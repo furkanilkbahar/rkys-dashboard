@@ -1,0 +1,162 @@
+# DECISIONS.md — Karar Günlüğü
+
+> Planlama oturumlarında alınan kararlar ve gerekçeleri. Claude Code bir davranışın "neden böyle" olduğunu buradan doğrular. Yeni kararlar tarihiyle eklenir; karar değişirse eskisi silinmez, "revize edildi" notu düşülür.
+
+## Oturum 1 — Kapsam ve Temel Mimari (2026-07)
+
+| # | Karar | Gerekçe |
+|---|---|---|
+| D1 | Mobil uygulama ertelendi; her şey web tabanlı, push yerine panel içi sesli bildirim | Basit başlangıç; ileride PWA→native yolu açık |
+| D2 | Ödeme: kasada + online (iyzico), tenant seçimli | Esneklik |
+| D3 | Baştan multi-tenant SaaS | Satılabilir ürün hedefi; RLS izolasyonu temel |
+| D4 | 3 personel yüzeyi: Admin + KDS + Garson paneli | Rol bazlı odaklı ekranlar |
+| D5 | Stack: Next.js + Supabase | Hız + Realtime + RLS uyumu |
+| D6 | Çok dilli altyapı; tenant dillerini seçer | Uluslararası satış kapısı |
+| D7 | Süper Admin baştan; abonelik + **lifetime** + **self-hosted (yıllık lisans)** modelleri | Esnek gelir modelleri; lisans anahtarı altyapısı gerekir |
+| D8 | Ürün yapısı: varyant + ekstra + stok | Zengin menü ihtiyacı |
+| D9 | Tek premium tema ile başla; tema altyapısı public/**private (tenant'a özel)** atamalı | Müşteriye özel tema satabilme |
+| D10 | Sipariş modu tenant ayarlı: `direct` / `approval` | Farklı işletme alışkanlıkları |
+| D11 | Tam pazarlama sitesi (tanıtım+fiyat+kayıt) | SaaS satış kanalı |
+| D12 | Detaylı raporlama | Karar destek + satış argümanı |
+
+## Oturum 2 — Detaylandırma (2026-07)
+
+### Tasarım
+| # | Karar | Gerekçe |
+|---|---|---|
+| D13 | Tema kimliği: **`warm-luxury`** — lüks + sıcak karışımı (espresso/antrasit + krem + altın) | "Aşırı koyu olmasın" talebi; gündüz okunabilirlik |
+| D14 | Ürün düzeni esnek: grid / liste / vitrin şeridi; **admin kategori başına seçer** (ayar Faz 2) | Her menü tipine uyum |
+| D15 | Animasyon: dengeli mikro animasyonlar | Premium his + performans |
+
+### Fiyatlandırma
+| # | Karar | Gerekçe |
+|---|---|---|
+| D16 | 3 plan: Başlangıç / Pro / Sınırsız | Sade karar, klasik SaaS |
+| D17 | Limit **yalnızca masa sayısı**; tüm özellikler her planda açık | En anlaşılır metrik |
+| D18 | 14 gün tam özellikli trial, **kart istenmez** | Sıfır giriş bariyeri |
+
+### Ödeme & Hesap
+| # | Karar | Gerekçe |
+|---|---|---|
+| D19 | Hesap bölme fazlı: tek ödeme + eşit bölüşme (Faz 3), kalem bazlı (Faz 5); tenant hangilerini açacağını seçer | Riski dağıtma |
+| D20 | Bahşiş: hazır tutar çipleri (50/100/200/300/400/500₺, **tenant düzenler**) + özel tutar | Hızlı seçim, yazma derdi yok |
+| D21 | Varsayılan: KDV dahil net fiyat, sıfır ek ücret; **Pricing Rules motoru** altyapısı (servis ücreti, mutlu saat, paket farkı) tenant isterse aktive eder — temel motor Faz 5 | Şeffaflık + gelecek esnekliği |
+
+### Sipariş Akışı
+| # | Karar | Gerekçe |
+|---|---|---|
+| D22 | İptal karma: `pending/approved` serbest; `preparing` sonrası **iptal isteği** garson onaylı | Müşteri özgür, mutfak korunur |
+| D23 | Oturum: otomatik açılış + ödeme/timeout/manuel kapama; **masa taşıma sadece garson yetkisi** (müşteride görünmez) | Kendi kendine düzelen sistem + saha ihtiyacı |
+| D24 | Müşteri görünümü: tüm oturum siparişleri + ara toplam + Hesap İste + **cihaz bazlı etiket** | Şeffaflık; kalem bazlı bölmeye temel |
+
+### Erişim & Onboarding
+| # | Karar | Gerekçe |
+|---|---|---|
+| D25 | URL: subdomain + custom domain kapısı | Premium imaj + ileride üst plan özelliği |
+| D26 | Giriş karma: admin e-posta+şifre; garson/mutfak **yetkili cihazda vardiya modu + PIN** | Güvenlik + saha hızı |
+| D27 | Onboarding iki yol: **"Demo veriyle keşfet"** (toplu demo temizleme butonuyla) veya **"Sıfırdan kur"** tam sihirbazı (logo→dil→para birimi→masalar→şablon menü→tema önizleme) | Hem hızlı fikir hem temiz kurulum |
+
+### Bildirim, QR, Dayanıklılık
+| # | Karar | Gerekçe |
+|---|---|---|
+| D28 | Sesler olay tipine göre + cihaz başına ayar + kritik olaylarda **ısrarcı tekrar modu** | "Garson duymadı" senaryosunu öldürmek |
+| D29 | **İki QR tipi:** masa QR'ı (doğrudan oturum) + genel QR (**masa seçtirir**); baskı şablonları çoklu format + tema uyumlu | Tek QR bastırma esnekliği + görsel bütünlük |
+| D30 | Dayanıklılık: reconnect+senkron, bağlantı göstergesi, sepet koruması, idempotency | Kafe Wi-Fi gerçeği |
+
+### Müşteri Deneyimi
+| # | Karar | Gerekçe |
+|---|---|---|
+| D31 | Değerlendirme: dahili yıldız+yorum; 4-5★ → Google köprüsü, düşük puan içeride + admin uyarısı; **garson puanlama** (isim/yaka no/foto gösterimi tenant ayarlı) | Google puanı büyütme + personel ölçümü |
+| D32 | Görseller: telifsiz hazır kütüphane + otomatik optimizasyon (WebP) | Boş menü olmasın + LCP hedefi |
+| D33 | "Hazır" bildirimi: şimdi ses/titreşim+sekme uyarısı; Web Push Faz 6 | iOS sürtünmesini erteleme |
+| D34 | KVKK/çerez/sözleşmeler + veri silme akışı kapsama alındı | Yasal zorunluluk |
+
+### Operasyon
+| # | Karar | Gerekçe |
+|---|---|---|
+| D35 | Çağrı tipleri: standart set + tenant özel tip + **tipsiz tek dokunuş çağrı** | Konsepte uyum + en hızlı yol |
+| D36 | Para birimi: tenant tek birim seçer; çoklu kur gösterimi gelecek faz | Uluslararası kapı, düşük maliyet |
+| D37 | Mutfak istasyonları: şema baştan hazır (`station`), v1 tek ekran, istasyon ekranları Faz 5 | Bugün basit, yarın hazır |
+
+## Oturum 3 — 100k$ Kriter Analizi ve Kapsam Genişletme (2026-07)
+
+### Ürün Anayasası
+| # | Karar | Gerekçe |
+|---|---|---|
+| D38 | **Dinamik Ölçeklenme İlkesi + Modül Sistemi** (`tenant_modules`): çekirdek = QR menü; kasa, stok, CRM, kanallar, rezervasyon, kiosk, vardiya, hediye kartı vb. tenant'ın açıp kapattığı modüller; kapalı modül hiçbir yüzeyde görünmez | "Sadece QR menü isteyene de tam restoran yönetimi isteyene de hizmet" talebi |
+
+### Şube
+| # | Karar | Gerekçe |
+|---|---|---|
+| D39 | Şube: şema tam + görünmez tek şube + hazır seçici altyapısı | Migration acısını bugünden sıfırlama |
+| D40 | Merkezi menü + `branch_product_overrides` (fiyat/stok/satılmıyor) | Zincir standardı |
+| D41 | Plan: dahil şube sayısı + ek şube aylık ücret | Sade + ölçeklenen gelir |
+
+### Kasa & Finans
+| # | Karar | Gerekçe |
+|---|---|---|
+| D42 | Kasa modülü: vardiya kasa (açılış/sayım/fark) + **POS-lite sipariş girişi** + gün sonu snapshot (Faz 3); **donanım paketi ayrı fazda** (termal/çekmece/barkod, adaptör kapısı baştan) | QR kullanmayan müşteri gerçeği; donanım sürücüleri çekirdeği bekletmesin |
+| D43 | İkram/indirim: izin bayrağı + **zorunlu sebep kodu** → kayıp-kaçak raporu | Suistimal görünürlüğü |
+| D44 | İade fazlı: tam iade Faz 3 (online=iyzico gerçek iade, kasa=manuel); kısmi/kalem iade Faz 6 (hesap bölmeyle ortak altyapı) | Riskli karmaşıklığı fazlama |
+
+### Stok & Maliyet
+| # | Karar | Gerekçe |
+|---|---|---|
+| D45 | **Hibrit stok:** ürün başına `simple` / `recipe` modu; malzeme+reçete şeması baştan, reçete UI Faz 8 | Kolay başla, olgunlaş |
+| D46 | Tedarik fazlı: basit alım+hareketli ortalama maliyet önce; tam PO ileri faz | Maliyet verisinin temeli |
+| D47 | Kârlılık fazlı: manuel maliyet+marj erken (Faz 3); reçeteyle **otomatik maliyet + menü mühendisliği matrisi** (Faz 8) | Erken değer + imza rapor |
+
+### CRM & Pazarlama
+| # | Karar | Gerekçe |
+|---|---|---|
+| D48 | Müşteri kimliği: **telefon+OTP sadakat hesabı**, tamamen opsiyonel; menü anonim akmaya devam eder | Sürtünmesiz deneyim korunur |
+| D49 | Sadakat: modüler motor — tenant damga/puan seçer; kademe ileri faz | Kafe kültürüne uyum |
+| D50 | Kampanya fazlı: kural bazlı (Pricing Rules üstünde, Faz 6); segmentli+İYS iletişimi CRM sonrası | Aynı altyapı, doğru sıra |
+| D51 | **AÇIK KARAR — Pazar yeri bağlantı biçimi:** adaptör mimarisi kesin; doğrudan platform API'leri mi (iş ortaklığı onayı gerekir) yoksa aracı katman sağlayıcısı mı — onay süreçleri/maliyet netleşince | API erişimleri izne tabi |
+| D52 | Hediye kartı modülü plana alındı (bakiye=borç muhasebesiyle) | Ön nakit + sadakat sinerjisi |
+
+### Kanallar
+| # | Karar | Gerekçe |
+|---|---|---|
+| D53 | `order_channel` şeması baştan; gel-al → kendi kurye paketi + zamanlanmış sipariş fazlı (Faz 9) | Tek sipariş motoru |
+| D54 | Kurye: `courier` rolü şimdi; basit modül Faz 9; canlı takip gelecek kapısı; **modül olarak aktif/pasif** | Kuryesiz işletme zorlanmaz |
+
+### Analitik
+| # | Karar | Gerekçe |
+|---|---|---|
+| D55 | Ayrı **Analitik Merkezi**: widget dashboard + hedefler/anomali uyarıları + **zamanlanmış e-posta/PDF raporları** | Rapor → karar asistanı |
+| D56 | Rapor erişimi rol/izin bayraklı; **veri geçmişi sınırsız** + dönem/geçen yıl kıyası | Kurumsal beklenti |
+
+### Yetki & Platform
+| # | Karar | Gerekçe |
+|---|---|---|
+| D57 | İzin sistemi: sabit roller + **tenant ayarlı izin bayrakları** (ikram, iade, raporlar, kasa, masa taşıma...); özel rol oluşturma gelecek | %90 ihtiyaç, sade model |
+| D58 | 2FA: TOTP altyapısı; **zorunluluk Süper Admin anahtarında, varsayılan opsiyonel** (öneri: canlıda süper admin için açılması) | Kullanıcı talebi: dayatma yok |
+| D59 | Status sayfası + planlı bakım duyuruları + panel banner | Kesinti güveni |
+| D60 | Ortamlar: Prod+Staging+PR preview; CI (tip/lint/test/RLS) zorunlu; yedek+PITR+aylık restore tatbikatı (OPERATIONS.md) | Profesyonel işletim |
+| D61 | Muhasebe fazlı: CSV/Excel + program uyumlu exportlar erken; doğrudan API adaptörü Faz 10; **ÖKC adaptör kapısı** mimaride | TR satış gerçeği |
+| D62 | Tenant API fazlı: API key + imzalı webhooks + read API (Faz 10); yazma API'si pazar yeri altyapısıyla | Entegre edilebilir ürün |
+
+### Ek Modüller
+| # | Karar | Gerekçe |
+|---|---|---|
+| D63 | Plana alındı: **Rezervasyon+bekleme listesi, Kiosk modu, Vardiya planlama+puantaj** (Faz 11) — hepsi modül | 100k$ kapsam |
+| D64 | **AÇIK KARAR — Wi-Fi portalı:** kararsız; OTP'li sadakat aynı veriyi topluyor; ileride konuşulacak | Donanım+KVKK yükü |
+
+## Oturum 4 — Açık Kararların Kapatılması (2026-07)
+
+| # | Karar | Gerekçe |
+|---|---|---|
+| D65 | Destek: **panel içi ticket modülü** (tenant talep → Süper Admin kuyruğu, durum akışı); Yardım Merkezi gelecek kapısı | Talepler tek yerde, ölçülebilir |
+| D66 | **REVİZE — SMS sağlayıcısı:** adaptör mimarisi kesin (`lib/integrations/sms`), altyapı Faz 7'de kurulur; somut sağlayıcı seçimi/entegrasyonu artık zorunlu değil, kullanıcı gündeme getirdiğinde yapılır (gerekirse Faz 12 havuzuna kadar ertelenebilir) | Kullanıcı talebi (2026-07-19): OTP/SMS şu an öncelik değil, son iş olarak bakılacak |
+| D67 | Geliştirme akışı: **lokal öncelikli** (Docker + Supabase CLI, her şey lokalde görülür/test edilir) → GitHub+CI → canlıya alma **Vercel + Supabase Cloud**; Docker image üretimi baştan (self-hosted paketin temeli) | Kullanıcı talebi: lokalde görme + kontrollü canlıya çıkış |
+| D68 | Plan taslağı: **Başlangıç 10 masa/1 şube · Pro 25/2 · Sınırsız ∞/3 dahil** + ek şube ücreti; fiyatlar lansmanda | Dengeli segmentasyon |
+| D69 | Wi-Fi portalı **kapsam dışı** (D64 kapandı) | OTP'li sadakat aynı veriyi topluyor; donanım+KVKK yükü |
+| D70 | Pazar yeri **karma strateji** (D51 kapandı): aracı katmanla (Posentegra/Entegre App/API Merkezi sınıfı) hızlı çıkış + Yemeksepeti resmî Plugin ve Trendyol partner-bilgisi doğrudan bağlantılarına kademeli geçiş; adaptör deseni geçişi şeffaf kılar | Araştırma bulguları: YS dokümante resmî program, Trendyol self-servise yakın, aracılar oturmuş pazar |
+| D71 | **REVİZE — Ürün ismi + domain:** Ürün adı **RKYS Dashboard** olarak belirlendi. Alan adı henüz alınmadı; kullanıcı ileride alacak — müsait değilse başka bir isim seçilip dokümanlar/koddaki referanslar güncellenecek. Subdomain/custom domain mimarisi (D25) zaten hazır, isim değişikliği mimariyi etkilemez | Kullanıcı kararı (2026-07-19) |
+
+## Oturum 5 — Repo Kurulumu (2026-07)
+
+| # | Karar | Gerekçe |
+|---|---|---|
+| D72 | **Production'a asla erken çıkılmaz:** Proje **lokalde uçtan uca tamamlanmadan** (tüm fazlar bitip kullanıcı onayı alınmadan) hiçbir şekilde Vercel/Supabase Cloud production ortamına deploy yapılmaz; staging dahi kullanıcı onayı ile açılır. Bkz. RULES.md #45 | Kullanıcı açık talimatı (2026-07-19): canlıya çıkış tamamen kullanıcı kontrolünde, aceleye getirilmeyecek |
