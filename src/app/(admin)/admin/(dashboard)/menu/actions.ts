@@ -275,3 +275,51 @@ export async function updateExtra(extraId: string, input: unknown): Promise<Menu
   return { ok: true };
 }
 
+export async function reorderMenuCategories(orderedIds: string[]): Promise<MenuActionResult> {
+  const actor = await requireMenuEditActor();
+  if (!actor) return { ok: false, error: "forbidden" };
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("reorder_menu_categories", { p_ids: orderedIds });
+  if (error) return { ok: false, error: "unknown" };
+
+  revalidatePath("/admin/menu");
+  return { ok: true };
+}
+
+export async function reorderProducts(categoryId: string, orderedIds: string[]): Promise<MenuActionResult> {
+  const actor = await requireMenuEditActor();
+  if (!actor) return { ok: false, error: "forbidden" };
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("reorder_products", { p_category_id: categoryId, p_ids: orderedIds });
+  if (error) return { ok: false, error: "unknown" };
+
+  revalidatePath(`/admin/menu/${categoryId}`);
+  return { ok: true };
+}
+
+export async function reorderVariants(productId: string, orderedIds: string[]): Promise<MenuActionResult> {
+  const actor = await requireMenuEditActor();
+  if (!actor) return { ok: false, error: "forbidden" };
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("reorder_product_variants", { p_product_id: productId, p_ids: orderedIds });
+  if (error) return { ok: false, error: "unknown" };
+
+  revalidatePath("/admin/menu", "layout");
+  return { ok: true };
+}
+
+export async function reorderExtras(productId: string, orderedIds: string[]): Promise<MenuActionResult> {
+  const actor = await requireMenuEditActor();
+  if (!actor) return { ok: false, error: "forbidden" };
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("reorder_product_extras", { p_product_id: productId, p_ids: orderedIds });
+  if (error) return { ok: false, error: "unknown" };
+
+  revalidatePath("/admin/menu", "layout");
+  return { ok: true };
+}
+

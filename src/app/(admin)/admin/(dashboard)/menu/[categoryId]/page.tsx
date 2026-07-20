@@ -2,7 +2,6 @@ import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireAdminActor } from "@/lib/auth/adminGuard";
@@ -10,6 +9,7 @@ import { getAdminCategory, getAdminProductsByCategory } from "@/lib/data/adminMe
 
 import { updateCategory } from "../actions";
 import { CategoryForm } from "../category-form";
+import { ProductList } from "./product-list";
 
 export default async function CategoryDetailPage({ params }: { params: Promise<{ categoryId: string }> }) {
   const { categoryId } = await params;
@@ -56,26 +56,7 @@ export default async function CategoryDetailPage({ params }: { params: Promise<{
 
       {products.length === 0 && <p className="text-sm text-muted-foreground">{t("product.empty")}</p>}
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {products.map((product) => (
-          <Link key={product.id} href={`/admin/menu/${categoryId}/products/${product.id}`}>
-            <Card className="transition-colors hover:border-primary">
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between text-base">
-                  <span>{product.name.tr || product.name.en}</span>
-                  <Badge variant={product.isActive ? "secondary" : "destructive"}>
-                    {product.isActive ? t("category.active") : t("category.inactive")}
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="text-sm text-muted-foreground">
-                {(product.basePriceMinor / 100).toLocaleString("tr-TR", { style: "currency", currency: "TRY" })}
-                {product.isSoldOut && ` · ${t("product.soldOut")}`}
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
-      </div>
+      <ProductList categoryId={categoryId} products={products} />
     </div>
   );
 }

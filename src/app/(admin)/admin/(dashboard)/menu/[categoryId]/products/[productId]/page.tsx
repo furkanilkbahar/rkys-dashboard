@@ -6,7 +6,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireAdminActor } from "@/lib/auth/adminGuard";
 import { getAdminCategory, getAdminProduct } from "@/lib/data/adminMenu";
 
-import { createExtra, createVariant, updateExtra, updateProduct, updateVariant } from "../../../actions";
+import {
+  createExtra,
+  createVariant,
+  reorderExtras,
+  reorderVariants,
+  updateExtra,
+  updateProduct,
+  updateVariant,
+} from "../../../actions";
 import { ProductForm } from "../product-form";
 import { VariantExtraEditor } from "./variant-extra-editor";
 
@@ -63,6 +71,7 @@ export default async function ProductDetailPage({
           items={variants}
           createAction={createVariant}
           updateAction={updateVariant}
+          reorderAction={reorderVariants.bind(null, productId)}
         />
         <VariantExtraEditor
           kind="extra"
@@ -70,6 +79,7 @@ export default async function ProductDetailPage({
           items={extras}
           createAction={createExtra}
           updateAction={updateExtra}
+          reorderAction={reorderExtras.bind(null, productId)}
         />
       </div>
     </div>

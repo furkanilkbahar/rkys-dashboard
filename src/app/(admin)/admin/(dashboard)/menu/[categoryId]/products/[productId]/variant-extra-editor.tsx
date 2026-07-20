@@ -3,9 +3,10 @@
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { Controller, useForm } from "react-hook-form";
 
+import { SortableList } from "@/components/admin/sortable-list";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -41,12 +42,14 @@ function ItemForm({
   item,
   createAction,
   updateAction,
+  dragHandle,
 }: {
   kind: "variant" | "extra";
   productId: string;
   item?: Item;
   createAction: (input: unknown) => Promise<MenuActionResult>;
   updateAction: (id: string, input: unknown) => Promise<MenuActionResult>;
+  dragHandle?: ReactNode;
 }) {
   const t = useTranslations(`admin.menu.${kind}`);
   const tErrors = useTranslations("admin.menu.errors");
@@ -93,6 +96,7 @@ function ItemForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2 rounded-md border border-border p-3">
+      {dragHandle}
       <div className="grid grid-cols-2 gap-2">
         <Input placeholder={t("nameTr")} {...register("nameTr")} />
         <Input placeholder={t("nameEn")} {...register("nameEn")} />
@@ -135,12 +139,14 @@ export function VariantExtraEditor({
   items,
   createAction,
   updateAction,
+  reorderAction,
 }: {
   kind: "variant" | "extra";
   productId: string;
   items: Item[];
   createAction: (input: unknown) => Promise<MenuActionResult>;
   updateAction: (id: string, input: unknown) => Promise<MenuActionResult>;
+  reorderAction: (orderedIds: string[]) => Promise<MenuActionResult>;
 }) {
   const t = useTranslations(`admin.menu.${kind}`);
 
@@ -148,16 +154,21 @@ export function VariantExtraEditor({
     <div className="flex flex-col gap-3" data-testid={`${kind}-editor`}>
       <h3 className="text-sm font-semibold">{t("title")}</h3>
       {items.length === 0 && <p className="text-xs text-muted-foreground">{t("empty")}</p>}
-      {items.map((item) => (
-        <ItemForm
-          key={item.id}
-          kind={kind}
-          productId={productId}
-          item={item}
-          createAction={createAction}
-          updateAction={updateAction}
-        />
-      ))}
+      <SortableList
+        items={items}
+        onReorder={reorderAction}
+        className="flex flex-col gap-2"
+        renderItem={(item, dragHandle) => (
+          <ItemForm
+            kind={kind}
+            productId={productId}
+            item={item}
+            createAction={createAction}
+            updateAction={updateAction}
+            dragHandle={dragHandle}
+          />
+        )}
+      />
       <ItemForm kind={kind} productId={productId} createAction={createAction} updateAction={updateAction} />
     </div>
   );
