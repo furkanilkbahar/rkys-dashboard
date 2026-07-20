@@ -19,6 +19,7 @@ Bir davranışın gerekçesini merak edersen `DECISIONS.md` karar günlüğüne 
    - **Hayır** (isimlendirme, küçük implementasyon detayı, dosya/klasör organizasyonu, yardımcı fonksiyon şekli gibi düşük riskli ve geri alınabilir seçimler) → kendi içinde hızlıca değerlendir; seçeneklerden biri makul ölçüde daha iyiyse (kabaca %80+ eminsen) onu seç ve devam et, yanıtında tek satır **"Varsayım: ..."** notuyla belirt. Sormak için durma.
    - Aradaysan (emin değilsen) en olası 1-2 seçeneği kısaca sun, onay isteyip devam et.
 5. Büyük görevleri küçük, doğrulanabilir adımlara böl; her adım sonunda uygulama çalışır durumda olsun.
+6. **Adım bazlı otomatik commit+push (D75):** Bir plan Adımı bitip hızlı doğrulaması (tsc + lint + o adımı ilgilendiren unit/entegrasyon testleri) yeşil olunca, onay beklemeden commit atılır ve `origin/main`'e push edilir. Commit Kuralları aynen uygulanır (migration'lar ayrı commit). Tam paket (integration ×2 + E2E) Adım'da değil, yalnızca faz kapanışında (D73/D74) koşulur.
 
 ## Stack (özet — detay ARCHITECTURE.md)
 - Next.js App Router + TypeScript **strict** + Tailwind + shadcn/ui + Framer Motion

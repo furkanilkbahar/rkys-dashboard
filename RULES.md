@@ -60,3 +60,4 @@
 43. Bir faz, TESTING.md'deki kapanış kriterleri (yeni testler + tüm eski testler yeşil + senaryo listesi + koşum onayı + otomatik doğrulama özeti + kullanıcının faz geçiş onayı) sağlanmadan kapanmaz (D73/D74).
 44. TESTING.md'deki kritik E2E senaryoları silinemez/atlanamaz; yeni kritik akış eklendiğinde senaryo listesi güncellenir.
 45. **Production'a erken çıkış YASAK:** Proje lokalde uçtan uca tamamlanıp kullanıcı onayı alınmadan Vercel/Supabase Cloud production ortamına hiçbir deploy yapılmaz; staging ortamının açılması da kullanıcı onayına tabidir (D72).
+46. Bir plan Adımı bitip hızlı doğrulaması (tsc+lint+ilgili testler) yeşil olunca commit+push için ayrıca onay beklenmez — otomatik yapılır (D75). Bu, genel "onaysız commit atma" varsayılanının bu proje özelinde kalıcı istisnasıdır; migration'lar yine ayrı commit olur (Commit Kuralları).
