@@ -62,7 +62,7 @@ supabase/
 - Kritik akışlara (sipariş oluşturma, durum makinesi, çağrı, lisans doğrulama) birim/entegrasyon testi.
 - PR/commit öncesi: `tsc --noEmit`, lint ve testler geçmeli.
 - Test stratejisi TESTING.md'dedir: her fazda ilgili E2E senaryoları yazılır, faz kapanış kriterleri uygulanır.
-- **Faz sonu ritüeli (D73):** manuel el testi yok — faz kapanışında ilgili senaryolar E2E'ye (Playwright) dönüştürülür, tam paket (`pnpm test` + `pnpm exec playwright test`) koşturulur, sonucu sohbette özetlenir. **Fazlar arası geçiş her zaman kullanıcı onayına tabidir**; faz içindeki uygulama adımları için ayrıca onay beklenmez (Faz 4'te tekrar değerlendirilecek).
+- **Faz sonu ritüeli (D73/D74):** manuel el testi yok, ama görünürlük var — faz kapanışında önce okunabilir bir senaryo listesi sunulur ("şunları test edebilirsiniz"), sonra otomatik koşum için açıkça onay istenir ("onay verirseniz sizin yerinize ben yaparım"). Onay sonrası ilgili senaryolar E2E/entegrasyon testine dönüştürülür, tam paket koşturulur, sonucu (katman/sonuç tablosu) sohbette özetlenir. Bu ayrıdır: paket yeşilse **bir sonraki faza geçmek için de ayrıca onay istenir** (fazlar arası geçiş her zaman onaya tabidir). Faz içindeki uygulama adımları için onay beklenmez (Faz 4'te tekrar değerlendirilecek).
 
 ## Commit Kuralları
 - Conventional Commits: `feat:`, `fix:`, `refactor:`, `db:`, `docs:`, `chore:`

@@ -44,12 +44,14 @@ Her yeni tablo için otomatik üretilen test çifti:
 - A tenant'ı olarak B'nin satırı SELECT/UPDATE/DELETE edilemez.
 - branch_id'li tablolarda yetkisiz şube erişimi engellenir.
 
-## 5. Faz Kapanış Doğrulaması (otomatik — D73)
-- Manuel el testi zorunlu değildir; kullanıcı manuel test yapmak istemez (kullanıcı kararı, 2026-07-20).
-- Bunun yerine: eskiden manuel listede yer alacak her senaryo (tenant izolasyonu, login akışı, modül guard'ı, kritik sayfa render'ı vb.) bir Playwright E2E testine dönüştürülür ve `tests/e2e/` altına eklenir.
-- Faz sonunda Claude Code tüm paketi (`pnpm test` + `pnpm exec playwright test`) koşturur; sonucu (geçen/kalan test sayısı) sohbette özetler.
-- Gerçek cihaz/görsel kontrol otomatikleştirilemez — bloklayıcı değildir, kullanıcı isterse ayrıca kendi yapar.
-- Paket yeşilse Claude Code faz geçişi için onay ister; **onay olmadan bir sonraki faza geçilmez**. Faz içindeki uygulama adımları için ayrıca onay beklenmez (kullanıcı kararı; Faz 4'te tekrar değerlendirilecek).
+## 5. Faz Kapanış Doğrulaması (otomatik, iki onay adımlı — D73/D74)
+Kullanıcı fiilen manuel test yapmak istemiyor ama neyin test edildiğini görmek ve otomatik koşumu onaylamak istiyor. Sıra:
+1. **Senaryo listesi:** Claude Code, o fazın kapanışında eski manuel-test-listesi formatında okunabilir bir senaryo listesi sunar (örn. "1. X açılır ve Y görünür. 2. A tenant'ı B'nin verisini göremez. ..."). Bu liste bilgilendirme amaçlıdır — kullanıcı isterse kendisi de elle bakabilir.
+2. **Koşum onayı:** Ardından açıkça sorar: *"Bunları siz test edebilirsiniz, ya da onay verirseniz sizin yerinize otomatik olarak ben yaparım."* Onay gelmeden paket çalıştırılmaz.
+3. **Otomatik koşum:** Onay sonrası her senaryonun karşılığı olan Playwright E2E / entegrasyon testi çalıştırılır (yeni senaryolar `tests/e2e/` veya `tests/integration/` altına eklenir), sonuç katman/sonuç tablosu + toplam olarak sohbette gösterilir (bkz. [[feedback_test_summary_output]] tarzı özet).
+4. **Faz geçiş onayı:** Paket yeşilse Claude Code ayrıca bir sonraki faza geçmek için onay ister (D73, değişmedi) — bu, 2. adımdaki koşum onayından **ayrı** bir onaydır.
+- Gerçek cihaz/görsel kontrol otomatikleştirilemez — bloklayıcı değildir, senaryo listesinde not düşülür, kullanıcı isterse kendisi kontrol eder.
+- Faz içindeki uygulama adımları için ayrıca onay beklenmez (kullanıcı kararı; Faz 4'te tekrar değerlendirilecek) — bu ritüel yalnızca faz kapanışına özeldir.
 
 ## 6. Kapsam Dışı (bilinçli)
 - %100 kapsama hedefi yok; hedef **kritik akışların** korunması.
