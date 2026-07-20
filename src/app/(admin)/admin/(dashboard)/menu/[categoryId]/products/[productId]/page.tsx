@@ -2,18 +2,21 @@ import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { ImageUploader } from "@/components/admin/image-uploader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireAdminActor } from "@/lib/auth/adminGuard";
-import { getAdminCategory, getAdminProduct } from "@/lib/data/adminMenu";
+import { getAdminCategory, getAdminProduct, getProductGallery } from "@/lib/data/adminMenu";
 
 import {
   createExtra,
   createVariant,
   reorderExtras,
   reorderVariants,
+  selectProductImageFromGallery,
   updateExtra,
   updateProduct,
   updateVariant,
+  uploadProductImage,
 } from "../../../actions";
 import { ProductForm } from "../product-form";
 import { VariantExtraEditor } from "./variant-extra-editor";
@@ -34,6 +37,7 @@ export default async function ProductDetailPage({
   }
 
   const { product, variants, extras } = result;
+  const gallery = await getProductGallery(actor.tenantId);
 
   return (
     <div className="flex flex-col gap-6">
@@ -45,7 +49,13 @@ export default async function ProductDetailPage({
         <CardHeader>
           <CardTitle>{t("product.editTitle")}</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex flex-col gap-4">
+          <ImageUploader
+            currentUrl={product.imageUrl}
+            uploadAction={uploadProductImage.bind(null, productId)}
+            gallery={gallery}
+            onSelectFromGallery={selectProductImageFromGallery.bind(null, productId)}
+          />
           <ProductForm
             categoryId={categoryId}
             initial={{

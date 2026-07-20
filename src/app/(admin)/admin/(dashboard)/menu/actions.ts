@@ -1,14 +1,20 @@
 "use server";
 
+import { randomUUID } from "crypto";
+
 import { revalidatePath } from "next/cache";
 
 import { assertCan } from "@/lib/auth/can";
 import { getCurrentActor } from "@/lib/auth/session";
+import { optimizeMenuImage } from "@/lib/images/optimize";
 import {
+  ALLOWED_IMAGE_TYPES,
+  MAX_IMAGE_BYTES,
   categoryServerSchema,
   extraServerSchema,
   productServerSchema,
   variantServerSchema,
+  type ImageActionResult,
   type MenuActionResult,
 } from "@/lib/menu/schemas";
 import { createClient } from "@/lib/supabase/server";
@@ -321,5 +327,115 @@ export async function reorderExtras(productId: string, orderedIds: string[]): Pr
 
   revalidatePath("/admin/menu", "layout");
   return { ok: true };
+}
+
+async function extractImageBuffer(
+  formData: FormData,
+): Promise<{ buffer: Buffer } | { error: "invalid_input" | "too_large" | "unsupported_type" }> {
+  const file = formData.get("file");
+  if (!(file instanceof File) || file.size === 0) return { error: "invalid_input" };
+  if (!(ALLOWED_IMAGE_TYPES as readonly string[]).includes(file.type)) return { error: "unsupported_type" };
+  if (file.size > MAX_IMAGE_BYTES) return { error: "too_large" };
+
+  return { buffer: Buffer.from(await file.arrayBuffer()) };
+}
+
+export async function uploadProductImage(productId: string, formData: FormData): Promise<ImageActionResult> {
+  const actor = await requireMenuEditActor();
+  if (!actor) return { ok: false, error: "forbidden" };
+
+  const extracted = await extractImageBuffer(formData);
+  if ("error" in extracted) return { ok: false, error: extracted.error };
+
+  let optimized: Buffer;
+  try {
+    optimized = await optimizeMenuImage(extracted.buffer);
+  } catch {
+    return { ok: false, error: "invalid_input" };
+  }
+
+  const supabase = await createClient();
+  const path = `${actor.tenantId}/products/${productId}-${randomUUID()}.webp`;
+  const { error: uploadError } = await supabase.storage
+    .from("menu-images")
+    .upload(path, optimized, { contentType: "image/webp" });
+  if (uploadError) return { ok: false, error: "unknown" };
+
+  const imageUrl = supabase.storage.from("menu-images").getPublicUrl(path).data.publicUrl;
+
+  const { error: updateError } = await supabase
+    .from("products")
+    .update({ image_url: imageUrl })
+    .eq("id", productId)
+    .eq("tenant_id", actor.tenantId);
+  if (updateError) return { ok: false, error: "unknown" };
+
+  await supabase.from("product_images").insert({ tenant_id: actor.tenantId, storage_path: path });
+
+  revalidatePath("/admin/menu", "layout");
+  return { ok: true, imageUrl };
+}
+
+export async function uploadCategoryImage(categoryId: string, formData: FormData): Promise<ImageActionResult> {
+  const actor = await requireMenuEditActor();
+  if (!actor) return { ok: false, error: "forbidden" };
+
+  const extracted = await extractImageBuffer(formData);
+  if ("error" in extracted) return { ok: false, error: extracted.error };
+
+  let optimized: Buffer;
+  try {
+    optimized = await optimizeMenuImage(extracted.buffer);
+  } catch {
+    return { ok: false, error: "invalid_input" };
+  }
+
+  const supabase = await createClient();
+  const path = `${actor.tenantId}/categories/${categoryId}-${randomUUID()}.webp`;
+  const { error: uploadError } = await supabase.storage
+    .from("menu-images")
+    .upload(path, optimized, { contentType: "image/webp" });
+  if (uploadError) return { ok: false, error: "unknown" };
+
+  const imageUrl = supabase.storage.from("menu-images").getPublicUrl(path).data.publicUrl;
+
+  const { error: updateError } = await supabase
+    .from("menu_categories")
+    .update({ image_url: imageUrl })
+    .eq("id", categoryId)
+    .eq("tenant_id", actor.tenantId);
+  if (updateError) return { ok: false, error: "unknown" };
+
+  revalidatePath("/admin/menu", "layout");
+  return { ok: true, imageUrl };
+}
+
+export async function selectProductImageFromGallery(
+  productId: string,
+  galleryImageId: string,
+): Promise<ImageActionResult> {
+  const actor = await requireMenuEditActor();
+  if (!actor) return { ok: false, error: "forbidden" };
+
+  const supabase = await createClient();
+  const { data: galleryImage } = await supabase
+    .from("product_images")
+    .select("storage_path")
+    .eq("id", galleryImageId)
+    .eq("tenant_id", actor.tenantId)
+    .maybeSingle();
+  if (!galleryImage) return { ok: false, error: "invalid_input" };
+
+  const imageUrl = supabase.storage.from("menu-images").getPublicUrl(galleryImage.storage_path).data.publicUrl;
+
+  const { error } = await supabase
+    .from("products")
+    .update({ image_url: imageUrl })
+    .eq("id", productId)
+    .eq("tenant_id", actor.tenantId);
+  if (error) return { ok: false, error: "unknown" };
+
+  revalidatePath("/admin/menu", "layout");
+  return { ok: true, imageUrl };
 }
 

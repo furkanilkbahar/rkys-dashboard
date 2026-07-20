@@ -107,7 +107,15 @@
         "not_found": "Kayıt bulunamadı.",
         "unknown": "Kaydedilemedi, tekrar deneyin.",
         "required": "Bu alan zorunlu.",
-        "invalid_price": "Geçerli bir fiyat girin (örn. 45.00)."
+        "invalid_price": "Geçerli bir fiyat girin (örn. 45.00).",
+        "too_large": "Görsel çok büyük (en fazla 10 MB).",
+        "unsupported_type": "Desteklenmeyen görsel formatı (PNG, JPEG veya WebP kullanın)."
+      },
+      "image": {
+        "noImage": "Görsel yok",
+        "upload": "Görsel Yükle",
+        "uploading": "Yükleniyor...",
+        "chooseFromGallery": "Galeriden Seç"
       }
     }
   },

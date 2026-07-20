@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
+import Image from "next/image";
 import { useMemo, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
@@ -70,6 +71,11 @@ export function ProductCard({ product }: { product: MenuProduct }) {
       transition={{ duration: 0.25, ease: "easeOut" }}
     >
       <Card>
+        {product.imageUrl && (
+          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-t-[calc(var(--radius)-1px)]">
+            <Image src={product.imageUrl} alt="" fill unoptimized className="object-cover" />
+          </div>
+        )}
         <CardHeader
           className={hasDetails ? "cursor-pointer" : undefined}
           onClick={hasDetails ? () => setExpanded((v) => !v) : undefined}

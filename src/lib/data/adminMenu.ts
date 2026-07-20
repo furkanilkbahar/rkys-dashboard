@@ -11,6 +11,7 @@ export type AdminCategory = {
   isActive: boolean;
   name: AdminTranslation;
   productCount: number;
+  imageUrl: string | null;
 };
 
 export type AdminProduct = {
@@ -24,7 +25,10 @@ export type AdminProduct = {
   isActive: boolean;
   name: AdminTranslation;
   description: AdminTranslation;
+  imageUrl: string | null;
 };
+
+export type ProductGalleryImage = { id: string; url: string };
 
 export type AdminVariant = {
   id: string;
@@ -96,7 +100,7 @@ export async function getAdminCategories(tenantId: string): Promise<AdminCategor
 
   const { data: categories } = await supabase
     .from("menu_categories")
-    .select("id, layout, display_order, is_active, products(count)")
+    .select("id, layout, display_order, is_active, image_url, products(count)")
     .eq("tenant_id", tenantId)
     .order("display_order");
 
@@ -110,6 +114,7 @@ export async function getAdminCategories(tenantId: string): Promise<AdminCategor
     isActive: c.is_active,
     name: readTranslation(nameMap, "menu_category", c.id, "name"),
     productCount: c.products?.[0]?.count ?? 0,
+    imageUrl: c.image_url,
   }));
 }
 
@@ -118,7 +123,7 @@ export async function getAdminCategory(tenantId: string, categoryId: string): Pr
 
   const { data: category } = await supabase
     .from("menu_categories")
-    .select("id, layout, display_order, is_active")
+    .select("id, layout, display_order, is_active, image_url")
     .eq("tenant_id", tenantId)
     .eq("id", categoryId)
     .maybeSingle();
@@ -136,6 +141,7 @@ export async function getAdminCategory(tenantId: string, categoryId: string): Pr
     isActive: category.is_active,
     name: readTranslation(nameMap, "menu_category", categoryId, "name"),
     productCount: 0,
+    imageUrl: category.image_url,
   };
 }
 
@@ -144,7 +150,9 @@ export async function getAdminProductsByCategory(tenantId: string, categoryId: s
 
   const { data: products } = await supabase
     .from("products")
-    .select("id, category_id, track_mode, base_price_minor, stock_quantity, is_sold_out, display_order, is_active")
+    .select(
+      "id, category_id, track_mode, base_price_minor, stock_quantity, is_sold_out, display_order, is_active, image_url",
+    )
     .eq("tenant_id", tenantId)
     .eq("category_id", categoryId)
     .order("display_order");
@@ -163,6 +171,7 @@ export async function getAdminProductsByCategory(tenantId: string, categoryId: s
     isActive: p.is_active,
     name: readTranslation(translations, "product", p.id, "name"),
     description: readTranslation(translations, "product", p.id, "description"),
+    imageUrl: p.image_url,
   }));
 }
 
@@ -174,7 +183,9 @@ export async function getAdminProduct(
 
   const { data: product } = await supabase
     .from("products")
-    .select("id, category_id, track_mode, base_price_minor, stock_quantity, is_sold_out, display_order, is_active")
+    .select(
+      "id, category_id, track_mode, base_price_minor, stock_quantity, is_sold_out, display_order, is_active, image_url",
+    )
     .eq("tenant_id", tenantId)
     .eq("id", productId)
     .maybeSingle();
@@ -219,6 +230,7 @@ export async function getAdminProduct(
       isActive: product.is_active,
       name: readTranslation(productTranslations, "product", product.id, "name"),
       description: readTranslation(productTranslations, "product", product.id, "description"),
+      imageUrl: product.image_url,
     },
     variants: (variantsRes.data ?? []).map((v) => ({
       id: v.id,
@@ -241,4 +253,20 @@ export async function getAdminProduct(
       name: readTranslation(extraNameMap, "product_extra", e.id, "name"),
     })),
   };
+}
+
+export async function getProductGallery(tenantId: string): Promise<ProductGalleryImage[]> {
+  const supabase = await createClient();
+
+  const { data } = await supabase
+    .from("product_images")
+    .select("id, storage_path")
+    .eq("tenant_id", tenantId)
+    .order("created_at", { ascending: false })
+    .limit(24);
+
+  return (data ?? []).map((row) => ({
+    id: row.id,
+    url: supabase.storage.from("menu-images").getPublicUrl(row.storage_path).data.publicUrl,
+  }));
 }

@@ -21,6 +21,7 @@ export type MenuProduct = {
   name: string;
   priceMinor: number;
   isOrderable: boolean;
+  imageUrl: string | null;
   variants: MenuVariant[];
   extras: MenuExtra[];
 };
@@ -29,6 +30,7 @@ export type MenuCategory = {
   id: string;
   name: string;
   layout: "grid" | "list" | "showcase";
+  imageUrl: string | null;
   products: MenuProduct[];
 };
 
@@ -61,14 +63,14 @@ export async function getEffectiveMenu(
   const [categoriesRes, productsRes, effectiveRes, translationsRes] = await Promise.all([
     supabase
       .from("menu_categories")
-      .select("id, layout, display_order")
+      .select("id, layout, display_order, image_url")
       .eq("tenant_id", tenantId)
       .eq("is_active", true)
       .order("display_order"),
     supabase
       .from("products")
       .select(
-        `id, category_id, base_price_minor, display_order,
+        `id, category_id, base_price_minor, display_order, image_url,
          product_variants(id, price_minor, display_order, is_active),
          product_extras(id, price_minor, display_order, is_active, is_sold_out, stock_quantity)`,
       )
@@ -141,6 +143,7 @@ export async function getEffectiveMenu(
       priceMinor: variants.length > 0 ? variants[0].priceMinor : (productEffective?.priceMinor ?? product.base_price_minor),
       isOrderable:
         variants.length > 0 ? variants.some((v) => v.isOrderable) : (productEffective?.isOrderable ?? false),
+      imageUrl: product.image_url,
       variants,
       extras,
     };
@@ -154,6 +157,7 @@ export async function getEffectiveMenu(
     id: category.id,
     name: nameMap.get(`menu_category:${category.id}`) ?? "",
     layout: category.layout as MenuCategory["layout"],
+    imageUrl: category.image_url,
     products: productsByCategory.get(category.id) ?? [],
   }));
 }

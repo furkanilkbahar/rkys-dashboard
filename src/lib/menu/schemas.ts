@@ -84,3 +84,10 @@ export const extraServerSchema = extraFormSchema.transform((v) => ({
 export type MenuActionResult =
   | { ok: true }
   | { ok: false; error: "invalid_input" | "forbidden" | "not_found" | "unknown" };
+
+export const ALLOWED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp"] as const;
+export const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
+
+export type ImageActionResult =
+  | { ok: true; imageUrl: string }
+  | { ok: false; error: "invalid_input" | "forbidden" | "too_large" | "unsupported_type" | "unknown" };

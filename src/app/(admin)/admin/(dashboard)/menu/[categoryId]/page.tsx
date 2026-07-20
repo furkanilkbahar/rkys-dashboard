@@ -2,12 +2,13 @@ import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { ImageUploader } from "@/components/admin/image-uploader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireAdminActor } from "@/lib/auth/adminGuard";
 import { getAdminCategory, getAdminProductsByCategory } from "@/lib/data/adminMenu";
 
-import { updateCategory } from "../actions";
+import { updateCategory, uploadCategoryImage } from "../actions";
 import { CategoryForm } from "../category-form";
 import { ProductList } from "./product-list";
 
@@ -33,7 +34,8 @@ export default async function CategoryDetailPage({ params }: { params: Promise<{
         <CardHeader>
           <CardTitle>{t("category.editTitle")}</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex flex-col gap-4">
+          <ImageUploader currentUrl={category.imageUrl} uploadAction={uploadCategoryImage.bind(null, categoryId)} />
           <CategoryForm
             initial={{
               layout: category.layout,

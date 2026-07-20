@@ -107,7 +107,15 @@
         "not_found": "Record not found.",
         "unknown": "Could not save, please try again.",
         "required": "This field is required.",
-        "invalid_price": "Enter a valid price (e.g. 45.00)."
+        "invalid_price": "Enter a valid price (e.g. 45.00).",
+        "too_large": "Image is too large (10 MB max).",
+        "unsupported_type": "Unsupported image format (use PNG, JPEG, or WebP)."
+      },
+      "image": {
+        "noImage": "No image",
+        "upload": "Upload Image",
+        "uploading": "Uploading...",
+        "chooseFromGallery": "Choose from Gallery"
       }
     }
   },
