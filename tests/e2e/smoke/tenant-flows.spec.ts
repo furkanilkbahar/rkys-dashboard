@@ -35,7 +35,7 @@ test("acme ve beta subdomain'leri /api/health'te farklı tenant döner", async (
 
 test("seed owner ile giriş /admin'de tenant+rol bilgisini gösterir", async ({ page, baseURL }) => {
   await loginAs(page, baseURL!, SEED.acme.slug, SEED.acme.ownerEmail);
-  await expect(page.getByText(/rol: owner/)).toBeVisible();
+  await expect(page.getByText(/Hoş geldin, owner/)).toBeVisible();
 });
 
 test("pos_cash açık tenant'ta kasa erişilebilir, kapalı tenant'ta 404 döner", async ({ page, baseURL }) => {

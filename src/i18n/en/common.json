@@ -45,6 +45,70 @@
       "loading": "Loading...",
       "comingSoonTitle": "This section lands in a later step",
       "comingSoonBody": "{section} — Phase 2, {adim}."
+    },
+    "menu": {
+      "title": "Menu",
+      "categoriesEmpty": "No categories yet.",
+      "addCategory": "+ Add Category",
+      "backToCategories": "Back to categories",
+      "category": {
+        "createTitle": "New Category",
+        "editTitle": "Edit Category",
+        "nameTr": "Name (Turkish)",
+        "nameEn": "Name (English)",
+        "layout": "Layout",
+        "layoutGrid": "Grid",
+        "layoutList": "List",
+        "layoutShowcase": "Showcase",
+        "active": "Active",
+        "inactive": "Inactive",
+        "productCount": "{count} products"
+      },
+      "product": {
+        "createTitle": "New Product",
+        "editTitle": "Edit Product",
+        "nameTr": "Name (Turkish)",
+        "nameEn": "Name (English)",
+        "descriptionTr": "Description (Turkish)",
+        "descriptionEn": "Description (English)",
+        "price": "Price (₺)",
+        "stock": "Stock",
+        "stockUnlimitedHint": "Leave empty to skip stock tracking.",
+        "soldOut": "Mark as sold out",
+        "active": "Active",
+        "addProduct": "+ Add Product",
+        "empty": "No products in this category yet."
+      },
+      "variant": {
+        "title": "Variants",
+        "nameTr": "Name (Turkish)",
+        "nameEn": "Name (English)",
+        "price": "Price (₺)",
+        "stock": "Stock",
+        "soldOut": "Sold out",
+        "active": "Active",
+        "add": "+ Add Variant",
+        "empty": "No variants."
+      },
+      "extra": {
+        "title": "Extras",
+        "nameTr": "Name (Turkish)",
+        "nameEn": "Name (English)",
+        "price": "Price (₺)",
+        "stock": "Stock",
+        "soldOut": "Sold out",
+        "active": "Active",
+        "add": "+ Add Extra",
+        "empty": "No extras."
+      },
+      "errors": {
+        "invalid_input": "Please check the information you entered.",
+        "forbidden": "You don't have permission for this action.",
+        "not_found": "Record not found.",
+        "unknown": "Could not save, please try again.",
+        "required": "This field is required.",
+        "invalid_price": "Enter a valid price (e.g. 45.00)."
+      }
     }
   },
   "waiter": {

@@ -45,6 +45,70 @@
       "loading": "Yükleniyor...",
       "comingSoonTitle": "Bu bölüm bir sonraki adımda geliyor",
       "comingSoonBody": "{section} — Faz 2, {adim}."
+    },
+    "menu": {
+      "title": "Menü",
+      "categoriesEmpty": "Henüz kategori yok.",
+      "addCategory": "+ Kategori Ekle",
+      "backToCategories": "Kategorilere dön",
+      "category": {
+        "createTitle": "Yeni Kategori",
+        "editTitle": "Kategoriyi Düzenle",
+        "nameTr": "Ad (Türkçe)",
+        "nameEn": "Ad (İngilizce)",
+        "layout": "Düzen",
+        "layoutGrid": "Izgara",
+        "layoutList": "Liste",
+        "layoutShowcase": "Vitrin",
+        "active": "Aktif",
+        "inactive": "Pasif",
+        "productCount": "{count} ürün"
+      },
+      "product": {
+        "createTitle": "Yeni Ürün",
+        "editTitle": "Ürünü Düzenle",
+        "nameTr": "Ad (Türkçe)",
+        "nameEn": "Ad (İngilizce)",
+        "descriptionTr": "Açıklama (Türkçe)",
+        "descriptionEn": "Açıklama (İngilizce)",
+        "price": "Fiyat (₺)",
+        "stock": "Stok",
+        "stockUnlimitedHint": "Boş bırakılırsa stok takip edilmez.",
+        "soldOut": "Tükendi olarak işaretle",
+        "active": "Aktif",
+        "addProduct": "+ Ürün Ekle",
+        "empty": "Bu kategoride henüz ürün yok."
+      },
+      "variant": {
+        "title": "Varyantlar",
+        "nameTr": "Ad (Türkçe)",
+        "nameEn": "Ad (İngilizce)",
+        "price": "Fiyat (₺)",
+        "stock": "Stok",
+        "soldOut": "Tükendi",
+        "active": "Aktif",
+        "add": "+ Varyant Ekle",
+        "empty": "Varyant yok."
+      },
+      "extra": {
+        "title": "Ekstralar",
+        "nameTr": "Ad (Türkçe)",
+        "nameEn": "Ad (İngilizce)",
+        "price": "Fiyat (₺)",
+        "stock": "Stok",
+        "soldOut": "Tükendi",
+        "active": "Aktif",
+        "add": "+ Ekstra Ekle",
+        "empty": "Ekstra yok."
+      },
+      "errors": {
+        "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
+        "forbidden": "Bu işlem için yetkiniz yok.",
+        "not_found": "Kayıt bulunamadı.",
+        "unknown": "Kaydedilemedi, tekrar deneyin.",
+        "required": "Bu alan zorunlu.",
+        "invalid_price": "Geçerli bir fiyat girin (örn. 45.00)."
+      }
     }
   },
   "waiter": {
