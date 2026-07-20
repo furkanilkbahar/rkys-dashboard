@@ -1566,6 +1566,19 @@ export type Database = {
         Args: { p_order_id: string }
         Returns: undefined
       }
+      reorder_menu_categories: { Args: { p_ids: string[] }; Returns: undefined }
+      reorder_product_extras: {
+        Args: { p_ids: string[]; p_product_id: string }
+        Returns: undefined
+      }
+      reorder_product_variants: {
+        Args: { p_ids: string[]; p_product_id: string }
+        Returns: undefined
+      }
+      reorder_products: {
+        Args: { p_category_id: string; p_ids: string[] }
+        Returns: undefined
+      }
       request_order_cancellation: {
         Args: { p_order_id: string; p_reason: string }
         Returns: undefined
