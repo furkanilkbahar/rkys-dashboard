@@ -1,5 +1,6 @@
 # Claude Code local tooling (bundled skills/plugins — not project source)
 .claude/skills/
+.claude/settings.local.json
 
 # Dependencies
 node_modules/

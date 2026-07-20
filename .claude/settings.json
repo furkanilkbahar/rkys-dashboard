@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh auth status)",
+      "Bash(node --version)",
+      "Bash(supabase status)",
+      "Bash(supabase --version)",
+      "Bash(docker info)",
+      "Bash(pnpm exec tsc --noEmit)",
+      "Bash(pnpm run lint)",
+      "Bash(curl -s http://localhost:*)",
+      "Bash(curl -s -o /dev/null -w * http://localhost:*)"
+    ]
+  }
+}

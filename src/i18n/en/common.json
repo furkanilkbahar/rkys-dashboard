@@ -1,0 +1,26 @@
+{
+  "auth": {
+    "login": {
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "submit": "Sign in"
+    }
+  },
+  "tenantNotFound": {
+    "title": "Tenant not found."
+  },
+  "placeholders": {
+    "marketing": "RKYS Dashboard — marketing (Phase 13)",
+    "marketingCardBody": "Phase 0 theme/component verification card — real marketing content lands in Phase 13.",
+    "marketingCardButton": "Example button",
+    "menuTable": "RKYS Dashboard — QR menu (Phase 1)",
+    "adminSignedOut": "Sign in to continue.",
+    "adminSignedIn": "Signed in — tenant: {tenantId}, role: {role}",
+    "waiter": "RKYS Dashboard — waiter panel (Phase 1)",
+    "kitchen": "RKYS Dashboard — KDS (Phase 1)",
+    "cashier": "RKYS Dashboard — cash register (Phase 3)",
+    "cashierModuleDisabled": "The cash register module is disabled for this tenant.",
+    "analytics": "RKYS Dashboard — analytics hub (Phase 5)",
+    "platform": "RKYS Dashboard — super admin (Phase 4)"
+  }
+}

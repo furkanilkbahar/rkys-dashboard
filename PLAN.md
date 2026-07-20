@@ -6,15 +6,15 @@
 ---
 
 ## Faz 0 — Temel Kurulum
-- [ ] Next.js (TS strict) + Tailwind + shadcn/ui + Framer Motion; route group iskeleti (cashier ve analytics dahil)
-- [ ] **Lokal geliştirme ortamı:** Docker + Supabase CLI (`supabase start`), tüm sistem lokalde çalışır; GitHub repo + CI (tsc/lint/test zorunlu)
-- [ ] Prod+Staging (Vercel + Supabase Cloud) tanımı ve PR preview — canlıya alma proje olgunlaşınca (D67)
-- [ ] Tenant middleware + `tenant_domains`; **`branches` katmanı** (otomatik tek şube, gizli seçici altyapısı)
-- [ ] Auth + roller (courier dahil) + `role_permissions` izin bayrağı altyapısı + `staff_devices`/PIN şeması
-- [ ] **`tenant_modules` Modül Sistemi** (isEnabled guard, navigasyon filtreleme)
-- [ ] `warm-luxury` tema token seti + tema altyapısı
-- [ ] Sentry + temel loglama kancaları (OPERATIONS.md standartları)
-- [ ] **Test altyapısı:** Vitest + Playwright kurulumu, RLS izolasyon test şablonu, CI'da tam paket koşumu (bkz. TESTING.md)
+- [x] Next.js (TS strict) + Tailwind + shadcn/ui + Framer Motion; route group iskeleti (cashier ve analytics dahil)
+- [x] **Lokal geliştirme ortamı:** Docker + Supabase CLI (`supabase start`), tüm sistem lokalde çalışır; GitHub repo + CI (tsc/lint/test zorunlu)
+- [x] Prod+Staging (Vercel + Supabase Cloud) tanımı (`docs/environments.md`) — PR preview ve gerçek deploy canlıya alma proje olgunlaşınca (D67, D72)
+- [x] Tenant middleware + `tenant_domains`; **`branches` katmanı** (otomatik tek şube, gizli seçici altyapısı)
+- [x] Auth + roller (courier dahil) + `role_permissions` izin bayrağı altyapısı + `staff_devices`/PIN şeması
+- [x] **`tenant_modules` Modül Sistemi** (isEnabled guard, navigasyon filtreleme)
+- [x] `warm-luxury` tema token seti + tema altyapısı
+- [x] Sentry + temel loglama kancaları (OPERATIONS.md standartları)
+- [x] **Test altyapısı:** Vitest + Playwright kurulumu, RLS izolasyon test şablonu, CI'da tam paket koşumu (bkz. TESTING.md)
 
 ## Faz 1 — QR Menü + Sipariş Çekirdeği
 - [ ] Menü şeması (layout+station, `track_mode`, `branch_product_overrides` temeli) + çeviri + basit stok

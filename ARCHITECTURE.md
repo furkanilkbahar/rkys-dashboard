@@ -35,7 +35,7 @@
 5. **Kanal tek motoru:** tüm siparişler `orders.channel` (`dine_in|pickup|delivery|marketplace`) ile tek durum makinesi ve tek KDS'ten akar.
 
 ## 3. Multi-Tenancy ve Güvenlik (özet — detay RULES/OPERATIONS)
-- Her tabloda `tenant_id` (+operasyonelde `branch_id`), RLS zorunlu; personel JWT claim (tenant_id, role), müşteri anon yazmaları imzalı masa/OTP token'lı RPC/Edge Fn; Süper Admin ayrı claim. `service_role` yalnız server. Plan limitleri (masa, şube) UI + DB (trigger/RPC) çift katman. 2FA: TOTP altyapısı; zorunluluk `platform_settings.enforce_2fa` (Süper Admin kontrolü, varsayılan kapalı).
+- Her tabloda `tenant_id` (+operasyonelde `branch_id`), RLS zorunlu; personel JWT claim (tenant_id, user_role — "role" PostgREST'in rezerve claim'i olduğu için kullanılmaz), müşteri anon yazmaları imzalı masa/OTP token'lı RPC/Edge Fn; Süper Admin ayrı claim. `service_role` yalnız server. Plan limitleri (masa, şube) UI + DB (trigger/RPC) çift katman. 2FA: TOTP altyapısı; zorunluluk `platform_settings.enforce_2fa` (Süper Admin kontrolü, varsayılan kapalı).
 
 ## 4. Veri Modeli (tablo grupları)
 

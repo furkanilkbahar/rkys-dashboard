@@ -1,0 +1,26 @@
+{
+  "auth": {
+    "login": {
+      "emailLabel": "E-posta",
+      "passwordLabel": "Şifre",
+      "submit": "Giriş yap"
+    }
+  },
+  "tenantNotFound": {
+    "title": "Tenant bulunamadı."
+  },
+  "placeholders": {
+    "marketing": "RKYS Dashboard — marketing (Faz 13)",
+    "marketingCardBody": "Faz 0 tema/bileşen doğrulama kartı — marketing içeriği Faz 13'te gelecek.",
+    "marketingCardButton": "Örnek buton",
+    "menuTable": "RKYS Dashboard — QR menü (Faz 1)",
+    "adminSignedOut": "Devam etmek için giriş yapmalısın.",
+    "adminSignedIn": "Giriş yapıldı — tenant: {tenantId}, rol: {role}",
+    "waiter": "RKYS Dashboard — garson paneli (Faz 1)",
+    "kitchen": "RKYS Dashboard — KDS (Faz 1)",
+    "cashier": "RKYS Dashboard — kasa (Faz 3)",
+    "cashierModuleDisabled": "Kasa modülü bu tenant için kapalı.",
+    "analytics": "RKYS Dashboard — analitik merkezi (Faz 5)",
+    "platform": "RKYS Dashboard — süper admin (Faz 4)"
+  }
+}

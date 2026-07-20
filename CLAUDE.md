@@ -14,7 +14,10 @@ Bir davranışın gerekçesini merak edersen `DECISIONS.md` karar günlüğüne 
 1. **Önce plan, sonra kod:** Orta/büyük her görevde önce kısa bir uygulama planı sun, onay al, sonra uygula.
 2. `PLAN.md`'deki faz sırasına uy; mevcut fazın kapsamı dışına çıkma, faz atlama.
 3. Tamamlanan maddeleri `PLAN.md`'de işaretle; mimari bir karar değişirse önce `ARCHITECTURE.md`'yi güncelle.
-4. Belirsizlikte varsayım uydurma — kullanıcıya sor.
+4. **Otonom karar eşiği:** Belirsizlikte önce şunu değerlendir — karar `RULES.md`'deki kesin bir kuralı, mimariyi (`ARCHITECTURE.md`), faz/kapsam sınırını, geri dönüşü zor bir işlemi (migration, veri kaybı, production/staging deploy, dış sisteme yazma) ya da ürünün gerçek davranışını/kullanıcı tercihini etkiliyor mu?
+   - **Evet** → dur, kullanıcıya sor.
+   - **Hayır** (isimlendirme, küçük implementasyon detayı, dosya/klasör organizasyonu, yardımcı fonksiyon şekli gibi düşük riskli ve geri alınabilir seçimler) → kendi içinde hızlıca değerlendir; seçeneklerden biri makul ölçüde daha iyiyse (kabaca %80+ eminsen) onu seç ve devam et, yanıtında tek satır **"Varsayım: ..."** notuyla belirt. Sormak için durma.
+   - Aradaysan (emin değilsen) en olası 1-2 seçeneği kısaca sun, onay isteyip devam et.
 5. Büyük görevleri küçük, doğrulanabilir adımlara böl; her adım sonunda uygulama çalışır durumda olsun.
 
 ## Stack (özet — detay ARCHITECTURE.md)

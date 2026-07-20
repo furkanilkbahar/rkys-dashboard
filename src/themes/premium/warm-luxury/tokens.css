@@ -1,0 +1,23 @@
+/* warm-luxury (v1): espresso + krem + altın. Değişken isimleri shadcn'in
+   --background/--primary/... setiyle birebir hizalı — paralel bir tema
+   sistemi kurulmaz (bkz. ARCHITECTURE.md #6). */
+html[data-theme="warm-luxury"] {
+  --background: oklch(0.97 0.015 85);
+  --foreground: oklch(0.28 0.04 50);
+  --card: oklch(0.99 0.008 85);
+  --card-foreground: oklch(0.28 0.04 50);
+  --popover: oklch(0.99 0.008 85);
+  --popover-foreground: oklch(0.28 0.04 50);
+  --primary: oklch(0.72 0.13 80);
+  --primary-foreground: oklch(0.22 0.04 50);
+  --secondary: oklch(0.28 0.04 50);
+  --secondary-foreground: oklch(0.97 0.015 85);
+  --muted: oklch(0.93 0.02 80);
+  --muted-foreground: oklch(0.45 0.02 60);
+  --accent: oklch(0.9 0.05 80);
+  --accent-foreground: oklch(0.28 0.04 50);
+  --border: oklch(0.88 0.02 80);
+  --input: oklch(0.88 0.02 80);
+  --ring: oklch(0.72 0.13 80);
+  --radius: 0.75rem;
+}
