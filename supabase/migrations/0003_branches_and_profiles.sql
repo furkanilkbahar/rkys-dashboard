@@ -15,7 +15,7 @@ create policy "branches_tenant_isolation"
   using (tenant_id = public.current_tenant_id())
   with check (tenant_id = public.current_tenant_id());
 
-grant select, insert, update, delete on public.branches to authenticated;
+grant select, insert, update, delete on public.branches to authenticated, service_role;
 
 create table public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
@@ -41,7 +41,7 @@ create policy "profiles_self_update"
   using (id = auth.uid())
   with check (id = auth.uid());
 
-grant select, update on public.profiles to authenticated;
+grant select, update on public.profiles to authenticated, service_role;
 
 create table public.staff_branch_assignments (
   id uuid primary key default gen_random_uuid(),
@@ -61,4 +61,4 @@ create policy "staff_branch_assignments_tenant_isolation"
   using (tenant_id = public.current_tenant_id())
   with check (tenant_id = public.current_tenant_id());
 
-grant select, insert, update, delete on public.staff_branch_assignments to authenticated;
+grant select, insert, update, delete on public.staff_branch_assignments to authenticated, service_role;

@@ -21,7 +21,7 @@ create policy "tenants_platform_admin_all"
 
 -- PostgREST also requires a base table GRANT — RLS only filters rows once
 -- the operation is already permitted (auto_expose_new_tables defaults off).
-grant select, insert, update, delete on public.tenants to authenticated;
+grant select, insert, update, delete on public.tenants to authenticated, service_role;
 
 create table public.tenant_domains (
   id uuid primary key default gen_random_uuid(),
@@ -40,7 +40,7 @@ create policy "tenant_domains_tenant_isolation"
   using (tenant_id = public.current_tenant_id())
   with check (tenant_id = public.current_tenant_id());
 
-grant select, insert, update, delete on public.tenant_domains to authenticated;
+grant select, insert, update, delete on public.tenant_domains to authenticated, service_role;
 
 -- The tenant middleware resolves a subdomain before the visitor has a JWT
 -- (anon request), so it cannot rely on current_tenant_id()/RLS. This

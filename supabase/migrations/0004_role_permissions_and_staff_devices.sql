@@ -17,7 +17,7 @@ create policy "role_permissions_tenant_isolation"
   using (tenant_id = public.current_tenant_id())
   with check (tenant_id = public.current_tenant_id());
 
-grant select, insert, update, delete on public.role_permissions to authenticated;
+grant select, insert, update, delete on public.role_permissions to authenticated, service_role;
 
 -- PIN'ler düz metin saklanmaz (RULES #29) — device_secret_hash bir hash'tir.
 create table public.staff_devices (
@@ -40,4 +40,4 @@ create policy "staff_devices_tenant_isolation"
   using (tenant_id = public.current_tenant_id())
   with check (tenant_id = public.current_tenant_id());
 
-grant select, insert, update, delete on public.staff_devices to authenticated;
+grant select, insert, update, delete on public.staff_devices to authenticated, service_role;

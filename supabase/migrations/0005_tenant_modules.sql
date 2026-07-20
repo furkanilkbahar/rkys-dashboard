@@ -23,4 +23,4 @@ create policy "tenant_modules_tenant_isolation"
   using (tenant_id = public.current_tenant_id())
   with check (tenant_id = public.current_tenant_id());
 
-grant select, insert, update, delete on public.tenant_modules to authenticated;
+grant select, insert, update, delete on public.tenant_modules to authenticated, service_role;
