@@ -13,12 +13,39 @@
     "marketing": "RKYS Dashboard — marketing (Phase 13)",
     "marketingCardBody": "Phase 0 theme/component verification card — real marketing content lands in Phase 13.",
     "marketingCardButton": "Example button",
-    "adminSignedOut": "Sign in to continue.",
-    "adminSignedIn": "Signed in — tenant: {tenantId}, role: {role}",
     "cashier": "RKYS Dashboard — cash register (Phase 3)",
     "cashierModuleDisabled": "The cash register module is disabled for this tenant.",
     "analytics": "RKYS Dashboard — analytics hub (Phase 5)",
     "platform": "RKYS Dashboard — super admin (Phase 4)"
+  },
+  "admin": {
+    "nav": {
+      "dashboard": "Dashboard",
+      "menu": "Menu",
+      "tables": "Tables",
+      "staff": "Staff",
+      "settings": "Settings",
+      "menuOpen": "Open menu"
+    },
+    "topbar": {
+      "logout": "Sign out"
+    },
+    "dashboard": {
+      "welcome": "Welcome, {role}",
+      "tenantLabel": "Business",
+      "roleLabel": "Role"
+    },
+    "common": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "confirm": "Confirm",
+      "edit": "Edit",
+      "create": "Create",
+      "loading": "Loading...",
+      "comingSoonTitle": "This section lands in a later step",
+      "comingSoonBody": "{section} — Phase 2, {adim}."
+    }
   },
   "waiter": {
     "title": "Waiter Panel",

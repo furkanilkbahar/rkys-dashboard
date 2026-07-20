@@ -1,11 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-function acmeUrl(baseURL: string, path: string): string {
-  const url = new URL(baseURL);
-  url.hostname = `acme.${url.hostname}`;
-  url.pathname = path;
-  return url.toString();
-}
+import { acmeUrl } from "../helpers/tenant";
 
 test("misafirin garson çağrısı garson panelinde canlı görünür ve karşılanabilir", async ({ browser, baseURL }) => {
   const staffContext = await browser.newContext();

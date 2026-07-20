@@ -1,11 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-function acmeUrl(baseURL: string, path: string): string {
-  const url = new URL(baseURL);
-  url.hostname = `acme.${url.hostname}`;
-  url.pathname = path;
-  return url.toString();
-}
+import { acmeUrl } from "../helpers/tenant";
 
 test("misafir sepete ürün ekleyip siparişi gönderebilir", async ({ page, baseURL }) => {
   await page.goto(acmeUrl(baseURL!, "/masa/t/demo-acme-table-2"));

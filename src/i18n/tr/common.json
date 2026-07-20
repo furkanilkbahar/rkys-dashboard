@@ -13,12 +13,39 @@
     "marketing": "RKYS Dashboard — marketing (Faz 13)",
     "marketingCardBody": "Faz 0 tema/bileşen doğrulama kartı — marketing içeriği Faz 13'te gelecek.",
     "marketingCardButton": "Örnek buton",
-    "adminSignedOut": "Devam etmek için giriş yapmalısın.",
-    "adminSignedIn": "Giriş yapıldı — tenant: {tenantId}, rol: {role}",
     "cashier": "RKYS Dashboard — kasa (Faz 3)",
     "cashierModuleDisabled": "Kasa modülü bu tenant için kapalı.",
     "analytics": "RKYS Dashboard — analitik merkezi (Faz 5)",
     "platform": "RKYS Dashboard — süper admin (Faz 4)"
+  },
+  "admin": {
+    "nav": {
+      "dashboard": "Pano",
+      "menu": "Menü",
+      "tables": "Masalar",
+      "staff": "Personel",
+      "settings": "Ayarlar",
+      "menuOpen": "Menüyü aç"
+    },
+    "topbar": {
+      "logout": "Çıkış yap"
+    },
+    "dashboard": {
+      "welcome": "Hoş geldin, {role}",
+      "tenantLabel": "İşletme",
+      "roleLabel": "Rol"
+    },
+    "common": {
+      "save": "Kaydet",
+      "cancel": "Vazgeç",
+      "delete": "Sil",
+      "confirm": "Onayla",
+      "edit": "Düzenle",
+      "create": "Oluştur",
+      "loading": "Yükleniyor...",
+      "comingSoonTitle": "Bu bölüm bir sonraki adımda geliyor",
+      "comingSoonBody": "{section} — Faz 2, {adim}."
+    }
   },
   "waiter": {
     "title": "Garson Paneli",

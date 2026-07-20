@@ -1,6 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
 import { expect, test } from "@playwright/test";
 
+import { acmeUrl } from "../helpers/tenant";
+
 // Sabit lokal demo anahtarları (gizli değil — .env.ci'de de aynı değerler
 // committed). afterEach HER zaman çalışır (başarısız denemede de) — inline
 // temizlik yalnızca test BAŞARILI olunca çalışırdı, bu da retry'larda aynı
@@ -19,13 +21,6 @@ async function closeActiveSession(tableId: string) {
     .update({ status: "closed", closed_at: new Date().toISOString() })
     .eq("table_id", tableId)
     .eq("status", "active");
-}
-
-function acmeUrl(baseURL: string, path: string): string {
-  const url = new URL(baseURL);
-  url.hostname = `acme.${url.hostname}`;
-  url.pathname = path;
-  return url.toString();
 }
 
 test.afterEach(async () => {
