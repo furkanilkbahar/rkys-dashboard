@@ -297,6 +297,7 @@ export type Database = {
           created_at: string
           display_order: number
           id: string
+          image_url: string | null
           is_active: boolean
           layout: string
           station: string | null
@@ -306,6 +307,7 @@ export type Database = {
           created_at?: string
           display_order?: number
           id?: string
+          image_url?: string | null
           is_active?: boolean
           layout?: string
           station?: string | null
@@ -315,6 +317,7 @@ export type Database = {
           created_at?: string
           display_order?: number
           id?: string
+          image_url?: string | null
           is_active?: boolean
           layout?: string
           station?: string | null
@@ -663,6 +666,35 @@ export type Database = {
           },
         ]
       }
+      product_images: {
+        Row: {
+          created_at: string
+          id: string
+          storage_path: string
+          tenant_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          storage_path: string
+          tenant_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          storage_path?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_images_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_variants: {
         Row: {
           created_at: string
@@ -728,6 +760,7 @@ export type Database = {
           created_at: string
           display_order: number
           id: string
+          image_url: string | null
           is_active: boolean
           is_sold_out: boolean
           stock_quantity: number | null
@@ -741,6 +774,7 @@ export type Database = {
           created_at?: string
           display_order?: number
           id?: string
+          image_url?: string | null
           is_active?: boolean
           is_sold_out?: boolean
           stock_quantity?: number | null
@@ -754,6 +788,7 @@ export type Database = {
           created_at?: string
           display_order?: number
           id?: string
+          image_url?: string | null
           is_active?: boolean
           is_sold_out?: boolean
           stock_quantity?: number | null
