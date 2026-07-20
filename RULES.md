@@ -57,6 +57,6 @@
 40. Webhook gönderimleri HMAC imzasız yapılamaz; imza anahtarları tenant başına ayrıdır.
 41. İzin bayrağı kontrolü olmadan yetkili işlem (comp, refund, kasa, masa taşıma, rapor) çalıştırılamaz — `can()` katmanı atlanamaz.
 42. AÇIK KARAR kapatılmadan ilgili geliştirmeye başlanmaz (güncel durum DECISIONS.md'de; şu an bloklayıcı açık karar yok — D66 SMS sağlayıcı seçimi Faz 7'ye ertelendi, D71 isim/domain kapatıldı); karar önce DECISIONS.md'ye işlenir.
-43. Bir faz, TESTING.md'deki kapanış kriterleri (yeni testler + tüm eski testler yeşil + kullanıcı el testi onayı) sağlanmadan kapanmaz.
+43. Bir faz, TESTING.md'deki kapanış kriterleri (yeni testler + tüm eski testler yeşil + otomatik doğrulama özeti + kullanıcının faz geçiş onayı) sağlanmadan kapanmaz (D73).
 44. TESTING.md'deki kritik E2E senaryoları silinemez/atlanamaz; yeni kritik akış eklendiğinde senaryo listesi güncellenir.
 45. **Production'a erken çıkış YASAK:** Proje lokalde uçtan uca tamamlanıp kullanıcı onayı alınmadan Vercel/Supabase Cloud production ortamına hiçbir deploy yapılmaz; staging ortamının açılması da kullanıcı onayına tabidir (D72).

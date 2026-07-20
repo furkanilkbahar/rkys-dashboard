@@ -160,3 +160,9 @@
 | # | Karar | Gerekçe |
 |---|---|---|
 | D72 | **Production'a asla erken çıkılmaz:** Proje **lokalde uçtan uca tamamlanmadan** (tüm fazlar bitip kullanıcı onayı alınmadan) hiçbir şekilde Vercel/Supabase Cloud production ortamına deploy yapılmaz; staging dahi kullanıcı onayı ile açılır. Bkz. RULES.md #45 | Kullanıcı açık talimatı (2026-07-19): canlıya çıkış tamamen kullanıcı kontrolünde, aceleye getirilmeyecek |
+
+## Oturum 6 — Test Ritüeli Otomasyonu (2026-07)
+
+| # | Karar | Gerekçe |
+|---|---|---|
+| D73 | **REVİZE — Faz kapanış testi otomatik:** Manuel el testi ritüeli (TESTING.md §5, eski RULES #43) kaldırıldı. Faz kapanışında eskiden manuel listede yer alacak senaryolar Playwright E2E testine dönüştürülür; Claude Code tam paketi (unit+entegrasyon+E2E) koşturup sonucu sohbette özetler. Gerçek cihaz/görsel kontrol otomatikleştirilemediği için bloklayıcı değildir. **Fazlar arası geçiş yine de her zaman kullanıcı onayına tabidir** — bu değişmedi. Faz içindeki uygulama adımları için ayrıca onay beklenmeyecek (bu gevşetme geçicidir, **Faz 4'te tekrar değerlendirilecek**). | Kullanıcı talebi (2026-07-20): manuel test istemiyorum, otomatik doğrulama yeterli; onay eşiği sadece faz geçişinde kalsın |

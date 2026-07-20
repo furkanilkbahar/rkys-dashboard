@@ -13,9 +13,9 @@
 ## 2. Faz Kapanış Kriteri (Definition of Done)
 Bir faz şunlar olmadan kapanmaz:
 1. Fazın yeni özelliklerinin birim/entegrasyon testleri yazıldı.
-2. Faza ait E2E senaryoları (aşağıdaki listeden ilgili olanlar) Playwright'ta geçiyor.
+2. Faza ait E2E senaryoları (aşağıdaki listeden ilgili olanlar) Playwright'ta geçiyor; daha önce sohbette sunulan manuel test maddeleri varsa karşılığı otomatik teste dönüştürülür (bkz. §5).
 3. **Önceki tüm fazların testleri dahil** paket yeşil.
-4. Kullanıcıya sohbette 5–10 maddelik **manuel el testi listesi** sunuldu ve onaylandı.
+4. Claude Code otomatik test paketinin sonucunu sohbette özetler; **fazlar arası geçiş kullanıcı onayına tabidir** (D73) — faz içindeki adımlar için ayrıca onay beklenmez.
 
 ## 3. Kritik E2E Senaryoları (yaşayan liste — her fazda genişletilir)
 | # | Senaryo | Faz |
@@ -44,10 +44,12 @@ Her yeni tablo için otomatik üretilen test çifti:
 - A tenant'ı olarak B'nin satırı SELECT/UPDATE/DELETE edilemez.
 - branch_id'li tablolarda yetkisiz şube erişimi engellenir.
 
-## 5. Manuel El Testi Ritüeli
-- Her faz sonunda Claude Code, **sohbette** kısa manuel test listesi üretir (dosya oluşturmaz — repo şişirilmez).
-- Liste gerçek cihaz vurgusu taşır: en az bir madde telefonda test edilir (QR akışları).
-- Kullanıcı onayı alınmadan sonraki faza geçilmez.
+## 5. Faz Kapanış Doğrulaması (otomatik — D73)
+- Manuel el testi zorunlu değildir; kullanıcı manuel test yapmak istemez (kullanıcı kararı, 2026-07-20).
+- Bunun yerine: eskiden manuel listede yer alacak her senaryo (tenant izolasyonu, login akışı, modül guard'ı, kritik sayfa render'ı vb.) bir Playwright E2E testine dönüştürülür ve `tests/e2e/` altına eklenir.
+- Faz sonunda Claude Code tüm paketi (`pnpm test` + `pnpm exec playwright test`) koşturur; sonucu (geçen/kalan test sayısı) sohbette özetler.
+- Gerçek cihaz/görsel kontrol otomatikleştirilemez — bloklayıcı değildir, kullanıcı isterse ayrıca kendi yapar.
+- Paket yeşilse Claude Code faz geçişi için onay ister; **onay olmadan bir sonraki faza geçilmez**. Faz içindeki uygulama adımları için ayrıca onay beklenmez (kullanıcı kararı; Faz 4'te tekrar değerlendirilecek).
 
 ## 6. Kapsam Dışı (bilinçli)
 - %100 kapsama hedefi yok; hedef **kritik akışların** korunması.
