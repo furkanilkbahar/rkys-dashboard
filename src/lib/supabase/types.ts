@@ -34,6 +34,98 @@ export type Database = {
   }
   public: {
     Tables: {
+      branch_product_overrides: {
+        Row: {
+          branch_id: string
+          created_at: string
+          id: string
+          is_available: boolean
+          is_sold_out: boolean | null
+          price_minor: number | null
+          product_id: string
+          stock_quantity: number | null
+          tenant_id: string
+          updated_at: string
+          variant_id: string | null
+        }
+        Insert: {
+          branch_id: string
+          created_at?: string
+          id?: string
+          is_available?: boolean
+          is_sold_out?: boolean | null
+          price_minor?: number | null
+          product_id: string
+          stock_quantity?: number | null
+          tenant_id: string
+          updated_at?: string
+          variant_id?: string | null
+        }
+        Update: {
+          branch_id?: string
+          created_at?: string
+          id?: string
+          is_available?: boolean
+          is_sold_out?: boolean | null
+          price_minor?: number | null
+          product_id?: string
+          stock_quantity?: number | null
+          tenant_id?: string
+          updated_at?: string
+          variant_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "branch_product_overrides_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "branch_product_overrides_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "branch_product_overrides_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "branch_product_overrides_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "branch_product_overrides_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "branch_product_overrides_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["variant_id"]
+          },
+          {
+            foreignKeyName: "branch_product_overrides_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "product_variants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       branches: {
         Row: {
           created_at: string
@@ -59,6 +151,626 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "branches_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      call_types: {
+        Row: {
+          created_at: string
+          display_order: number
+          id: string
+          is_active: boolean
+          is_system: boolean
+          key: string
+          tenant_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          is_system?: boolean
+          key: string
+          tenant_id: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          is_system?: boolean
+          key?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_types_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      content_translations: {
+        Row: {
+          created_at: string
+          entity_id: string
+          entity_type: string
+          field: string
+          id: string
+          locale: string
+          tenant_id: string
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          created_at?: string
+          entity_id: string
+          entity_type: string
+          field: string
+          id?: string
+          locale: string
+          tenant_id: string
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          created_at?: string
+          entity_id?: string
+          entity_type?: string
+          field?: string
+          id?: string
+          locale?: string
+          tenant_id?: string
+          updated_at?: string
+          value?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_translations_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      generic_qr_codes: {
+        Row: {
+          branch_id: string
+          created_at: string
+          id: string
+          is_active: boolean
+          label: string
+          qr_token_hash: string
+          tenant_id: string
+        }
+        Insert: {
+          branch_id: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          label?: string
+          qr_token_hash: string
+          tenant_id: string
+        }
+        Update: {
+          branch_id?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          label?: string
+          qr_token_hash?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "generic_qr_codes_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generic_qr_codes_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "generic_qr_codes_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      menu_categories: {
+        Row: {
+          created_at: string
+          display_order: number
+          id: string
+          is_active: boolean
+          layout: string
+          station: string | null
+          tenant_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          layout?: string
+          station?: string | null
+          tenant_id: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          layout?: string
+          station?: string | null
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "menu_categories_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_item_extras: {
+        Row: {
+          branch_id: string
+          created_at: string
+          extra_id: string
+          extra_name_snapshot: string
+          id: string
+          order_item_id: string
+          table_session_id: string
+          tenant_id: string
+          unit_price_minor: number
+        }
+        Insert: {
+          branch_id: string
+          created_at?: string
+          extra_id: string
+          extra_name_snapshot: string
+          id?: string
+          order_item_id: string
+          table_session_id: string
+          tenant_id: string
+          unit_price_minor: number
+        }
+        Update: {
+          branch_id?: string
+          created_at?: string
+          extra_id?: string
+          extra_name_snapshot?: string
+          id?: string
+          order_item_id?: string
+          table_session_id?: string
+          tenant_id?: string
+          unit_price_minor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_item_extras_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_item_extras_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "order_item_extras_extra_id_fkey"
+            columns: ["extra_id"]
+            isOneToOne: false
+            referencedRelation: "product_extras"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_item_extras_order_item_id_fkey"
+            columns: ["order_item_id"]
+            isOneToOne: false
+            referencedRelation: "order_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_item_extras_table_session_id_fkey"
+            columns: ["table_session_id"]
+            isOneToOne: false
+            referencedRelation: "table_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_item_extras_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_items: {
+        Row: {
+          branch_id: string
+          created_at: string
+          id: string
+          line_subtotal_minor: number
+          order_id: string
+          product_id: string
+          product_name_snapshot: string
+          quantity: number
+          table_session_id: string
+          tenant_id: string
+          unit_price_minor: number
+          variant_id: string | null
+          variant_name_snapshot: string | null
+        }
+        Insert: {
+          branch_id: string
+          created_at?: string
+          id?: string
+          line_subtotal_minor: number
+          order_id: string
+          product_id: string
+          product_name_snapshot: string
+          quantity: number
+          table_session_id: string
+          tenant_id: string
+          unit_price_minor: number
+          variant_id?: string | null
+          variant_name_snapshot?: string | null
+        }
+        Update: {
+          branch_id?: string
+          created_at?: string
+          id?: string
+          line_subtotal_minor?: number
+          order_id?: string
+          product_id?: string
+          product_name_snapshot?: string
+          quantity?: number
+          table_session_id?: string
+          tenant_id?: string
+          unit_price_minor?: number
+          variant_id?: string | null
+          variant_name_snapshot?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_table_session_id_fkey"
+            columns: ["table_session_id"]
+            isOneToOne: false
+            referencedRelation: "table_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["variant_id"]
+          },
+          {
+            foreignKeyName: "order_items_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "product_variants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          branch_id: string
+          cancel_requested_at: string | null
+          cancel_requested_reason: string | null
+          channel: string
+          created_at: string
+          id: string
+          idempotency_key: string
+          placed_by_device_id: string | null
+          status: string
+          subtotal_minor: number
+          table_session_id: string
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          branch_id: string
+          cancel_requested_at?: string | null
+          cancel_requested_reason?: string | null
+          channel?: string
+          created_at?: string
+          id?: string
+          idempotency_key: string
+          placed_by_device_id?: string | null
+          status?: string
+          subtotal_minor?: number
+          table_session_id: string
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          branch_id?: string
+          cancel_requested_at?: string | null
+          cancel_requested_reason?: string | null
+          channel?: string
+          created_at?: string
+          id?: string
+          idempotency_key?: string
+          placed_by_device_id?: string | null
+          status?: string
+          subtotal_minor?: number
+          table_session_id?: string
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "orders_placed_by_device_id_fkey"
+            columns: ["placed_by_device_id"]
+            isOneToOne: false
+            referencedRelation: "table_session_devices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_table_session_id_fkey"
+            columns: ["table_session_id"]
+            isOneToOne: false
+            referencedRelation: "table_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_extras: {
+        Row: {
+          created_at: string
+          display_order: number
+          id: string
+          is_active: boolean
+          is_sold_out: boolean
+          price_minor: number
+          product_id: string
+          stock_quantity: number | null
+          tenant_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          is_sold_out?: boolean
+          price_minor?: number
+          product_id: string
+          stock_quantity?: number | null
+          tenant_id: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          is_sold_out?: boolean
+          price_minor?: number
+          product_id?: string
+          stock_quantity?: number | null
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_extras_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "product_extras_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_extras_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_variants: {
+        Row: {
+          created_at: string
+          display_order: number
+          id: string
+          is_active: boolean
+          is_sold_out: boolean
+          price_minor: number
+          product_id: string
+          stock_quantity: number | null
+          tenant_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          is_sold_out?: boolean
+          price_minor: number
+          product_id: string
+          stock_quantity?: number | null
+          tenant_id: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          is_sold_out?: boolean
+          price_minor?: number
+          product_id?: string
+          stock_quantity?: number | null
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_variants_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "product_variants_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_variants_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          base_price_minor: number
+          category_id: string
+          created_at: string
+          display_order: number
+          id: string
+          is_active: boolean
+          is_sold_out: boolean
+          stock_quantity: number | null
+          tenant_id: string
+          track_mode: string
+          updated_at: string
+        }
+        Insert: {
+          base_price_minor: number
+          category_id: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          is_sold_out?: boolean
+          stock_quantity?: number | null
+          tenant_id: string
+          track_mode?: string
+          updated_at?: string
+        }
+        Update: {
+          base_price_minor?: number
+          category_id?: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          is_sold_out?: boolean
+          stock_quantity?: number | null
+          tenant_id?: string
+          track_mode?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "menu_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "products_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "tenants"
@@ -142,6 +854,95 @@ export type Database = {
           },
         ]
       }
+      session_events: {
+        Row: {
+          actor_profile_id: string | null
+          branch_id: string
+          created_at: string
+          event_type: string
+          from_table_id: string | null
+          id: string
+          reason: string | null
+          table_session_id: string
+          tenant_id: string
+          to_table_id: string | null
+        }
+        Insert: {
+          actor_profile_id?: string | null
+          branch_id: string
+          created_at?: string
+          event_type: string
+          from_table_id?: string | null
+          id?: string
+          reason?: string | null
+          table_session_id: string
+          tenant_id: string
+          to_table_id?: string | null
+        }
+        Update: {
+          actor_profile_id?: string | null
+          branch_id?: string
+          created_at?: string
+          event_type?: string
+          from_table_id?: string | null
+          id?: string
+          reason?: string | null
+          table_session_id?: string
+          tenant_id?: string
+          to_table_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_events_actor_profile_id_fkey"
+            columns: ["actor_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "session_events_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "session_events_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "session_events_from_table_id_fkey"
+            columns: ["from_table_id"]
+            isOneToOne: false
+            referencedRelation: "tables"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "session_events_table_session_id_fkey"
+            columns: ["table_session_id"]
+            isOneToOne: false
+            referencedRelation: "table_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "session_events_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "session_events_to_table_id_fkey"
+            columns: ["to_table_id"]
+            isOneToOne: false
+            referencedRelation: "tables"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       staff_branch_assignments: {
         Row: {
           branch_id: string
@@ -171,6 +972,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "branches"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "staff_branch_assignments_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
           },
           {
             foreignKeyName: "staff_branch_assignments_profile_id_fkey"
@@ -228,7 +1036,196 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "staff_devices_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
             foreignKeyName: "staff_devices_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      table_session_devices: {
+        Row: {
+          branch_id: string
+          created_at: string
+          device_label: string
+          guest_user_id: string
+          id: string
+          last_seen_at: string
+          table_session_id: string
+          tenant_id: string
+        }
+        Insert: {
+          branch_id: string
+          created_at?: string
+          device_label: string
+          guest_user_id: string
+          id?: string
+          last_seen_at?: string
+          table_session_id: string
+          tenant_id: string
+        }
+        Update: {
+          branch_id?: string
+          created_at?: string
+          device_label?: string
+          guest_user_id?: string
+          id?: string
+          last_seen_at?: string
+          table_session_id?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "table_session_devices_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "table_session_devices_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "table_session_devices_table_session_id_fkey"
+            columns: ["table_session_id"]
+            isOneToOne: false
+            referencedRelation: "table_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "table_session_devices_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      table_sessions: {
+        Row: {
+          branch_id: string
+          close_reason: string | null
+          closed_at: string | null
+          created_at: string
+          id: string
+          last_activity_at: string
+          opened_at: string
+          status: string
+          table_id: string
+          tenant_id: string
+        }
+        Insert: {
+          branch_id: string
+          close_reason?: string | null
+          closed_at?: string | null
+          created_at?: string
+          id?: string
+          last_activity_at?: string
+          opened_at?: string
+          status?: string
+          table_id: string
+          tenant_id: string
+        }
+        Update: {
+          branch_id?: string
+          close_reason?: string | null
+          closed_at?: string | null
+          created_at?: string
+          id?: string
+          last_activity_at?: string
+          opened_at?: string
+          status?: string
+          table_id?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "table_sessions_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "table_sessions_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "table_sessions_table_id_fkey"
+            columns: ["table_id"]
+            isOneToOne: false
+            referencedRelation: "tables"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "table_sessions_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tables: {
+        Row: {
+          branch_id: string
+          created_at: string
+          id: string
+          is_active: boolean
+          label: string
+          qr_token_hash: string
+          tenant_id: string
+        }
+        Insert: {
+          branch_id: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          label: string
+          qr_token_hash: string
+          tenant_id: string
+        }
+        Update: {
+          branch_id?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          label?: string
+          qr_token_hash?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tables_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tables_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "tables_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "tenants"
@@ -268,6 +1265,38 @@ export type Database = {
           },
         ]
       }
+      tenant_locales: {
+        Row: {
+          created_at: string
+          id: string
+          is_default: boolean
+          locale: string
+          tenant_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_default?: boolean
+          locale: string
+          tenant_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_default?: boolean
+          locale?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_locales_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tenant_modules: {
         Row: {
           id: string
@@ -295,6 +1324,38 @@ export type Database = {
             foreignKeyName: "tenant_modules_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tenant_settings: {
+        Row: {
+          created_at: string
+          order_mode: string
+          session_timeout_minutes: number
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          order_mode?: string
+          session_timeout_minutes?: number
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          order_mode?: string
+          session_timeout_minutes?: number
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_settings_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: true
             referencedRelation: "tenants"
             referencedColumns: ["id"]
           },
@@ -330,21 +1391,199 @@ export type Database = {
         }
         Relationships: []
       }
+      waiter_calls: {
+        Row: {
+          acknowledged_at: string | null
+          acknowledged_by: string | null
+          branch_id: string
+          call_type_id: string | null
+          created_at: string
+          id: string
+          note: string | null
+          status: string
+          table_session_id: string
+          tenant_id: string
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          branch_id: string
+          call_type_id?: string | null
+          created_at?: string
+          id?: string
+          note?: string | null
+          status?: string
+          table_session_id: string
+          tenant_id: string
+        }
+        Update: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          branch_id?: string
+          call_type_id?: string | null
+          created_at?: string
+          id?: string
+          note?: string | null
+          status?: string
+          table_session_id?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "waiter_calls_acknowledged_by_fkey"
+            columns: ["acknowledged_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "waiter_calls_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "waiter_calls_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "waiter_calls_call_type_id_fkey"
+            columns: ["call_type_id"]
+            isOneToOne: false
+            referencedRelation: "call_types"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "waiter_calls_table_session_id_fkey"
+            columns: ["table_session_id"]
+            isOneToOne: false
+            referencedRelation: "table_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "waiter_calls_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
-      [_ in never]: never
+      effective_menu_items: {
+        Row: {
+          branch_id: string | null
+          category_id: string | null
+          effective_price_minor: number | null
+          is_orderable: boolean | null
+          product_id: string | null
+          tenant_id: string | null
+          variant_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "menu_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "products_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
+      acknowledge_waiter_call: {
+        Args: { p_call_id: string }
+        Returns: undefined
+      }
+      advance_order_status: {
+        Args: { p_order_id: string; p_to_status: string }
+        Returns: undefined
+      }
+      approve_cancellation_request: {
+        Args: { p_order_id: string }
+        Returns: undefined
+      }
+      approve_order: { Args: { p_order_id: string }; Returns: undefined }
+      call_waiter: {
+        Args: { p_call_type_key?: string; p_note?: string }
+        Returns: string
+      }
+      cancel_order: { Args: { p_order_id: string }; Returns: undefined }
+      close_stale_table_sessions: { Args: never; Returns: undefined }
+      close_table_session: {
+        Args: { p_reason: string; p_table_session_id: string }
+        Returns: undefined
+      }
+      current_guest_branch_id: { Args: never; Returns: string }
       current_role: { Args: never; Returns: string }
+      current_table_session_id: { Args: never; Returns: string }
       current_tenant_id: { Args: never; Returns: string }
       custom_access_token_hook: { Args: { event: Json }; Returns: Json }
       is_platform_admin: { Args: never; Returns: boolean }
+      is_staff: { Args: never; Returns: boolean }
+      link_guest_device: {
+        Args: {
+          p_branch_id: string
+          p_guest_user_id: string
+          p_table_session_id: string
+          p_tenant_id: string
+        }
+        Returns: string
+      }
+      list_branch_tables_for_generic_qr: {
+        Args: { p_token_hash: string }
+        Returns: {
+          label: string
+          table_id: string
+        }[]
+      }
+      move_table_session: {
+        Args: {
+          p_reason?: string
+          p_table_session_id: string
+          p_to_table_id: string
+        }
+        Returns: undefined
+      }
+      open_or_get_active_table_session: {
+        Args: { p_table_id: string }
+        Returns: string
+      }
+      reject_cancellation_request: {
+        Args: { p_order_id: string }
+        Returns: undefined
+      }
+      request_order_cancellation: {
+        Args: { p_order_id: string; p_reason: string }
+        Returns: undefined
+      }
       resolve_tenant_by_domain: {
         Args: { p_domain: string }
         Returns: {
           tenant_id: string
           tenant_slug: string
           tenant_status: string
+        }[]
+      }
+      submit_order: {
+        Args: { p_idempotency_key: string; p_items: Json }
+        Returns: {
+          order_id: string
+          order_status: string
+          subtotal_minor: number
         }[]
       }
     }
