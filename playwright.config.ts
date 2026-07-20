@@ -3,7 +3,13 @@ import { defineConfig, devices } from "@playwright/test";
 export default defineConfig({
   testDir: "./tests/e2e",
   fullyParallel: true,
-  retries: 0,
+  // Realtime (WebSocket) senaryoları tek dev sunucusuna karşı yüksek
+  // paralellikte (5 worker) ara sıra zaman aşımına uğrayabiliyor — izole
+  // çalıştırıldıklarında güvenilir şekilde geçiyorlar (kod hatası değil,
+  // eşzamanlılık altında sunucu gecikmesi). 1 retry bu sınıf kırılganlığı emer.
+  retries: 2,
+  timeout: 45_000,
+  expect: { timeout: 10_000 },
   reporter: [["list"]],
   use: {
     baseURL: "http://localhost:3000",

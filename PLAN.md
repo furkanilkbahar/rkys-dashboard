@@ -17,13 +17,13 @@
 - [x] **Test altyapısı:** Vitest + Playwright kurulumu, RLS izolasyon test şablonu, CI'da tam paket koşumu (bkz. TESTING.md)
 
 ## Faz 1 — QR Menü + Sipariş Çekirdeği
-- [ ] Menü şeması (layout+station, `track_mode`, `branch_product_overrides` temeli) + çeviri + basit stok
-- [ ] Masa QR + genel QR (masa seçtiren) + imzalı oturum token
-- [ ] Premium menü UI (varsayılan düzen, dil seçici, mikro animasyonlar)
-- [ ] Sepet koruması + idempotency'li sipariş (channel=`dine_in`) + server-side stok kontrolü
-- [ ] Durum makinesi + direct/approval + karma iptal; oturum yaşam döngüsü + **masa taşıma (personel)**
-- [ ] Garson Çağır (tipsiz + tipler) + KDS + Garson paneli + ısrarcı sesler + bağlantı göstergesi
-- [ ] Müşteri oturum görünümü + hazır ses/titreşim
+- [x] Menü şeması (layout+station, `track_mode`, `branch_product_overrides` temeli) + çeviri + basit stok
+- [x] Masa QR + genel QR (masa seçtiren) + imzalı oturum token
+- [x] Premium menü UI (varsayılan düzen, dil seçici, mikro animasyonlar)
+- [x] Sepet koruması + idempotency'li sipariş (channel=`dine_in`) + server-side stok kontrolü
+- [x] Durum makinesi + direct/approval + karma iptal; oturum yaşam döngüsü + **masa taşıma (personel)**
+- [x] Garson Çağır (tipsiz + tipler) + KDS + Garson paneli + ısrarcı sesler + bağlantı göstergesi
+- [x] Müşteri oturum görünümü + hazır ses/titreşim
 
 ## Faz 2 — Admin Panel + Onboarding
 - [ ] Menü CRUD, drag&drop, çeviri editörü, kategori düzeni seçimi

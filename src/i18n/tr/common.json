@@ -13,14 +13,95 @@
     "marketing": "RKYS Dashboard — marketing (Faz 13)",
     "marketingCardBody": "Faz 0 tema/bileşen doğrulama kartı — marketing içeriği Faz 13'te gelecek.",
     "marketingCardButton": "Örnek buton",
-    "menuTable": "RKYS Dashboard — QR menü (Faz 1)",
     "adminSignedOut": "Devam etmek için giriş yapmalısın.",
     "adminSignedIn": "Giriş yapıldı — tenant: {tenantId}, rol: {role}",
-    "waiter": "RKYS Dashboard — garson paneli (Faz 1)",
-    "kitchen": "RKYS Dashboard — KDS (Faz 1)",
     "cashier": "RKYS Dashboard — kasa (Faz 3)",
     "cashierModuleDisabled": "Kasa modülü bu tenant için kapalı.",
     "analytics": "RKYS Dashboard — analitik merkezi (Faz 5)",
     "platform": "RKYS Dashboard — süper admin (Faz 4)"
+  },
+  "waiter": {
+    "title": "Garson Paneli",
+    "enableSound": "Sesi Aç",
+    "connected": "Bağlı",
+    "disconnected": "Bağlantı koptu",
+    "openCalls": "Açık Çağrılar",
+    "noOpenCalls": "Açık çağrı yok.",
+    "untypedCall": "Çağırıyor",
+    "acknowledge": "Karşılandı",
+    "pendingApproval": "Onay Bekleyen Siparişler",
+    "noPendingOrders": "Onay bekleyen sipariş yok."
+  },
+  "kitchen": {
+    "title": "Mutfak Ekranı (KDS)",
+    "connected": "Bağlı",
+    "disconnected": "Bağlantı koptu",
+    "noOrders": "Bekleyen sipariş yok.",
+    "status": {
+      "approved": "Onaylandı",
+      "preparing": "Hazırlanıyor",
+      "ready": "Hazır"
+    },
+    "advanceTo": {
+      "preparing": "Hazırlamaya Başla",
+      "ready": "Hazır",
+      "served": "Servis Edildi"
+    }
+  },
+  "menu": {
+    "invalidQr": {
+      "title": "Bu QR kodu geçersiz veya artık aktif değil.",
+      "description": "Lütfen masanızdaki QR kodu tekrar okutun veya personelden yardım isteyin."
+    },
+    "tableSelect": {
+      "title": "Masanızı seçin",
+      "missingToken": "Geçersiz bağlantı.",
+      "invalidQr": "Bu QR kodu geçersiz veya artık aktif değil."
+    },
+    "session": {
+      "noSession": "Menüyü görüntülemek için masanızdaki QR kodu okutun.",
+      "connected": "Masanıza bağlandınız."
+    },
+    "product": {
+      "soldOut": "Tükendi",
+      "priceFrom": "{price}'den itibaren",
+      "addToCart": "Sepete ekle",
+      "added": "Eklendi"
+    },
+    "cart": {
+      "itemCount": "{count} ürün",
+      "submit": "Siparişi Gönder",
+      "submitting": "Gönderiliyor...",
+      "success": "Siparişiniz alındı.",
+      "invalid_input": "Sipariş bilgisi geçersiz.",
+      "no_session": "Oturumunuz bulunamadı, lütfen QR kodu tekrar okutun.",
+      "stock_unavailable": "Sepetinizdeki bir ürün artık stokta yok.",
+      "rate_limited": "Çok hızlı sipariş gönderdiniz, biraz bekleyin.",
+      "unknown": "Sipariş gönderilemedi, tekrar deneyin."
+    },
+    "waiterCall": {
+      "callWaiter": "Garson Çağır",
+      "sent": "Garson çağrıldı.",
+      "rate_limited": "Az önce çağırdınız, biraz bekleyin.",
+      "unknown": "Çağrı gönderilemedi, tekrar deneyin.",
+      "invalid_input": "Çağrı gönderilemedi, tekrar deneyin."
+    },
+    "sessionPanel": {
+      "toggle": "Oturumum",
+      "noOrders": "Henüz sipariş yok.",
+      "subtotal": "Ara toplam: {amount}",
+      "requestCheck": "Hesap İste",
+      "checkRequested": "Hesap istendi",
+      "orderReady": "Siparişiniz hazır!",
+      "enableSound": "Sesi Aç",
+      "status": {
+        "pending": "Onay bekliyor",
+        "approved": "Onaylandı",
+        "preparing": "Hazırlanıyor",
+        "ready": "Hazır",
+        "served": "Servis edildi",
+        "cancelled": "İptal edildi"
+      }
+    }
   }
 }

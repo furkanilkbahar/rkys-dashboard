@@ -2,10 +2,12 @@ import "server-only";
 
 import { createClient } from "@/lib/supabase/server";
 
+const STAFF_ROLES = ["owner", "manager", "waiter", "kitchen", "courier"] as const;
+
 export type CurrentActor = {
   userId: string;
   tenantId: string;
-  role: "owner" | "manager" | "waiter" | "kitchen" | "courier";
+  role: (typeof STAFF_ROLES)[number];
 };
 
 /**
@@ -28,6 +30,12 @@ export async function getCurrentActor(): Promise<CurrentActor | null> {
   const role = typeof claims.user_role === "string" ? claims.user_role : null;
 
   if (!userId || !tenantId || !role) {
+    return null;
+  }
+
+  // Faz 1'den itibaren misafirler de JWT'de user_role='guest' taşıyabilir —
+  // burası yalnızca personel claim'lerini kabul eder (fail-closed).
+  if (!STAFF_ROLES.includes(role as CurrentActor["role"])) {
     return null;
   }
 

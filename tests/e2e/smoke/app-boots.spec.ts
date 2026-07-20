@@ -1,8 +1,10 @@
 import { expect, test } from "@playwright/test";
 
-test("kök domain marketing sayfasını açar", async ({ page }) => {
+test("kök domain marketing sayfasını warm-luxury temasıyla açar", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByText("RKYS Dashboard")).toBeVisible();
+  await expect(page.getByText("warm-luxury")).toBeVisible();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "warm-luxury");
 });
 
 test("bilinmeyen subdomain tenant-not-found sayfasına düşer", async ({ page, baseURL }) => {

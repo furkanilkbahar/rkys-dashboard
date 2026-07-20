@@ -13,14 +13,95 @@
     "marketing": "RKYS Dashboard — marketing (Phase 13)",
     "marketingCardBody": "Phase 0 theme/component verification card — real marketing content lands in Phase 13.",
     "marketingCardButton": "Example button",
-    "menuTable": "RKYS Dashboard — QR menu (Phase 1)",
     "adminSignedOut": "Sign in to continue.",
     "adminSignedIn": "Signed in — tenant: {tenantId}, role: {role}",
-    "waiter": "RKYS Dashboard — waiter panel (Phase 1)",
-    "kitchen": "RKYS Dashboard — KDS (Phase 1)",
     "cashier": "RKYS Dashboard — cash register (Phase 3)",
     "cashierModuleDisabled": "The cash register module is disabled for this tenant.",
     "analytics": "RKYS Dashboard — analytics hub (Phase 5)",
     "platform": "RKYS Dashboard — super admin (Phase 4)"
+  },
+  "waiter": {
+    "title": "Waiter Panel",
+    "enableSound": "Enable Sound",
+    "connected": "Connected",
+    "disconnected": "Disconnected",
+    "openCalls": "Open Calls",
+    "noOpenCalls": "No open calls.",
+    "untypedCall": "Calling",
+    "acknowledge": "Acknowledge",
+    "pendingApproval": "Orders Awaiting Approval",
+    "noPendingOrders": "No orders awaiting approval."
+  },
+  "kitchen": {
+    "title": "Kitchen Display",
+    "connected": "Connected",
+    "disconnected": "Disconnected",
+    "noOrders": "No orders pending.",
+    "status": {
+      "approved": "Approved",
+      "preparing": "Preparing",
+      "ready": "Ready"
+    },
+    "advanceTo": {
+      "preparing": "Start Preparing",
+      "ready": "Ready",
+      "served": "Served"
+    }
+  },
+  "menu": {
+    "invalidQr": {
+      "title": "This QR code is invalid or no longer active.",
+      "description": "Please rescan the QR code on your table or ask a staff member for help."
+    },
+    "tableSelect": {
+      "title": "Choose your table",
+      "missingToken": "Invalid link.",
+      "invalidQr": "This QR code is invalid or no longer active."
+    },
+    "session": {
+      "noSession": "Scan the QR code on your table to view the menu.",
+      "connected": "You're connected to your table."
+    },
+    "product": {
+      "soldOut": "Sold out",
+      "priceFrom": "From {price}",
+      "addToCart": "Add to cart",
+      "added": "Added"
+    },
+    "cart": {
+      "itemCount": "{count} items",
+      "submit": "Submit Order",
+      "submitting": "Submitting...",
+      "success": "Your order has been received.",
+      "invalid_input": "Order data is invalid.",
+      "no_session": "Your session was not found, please rescan the QR code.",
+      "stock_unavailable": "An item in your cart is no longer in stock.",
+      "rate_limited": "You're sending orders too fast, please wait.",
+      "unknown": "Order could not be submitted, please try again."
+    },
+    "waiterCall": {
+      "callWaiter": "Call Waiter",
+      "sent": "Waiter called.",
+      "rate_limited": "You just called, please wait a moment.",
+      "unknown": "Call could not be sent, please try again.",
+      "invalid_input": "Call could not be sent, please try again."
+    },
+    "sessionPanel": {
+      "toggle": "My Session",
+      "noOrders": "No orders yet.",
+      "subtotal": "Subtotal: {amount}",
+      "requestCheck": "Request Check",
+      "checkRequested": "Check requested",
+      "orderReady": "Your order is ready!",
+      "enableSound": "Enable Sound",
+      "status": {
+        "pending": "Awaiting approval",
+        "approved": "Approved",
+        "preparing": "Preparing",
+        "ready": "Ready",
+        "served": "Served",
+        "cancelled": "Cancelled"
+      }
+    }
   }
 }

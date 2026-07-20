@@ -1,13 +1,12 @@
 import { cookies } from "next/headers";
 import { getRequestConfig } from "next-intl/server";
 
+import { DEFAULT_LOCALE, LOCALE_COOKIE, SUPPORTED_LOCALES, type Locale } from "@/i18n/locales";
+
 // URL'de dil öneki YOK (kullanıcı kararı, 2026-07-19): QR menü linkleri
 // subdomain'i zaten kullanıyor, dil bir de path'i uzatmasın. Locale bir
 // cookie'de tutulur.
-export const SUPPORTED_LOCALES = ["tr", "en"] as const;
-export type Locale = (typeof SUPPORTED_LOCALES)[number];
-export const DEFAULT_LOCALE: Locale = "tr";
-export const LOCALE_COOKIE = "rkys-locale";
+export { SUPPORTED_LOCALES, DEFAULT_LOCALE, LOCALE_COOKIE, type Locale };
 
 export default getRequestConfig(async () => {
   const cookieStore = await cookies();
