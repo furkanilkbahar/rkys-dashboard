@@ -764,6 +764,90 @@ export type Database = {
           },
         ]
       }
+      payments: {
+        Row: {
+          amount_minor: number
+          branch_id: string
+          created_at: string
+          created_by: string | null
+          id: string
+          method: string
+          provider: string
+          provider_ref: string | null
+          split_group: string | null
+          status: string
+          table_session_id: string
+          tenant_id: string
+          tip_amount_minor: number
+        }
+        Insert: {
+          amount_minor: number
+          branch_id: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          method: string
+          provider?: string
+          provider_ref?: string | null
+          split_group?: string | null
+          status?: string
+          table_session_id: string
+          tenant_id: string
+          tip_amount_minor?: number
+        }
+        Update: {
+          amount_minor?: number
+          branch_id?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          method?: string
+          provider?: string
+          provider_ref?: string | null
+          split_group?: string | null
+          status?: string
+          table_session_id?: string
+          tenant_id?: string
+          tip_amount_minor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "payments_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_table_session_id_fkey"
+            columns: ["table_session_id"]
+            isOneToOne: false
+            referencedRelation: "table_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_extras: {
         Row: {
           created_at: string
@@ -1037,6 +1121,44 @@ export type Database = {
             foreignKeyName: "rating_settings_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: true
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reason_codes: {
+        Row: {
+          category: string
+          created_at: string
+          display_order: number
+          id: string
+          is_active: boolean
+          key: string
+          tenant_id: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          key: string
+          tenant_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          key?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reason_codes_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
             referencedRelation: "tenants"
             referencedColumns: ["id"]
           },
@@ -1919,6 +2041,16 @@ export type Database = {
           p_movement_type: string
           p_note?: string
           p_shift_id: string
+        }
+        Returns: string
+      }
+      record_payment: {
+        Args: {
+          p_amount_minor: number
+          p_method: string
+          p_split_group?: string
+          p_table_session_id: string
+          p_tip_amount_minor?: number
         }
         Returns: string
       }
