@@ -1,4 +1,10 @@
 import { defineConfig, devices } from "@playwright/test";
+import { config } from "dotenv";
+
+// tests/helpers/testClients.ts (Adım 7'den itibaren bazı E2E testlerinde de
+// kullanılıyor — bkz. onboarding.spec.ts) modül yüklenirken process.env'i
+// okuyor; vitest.integration.config.ts'teki setup dosyasıyla aynı desen.
+config({ path: ".env.local" });
 
 export default defineConfig({
   testDir: "./tests/e2e",

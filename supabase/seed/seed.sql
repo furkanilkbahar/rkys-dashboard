@@ -2,22 +2,28 @@
 -- Idempotent: `supabase db reset` her koşumda tabloları sıfırdan kurduğu için
 -- on conflict koruması sadece manuel tekrar-koşum için güvenlik.
 
-insert into public.tenants (id, slug, name, status, timezone, currency)
+-- gamma: Faz 2 Adım 7 (onboarding) için onboarding_completed_at = null taze
+-- tenant — "Demo veriyle keşfet" yolunun göstereceği minimal demo katalog +
+-- "Sıfırdan kur" yolunun clear_demo_data() ile temizleyeceği veri burada.
+insert into public.tenants (id, slug, name, status, timezone, currency, onboarding_completed_at)
 values
-  ('00000000-0000-4000-8000-000000000001', 'acme', 'Acme Kafe', 'active', 'Europe/Istanbul', 'TRY'),
-  ('00000000-0000-4000-8000-000000000002', 'beta', 'Beta Restoran', 'active', 'Europe/Istanbul', 'TRY')
+  ('00000000-0000-4000-8000-000000000001', 'acme', 'Acme Kafe', 'active', 'Europe/Istanbul', 'TRY', now()),
+  ('00000000-0000-4000-8000-000000000002', 'beta', 'Beta Restoran', 'active', 'Europe/Istanbul', 'TRY', now()),
+  ('00000000-0000-4000-8000-000000000003', 'gamma', 'Gamma Bistro', 'active', 'Europe/Istanbul', 'TRY', null)
 on conflict (id) do nothing;
 
 insert into public.tenant_domains (tenant_id, domain, is_primary)
 values
   ('00000000-0000-4000-8000-000000000001', 'acme.localhost:3000', true),
-  ('00000000-0000-4000-8000-000000000002', 'beta.localhost:3000', true)
+  ('00000000-0000-4000-8000-000000000002', 'beta.localhost:3000', true),
+  ('00000000-0000-4000-8000-000000000003', 'gamma.localhost:3000', true)
 on conflict (domain) do nothing;
 
 insert into public.branches (id, tenant_id, name, is_default)
 values
   ('00000000-0000-4000-8000-000000000011', '00000000-0000-4000-8000-000000000001', 'Merkez Şube', true),
-  ('00000000-0000-4000-8000-000000000012', '00000000-0000-4000-8000-000000000002', 'Merkez Şube', true)
+  ('00000000-0000-4000-8000-000000000012', '00000000-0000-4000-8000-000000000002', 'Merkez Şube', true),
+  ('00000000-0000-4000-8000-000000000013', '00000000-0000-4000-8000-000000000003', 'Merkez Şube', true)
 on conflict (id) do nothing;
 
 -- acme: pos_cash açık (guard'ın "açık" ucunu gösterir). beta: hepsi kapalı
@@ -52,14 +58,16 @@ values
   ('00000000-0000-4000-8000-000000000001', 'tr', true),
   ('00000000-0000-4000-8000-000000000001', 'en', false),
   ('00000000-0000-4000-8000-000000000002', 'tr', true),
-  ('00000000-0000-4000-8000-000000000002', 'en', false)
+  ('00000000-0000-4000-8000-000000000002', 'en', false),
+  ('00000000-0000-4000-8000-000000000003', 'tr', true)
 on conflict (tenant_id, locale) do nothing;
 
 insert into public.menu_categories (id, tenant_id, layout, display_order)
 values
   ('00000000-0000-4000-8000-000000000101', '00000000-0000-4000-8000-000000000001', 'grid', 0),
   ('00000000-0000-4000-8000-000000000102', '00000000-0000-4000-8000-000000000001', 'list', 1),
-  ('00000000-0000-4000-8000-000000000103', '00000000-0000-4000-8000-000000000002', 'grid', 0)
+  ('00000000-0000-4000-8000-000000000103', '00000000-0000-4000-8000-000000000002', 'grid', 0),
+  ('00000000-0000-4000-8000-000000000104', '00000000-0000-4000-8000-000000000003', 'grid', 0)
 on conflict (id) do nothing;
 
 insert into public.products (id, tenant_id, category_id, track_mode, base_price_minor, stock_quantity, is_sold_out, display_order)
@@ -67,7 +75,8 @@ values
   ('00000000-0000-4000-8000-000000000201', '00000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-000000000101', 'simple', 8000, null, false, 0),
   ('00000000-0000-4000-8000-000000000202', '00000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-000000000101', 'simple', 9000, null, false, 1),
   ('00000000-0000-4000-8000-000000000203', '00000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-000000000102', 'simple', 12000, 0, true, 0),
-  ('00000000-0000-4000-8000-000000000204', '00000000-0000-4000-8000-000000000002', '00000000-0000-4000-8000-000000000103', 'simple', 15000, null, false, 0)
+  ('00000000-0000-4000-8000-000000000204', '00000000-0000-4000-8000-000000000002', '00000000-0000-4000-8000-000000000103', 'simple', 15000, null, false, 0),
+  ('00000000-0000-4000-8000-000000000205', '00000000-0000-4000-8000-000000000003', '00000000-0000-4000-8000-000000000104', 'simple', 7000, null, false, 0)
 on conflict (id) do nothing;
 
 insert into public.product_variants (id, tenant_id, product_id, price_minor, display_order)
@@ -105,7 +114,9 @@ values
   ('00000000-0000-4000-8000-000000000001', 'product_extra', '00000000-0000-4000-8000-000000000401', 'tr', 'name', 'Çilek Sosu'),
   ('00000000-0000-4000-8000-000000000001', 'product_extra', '00000000-0000-4000-8000-000000000401', 'en', 'name', 'Strawberry Sauce'),
   ('00000000-0000-4000-8000-000000000001', 'product_extra', '00000000-0000-4000-8000-000000000402', 'tr', 'name', 'Çikolata Sosu'),
-  ('00000000-0000-4000-8000-000000000001', 'product_extra', '00000000-0000-4000-8000-000000000402', 'en', 'name', 'Chocolate Sauce')
+  ('00000000-0000-4000-8000-000000000001', 'product_extra', '00000000-0000-4000-8000-000000000402', 'en', 'name', 'Chocolate Sauce'),
+  ('00000000-0000-4000-8000-000000000003', 'menu_category', '00000000-0000-4000-8000-000000000104', 'tr', 'name', 'Kahveler'),
+  ('00000000-0000-4000-8000-000000000003', 'product', '00000000-0000-4000-8000-000000000205', 'tr', 'name', 'Filtre Kahve')
 on conflict (entity_type, entity_id, locale, field) do nothing;
 
 -- D35 standart çağrı tipi seti (her iki tenant için) + tipsiz tek dokunuş
@@ -117,7 +128,8 @@ values
   ('00000000-0000-4000-8000-000000000703', '00000000-0000-4000-8000-000000000001', 'assistance', true, 2),
   ('00000000-0000-4000-8000-000000000704', '00000000-0000-4000-8000-000000000002', 'water', true, 0),
   ('00000000-0000-4000-8000-000000000705', '00000000-0000-4000-8000-000000000002', 'check', true, 1),
-  ('00000000-0000-4000-8000-000000000706', '00000000-0000-4000-8000-000000000002', 'assistance', true, 2)
+  ('00000000-0000-4000-8000-000000000706', '00000000-0000-4000-8000-000000000002', 'assistance', true, 2),
+  ('00000000-0000-4000-8000-000000000707', '00000000-0000-4000-8000-000000000003', 'water', true, 0)
 on conflict (id) do nothing;
 
 insert into public.content_translations (tenant_id, entity_type, entity_id, locale, field, value)
@@ -133,7 +145,8 @@ values
   ('00000000-0000-4000-8000-000000000002', 'call_type', '00000000-0000-4000-8000-000000000705', 'tr', 'name', 'Hesap İstiyorum'),
   ('00000000-0000-4000-8000-000000000002', 'call_type', '00000000-0000-4000-8000-000000000705', 'en', 'name', 'Check, please'),
   ('00000000-0000-4000-8000-000000000002', 'call_type', '00000000-0000-4000-8000-000000000706', 'tr', 'name', 'Yardım İstiyorum'),
-  ('00000000-0000-4000-8000-000000000002', 'call_type', '00000000-0000-4000-8000-000000000706', 'en', 'name', 'I need help')
+  ('00000000-0000-4000-8000-000000000002', 'call_type', '00000000-0000-4000-8000-000000000706', 'en', 'name', 'I need help'),
+  ('00000000-0000-4000-8000-000000000003', 'call_type', '00000000-0000-4000-8000-000000000707', 'tr', 'name', 'Su İstiyorum')
 on conflict (entity_type, entity_id, locale, field) do nothing;
 
 -- Demo masalar + QR'lar (Faz 1): ham token'lar yalnızca lokalde, testlerin
@@ -150,13 +163,15 @@ values
   -- masayı paylaşınca table_session çakışması olmasın diye ayrı masalar).
   ('00000000-0000-4000-8000-000000000505', '00000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-000000000011', 'Masa 4', encode(digest('demo-acme-table-4', 'sha256'), 'hex')),
   ('00000000-0000-4000-8000-000000000506', '00000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-000000000011', 'Masa 5', encode(digest('demo-acme-table-5', 'sha256'), 'hex')),
-  ('00000000-0000-4000-8000-000000000504', '00000000-0000-4000-8000-000000000002', '00000000-0000-4000-8000-000000000012', 'Masa 1', encode(digest('demo-beta-table-1', 'sha256'), 'hex'))
+  ('00000000-0000-4000-8000-000000000504', '00000000-0000-4000-8000-000000000002', '00000000-0000-4000-8000-000000000012', 'Masa 1', encode(digest('demo-beta-table-1', 'sha256'), 'hex')),
+  ('00000000-0000-4000-8000-000000000507', '00000000-0000-4000-8000-000000000003', '00000000-0000-4000-8000-000000000013', 'Masa 1', encode(digest('demo-gamma-table-1', 'sha256'), 'hex'))
 on conflict (id) do nothing;
 
 insert into public.generic_qr_codes (id, tenant_id, branch_id, label, qr_token_hash)
 values
   ('00000000-0000-4000-8000-000000000601', '00000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-000000000011', 'Genel QR', encode(digest('demo-acme-generic', 'sha256'), 'hex')),
-  ('00000000-0000-4000-8000-000000000602', '00000000-0000-4000-8000-000000000002', '00000000-0000-4000-8000-000000000012', 'Genel QR', encode(digest('demo-beta-generic', 'sha256'), 'hex'))
+  ('00000000-0000-4000-8000-000000000602', '00000000-0000-4000-8000-000000000002', '00000000-0000-4000-8000-000000000012', 'Genel QR', encode(digest('demo-beta-generic', 'sha256'), 'hex')),
+  ('00000000-0000-4000-8000-000000000603', '00000000-0000-4000-8000-000000000003', '00000000-0000-4000-8000-000000000013', 'Genel QR', encode(digest('demo-gamma-generic', 'sha256'), 'hex'))
 on conflict (id) do nothing;
 
 -- Demo owner girişleri (yalnızca lokal geliştirme): auth.users + auth.identities
@@ -211,6 +226,16 @@ values
     now(), '{"provider":"email","providers":["email"]}', '{}',
     now(), now(),
     '', '', '', '', '', '', '', ''
+  ),
+  -- gamma owner: onboarding sihirbazının test edileceği hesap.
+  (
+    '00000000-0000-0000-0000-000000000000',
+    '00000000-0000-4000-8000-0000000000c1',
+    'authenticated', 'authenticated', 'owner@gamma.test',
+    crypt('password123', gen_salt('bf')),
+    now(), '{"provider":"email","providers":["email"]}', '{}',
+    now(), now(),
+    '', '', '', '', '', '', '', ''
   )
 on conflict (id) do nothing;
 
@@ -231,6 +256,10 @@ values
   (
     gen_random_uuid(), '00000000-0000-4000-8000-0000000000b1', '00000000-0000-4000-8000-0000000000b1',
     '{"sub":"00000000-0000-4000-8000-0000000000b1","email":"owner@beta.test"}', 'email', now(), now()
+  ),
+  (
+    gen_random_uuid(), '00000000-0000-4000-8000-0000000000c1', '00000000-0000-4000-8000-0000000000c1',
+    '{"sub":"00000000-0000-4000-8000-0000000000c1","email":"owner@gamma.test"}', 'email', now(), now()
   )
 on conflict (provider_id, provider) do nothing;
 
@@ -239,5 +268,6 @@ values
   ('00000000-0000-4000-8000-0000000000a1', '00000000-0000-4000-8000-000000000001', 'owner', true),
   ('00000000-0000-4000-8000-0000000000a2', '00000000-0000-4000-8000-000000000001', 'manager', true),
   ('00000000-0000-4000-8000-0000000000a3', '00000000-0000-4000-8000-000000000001', 'waiter', true),
-  ('00000000-0000-4000-8000-0000000000b1', '00000000-0000-4000-8000-000000000002', 'owner', true)
+  ('00000000-0000-4000-8000-0000000000b1', '00000000-0000-4000-8000-000000000002', 'owner', true),
+  ('00000000-0000-4000-8000-0000000000c1', '00000000-0000-4000-8000-000000000003', 'owner', true)
 on conflict (id) do nothing;

@@ -290,6 +290,50 @@
         "last_locale": "En az bir dil etkin kalmalı.",
         "unknown": "Kaydedilemedi, tekrar deneyin."
       }
+    },
+    "onboarding": {
+      "entry": {
+        "title": "İşletmenizi kuralım",
+        "body": "Örnek verilerle hemen keşfedebilir ya da sıfırdan kendi menünüzü, masalarınızı ve ayarlarınızı oluşturabilirsiniz.",
+        "exploreDemo": "Demo veriyle keşfet",
+        "startFresh": "Sıfırdan kur"
+      },
+      "stepCounter": "Adım {current} / {total}",
+      "back": "Geri",
+      "next": "İleri",
+      "finish": "Tamamla",
+      "saved": "Kaydedildi.",
+      "logo": {
+        "title": "Logo"
+      },
+      "language": {
+        "title": "Diller",
+        "tr": "Türkçe",
+        "en": "İngilizce"
+      },
+      "currency": {
+        "title": "Para Birimi",
+        "ownerOnlyHint": "Para birimi yalnızca işletme sahibi tarafından ayarlanabilir."
+      },
+      "tables": {
+        "title": "Masalar",
+        "count": "Masa sayısı",
+        "create": "Oluştur",
+        "created": "Masalar oluşturuldu"
+      },
+      "menu": {
+        "title": "Şablon Menü",
+        "body": "Başlangıç için bir kategori ve örnek bir ürün eklenir — dilediğiniz gibi düzenleyebilirsiniz.",
+        "apply": "Standart menüyü ekle",
+        "applied": "Menü eklendi"
+      },
+      "modules": {
+        "title": "Modül Seçimi"
+      },
+      "theme": {
+        "title": "Tema Önizleme",
+        "comingSoon": "Diğer temalar Faz 6'da eklenecek."
+      }
     }
   },
   "waiter": {

@@ -21,27 +21,27 @@ describe("Şema ve seed verisi (Supabase Studio manuel kontrolünün otomatik ka
     expect(error).toBeNull();
   });
 
-  it("seed: 2 tenant yüklü (acme, beta)", async () => {
+  it("seed: 3 tenant yüklü (acme, beta, gamma)", async () => {
     const { data, error } = await serviceRoleClient().from("tenants").select("slug").order("slug");
     expect(error).toBeNull();
-    expect(data?.map((row) => row.slug)).toEqual(["acme", "beta"]);
+    expect(data?.map((row) => row.slug)).toEqual(["acme", "beta", "gamma"]);
   });
 
-  it("seed: 2 şube yüklü", async () => {
+  it("seed: 3 şube yüklü", async () => {
     const { count, error } = await serviceRoleClient()
       .from("branches")
       .select("*", { count: "exact", head: true });
     expect(error).toBeNull();
-    expect(count).toBe(2);
+    expect(count).toBe(3);
   });
 
-  it("seed: tenant_modules 15 modül × 2 tenant = 30 satır; acme.pos_cash açık, beta.pos_cash kapalı", async () => {
+  it("seed: tenant_modules 15 modül × 3 tenant = 45 satır; acme.pos_cash açık, beta.pos_cash kapalı", async () => {
     const client = serviceRoleClient();
     const { count, error } = await client
       .from("tenant_modules")
       .select("*", { count: "exact", head: true });
     expect(error).toBeNull();
-    expect(count).toBe(30);
+    expect(count).toBe(45);
 
     const { data: acme } = await client
       .from("tenant_modules")
@@ -60,11 +60,11 @@ describe("Şema ve seed verisi (Supabase Studio manuel kontrolünün otomatik ka
     expect(beta?.is_enabled).toBe(false);
   });
 
-  it("seed: role_permissions 2 rol × 9 izin × 2 tenant = 36 satır", async () => {
+  it("seed: role_permissions 2 rol × 9 izin × 3 tenant = 54 satır", async () => {
     const { count, error } = await serviceRoleClient()
       .from("role_permissions")
       .select("*", { count: "exact", head: true });
     expect(error).toBeNull();
-    expect(count).toBe(36);
+    expect(count).toBe(54);
   });
 });

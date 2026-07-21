@@ -27,6 +27,14 @@ export const SEED = {
     table1Token: "demo-beta-table-1",
     genericToken: "demo-beta-generic",
   },
+  gamma: {
+    tenantId: "00000000-0000-4000-8000-000000000003",
+    branchId: "00000000-0000-4000-8000-000000000013",
+    ownerEmail: "owner@gamma.test", // onboarding_completed_at = null (Faz 2 Adım 7)
+    table1Id: "00000000-0000-4000-8000-000000000507",
+    table1Token: "demo-gamma-table-1",
+    genericToken: "demo-gamma-generic",
+  },
   password: "password123",
 };
 
@@ -89,4 +97,43 @@ export async function bootstrapGuestForTable(tableId: string) {
 
   await guest.auth.refreshSession();
   return { client: guest, tableSessionId: tableSessionId as string };
+}
+
+/**
+ * Onboarding testleri (Faz 2 Adım 7) için tek kullanımlık, atılabilir bir
+ * tenant + owner hesabı kurar — onboarding_completed_at = null. Sipariş/
+ * oturum geçmişi kalıcı olduğu için (RULES #18) bu tenant'lar paylaşılan
+ * seed tenant'larına karışmaz; çağıran taraf işini bitirince
+ * `service.from("tenants").delete().eq("id", tenantId)` ile (cascade) siler.
+ */
+export async function createThrowawayTenant(prefix: string) {
+  const service = serviceRoleClient();
+  const suffix = crypto.randomUUID().slice(0, 8);
+  const tenantId = crypto.randomUUID();
+  const branchId = crypto.randomUUID();
+  const email = `owner-${prefix}-${suffix}@test-throwaway.test`;
+
+  await service.from("tenants").insert({
+    id: tenantId,
+    slug: `test-${prefix}-${suffix}`,
+    name: `Test ${prefix}`,
+    status: "active",
+    timezone: "Europe/Istanbul",
+    currency: "TRY",
+    onboarding_completed_at: null,
+  });
+  await service.from("branches").insert({ id: branchId, tenant_id: tenantId, name: "Şube", is_default: true });
+  await service.from("tenant_domains").insert({ tenant_id: tenantId, domain: `test-${prefix}-${suffix}.localhost:3000`, is_primary: true });
+
+  const { data: authUser, error: authUserError } = await service.auth.admin.createUser({
+    email,
+    password: SEED.password,
+    email_confirm: true,
+  });
+  if (authUserError || !authUser.user) {
+    throw new Error(`throwaway owner create failed: ${authUserError?.message}`);
+  }
+  await service.from("profiles").insert({ id: authUser.user.id, tenant_id: tenantId, role: "owner", is_active: true });
+
+  return { tenantId, branchId, email, slug: `test-${prefix}-${suffix}` };
 }

@@ -290,6 +290,50 @@
         "last_locale": "At least one language must stay enabled.",
         "unknown": "Could not save, please try again."
       }
+    },
+    "onboarding": {
+      "entry": {
+        "title": "Let's set up your business",
+        "body": "Explore right away with sample data, or start fresh and build your own menu, tables, and settings.",
+        "exploreDemo": "Explore with demo data",
+        "startFresh": "Start from scratch"
+      },
+      "stepCounter": "Step {current} / {total}",
+      "back": "Back",
+      "next": "Next",
+      "finish": "Finish",
+      "saved": "Saved.",
+      "logo": {
+        "title": "Logo"
+      },
+      "language": {
+        "title": "Languages",
+        "tr": "Turkish",
+        "en": "English"
+      },
+      "currency": {
+        "title": "Currency",
+        "ownerOnlyHint": "Currency can only be set by the business owner."
+      },
+      "tables": {
+        "title": "Tables",
+        "count": "Table count",
+        "create": "Create",
+        "created": "Tables created"
+      },
+      "menu": {
+        "title": "Template Menu",
+        "body": "One starter category and a sample item are added — edit them however you like.",
+        "apply": "Add the standard menu",
+        "applied": "Menu added"
+      },
+      "modules": {
+        "title": "Module Selection"
+      },
+      "theme": {
+        "title": "Theme Preview",
+        "comingSoon": "More themes will be added in Phase 6."
+      }
     }
   },
   "waiter": {
