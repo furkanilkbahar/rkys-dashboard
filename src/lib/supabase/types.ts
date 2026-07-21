@@ -475,6 +475,86 @@ export type Database = {
           },
         ]
       }
+      day_closures: {
+        Row: {
+          branch_id: string
+          business_date: string
+          cancelled_orders_count: number
+          card_manual_minor: number
+          cash_minor: number
+          closed_by: string | null
+          comps_minor: number
+          created_at: string
+          id: string
+          online_minor: number
+          refunds_minor: number
+          revenue_minor: number
+          tenant_id: string
+          tips_minor: number
+        }
+        Insert: {
+          branch_id: string
+          business_date: string
+          cancelled_orders_count: number
+          card_manual_minor: number
+          cash_minor: number
+          closed_by?: string | null
+          comps_minor: number
+          created_at?: string
+          id?: string
+          online_minor: number
+          refunds_minor: number
+          revenue_minor: number
+          tenant_id: string
+          tips_minor: number
+        }
+        Update: {
+          branch_id?: string
+          business_date?: string
+          cancelled_orders_count?: number
+          card_manual_minor?: number
+          cash_minor?: number
+          closed_by?: string | null
+          comps_minor?: number
+          created_at?: string
+          id?: string
+          online_minor?: number
+          refunds_minor?: number
+          revenue_minor?: number
+          tenant_id?: string
+          tips_minor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "day_closures_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "day_closures_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "day_closures_closed_by_fkey"
+            columns: ["closed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "day_closures_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       generic_qr_codes: {
         Row: {
           branch_id: string
@@ -920,6 +1000,49 @@ export type Database = {
           },
           {
             foreignKeyName: "payments_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_costs: {
+        Row: {
+          cost_minor: number
+          product_id: string
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          cost_minor: number
+          product_id: string
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          cost_minor?: number
+          product_id?: string
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_costs_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: true
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "product_costs_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: true
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_costs_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "tenants"
@@ -2213,6 +2336,7 @@ export type Database = {
       }
       cancel_order: { Args: { p_order_id: string }; Returns: undefined }
       clear_demo_data: { Args: never; Returns: undefined }
+      close_business_day: { Args: { p_branch_id: string }; Returns: string }
       close_shift: {
         Args: { p_counted_cash_minor: number; p_shift_id: string }
         Returns: undefined
@@ -2248,6 +2372,60 @@ export type Database = {
       current_tenant_id: { Args: never; Returns: string }
       custom_access_token_hook: { Args: { event: Json }; Returns: Json }
       disable_tenant_locale: { Args: { p_locale: string }; Returns: undefined }
+      get_hourly_density: {
+        Args: { p_branch_id: string; p_business_date: string }
+        Returns: {
+          hour_of_day: number
+          order_count: number
+        }[]
+      }
+      get_margin_report: {
+        Args: { p_branch_id: string; p_business_date: string }
+        Returns: {
+          cost_minor: number
+          margin_minor: number
+          product_name: string
+          quantity: number
+          revenue_minor: number
+        }[]
+      }
+      get_revenue_report: {
+        Args: { p_branch_id: string; p_business_date: string }
+        Returns: {
+          card_manual_minor: number
+          cash_minor: number
+          comps_minor: number
+          online_minor: number
+          refunds_minor: number
+          revenue_minor: number
+          tips_minor: number
+        }[]
+      }
+      get_shifts_for_date: {
+        Args: { p_branch_id: string; p_business_date: string }
+        Returns: {
+          closed_at: string
+          counted_cash_minor: number
+          expected_cash_minor: number
+          opened_at: string
+          opening_balance_minor: number
+          shift_id: string
+          status: string
+          variance_minor: number
+        }[]
+      }
+      get_top_products: {
+        Args: { p_branch_id: string; p_business_date: string }
+        Returns: {
+          product_name: string
+          quantity: number
+          revenue_minor: number
+        }[]
+      }
+      is_business_date_closed: {
+        Args: { p_at?: string; p_branch_id: string }
+        Returns: boolean
+      }
       is_platform_admin: { Args: never; Returns: boolean }
       is_staff: { Args: never; Returns: boolean }
       link_guest_device: {
