@@ -10,12 +10,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { MenuProduct } from "@/lib/data/menu";
 import { lineKey, useCartStore } from "@/lib/store/cart";
+import { formatPrice } from "@/lib/utils/currency";
 
-function formatPrice(priceMinor: number): string {
-  return (priceMinor / 100).toLocaleString("tr-TR", { style: "currency", currency: "TRY" });
-}
-
-export function ProductCard({ product }: { product: MenuProduct }) {
+export function ProductCard({ product, currency }: { product: MenuProduct; currency: string }) {
   const t = useTranslations("menu.product");
   const addLine = useCartStore((state) => state.addLine);
   const [expanded, setExpanded] = useState(false);
@@ -88,8 +85,8 @@ export function ProductCard({ product }: { product: MenuProduct }) {
         <CardContent className="flex flex-col gap-3">
           <p className="text-sm font-medium text-foreground">
             {product.variants.length > 0
-              ? t("priceFrom", { price: formatPrice(displayPrice) })
-              : formatPrice(displayPrice)}
+              ? t("priceFrom", { price: formatPrice(displayPrice, currency) })
+              : formatPrice(displayPrice, currency)}
           </p>
 
           {expanded && (
@@ -115,7 +112,7 @@ export function ProductCard({ product }: { product: MenuProduct }) {
                       </span>
                       <span className="flex items-center gap-2">
                         {!variant.isOrderable && <Badge variant="destructive">{t("soldOut")}</Badge>}
-                        {formatPrice(variant.priceMinor)}
+                        {formatPrice(variant.priceMinor, currency)}
                       </span>
                     </label>
                   ))}
@@ -136,7 +133,7 @@ export function ProductCard({ product }: { product: MenuProduct }) {
                       </span>
                       <span className="flex items-center gap-2">
                         {!extra.isOrderable && <Badge variant="destructive">{t("soldOut")}</Badge>}
-                        {formatPrice(extra.priceMinor)}
+                        {formatPrice(extra.priceMinor, currency)}
                       </span>
                     </label>
                   ))}

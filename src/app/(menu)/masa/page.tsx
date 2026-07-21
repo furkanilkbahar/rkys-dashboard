@@ -6,9 +6,11 @@ import { CategorySection } from "@/components/menu/category-section";
 import { LanguageSwitcher } from "@/components/menu/language-switcher";
 import { SessionPanel } from "@/components/menu/session-panel";
 import { WaiterCallButton } from "@/components/menu/waiter-call-button";
+import type { Locale } from "@/i18n/locales";
 import { getCallTypes } from "@/lib/data/callTypes";
-import { getEffectiveMenu } from "@/lib/data/menu";
+import { getEffectiveMenu, getEnabledLocales } from "@/lib/data/menu";
 import { getSessionOrders } from "@/lib/data/sessionOrders";
+import { getCurrentTenant } from "@/lib/data/tenant";
 import { getCurrentGuestSession } from "@/lib/guest/session";
 
 import { submitOrder } from "./actions";
@@ -26,10 +28,13 @@ export default async function MenuPage() {
   }
 
   const locale = await getLocale();
-  const [categories, callTypes, sessionOrders] = await Promise.all([
+  const tenant = await getCurrentTenant();
+  const currency = tenant?.currency ?? "TRY";
+  const [categories, callTypes, sessionOrders, enabledLocales] = await Promise.all([
     getEffectiveMenu(guest.tenantId, guest.branchId, locale),
     getCallTypes(guest.tenantId, locale),
     getSessionOrders(guest.tableSessionId),
+    getEnabledLocales(guest.tenantId),
   ]);
 
   return (
@@ -38,17 +43,17 @@ export default async function MenuPage() {
       <header className="flex items-center justify-between gap-4">
         <p className="text-sm text-muted-foreground">{t("connected")}</p>
         <div className="flex items-center gap-2">
-          <SessionPanel tableSessionId={guest.tableSessionId} initialOrders={sessionOrders} />
-          <LanguageSwitcher />
+          <SessionPanel tableSessionId={guest.tableSessionId} currency={currency} initialOrders={sessionOrders} />
+          <LanguageSwitcher enabledLocales={enabledLocales as Locale[]} />
         </div>
       </header>
       <div className="flex flex-col gap-8">
         {categories.map((category) => (
-          <CategorySection key={category.id} category={category} />
+          <CategorySection key={category.id} category={category} currency={currency} />
         ))}
       </div>
       <WaiterCallButton callTypes={callTypes} />
-      <CartBar onSubmit={submitOrder} />
+      <CartBar currency={currency} onSubmit={submitOrder} />
     </main>
   );
 }

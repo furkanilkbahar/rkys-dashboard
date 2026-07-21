@@ -4,17 +4,27 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import type { TenantModuleKey } from "@/lib/settings/modules";
 import { cn } from "@/lib/utils/cn";
 
 import { ADMIN_NAV_ITEMS } from "./nav-items";
 
-export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
+export function SidebarNav({
+  onNavigate,
+  enabledModules = [],
+}: {
+  onNavigate?: () => void;
+  enabledModules?: TenantModuleKey[];
+}) {
   const t = useTranslations("admin.nav");
   const pathname = usePathname();
+  const visibleItems = ADMIN_NAV_ITEMS.filter(
+    (item) => item.moduleKey === null || enabledModules.includes(item.moduleKey),
+  );
 
   return (
     <nav className="flex flex-col gap-1 p-3" aria-label={t("dashboard")}>
-      {ADMIN_NAV_ITEMS.map(({ href, labelKey, icon: Icon, exact }) => {
+      {visibleItems.map(({ href, labelKey, icon: Icon, exact }) => {
         const isActive = exact ? pathname === href : pathname.startsWith(href);
 
         return (

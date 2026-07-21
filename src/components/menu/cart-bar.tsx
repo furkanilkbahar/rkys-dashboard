@@ -6,12 +6,15 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import type { SubmitOrderInput, SubmitOrderResult } from "@/lib/orders/schemas";
 import { useCartStore } from "@/lib/store/cart";
+import { formatPrice } from "@/lib/utils/currency";
 
-function formatPrice(priceMinor: number): string {
-  return (priceMinor / 100).toLocaleString("tr-TR", { style: "currency", currency: "TRY" });
-}
-
-export function CartBar({ onSubmit }: { onSubmit: (input: SubmitOrderInput) => Promise<SubmitOrderResult> }) {
+export function CartBar({
+  currency,
+  onSubmit,
+}: {
+  currency: string;
+  onSubmit: (input: SubmitOrderInput) => Promise<SubmitOrderResult>;
+}) {
   const t = useTranslations("menu.cart");
   const lines = useCartStore((state) => state.lines);
   const clear = useCartStore((state) => state.clear);
@@ -57,7 +60,7 @@ export function CartBar({ onSubmit }: { onSubmit: (input: SubmitOrderInput) => P
         {itemCount > 0 && (
           <div className="flex items-center justify-between gap-4">
             <p className="text-sm text-muted-foreground">{t("itemCount", { count: itemCount })}</p>
-            <p className="text-sm font-semibold">{formatPrice(subtotalMinor)}</p>
+            <p className="text-sm font-semibold">{formatPrice(subtotalMinor, currency)}</p>
             <Button type="button" disabled={status === "submitting"} onClick={handleSubmit}>
               {status === "submitting" ? t("submitting") : t("submit")}
             </Button>

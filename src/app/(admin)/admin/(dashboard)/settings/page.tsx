@@ -1,9 +1,66 @@
-import { getTranslations } from "next-intl/server";
+import { notFound } from "next/navigation";
 
-import { ComingSoon } from "@/components/admin/coming-soon";
+import { requireAdminActor } from "@/lib/auth/adminGuard";
+import {
+  getAdminCallTypes,
+  getAdminLocales,
+  getAdminModules,
+  getAdminRatingSettings,
+  getAdminTenantSettings,
+  getAdminTipPresets,
+} from "@/lib/data/adminSettings";
+
+import {
+  createCallType,
+  createTipPreset,
+  setDefaultLocale,
+  toggleLocale,
+  toggleModule,
+  updateBusinessSettings,
+  updateCallType,
+  updateOrderSettings,
+  updateRatingSettings,
+  updateTipPreset,
+} from "./actions";
+import { SettingsManager } from "./settings-manager";
 
 export default async function AdminSettingsPage() {
-  const t = await getTranslations("admin.nav");
+  const actor = await requireAdminActor();
 
-  return <ComingSoon section={t("settings")} adim="Adım 6" />;
+  const [settings, callTypes, locales, tipPresets, ratingSettings, modules] = await Promise.all([
+    getAdminTenantSettings(actor.tenantId),
+    getAdminCallTypes(actor.tenantId),
+    getAdminLocales(actor.tenantId),
+    getAdminTipPresets(actor.tenantId),
+    getAdminRatingSettings(actor.tenantId),
+    getAdminModules(actor.tenantId),
+  ]);
+
+  if (!settings || !ratingSettings) {
+    notFound();
+  }
+
+  return (
+    <SettingsManager
+      isOwner={actor.role === "owner"}
+      settings={settings}
+      callTypes={callTypes}
+      locales={locales}
+      tipPresets={tipPresets}
+      ratingSettings={ratingSettings}
+      modules={modules}
+      actions={{
+        updateOrderSettings,
+        updateBusinessSettings,
+        createCallType,
+        updateCallType,
+        toggleLocale,
+        setDefaultLocale,
+        createTipPreset,
+        updateTipPreset,
+        updateRatingSettings,
+        toggleModule,
+      }}
+    />
+  );
 }

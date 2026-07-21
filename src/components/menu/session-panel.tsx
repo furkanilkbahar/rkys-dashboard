@@ -11,16 +11,15 @@ import type { SessionOrder } from "@/lib/data/sessionOrders";
 import type { OrderStatus } from "@/lib/orders/stateMachine";
 import { playBeep, useSoundUnlock } from "@/lib/sound/insistentAlert";
 import { createClient } from "@/lib/supabase/client";
-
-function formatPrice(priceMinor: number): string {
-  return (priceMinor / 100).toLocaleString("tr-TR", { style: "currency", currency: "TRY" });
-}
+import { formatPrice } from "@/lib/utils/currency";
 
 export function SessionPanel({
   tableSessionId,
+  currency,
   initialOrders,
 }: {
   tableSessionId: string;
+  currency: string;
   initialOrders: SessionOrder[];
 }) {
   const t = useTranslations("menu.sessionPanel");
@@ -156,7 +155,7 @@ export function SessionPanel({
         <button
           type="button"
           onClick={unlock}
-          className="fixed top-4 right-4 z-20 rounded-full bg-muted px-3 py-1 text-xs text-muted-foreground"
+          className="fixed top-4 left-4 z-20 rounded-full bg-muted px-3 py-1 text-xs text-muted-foreground"
         >
           {t("enableSound")}
         </button>
@@ -189,7 +188,7 @@ export function SessionPanel({
                       {item.quantity}× {item.name}
                       {item.variantName ? ` (${item.variantName})` : ""}
                     </span>
-                    <span>{formatPrice(item.lineSubtotalMinor)}</span>
+                    <span>{formatPrice(item.lineSubtotalMinor, currency)}</span>
                   </div>
                 ))}
               </CardContent>
@@ -197,7 +196,7 @@ export function SessionPanel({
           ))}
 
           <div className="flex items-center justify-between border-t border-border pt-3">
-            <p className="text-sm font-semibold">{t("subtotal", { amount: formatPrice(subtotalMinor) })}</p>
+            <p className="text-sm font-semibold">{t("subtotal", { amount: formatPrice(subtotalMinor, currency) })}</p>
             <Button type="button" size="sm" disabled={checkRequested} onClick={handleRequestCheck}>
               {checkRequested ? t("checkRequested") : t("requestCheck")}
             </Button>

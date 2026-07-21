@@ -161,3 +161,14 @@ export async function getEffectiveMenu(
     products: productsByCategory.get(category.id) ?? [],
   }));
 }
+
+/**
+ * Misafirin dil seçicide görebileceği diller (admin ayarlarında etkin
+ * bırakılanlar) — S16. tenant_locales guest'e de açık (0009), is_staff()
+ * kısıtı yok.
+ */
+export async function getEnabledLocales(tenantId: string): Promise<string[]> {
+  const supabase = await createClient();
+  const { data } = await supabase.from("tenant_locales").select("locale").eq("tenant_id", tenantId);
+  return (data ?? []).map((row) => row.locale);
+}

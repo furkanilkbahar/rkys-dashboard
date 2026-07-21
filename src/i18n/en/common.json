@@ -24,6 +24,7 @@
       "menu": "Menu",
       "tables": "Tables",
       "staff": "Staff",
+      "reservations": "Reservations",
       "settings": "Settings",
       "menuOpen": "Open menu"
     },
@@ -206,6 +207,88 @@
         "last_owner": "The last owner cannot be demoted or deactivated.",
         "unknown": "Could not save, please try again.",
         "invalid_pin": "PIN must be 4-8 digits."
+      }
+    },
+    "settings": {
+      "title": "Settings",
+      "order": {
+        "title": "Order Settings",
+        "orderMode": "Order Mode",
+        "orderModeDirect": "Direct",
+        "orderModeApproval": "Approval",
+        "sessionTimeout": "Session Timeout (min)",
+        "save": "Save"
+      },
+      "business": {
+        "title": "Business Settings",
+        "currency": "Currency",
+        "timezone": "Timezone",
+        "ownerOnlyHint": "Only the business owner can change these settings.",
+        "save": "Save"
+      },
+      "callTypes": {
+        "title": "Call Types",
+        "nameTr": "Name (Turkish)",
+        "nameEn": "Name (English)",
+        "active": "Active",
+        "system": "System",
+        "add": "+ Add Call Type",
+        "empty": "No call types yet.",
+        "save": "Save"
+      },
+      "languages": {
+        "title": "Languages",
+        "default": "Default",
+        "setDefault": "Set Default",
+        "tr": "Turkish",
+        "en": "English"
+      },
+      "tips": {
+        "title": "Tip Presets",
+        "label": "Label",
+        "percentage": "Percentage (%)",
+        "active": "Active",
+        "add": "+ Add Tip Preset",
+        "empty": "No tip presets yet.",
+        "save": "Save"
+      },
+      "rating": {
+        "title": "Ratings",
+        "enable": "Enable rating collection",
+        "googleUrl": "Google Review Link",
+        "save": "Save"
+      },
+      "theme": {
+        "title": "Theme",
+        "current": "Current theme",
+        "comingSoon": "More themes will be added in Phase 6."
+      },
+      "modules": {
+        "title": "Modules",
+        "keys": {
+          "pos_cash": "Cash Register",
+          "inventory": "Inventory",
+          "recipes": "Recipes",
+          "crm_loyalty": "CRM & Loyalty",
+          "campaigns": "Campaigns",
+          "gift_cards": "Gift Cards",
+          "pickup": "Pickup",
+          "delivery": "Delivery",
+          "courier": "Courier",
+          "marketplace": "Marketplace Integration",
+          "reservations": "Reservations",
+          "kiosk": "Kiosk",
+          "staff_scheduling": "Staff Scheduling",
+          "accounting_export": "Accounting Export",
+          "api_access": "API Access"
+        }
+      },
+      "errors": {
+        "invalid_input": "Please check the information you entered.",
+        "forbidden": "You don't have permission for this action.",
+        "not_found": "Record not found.",
+        "last_locale": "At least one language must stay enabled.",
+        "unknown": "Could not save, please try again."
       }
     }
   },

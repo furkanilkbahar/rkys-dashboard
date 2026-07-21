@@ -9,7 +9,7 @@ const LAYOUT_CLASSES: Record<MenuCategory["layout"], string> = {
   showcase: "flex flex-col gap-4",
 };
 
-export function CategorySection({ category }: { category: MenuCategory }) {
+export function CategorySection({ category, currency }: { category: MenuCategory; currency: string }) {
   if (category.products.length === 0) {
     return null;
   }
@@ -19,7 +19,7 @@ export function CategorySection({ category }: { category: MenuCategory }) {
       <h2 className="text-base font-semibold">{category.name}</h2>
       <div className={cn(LAYOUT_CLASSES[category.layout])}>
         {category.products.map((product) => (
-          <ProductCard key={product.id} product={product} />
+          <ProductCard key={product.id} product={product} currency={currency} />
         ))}
       </div>
     </section>

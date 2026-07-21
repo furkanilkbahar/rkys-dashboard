@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import type { TenantModuleKey } from "@/lib/settings/modules";
 
 import { LogoutMenuItem } from "./logout-menu-item";
 import { SidebarNav } from "./sidebar-nav";
@@ -22,10 +23,12 @@ import { SidebarNav } from "./sidebar-nav";
 export function AdminShell({
   tenantLabel,
   role,
+  enabledModules,
   children,
 }: {
   tenantLabel: string;
   role: string;
+  enabledModules: TenantModuleKey[];
   children: ReactNode;
 }) {
   const t = useTranslations("admin");
@@ -35,7 +38,7 @@ export function AdminShell({
     <div className="flex min-h-dvh flex-col lg:flex-row">
       <aside className="hidden w-60 shrink-0 border-r border-border bg-card lg:flex lg:flex-col">
         <div className="px-4 py-4 text-sm font-semibold">RKYS Dashboard</div>
-        <SidebarNav />
+        <SidebarNav enabledModules={enabledModules} />
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
@@ -52,7 +55,7 @@ export function AdminShell({
               <SheetHeader className="px-4 py-4 text-left">
                 <SheetTitle>RKYS Dashboard</SheetTitle>
               </SheetHeader>
-              <SidebarNav onNavigate={() => setMobileNavOpen(false)} />
+              <SidebarNav onNavigate={() => setMobileNavOpen(false)} enabledModules={enabledModules} />
             </SheetContent>
           </Sheet>
 

@@ -24,6 +24,7 @@
       "menu": "Menü",
       "tables": "Masalar",
       "staff": "Personel",
+      "reservations": "Rezervasyon",
       "settings": "Ayarlar",
       "menuOpen": "Menüyü aç"
     },
@@ -206,6 +207,88 @@
         "last_owner": "Son sahip düşürülemez veya pasif yapılamaz.",
         "unknown": "Kaydedilemedi, tekrar deneyin.",
         "invalid_pin": "PIN 4-8 haneli rakam olmalı."
+      }
+    },
+    "settings": {
+      "title": "Ayarlar",
+      "order": {
+        "title": "Sipariş Ayarları",
+        "orderMode": "Sipariş Modu",
+        "orderModeDirect": "Doğrudan",
+        "orderModeApproval": "Onaylı",
+        "sessionTimeout": "Oturum Zaman Aşımı (dk)",
+        "save": "Kaydet"
+      },
+      "business": {
+        "title": "İşletme Ayarları",
+        "currency": "Para Birimi",
+        "timezone": "Saat Dilimi",
+        "ownerOnlyHint": "Bu ayarları yalnızca işletme sahibi değiştirebilir.",
+        "save": "Kaydet"
+      },
+      "callTypes": {
+        "title": "Çağrı Tipleri",
+        "nameTr": "Ad (Türkçe)",
+        "nameEn": "Ad (İngilizce)",
+        "active": "Aktif",
+        "system": "Sistem",
+        "add": "+ Çağrı Tipi Ekle",
+        "empty": "Henüz çağrı tipi yok.",
+        "save": "Kaydet"
+      },
+      "languages": {
+        "title": "Diller",
+        "default": "Varsayılan",
+        "setDefault": "Varsayılan Yap",
+        "tr": "Türkçe",
+        "en": "İngilizce"
+      },
+      "tips": {
+        "title": "Bahşiş Çipleri",
+        "label": "Etiket",
+        "percentage": "Yüzde (%)",
+        "active": "Aktif",
+        "add": "+ Bahşiş Çipi Ekle",
+        "empty": "Henüz bahşiş çipi yok.",
+        "save": "Kaydet"
+      },
+      "rating": {
+        "title": "Değerlendirme",
+        "enable": "Değerlendirme toplamayı etkinleştir",
+        "googleUrl": "Google Değerlendirme Bağlantısı",
+        "save": "Kaydet"
+      },
+      "theme": {
+        "title": "Tema",
+        "current": "Geçerli tema",
+        "comingSoon": "Diğer temalar Faz 6'da eklenecek."
+      },
+      "modules": {
+        "title": "Modüller",
+        "keys": {
+          "pos_cash": "Kasa",
+          "inventory": "Stok Yönetimi",
+          "recipes": "Reçeteler",
+          "crm_loyalty": "CRM & Sadakat",
+          "campaigns": "Kampanyalar",
+          "gift_cards": "Hediye Kartları",
+          "pickup": "Gel-Al",
+          "delivery": "Paket Servis",
+          "courier": "Kurye",
+          "marketplace": "Pazaryeri Entegrasyonu",
+          "reservations": "Rezervasyon",
+          "kiosk": "Kiosk",
+          "staff_scheduling": "Personel Vardiya Planlama",
+          "accounting_export": "Muhasebe Aktarımı",
+          "api_access": "API Erişimi"
+        }
+      },
+      "errors": {
+        "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
+        "forbidden": "Bu işlem için yetkiniz yok.",
+        "not_found": "Kayıt bulunamadı.",
+        "last_locale": "En az bir dil etkin kalmalı.",
+        "unknown": "Kaydedilemedi, tekrar deneyin."
       }
     }
   },

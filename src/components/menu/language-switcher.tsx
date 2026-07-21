@@ -12,7 +12,7 @@ function setLocaleCookie(nextLocale: Locale) {
   document.cookie = `${LOCALE_COOKIE}=${nextLocale}; path=/; max-age=31536000; samesite=lax`;
 }
 
-export function LanguageSwitcher() {
+export function LanguageSwitcher({ enabledLocales = SUPPORTED_LOCALES }: { enabledLocales?: readonly Locale[] }) {
   const locale = useLocale();
   const [isPending, startTransition] = useTransition();
 
@@ -24,9 +24,13 @@ export function LanguageSwitcher() {
     });
   }
 
+  if (enabledLocales.length <= 1) {
+    return null;
+  }
+
   return (
     <div className="flex gap-1" role="group" aria-label="language">
-      {SUPPORTED_LOCALES.map((code) => (
+      {enabledLocales.map((code) => (
         <button
           key={code}
           type="button"

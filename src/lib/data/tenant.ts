@@ -5,6 +5,7 @@ import { headers } from "next/headers";
 export type CurrentTenant = {
   id: string;
   slug: string;
+  currency: string;
 };
 
 /**
@@ -16,10 +17,11 @@ export async function getCurrentTenant(): Promise<CurrentTenant | null> {
   const headerStore = await headers();
   const id = headerStore.get("x-rkys-tenant-id");
   const slug = headerStore.get("x-rkys-tenant-slug");
+  const currency = headerStore.get("x-rkys-tenant-currency");
 
-  if (!id || !slug) {
+  if (!id || !slug || !currency) {
     return null;
   }
 
-  return { id, slug };
+  return { id, slug, currency };
 }
