@@ -117,6 +117,46 @@
         "uploading": "Yükleniyor...",
         "chooseFromGallery": "Galeriden Seç"
       }
+    },
+    "tables": {
+      "title": "Masalar",
+      "zones": {
+        "title": "Bölgeler",
+        "name": "Bölge adı",
+        "add": "+ Bölge Ekle",
+        "empty": "Henüz bölge yok.",
+        "noZone": "Bölgesiz"
+      },
+      "table": {
+        "title": "Masalar",
+        "label": "Masa adı",
+        "zone": "Bölge",
+        "active": "Aktif",
+        "add": "+ Masa Ekle",
+        "empty": "Henüz masa yok.",
+        "showQr": "QR Göster",
+        "regenerateQr": "QR'ı Yenile",
+        "regenerateConfirm": "Yeni QR oluşturulursa eski fiziksel QR kod geçersiz olur. Devam edilsin mi?"
+      },
+      "genericQr": {
+        "title": "Genel QR Kodları",
+        "label": "Etiket",
+        "add": "+ Genel QR Ekle",
+        "empty": "Henüz genel QR yok."
+      },
+      "qr": {
+        "download": "PNG İndir",
+        "print": "Yazdır",
+        "close": "Kapat",
+        "oneTimeWarning": "Bu kod bir daha gösterilemez — kaybederseniz yeniden oluşturmanız gerekir, eski fiziksel QR geçersiz olur."
+      },
+      "errors": {
+        "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
+        "forbidden": "Bu işlem için yetkiniz yok.",
+        "not_found": "Kayıt bulunamadı.",
+        "unknown": "Kaydedilemedi, tekrar deneyin.",
+        "required": "Bu alan zorunlu."
+      }
     }
   },
   "waiter": {

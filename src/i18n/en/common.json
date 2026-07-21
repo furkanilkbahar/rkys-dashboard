@@ -117,6 +117,46 @@
         "uploading": "Uploading...",
         "chooseFromGallery": "Choose from Gallery"
       }
+    },
+    "tables": {
+      "title": "Tables",
+      "zones": {
+        "title": "Zones",
+        "name": "Zone name",
+        "add": "+ Add Zone",
+        "empty": "No zones yet.",
+        "noZone": "No zone"
+      },
+      "table": {
+        "title": "Tables",
+        "label": "Table name",
+        "zone": "Zone",
+        "active": "Active",
+        "add": "+ Add Table",
+        "empty": "No tables yet.",
+        "showQr": "Show QR",
+        "regenerateQr": "Regenerate QR",
+        "regenerateConfirm": "Regenerating invalidates the old physical QR code. Continue?"
+      },
+      "genericQr": {
+        "title": "Generic QR Codes",
+        "label": "Label",
+        "add": "+ Add Generic QR",
+        "empty": "No generic QR codes yet."
+      },
+      "qr": {
+        "download": "Download PNG",
+        "print": "Print",
+        "close": "Close",
+        "oneTimeWarning": "This code cannot be shown again — if you lose it, you'll need to regenerate it, which invalidates the old physical QR code."
+      },
+      "errors": {
+        "invalid_input": "Please check the information you entered.",
+        "forbidden": "You don't have permission for this action.",
+        "not_found": "Record not found.",
+        "unknown": "Could not save, please try again.",
+        "required": "This field is required."
+      }
     }
   },
   "waiter": {

@@ -17,11 +17,11 @@ test("owner girişiyle admin nav kabuğu görünür ve bölümler arası geçiş
   await expect(page.getByRole("link", { name: "Personel" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Ayarlar" })).toBeVisible();
 
-  // Masalar Adım 4'e kadar placeholder kalıyor — nav geçişini bu bölümle
-  // doğruluyoruz (Menü Adım 1'den beri gerçek içerik, kendi testi
-  // menu-crud.spec.ts'te).
-  await page.getByRole("link", { name: "Masalar" }).click();
-  await expect(page).toHaveURL(/\/admin\/tables$/);
+  // Personel Adım 5'e kadar placeholder kalıyor — nav geçişini bu bölümle
+  // doğruluyoruz (Menü Adım 1'den, Masalar Adım 4'ten beri gerçek içerik,
+  // kendi testleri menu-crud.spec.ts / table-qr-flow.spec.ts'te).
+  await page.getByRole("link", { name: "Personel" }).click();
+  await expect(page).toHaveURL(/\/admin\/staff$/);
   await expect(page.getByText("Bu bölüm bir sonraki adımda geliyor")).toBeVisible();
 });
 
