@@ -20,6 +20,7 @@ import type {
   AdminLocale,
   AdminModule,
   AdminRatingSettings,
+  AdminReasonCode,
   AdminTenantSettings,
   AdminTipPreset,
 } from "@/lib/data/adminSettings";
@@ -31,6 +32,7 @@ import {
   callTypeFormSchema,
   orderSettingsFormSchema,
   ratingSettingsFormSchema,
+  reasonCodeFormSchema,
   tipPresetFormSchema,
   type SettingsActionResult,
 } from "@/lib/settings/schemas";
@@ -40,6 +42,8 @@ type Actions = {
   updateBusinessSettings: (input: unknown) => Promise<SettingsActionResult>;
   createCallType: (input: unknown) => Promise<SettingsActionResult>;
   updateCallType: (callTypeId: string, input: unknown) => Promise<SettingsActionResult>;
+  createReasonCode: (input: unknown) => Promise<SettingsActionResult>;
+  updateReasonCode: (reasonCodeId: string, input: unknown) => Promise<SettingsActionResult>;
   toggleLocale: (input: unknown) => Promise<SettingsActionResult>;
   setDefaultLocale: (locale: string) => Promise<SettingsActionResult>;
   createTipPreset: (input: unknown) => Promise<SettingsActionResult>;
@@ -289,6 +293,133 @@ function CallTypesCard({
           <div className="flex flex-col gap-1">
             <Label htmlFor="new-call-type-en">{t("nameEn")}</Label>
             <Input id="new-call-type-en" className="w-32" {...register("nameEn")} />
+          </div>
+          <Controller control={control} name="isActive" render={({ field }) => <Switch checked={field.value} onCheckedChange={field.onChange} />} />
+          <Button type="submit" size="sm">
+            {t("add")}
+          </Button>
+          {error && <p className="text-xs text-destructive">{error}</p>}
+        </form>
+      </CardContent>
+    </Card>
+  );
+}
+
+function ReasonCodeRow({ reasonCode, updateReasonCode }: { reasonCode: AdminReasonCode; updateReasonCode: Actions["updateReasonCode"] }) {
+  const t = useTranslations("admin.settings.reasonCodes");
+  const tErrors = useTranslations("admin.settings.errors");
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const { register, control, handleSubmit } = useForm({
+    resolver: standardSchemaResolver(reasonCodeFormSchema),
+    defaultValues: {
+      category: reasonCode.category,
+      nameTr: reasonCode.nameTr,
+      nameEn: reasonCode.nameEn,
+      isActive: reasonCode.isActive,
+    },
+  });
+
+  async function onSubmit(values: { category: "comp" | "refund" | "cancel"; nameTr: string; nameEn: string; isActive: boolean }) {
+    setError(null);
+    const result = await updateReasonCode(reasonCode.id, values);
+    if (!result.ok) {
+      setError(tErrors(result.error));
+      return;
+    }
+    router.refresh();
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-wrap items-end gap-2 rounded-md border border-border p-2">
+      <Badge variant="secondary">{t(`category.${reasonCode.category}`)}</Badge>
+      <div className="flex flex-col gap-1">
+        <Label htmlFor={`reason-code-tr-${reasonCode.id}`}>{t("nameTr")}</Label>
+        <Input id={`reason-code-tr-${reasonCode.id}`} className="w-32" {...register("nameTr")} />
+      </div>
+      <div className="flex flex-col gap-1">
+        <Label htmlFor={`reason-code-en-${reasonCode.id}`}>{t("nameEn")}</Label>
+        <Input id={`reason-code-en-${reasonCode.id}`} className="w-32" {...register("nameEn")} />
+      </div>
+      <div className="flex items-center gap-2">
+        <Controller control={control} name="isActive" render={({ field }) => <Switch checked={field.value} onCheckedChange={field.onChange} />} />
+        <Label>{t("active")}</Label>
+      </div>
+      <Button type="submit" size="sm">
+        {t("save")}
+      </Button>
+      {error && <p className="text-xs text-destructive">{error}</p>}
+    </form>
+  );
+}
+
+function ReasonCodesCard({
+  reasonCodes,
+  createReasonCode,
+  updateReasonCode,
+}: {
+  reasonCodes: AdminReasonCode[];
+  createReasonCode: Actions["createReasonCode"];
+  updateReasonCode: Actions["updateReasonCode"];
+}) {
+  const t = useTranslations("admin.settings.reasonCodes");
+  const tErrors = useTranslations("admin.settings.errors");
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const { register, control, handleSubmit, reset } = useForm({
+    resolver: standardSchemaResolver(reasonCodeFormSchema),
+    defaultValues: { category: "comp" as const, nameTr: "", nameEn: "", isActive: true },
+  });
+
+  async function onSubmit(values: { category: "comp" | "refund" | "cancel"; nameTr: string; nameEn: string; isActive: boolean }) {
+    setError(null);
+    const result = await createReasonCode(values);
+    if (!result.ok) {
+      setError(tErrors(result.error));
+      return;
+    }
+    reset({ category: "comp", nameTr: "", nameEn: "", isActive: true });
+    router.refresh();
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base">{t("title")}</CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-3">
+        {reasonCodes.length === 0 && <p className="text-sm text-muted-foreground">{t("empty")}</p>}
+        {reasonCodes.map((reasonCode) => (
+          <ReasonCodeRow key={reasonCode.id} reasonCode={reasonCode} updateReasonCode={updateReasonCode} />
+        ))}
+
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-wrap items-end gap-2">
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="new-reason-code-category">{t("category.label")}</Label>
+            <Controller
+              control={control}
+              name="category"
+              render={({ field }) => (
+                <Select value={field.value} onValueChange={(v) => v && field.onChange(v)}>
+                  <SelectTrigger id="new-reason-code-category" className="w-32" aria-label={t("category.label")}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="comp">{t("category.comp")}</SelectItem>
+                    <SelectItem value="refund">{t("category.refund")}</SelectItem>
+                    <SelectItem value="cancel">{t("category.cancel")}</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="new-reason-code-tr">{t("nameTr")}</Label>
+            <Input id="new-reason-code-tr" className="w-32" {...register("nameTr")} />
+          </div>
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="new-reason-code-en">{t("nameEn")}</Label>
+            <Input id="new-reason-code-en" className="w-32" {...register("nameEn")} />
           </div>
           <Controller control={control} name="isActive" render={({ field }) => <Switch checked={field.value} onCheckedChange={field.onChange} />} />
           <Button type="submit" size="sm">
@@ -566,6 +697,7 @@ export function SettingsManager({
   isOwner,
   settings,
   callTypes,
+  reasonCodes,
   locales,
   tipPresets,
   ratingSettings,
@@ -575,6 +707,7 @@ export function SettingsManager({
   isOwner: boolean;
   settings: AdminTenantSettings;
   callTypes: AdminCallType[];
+  reasonCodes: AdminReasonCode[];
   locales: AdminLocale[];
   tipPresets: AdminTipPreset[];
   ratingSettings: AdminRatingSettings;
@@ -590,6 +723,7 @@ export function SettingsManager({
       <OrderSettingsCard settings={settings} updateOrderSettings={actions.updateOrderSettings} />
       <BusinessSettingsCard settings={settings} isOwner={isOwner} updateBusinessSettings={actions.updateBusinessSettings} />
       <CallTypesCard callTypes={callTypes} createCallType={actions.createCallType} updateCallType={actions.updateCallType} />
+      <ReasonCodesCard reasonCodes={reasonCodes} createReasonCode={actions.createReasonCode} updateReasonCode={actions.updateReasonCode} />
       <LanguagesCard locales={locales} toggleLocale={actions.toggleLocale} setDefaultLocale={actions.setDefaultLocale} />
       <TipPresetsCard presets={tipPresets} createTipPreset={actions.createTipPreset} updateTipPreset={actions.updateTipPreset} />
       <RatingSettingsCard ratingSettings={ratingSettings} updateRatingSettings={actions.updateRatingSettings} />

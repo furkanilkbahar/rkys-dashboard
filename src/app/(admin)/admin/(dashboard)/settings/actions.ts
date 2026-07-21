@@ -12,6 +12,7 @@ import {
   moduleToggleSchema,
   orderSettingsFormSchema,
   ratingSettingsFormSchema,
+  reasonCodeFormSchema,
   tipPresetFormSchema,
   type SettingsActionResult,
 } from "@/lib/settings/schemas";
@@ -105,6 +106,66 @@ export async function updateCallType(callTypeId: string, input: unknown): Promis
     [
       { tenant_id: actor.tenantId, entity_type: "call_type", entity_id: callTypeId, locale: "tr", field: "name", value: parsed.data.nameTr },
       { tenant_id: actor.tenantId, entity_type: "call_type", entity_id: callTypeId, locale: "en", field: "name", value: parsed.data.nameEn },
+    ],
+    { onConflict: "entity_type,entity_id,locale,field" },
+  );
+
+  revalidatePath("/admin/settings");
+  return { ok: true };
+}
+
+export async function createReasonCode(input: unknown): Promise<SettingsActionResult> {
+  const actor = await requireStaffActor();
+  if (!actor) return { ok: false, error: "forbidden" };
+
+  const parsed = reasonCodeFormSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: "invalid_input" };
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("reason_codes")
+    .insert({
+      tenant_id: actor.tenantId,
+      category: parsed.data.category,
+      key: randomUUID(),
+      is_active: parsed.data.isActive,
+    })
+    .select("id")
+    .single();
+
+  if (error || !data) return { ok: false, error: "unknown" };
+
+  await supabase.from("content_translations").upsert(
+    [
+      { tenant_id: actor.tenantId, entity_type: "reason_code", entity_id: data.id, locale: "tr", field: "name", value: parsed.data.nameTr },
+      { tenant_id: actor.tenantId, entity_type: "reason_code", entity_id: data.id, locale: "en", field: "name", value: parsed.data.nameEn },
+    ],
+    { onConflict: "entity_type,entity_id,locale,field" },
+  );
+
+  revalidatePath("/admin/settings");
+  return { ok: true };
+}
+
+export async function updateReasonCode(reasonCodeId: string, input: unknown): Promise<SettingsActionResult> {
+  const actor = await requireStaffActor();
+  if (!actor) return { ok: false, error: "forbidden" };
+
+  const parsed = reasonCodeFormSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: "invalid_input" };
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("reason_codes")
+    .update({ is_active: parsed.data.isActive })
+    .eq("id", reasonCodeId)
+    .eq("tenant_id", actor.tenantId);
+  if (error) return { ok: false, error: "unknown" };
+
+  await supabase.from("content_translations").upsert(
+    [
+      { tenant_id: actor.tenantId, entity_type: "reason_code", entity_id: reasonCodeId, locale: "tr", field: "name", value: parsed.data.nameTr },
+      { tenant_id: actor.tenantId, entity_type: "reason_code", entity_id: reasonCodeId, locale: "en", field: "name", value: parsed.data.nameEn },
     ],
     { onConflict: "entity_type,entity_id,locale,field" },
   );

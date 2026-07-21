@@ -21,6 +21,15 @@ export type AdminCallType = {
   nameEn: string;
 };
 
+export type AdminReasonCode = {
+  id: string;
+  category: "comp" | "refund" | "cancel";
+  key: string;
+  isActive: boolean;
+  nameTr: string;
+  nameEn: string;
+};
+
 export type AdminTipPreset = {
   id: string;
   label: string;
@@ -99,6 +108,41 @@ export async function getAdminCallTypes(tenantId: string): Promise<AdminCallType
     isActive: c.is_active,
     nameTr: nameFor(c.id, "tr"),
     nameEn: nameFor(c.id, "en"),
+  }));
+}
+
+export async function getAdminReasonCodes(tenantId: string): Promise<AdminReasonCode[]> {
+  const supabase = await createClient();
+  const { data: reasonCodes } = await supabase
+    .from("reason_codes")
+    .select("id, category, key, is_active")
+    .eq("tenant_id", tenantId)
+    .order("display_order");
+
+  if (!reasonCodes || reasonCodes.length === 0) {
+    return [];
+  }
+
+  const { data: translations } = await supabase
+    .from("content_translations")
+    .select("entity_id, locale, value")
+    .eq("entity_type", "reason_code")
+    .eq("field", "name")
+    .in(
+      "entity_id",
+      reasonCodes.map((r) => r.id),
+    );
+
+  const nameFor = (entityId: string, l: Locale) =>
+    translations?.find((t) => t.entity_id === entityId && t.locale === l)?.value ?? "";
+
+  return reasonCodes.map((r) => ({
+    id: r.id,
+    category: r.category as "comp" | "refund" | "cancel",
+    key: r.key,
+    isActive: r.is_active,
+    nameTr: nameFor(r.id, "tr"),
+    nameEn: nameFor(r.id, "en"),
   }));
 }
 

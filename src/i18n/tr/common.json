@@ -46,7 +46,26 @@
         "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
         "forbidden": "Bu işlem için yetkiniz yok.",
         "not_open": "Bu hesap artık aktif değil.",
-        "unknown": "Kaydedilemedi, tekrar deneyin."
+        "unknown": "Kaydedilemedi, tekrar deneyin.",
+        "exceeds_subtotal": "İkram tutarı sipariş toplamını aşamaz.",
+        "not_refundable": "Bu ödeme iade edilemez.",
+        "provider_failed": "Sağlayıcıdan iade alınamadı, tekrar deneyin."
+      },
+      "comp": {
+        "title": "İkram / İndirim",
+        "addButton": "+ İkram Ekle",
+        "amount": "Tutar",
+        "reason": "Sebep",
+        "confirm": "Uygula",
+        "applied": "İkram uygulandı"
+      },
+      "refund": {
+        "recentTitle": "Son Ödemeler",
+        "empty": "Henüz ödeme yok.",
+        "button": "İade Et",
+        "reason": "Sebep",
+        "confirm": "İadeyi Onayla",
+        "refunded": "İade edildi"
       }
     },
     "order": {
@@ -375,6 +394,21 @@
         "not_found": "Kayıt bulunamadı.",
         "last_locale": "En az bir dil etkin kalmalı.",
         "unknown": "Kaydedilemedi, tekrar deneyin."
+      },
+      "reasonCodes": {
+        "title": "Sebep Kodları",
+        "nameTr": "Ad (Türkçe)",
+        "nameEn": "Ad (İngilizce)",
+        "active": "Aktif",
+        "add": "+ Sebep Kodu Ekle",
+        "empty": "Henüz sebep kodu yok.",
+        "save": "Kaydet",
+        "category": {
+          "label": "Kategori",
+          "comp": "İkram/İndirim",
+          "refund": "İade",
+          "cancel": "İptal"
+        }
       }
     },
     "onboarding": {

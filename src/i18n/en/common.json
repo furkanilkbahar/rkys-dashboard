@@ -46,7 +46,26 @@
         "invalid_input": "Please check the information you entered.",
         "forbidden": "You don't have permission for this action.",
         "not_open": "This bill is no longer active.",
-        "unknown": "Could not save, please try again."
+        "unknown": "Could not save, please try again.",
+        "exceeds_subtotal": "Comp amount cannot exceed the order total.",
+        "not_refundable": "This payment cannot be refunded.",
+        "provider_failed": "Could not process refund with the provider, please try again."
+      },
+      "comp": {
+        "title": "Comp / Discount",
+        "addButton": "+ Add Comp",
+        "amount": "Amount",
+        "reason": "Reason",
+        "confirm": "Apply",
+        "applied": "Comp applied"
+      },
+      "refund": {
+        "recentTitle": "Recent Payments",
+        "empty": "No payments yet.",
+        "button": "Refund",
+        "reason": "Reason",
+        "confirm": "Confirm Refund",
+        "refunded": "Refunded"
       }
     },
     "order": {
@@ -375,6 +394,21 @@
         "not_found": "Record not found.",
         "last_locale": "At least one language must stay enabled.",
         "unknown": "Could not save, please try again."
+      },
+      "reasonCodes": {
+        "title": "Reason Codes",
+        "nameTr": "Name (Turkish)",
+        "nameEn": "Name (English)",
+        "active": "Active",
+        "add": "+ Add Reason Code",
+        "empty": "No reason codes yet.",
+        "save": "Save",
+        "category": {
+          "label": "Category",
+          "comp": "Comp/Discount",
+          "refund": "Refund",
+          "cancel": "Cancel"
+        }
       }
     },
     "onboarding": {

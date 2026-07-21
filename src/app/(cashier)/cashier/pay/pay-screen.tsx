@@ -11,7 +11,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { AdminTipPreset } from "@/lib/data/adminSettings";
-import type { SessionBalance } from "@/lib/data/cashier";
+import type { RecentPayment, SessionBalance } from "@/lib/data/cashier";
+import type { ReasonCodeOption } from "@/lib/data/reasonCodes";
+import type { SessionOrder } from "@/lib/data/sessionOrders";
+import type { RecordCompResult, RefundPaymentResult } from "@/lib/cashier/comp-refund-schemas";
 import type { RecordPaymentResult } from "@/lib/cashier/payment-schemas";
 import { formatPrice } from "@/lib/utils/currency";
 
@@ -28,16 +31,185 @@ function splitEqually(totalMinor: number, count: number): number[] {
   return Array.from({ length: count }, (_, i) => base + (i < remainder ? 1 : 0));
 }
 
+function CompForm({
+  order,
+  currency,
+  compReasons,
+  recordComp,
+}: {
+  order: SessionOrder;
+  currency: string;
+  compReasons: ReasonCodeOption[];
+  recordComp: (input: unknown) => Promise<RecordCompResult>;
+}) {
+  const t = useTranslations("cashier.pay.comp");
+  const tErrors = useTranslations("cashier.pay.errors");
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [amount, setAmount] = useState("");
+  const [reasonCodeId, setReasonCodeId] = useState(compReasons[0]?.id ?? "");
+  const [error, setError] = useState<string | null>(null);
+  const [done, setDone] = useState(false);
+
+  async function submit() {
+    setError(null);
+    const amountMinor = Math.round(parseFloat(amount.replace(",", ".")) * 100);
+    if (!amountMinor || amountMinor <= 0 || !reasonCodeId) {
+      setError(tErrors("invalid_input"));
+      return;
+    }
+    const result = await recordComp({ orderId: order.id, amountMinor, reasonCodeId });
+    if (!result.ok) {
+      setError(tErrors(result.error));
+      return;
+    }
+    setDone(true);
+    router.refresh();
+  }
+
+  if (done) {
+    return <Badge variant="secondary">{t("applied")}</Badge>;
+  }
+
+  if (!open) {
+    return (
+      <Button type="button" size="sm" variant="outline" onClick={() => setOpen(true)}>
+        {t("addButton")}
+      </Button>
+    );
+  }
+
+  return (
+    <div className="flex flex-wrap items-end gap-2">
+      <div className="flex flex-col gap-1">
+        <Label htmlFor={`comp-amount-${order.id}`}>{t("amount")}</Label>
+        <Input
+          id={`comp-amount-${order.id}`}
+          className="w-24"
+          inputMode="decimal"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          placeholder={formatPrice(order.subtotalMinor, currency)}
+        />
+      </div>
+      <div className="flex flex-col gap-1">
+        <Label htmlFor={`comp-reason-${order.id}`}>{t("reason")}</Label>
+        <Select value={reasonCodeId} onValueChange={(v) => v && setReasonCodeId(v)}>
+          <SelectTrigger id={`comp-reason-${order.id}`} className="w-36" aria-label={t("reason")}>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {compReasons.map((r) => (
+              <SelectItem key={r.id} value={r.id}>
+                {r.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      <Button type="button" size="sm" onClick={submit}>
+        {t("confirm")}
+      </Button>
+      {error && <p className="text-xs text-destructive">{error}</p>}
+    </div>
+  );
+}
+
+function RecentPaymentRow({
+  payment,
+  currency,
+  refundReasons,
+  refundPayment,
+}: {
+  payment: RecentPayment;
+  currency: string;
+  refundReasons: ReasonCodeOption[];
+  refundPayment: (input: unknown) => Promise<RefundPaymentResult>;
+}) {
+  const t = useTranslations("cashier.pay.refund");
+  const tErrors = useTranslations("cashier.pay.errors");
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [reasonCodeId, setReasonCodeId] = useState(refundReasons[0]?.id ?? "");
+  const [error, setError] = useState<string | null>(null);
+
+  async function submit() {
+    setError(null);
+    if (!reasonCodeId) {
+      setError(tErrors("invalid_input"));
+      return;
+    }
+    const result = await refundPayment({ paymentId: payment.id, reasonCodeId });
+    if (!result.ok) {
+      setError(tErrors(result.error));
+      return;
+    }
+    router.refresh();
+  }
+
+  return (
+    <div className="flex flex-col gap-2 rounded-md border border-border p-2 text-sm">
+      <div className="flex items-center justify-between gap-2">
+        <span>
+          {payment.tableLabel} — {formatPrice(payment.amountMinor + payment.tipAmountMinor, currency)}
+        </span>
+        {payment.status === "refunded" ? (
+          <Badge variant="secondary">{t("refunded")}</Badge>
+        ) : open ? null : (
+          <Button type="button" size="sm" variant="outline" onClick={() => setOpen(true)}>
+            {t("button")}
+          </Button>
+        )}
+      </div>
+      {open && payment.status === "completed" && (
+        <div className="flex flex-wrap items-end gap-2">
+          <div className="flex flex-col gap-1">
+            <Label htmlFor={`refund-reason-${payment.id}`}>{t("reason")}</Label>
+            <Select value={reasonCodeId} onValueChange={(v) => v && setReasonCodeId(v)}>
+              <SelectTrigger id={`refund-reason-${payment.id}`} className="w-36" aria-label={t("reason")}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {refundReasons.map((r) => (
+                  <SelectItem key={r.id} value={r.id}>
+                    {r.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <Button type="button" size="sm" onClick={submit}>
+            {t("confirm")}
+          </Button>
+          {error && <p className="text-xs text-destructive">{error}</p>}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function PayScreen({
   currency,
   sessions,
+  ordersBySession,
   tipPresets,
+  compReasons,
+  refundReasons,
+  recentPayments,
   recordPayment,
+  recordComp,
+  refundPayment,
 }: {
   currency: string;
   sessions: SessionBalance[];
+  ordersBySession: Record<string, SessionOrder[]>;
   tipPresets: AdminTipPreset[];
+  compReasons: ReasonCodeOption[];
+  refundReasons: ReasonCodeOption[];
+  recentPayments: RecentPayment[];
   recordPayment: (input: unknown) => Promise<RecordPaymentResult>;
+  recordComp: (input: unknown) => Promise<RecordCompResult>;
+  refundPayment: (input: unknown) => Promise<RefundPaymentResult>;
 }) {
   const t = useTranslations("cashier.pay");
   const router = useRouter();
@@ -133,6 +305,22 @@ export function PayScreen({
               {t("balance")}: {formatPrice(session.balanceMinor, currency)}
             </p>
 
+            {compReasons.length > 0 && (ordersBySession[session.tableSessionId]?.length ?? 0) > 0 && (
+              <div className="flex flex-col gap-2">
+                <Label>{t("comp.title")}</Label>
+                {ordersBySession[session.tableSessionId]
+                  .filter((o) => o.status !== "cancelled")
+                  .map((order) => (
+                    <div key={order.id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border p-2 text-sm">
+                      <span>
+                        {order.deviceLabel} — {formatPrice(order.subtotalMinor, currency)}
+                      </span>
+                      <CompForm order={order} currency={currency} compReasons={compReasons} recordComp={recordComp} />
+                    </div>
+                  ))}
+              </div>
+            )}
+
             {tipPresets.length > 0 && (
               <div className="flex flex-col gap-1">
                 <Label>{t("tip")}</Label>
@@ -215,6 +403,20 @@ export function PayScreen({
             ))}
             {error && <p className="text-xs text-destructive">{error}</p>}
             {allPaid && <p className="text-sm text-primary">{t("allPaid")}</p>}
+          </CardContent>
+        </Card>
+      )}
+
+      {refundReasons.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">{t("refund.recentTitle")}</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-2">
+            {recentPayments.length === 0 && <p className="text-sm text-muted-foreground">{t("refund.empty")}</p>}
+            {recentPayments.map((payment) => (
+              <RecentPaymentRow key={payment.id} payment={payment} currency={currency} refundReasons={refundReasons} refundPayment={refundPayment} />
+            ))}
           </CardContent>
         </Card>
       )}

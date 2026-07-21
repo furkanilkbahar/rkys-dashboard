@@ -6,12 +6,14 @@ import {
   getAdminLocales,
   getAdminModules,
   getAdminRatingSettings,
+  getAdminReasonCodes,
   getAdminTenantSettings,
   getAdminTipPresets,
 } from "@/lib/data/adminSettings";
 
 import {
   createCallType,
+  createReasonCode,
   createTipPreset,
   setDefaultLocale,
   toggleLocale,
@@ -20,6 +22,7 @@ import {
   updateCallType,
   updateOrderSettings,
   updateRatingSettings,
+  updateReasonCode,
   updateTipPreset,
 } from "./actions";
 import { SettingsManager } from "./settings-manager";
@@ -27,9 +30,10 @@ import { SettingsManager } from "./settings-manager";
 export default async function AdminSettingsPage() {
   const actor = await requireAdminActor();
 
-  const [settings, callTypes, locales, tipPresets, ratingSettings, modules] = await Promise.all([
+  const [settings, callTypes, reasonCodes, locales, tipPresets, ratingSettings, modules] = await Promise.all([
     getAdminTenantSettings(actor.tenantId),
     getAdminCallTypes(actor.tenantId),
+    getAdminReasonCodes(actor.tenantId),
     getAdminLocales(actor.tenantId),
     getAdminTipPresets(actor.tenantId),
     getAdminRatingSettings(actor.tenantId),
@@ -45,6 +49,7 @@ export default async function AdminSettingsPage() {
       isOwner={actor.role === "owner"}
       settings={settings}
       callTypes={callTypes}
+      reasonCodes={reasonCodes}
       locales={locales}
       tipPresets={tipPresets}
       ratingSettings={ratingSettings}
@@ -54,6 +59,8 @@ export default async function AdminSettingsPage() {
         updateBusinessSettings,
         createCallType,
         updateCallType,
+        createReasonCode,
+        updateReasonCode,
         toggleLocale,
         setDefaultLocale,
         createTipPreset,

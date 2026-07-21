@@ -30,6 +30,14 @@ export const callTypeFormSchema = z.object({
 });
 export type CallTypeFormInput = z.infer<typeof callTypeFormSchema>;
 
+export const reasonCodeFormSchema = z.object({
+  category: z.enum(["comp", "refund", "cancel"]),
+  nameTr: z.string().min(1, "required"),
+  nameEn: z.string().min(1, "required"),
+  isActive: z.boolean(),
+});
+export type ReasonCodeFormInput = z.infer<typeof reasonCodeFormSchema>;
+
 export const tipPresetFormSchema = z.object({
   label: z.string().min(1, "required"),
   percentage: z.coerce.number().int().min(1).max(100),

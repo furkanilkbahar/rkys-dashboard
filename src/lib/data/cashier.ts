@@ -103,7 +103,7 @@ export async function getActiveSessionBalances(tenantId: string, branchId: strin
   const [ordersRes, paymentsRes, checkCallsRes] = await Promise.all([
     supabase
       .from("orders")
-      .select("table_session_id, subtotal_minor")
+      .select("id, table_session_id, subtotal_minor")
       .in("table_session_id", sessionIds)
       .neq("status", "cancelled"),
     supabase
@@ -118,10 +118,21 @@ export async function getActiveSessionBalances(tenantId: string, branchId: strin
       .eq("status", "open"),
   ]);
 
+  const sessionByOrderId = new Map<string, string>();
   const subtotalBySession = new Map<string, number>();
   for (const row of ordersRes.data ?? []) {
+    sessionByOrderId.set(row.id, row.table_session_id);
     subtotalBySession.set(row.table_session_id, (subtotalBySession.get(row.table_session_id) ?? 0) + row.subtotal_minor);
   }
+
+  const orderIds = [...sessionByOrderId.keys()];
+  const compsRes = orderIds.length > 0 ? await supabase.from("comps").select("order_id, amount_minor").in("order_id", orderIds) : { data: [] };
+  const compedBySession = new Map<string, number>();
+  for (const row of compsRes.data ?? []) {
+    const sid = sessionByOrderId.get(row.order_id);
+    if (sid) compedBySession.set(sid, (compedBySession.get(sid) ?? 0) + row.amount_minor);
+  }
+
   const paidBySession = new Map<string, number>();
   for (const row of paymentsRes.data ?? []) {
     paidBySession.set(row.table_session_id, (paidBySession.get(row.table_session_id) ?? 0) + row.amount_minor);
@@ -132,7 +143,7 @@ export async function getActiveSessionBalances(tenantId: string, branchId: strin
 
   return sessions
     .map((s) => {
-      const subtotalMinor = subtotalBySession.get(s.id) ?? 0;
+      const subtotalMinor = (subtotalBySession.get(s.id) ?? 0) - (compedBySession.get(s.id) ?? 0);
       const paidMinor = paidBySession.get(s.id) ?? 0;
       return {
         tableSessionId: s.id,
@@ -145,6 +156,44 @@ export async function getActiveSessionBalances(tenantId: string, branchId: strin
     })
     .filter((s) => s.balanceMinor > 0)
     .sort((a, b) => Number(b.checkRequested) - Number(a.checkRequested));
+}
+
+export type RecentPayment = {
+  id: string;
+  tableLabel: string;
+  method: "cash" | "card_manual" | "online";
+  provider: string;
+  amountMinor: number;
+  tipAmountMinor: number;
+  status: "pending" | "completed" | "failed" | "refunded";
+  createdAt: string;
+};
+
+// İade akışı için son ödemeler (S11): şubenin en son N ödemesi, iade
+// düğmesinin hedefleyeceği liste. Gün sonu/raporlama Adım 6'da ayrı bir
+// business-date bazlı sorgu ile gelecek — burası yalnızca kasa ekranının
+// "son işlemler" görünümü.
+export async function getRecentPayments(tenantId: string, branchId: string, limit = 20): Promise<RecentPayment[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("payments")
+    .select("id, method, provider, amount_minor, tip_amount_minor, status, created_at, table_sessions(tables(label))")
+    .eq("tenant_id", tenantId)
+    .eq("branch_id", branchId)
+    .in("status", ["completed", "refunded"])
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  return (data ?? []).map((p) => ({
+    id: p.id,
+    tableLabel: p.table_sessions?.tables?.label ?? "?",
+    method: p.method as RecentPayment["method"],
+    provider: p.provider,
+    amountMinor: p.amount_minor,
+    tipAmountMinor: p.tip_amount_minor,
+    status: p.status as RecentPayment["status"],
+    createdAt: p.created_at,
+  }));
 }
 
 export type ClosedCashShift = {
