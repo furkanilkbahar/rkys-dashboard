@@ -496,6 +496,13 @@
       "checkRequested": "Check requested",
       "orderReady": "Your order is ready!",
       "enableSound": "Enable Sound",
+      "payOnline": "Pay by Card",
+      "payingOnline": "Redirecting...",
+      "payErrors": {
+        "no_session": "Your session was not found, please rescan the QR code.",
+        "nothing_to_pay": "There's nothing to pay.",
+        "unknown": "Could not start payment, please try again."
+      },
       "status": {
         "pending": "Awaiting approval",
         "approved": "Approved",
@@ -504,6 +511,13 @@
         "served": "Served",
         "cancelled": "Cancelled"
       }
+    },
+    "mockPayment": {
+      "title": "Mock Payment Page",
+      "disclaimer": "This is a test/mock payment screen — no real charge is made.",
+      "confirm": "Confirm Payment",
+      "processing": "Processing...",
+      "failed": "Payment could not be confirmed, please try again."
     }
   }
 }

@@ -496,6 +496,13 @@
       "checkRequested": "Hesap istendi",
       "orderReady": "Siparişiniz hazır!",
       "enableSound": "Sesi Aç",
+      "payOnline": "Kartla Öde",
+      "payingOnline": "Yönlendiriliyor...",
+      "payErrors": {
+        "no_session": "Oturumunuz bulunamadı, lütfen QR kodu tekrar okutun.",
+        "nothing_to_pay": "Ödenecek bir tutar yok.",
+        "unknown": "Ödeme başlatılamadı, tekrar deneyin."
+      },
       "status": {
         "pending": "Onay bekliyor",
         "approved": "Onaylandı",
@@ -504,6 +511,13 @@
         "served": "Servis edildi",
         "cancelled": "İptal edildi"
       }
+    },
+    "mockPayment": {
+      "title": "Sahte Ödeme Sayfası",
+      "disclaimer": "Bu bir test/mock ödeme ekranıdır — gerçek bir tahsilat yapılmaz.",
+      "confirm": "Ödemeyi Onayla",
+      "processing": "İşleniyor...",
+      "failed": "Ödeme onaylanamadı, tekrar deneyin."
     }
   }
 }

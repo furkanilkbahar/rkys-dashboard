@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 
 import { callWaiter } from "@/app/(menu)/masa/waiter-call-actions";
+import { startOnlinePayment } from "@/app/(menu)/masa/pay-actions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,6 +28,8 @@ export function SessionPanel({
   const [orders, setOrders] = useState(initialOrders);
   const [readyToast, setReadyToast] = useState(false);
   const [checkRequested, setCheckRequested] = useState(false);
+  const [paying, setPaying] = useState(false);
+  const [payError, setPayError] = useState<string | null>(null);
   const { unlocked, unlock } = useSoundUnlock();
   const unlockedRef = useRef(unlocked);
   useEffect(() => {
@@ -137,6 +140,18 @@ export function SessionPanel({
     };
   }, [tableSessionId, t]);
 
+  async function handlePayOnline() {
+    setPayError(null);
+    setPaying(true);
+    const result = await startOnlinePayment();
+    if (!result.ok) {
+      setPaying(false);
+      setPayError(t(`payErrors.${result.error}`));
+      return;
+    }
+    window.location.assign(result.checkoutUrl);
+  }
+
   async function handleRequestCheck() {
     const result = await callWaiter({ callTypeKey: "check" });
     if (result.ok) {
@@ -195,11 +210,17 @@ export function SessionPanel({
             </Card>
           ))}
 
-          <div className="flex items-center justify-between border-t border-border pt-3">
-            <p className="text-sm font-semibold">{t("subtotal", { amount: formatPrice(subtotalMinor, currency) })}</p>
-            <Button type="button" size="sm" disabled={checkRequested} onClick={handleRequestCheck}>
-              {checkRequested ? t("checkRequested") : t("requestCheck")}
+          <div className="flex flex-col gap-2 border-t border-border pt-3">
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-semibold">{t("subtotal", { amount: formatPrice(subtotalMinor, currency) })}</p>
+              <Button type="button" size="sm" disabled={checkRequested} onClick={handleRequestCheck}>
+                {checkRequested ? t("checkRequested") : t("requestCheck")}
+              </Button>
+            </div>
+            <Button type="button" size="sm" variant="outline" disabled={paying} onClick={handlePayOnline}>
+              {paying ? t("payingOnline") : t("payOnline")}
             </Button>
+            {payError && <p className="text-xs text-destructive">{payError}</p>}
           </div>
         </div>
       )}
