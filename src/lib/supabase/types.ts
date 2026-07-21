@@ -1498,7 +1498,9 @@ export type Database = {
           created_at: string
           currency: string
           id: string
+          logo_url: string | null
           name: string
+          onboarding_completed_at: string | null
           slug: string
           status: string
           timezone: string
@@ -1507,7 +1509,9 @@ export type Database = {
           created_at?: string
           currency?: string
           id?: string
+          logo_url?: string | null
           name: string
+          onboarding_completed_at?: string | null
           slug: string
           status?: string
           timezone?: string
@@ -1516,7 +1520,9 @@ export type Database = {
           created_at?: string
           currency?: string
           id?: string
+          logo_url?: string | null
           name?: string
+          onboarding_completed_at?: string | null
           slug?: string
           status?: string
           timezone?: string
@@ -1692,11 +1698,13 @@ export type Database = {
         Returns: string
       }
       cancel_order: { Args: { p_order_id: string }; Returns: undefined }
+      clear_demo_data: { Args: never; Returns: undefined }
       close_stale_table_sessions: { Args: never; Returns: undefined }
       close_table_session: {
         Args: { p_reason: string; p_table_session_id: string }
         Returns: undefined
       }
+      complete_onboarding: { Args: never; Returns: undefined }
       create_staff_device: {
         Args: { p_branch_id: string; p_label: string }
         Returns: string
@@ -1794,6 +1802,7 @@ export type Database = {
         Args: { p_currency: string; p_timezone: string }
         Returns: undefined
       }
+      update_tenant_logo: { Args: { p_logo_url: string }; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
