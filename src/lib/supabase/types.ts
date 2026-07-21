@@ -196,6 +196,162 @@ export type Database = {
           },
         ]
       }
+      cash_movements: {
+        Row: {
+          amount_minor: number
+          branch_id: string
+          cash_shift_id: string
+          created_at: string
+          created_by: string | null
+          id: string
+          movement_type: string
+          note: string | null
+          tenant_id: string
+        }
+        Insert: {
+          amount_minor: number
+          branch_id: string
+          cash_shift_id: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          movement_type: string
+          note?: string | null
+          tenant_id: string
+        }
+        Update: {
+          amount_minor?: number
+          branch_id?: string
+          cash_shift_id?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          movement_type?: string
+          note?: string | null
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cash_movements_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cash_movements_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "cash_movements_cash_shift_id_fkey"
+            columns: ["cash_shift_id"]
+            isOneToOne: false
+            referencedRelation: "cash_shifts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cash_movements_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cash_movements_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cash_shifts: {
+        Row: {
+          branch_id: string
+          closed_at: string | null
+          closed_by: string | null
+          counted_cash_minor: number | null
+          created_at: string
+          expected_cash_minor: number | null
+          id: string
+          opened_at: string
+          opened_by: string
+          opening_balance_minor: number
+          status: string
+          tenant_id: string
+          variance_minor: number | null
+        }
+        Insert: {
+          branch_id: string
+          closed_at?: string | null
+          closed_by?: string | null
+          counted_cash_minor?: number | null
+          created_at?: string
+          expected_cash_minor?: number | null
+          id?: string
+          opened_at?: string
+          opened_by: string
+          opening_balance_minor: number
+          status?: string
+          tenant_id: string
+          variance_minor?: number | null
+        }
+        Update: {
+          branch_id?: string
+          closed_at?: string | null
+          closed_by?: string | null
+          counted_cash_minor?: number | null
+          created_at?: string
+          expected_cash_minor?: number | null
+          id?: string
+          opened_at?: string
+          opened_by?: string
+          opening_balance_minor?: number
+          status?: string
+          tenant_id?: string
+          variance_minor?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cash_shifts_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cash_shifts_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "cash_shifts_closed_by_fkey"
+            columns: ["closed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cash_shifts_opened_by_fkey"
+            columns: ["opened_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cash_shifts_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       content_translations: {
         Row: {
           created_at: string
@@ -1306,6 +1462,7 @@ export type Database = {
           created_at: string
           id: string
           is_active: boolean
+          is_counter: boolean
           label: string
           qr_token_hash: string
           tenant_id: string
@@ -1316,6 +1473,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_active?: boolean
+          is_counter?: boolean
           label: string
           qr_token_hash: string
           tenant_id: string
@@ -1326,6 +1484,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_active?: boolean
+          is_counter?: boolean
           label?: string
           qr_token_hash?: string
           tenant_id?: string
@@ -1699,6 +1858,10 @@ export type Database = {
       }
       cancel_order: { Args: { p_order_id: string }; Returns: undefined }
       clear_demo_data: { Args: never; Returns: undefined }
+      close_shift: {
+        Args: { p_counted_cash_minor: number; p_shift_id: string }
+        Returns: undefined
+      }
       close_stale_table_sessions: { Args: never; Returns: undefined }
       close_table_session: {
         Args: { p_reason: string; p_table_session_id: string }
@@ -1744,6 +1907,19 @@ export type Database = {
       }
       open_or_get_active_table_session: {
         Args: { p_table_id: string }
+        Returns: string
+      }
+      open_shift: {
+        Args: { p_branch_id: string; p_opening_balance_minor: number }
+        Returns: string
+      }
+      record_cash_movement: {
+        Args: {
+          p_amount_minor: number
+          p_movement_type: string
+          p_note?: string
+          p_shift_id: string
+        }
         Returns: string
       }
       reject_cancellation_request: {
