@@ -26,12 +26,12 @@
 - [x] Müşteri oturum görünümü + hazır ses/titreşim
 
 ## Faz 2 — Admin Panel + Onboarding
-- [ ] Menü CRUD, drag&drop, çeviri editörü, kategori düzeni seçimi
-- [ ] Görsel yükleme + otomatik optimizasyon + hazır kütüphane
-- [ ] Masa/bölge + QR baskı şablonları (tema uyumlu, çoklu format)
-- [ ] Personel (roller, PIN, cihaz yetkilendirme, **izin bayrakları UI**), garson profili
-- [ ] Ayarlar: sipariş modu, timeout, çağrı tipleri, diller, para birimi, bahşiş çipleri, değerlendirme, tema, **Modül aç/kapa ekranı**
-- [ ] Onboarding: demo veri (toplu temizleme) / sıfırdan kur (+**modül seçimi adımı**)
+- [x] Menü CRUD, drag&drop, çeviri editörü, kategori düzeni seçimi
+- [x] Görsel yükleme + otomatik optimizasyon + hazır kütüphane
+- [x] Masa/bölge + QR baskı şablonları (tema uyumlu, çoklu format)
+- [x] Personel (roller, PIN, cihaz yetkilendirme, **izin bayrakları UI**), garson profili
+- [x] Ayarlar: sipariş modu, timeout, çağrı tipleri, diller, para birimi, bahşiş çipleri, değerlendirme, tema, **Modül aç/kapa ekranı**
+- [x] Onboarding: demo veri (toplu temizleme) / sıfırdan kur (+**modül seçimi adımı**)
 
 ## Faz 3 — Kasa + Ödeme + İade/İkram + Temel Raporlar
 - [ ] **Kasa modülü:** vardiya aç/kapa, nakit sayım/fark, `cash_movements`, **POS-lite sipariş girişi**, gün sonu (`day_closures`)
