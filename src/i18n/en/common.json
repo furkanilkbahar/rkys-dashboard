@@ -20,7 +20,34 @@
     "title": "Cashier",
     "nav": {
       "shift": "Shift",
-      "order": "New Order"
+      "order": "New Order",
+      "pay": "Take Payment"
+    },
+    "pay": {
+      "selectSession": "Select Bill",
+      "noBalances": "No active bills with a balance due.",
+      "checkRequested": "Check requested",
+      "checkoutTitle": "{table} — Payment",
+      "balance": "Balance",
+      "tip": "Tip",
+      "noTip": "No Tip",
+      "tipAmount": "Tip amount",
+      "splitCount": "Split Between",
+      "method": "Payment Method",
+      "cash": "Cash",
+      "cardManual": "Card (Manual)",
+      "startPaying": "Start Checkout",
+      "sharesTitle": "Payment Shares",
+      "share": "Share {index}",
+      "pay": "Pay",
+      "paid": "Paid",
+      "allPaid": "All shares paid, bill closed.",
+      "errors": {
+        "invalid_input": "Please check the information you entered.",
+        "forbidden": "You don't have permission for this action.",
+        "not_open": "This bill is no longer active.",
+        "unknown": "Could not save, please try again."
+      }
     },
     "order": {
       "selectTable": "Select Table",

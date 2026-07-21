@@ -70,6 +70,83 @@ export async function getShiftMovements(shiftId: string): Promise<CashMovement[]
   }));
 }
 
+export type SessionBalance = {
+  tableSessionId: string;
+  tableLabel: string;
+  subtotalMinor: number;
+  paidMinor: number;
+  balanceMinor: number;
+  checkRequested: boolean;
+};
+
+/**
+ * Kasa ödeme ekranının masa/oturum seçicisi: bakiyesi > 0 olan tüm aktif
+ * oturumlar (yalnız "Hesap İste" bekleyenler değil — personel istediği anda
+ * herhangi bir aktif hesabı kapatabilmeli), check-request'i olanlar üstte.
+ */
+export async function getActiveSessionBalances(tenantId: string, branchId: string): Promise<SessionBalance[]> {
+  const supabase = await createClient();
+
+  const { data: sessions } = await supabase
+    .from("table_sessions")
+    .select("id, tables(label)")
+    .eq("tenant_id", tenantId)
+    .eq("branch_id", branchId)
+    .eq("status", "active");
+
+  if (!sessions || sessions.length === 0) {
+    return [];
+  }
+
+  const sessionIds = sessions.map((s) => s.id);
+
+  const [ordersRes, paymentsRes, checkCallsRes] = await Promise.all([
+    supabase
+      .from("orders")
+      .select("table_session_id, subtotal_minor")
+      .in("table_session_id", sessionIds)
+      .neq("status", "cancelled"),
+    supabase
+      .from("payments")
+      .select("table_session_id, amount_minor")
+      .in("table_session_id", sessionIds)
+      .eq("status", "completed"),
+    supabase
+      .from("waiter_calls")
+      .select("table_session_id, call_types(key)")
+      .in("table_session_id", sessionIds)
+      .eq("status", "open"),
+  ]);
+
+  const subtotalBySession = new Map<string, number>();
+  for (const row of ordersRes.data ?? []) {
+    subtotalBySession.set(row.table_session_id, (subtotalBySession.get(row.table_session_id) ?? 0) + row.subtotal_minor);
+  }
+  const paidBySession = new Map<string, number>();
+  for (const row of paymentsRes.data ?? []) {
+    paidBySession.set(row.table_session_id, (paidBySession.get(row.table_session_id) ?? 0) + row.amount_minor);
+  }
+  const checkRequestedSessions = new Set(
+    (checkCallsRes.data ?? []).filter((row) => row.call_types?.key === "check").map((row) => row.table_session_id),
+  );
+
+  return sessions
+    .map((s) => {
+      const subtotalMinor = subtotalBySession.get(s.id) ?? 0;
+      const paidMinor = paidBySession.get(s.id) ?? 0;
+      return {
+        tableSessionId: s.id,
+        tableLabel: s.tables?.label ?? "?",
+        subtotalMinor,
+        paidMinor,
+        balanceMinor: subtotalMinor - paidMinor,
+        checkRequested: checkRequestedSessions.has(s.id),
+      };
+    })
+    .filter((s) => s.balanceMinor > 0)
+    .sort((a, b) => Number(b.checkRequested) - Number(a.checkRequested));
+}
+
 export type ClosedCashShift = {
   id: string;
   openingBalanceMinor: number;

@@ -20,6 +20,9 @@ export default async function CashierLayout({ children }: { children: React.Reac
             <Link href="/cashier/order" className="hover:text-foreground">
               {t("nav.order")}
             </Link>
+            <Link href="/cashier/pay" className="hover:text-foreground">
+              {t("nav.pay")}
+            </Link>
           </nav>
         </div>
         <div className="flex items-center gap-3">

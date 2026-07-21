@@ -20,7 +20,34 @@
     "title": "Kasa",
     "nav": {
       "shift": "Vardiya",
-      "order": "Sipariş Gir"
+      "order": "Sipariş Gir",
+      "pay": "Ödeme Al"
+    },
+    "pay": {
+      "selectSession": "Hesap Seç",
+      "noBalances": "Bakiyesi olan aktif hesap yok.",
+      "checkRequested": "Hesap istendi",
+      "checkoutTitle": "{table} — Ödeme",
+      "balance": "Bakiye",
+      "tip": "Bahşiş",
+      "noTip": "Bahşiş Yok",
+      "tipAmount": "Bahşiş tutarı",
+      "splitCount": "Kaç Kişi Bölüşecek",
+      "method": "Ödeme Yöntemi",
+      "cash": "Nakit",
+      "cardManual": "Kart (Manuel)",
+      "startPaying": "Ödemeye Başla",
+      "sharesTitle": "Ödeme Payları",
+      "share": "Pay {index}",
+      "pay": "Öde",
+      "paid": "Ödendi",
+      "allPaid": "Tüm paylar ödendi, hesap kapandı.",
+      "errors": {
+        "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
+        "forbidden": "Bu işlem için yetkiniz yok.",
+        "not_open": "Bu hesap artık aktif değil.",
+        "unknown": "Kaydedilemedi, tekrar deneyin."
+      }
     },
     "order": {
       "selectTable": "Masa Seç",
