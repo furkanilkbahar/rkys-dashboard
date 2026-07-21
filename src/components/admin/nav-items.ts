@@ -1,6 +1,6 @@
 import { CalendarClock, LayoutDashboard, Settings, Table2, Users, UtensilsCrossed } from "lucide-react";
 
-import type { TenantModuleKey } from "@/lib/settings/modules";
+import type { ModuleKey } from "@/lib/modules/keys";
 
 export const ADMIN_NAV_ITEMS = [
   { href: "/admin", labelKey: "dashboard", icon: LayoutDashboard, exact: true, moduleKey: null },
@@ -12,7 +12,7 @@ export const ADMIN_NAV_ITEMS = [
     labelKey: "reservations",
     icon: CalendarClock,
     exact: false,
-    moduleKey: "reservations" satisfies TenantModuleKey,
+    moduleKey: "reservations" satisfies ModuleKey,
   },
   { href: "/admin/settings", labelKey: "settings", icon: Settings, exact: false, moduleKey: null },
 ] as const;

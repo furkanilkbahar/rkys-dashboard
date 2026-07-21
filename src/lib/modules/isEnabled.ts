@@ -4,25 +4,10 @@ import { notFound } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
 
-export const MODULE_KEYS = [
-  "pos_cash",
-  "inventory",
-  "recipes",
-  "crm_loyalty",
-  "campaigns",
-  "gift_cards",
-  "pickup",
-  "delivery",
-  "courier",
-  "marketplace",
-  "reservations",
-  "kiosk",
-  "staff_scheduling",
-  "accounting_export",
-  "api_access",
-] as const;
+import { MODULE_KEYS, type ModuleKey } from "./keys";
 
-export type ModuleKey = (typeof MODULE_KEYS)[number];
+export { MODULE_KEYS };
+export type { ModuleKey };
 
 /**
  * Kapalı modül hiçbir yüzeyde görünmez (RULES #34) — satır yoksa (henüz

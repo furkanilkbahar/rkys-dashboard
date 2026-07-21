@@ -15,7 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import type { TenantModuleKey } from "@/lib/settings/modules";
+import type { ModuleKey } from "@/lib/modules/keys";
 
 import { LogoutMenuItem } from "./logout-menu-item";
 import { SidebarNav } from "./sidebar-nav";
@@ -28,7 +28,7 @@ export function AdminShell({
 }: {
   tenantLabel: string;
   role: string;
-  enabledModules: TenantModuleKey[];
+  enabledModules: ModuleKey[];
   children: ReactNode;
 }) {
   const t = useTranslations("admin");

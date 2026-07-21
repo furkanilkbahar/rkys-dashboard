@@ -8,7 +8,7 @@ describe("RLS: tables", () => {
     const { data, error } = await acme.from("tables").select("tenant_id");
 
     expect(error).toBeNull();
-    expect(data).toHaveLength(5);
+    expect(data).toHaveLength(6); // Masa 1-5 + otomatik "Tezgâh" masası (Faz 3 Adım 0)
     expect(data?.every((row) => row.tenant_id === SEED.acme.tenantId)).toBe(true);
   });
 

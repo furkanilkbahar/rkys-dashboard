@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import type { TenantModuleKey } from "@/lib/settings/modules";
+import type { ModuleKey } from "@/lib/modules/keys";
 import { cn } from "@/lib/utils/cn";
 
 import { ADMIN_NAV_ITEMS } from "./nav-items";
@@ -14,7 +14,7 @@ export function SidebarNav({
   enabledModules = [],
 }: {
   onNavigate?: () => void;
-  enabledModules?: TenantModuleKey[];
+  enabledModules?: ModuleKey[];
 }) {
   const t = useTranslations("admin.nav");
   const pathname = usePathname();

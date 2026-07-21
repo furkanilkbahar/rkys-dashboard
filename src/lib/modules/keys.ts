@@ -1,7 +1,7 @@
 // tenant_modules.module_key CHECK constraint (0005_tenant_modules.sql) ile
-// birebir aynı liste — client-safe (server-only bağımlılığı yok), nav
-// filtreleme client component'inde de kullanılabilir.
-export const TENANT_MODULE_KEYS = [
+// birebir aynı liste — server-only bağımlılığı yok, client component'ler
+// (nav filtreleme, ayarlar/onboarding modül matrisi) doğrudan import edebilir.
+export const MODULE_KEYS = [
   "pos_cash",
   "inventory",
   "recipes",
@@ -19,4 +19,4 @@ export const TENANT_MODULE_KEYS = [
   "api_access",
 ] as const;
 
-export type TenantModuleKey = (typeof TENANT_MODULE_KEYS)[number];
+export type ModuleKey = (typeof MODULE_KEYS)[number];

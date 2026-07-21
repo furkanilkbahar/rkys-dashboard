@@ -23,7 +23,7 @@ import type {
   AdminTenantSettings,
   AdminTipPreset,
 } from "@/lib/data/adminSettings";
-import { TENANT_MODULE_KEYS, type TenantModuleKey } from "@/lib/settings/modules";
+import { MODULE_KEYS, type ModuleKey } from "@/lib/modules/keys";
 import {
   SUPPORTED_CURRENCIES,
   SUPPORTED_TIMEZONES,
@@ -537,7 +537,7 @@ function ModulesCard({ modules, toggleModule }: { modules: AdminModule[]; toggle
   const t = useTranslations("admin.settings.modules");
   const router = useRouter();
 
-  async function handleToggle(moduleKey: TenantModuleKey, isEnabled: boolean) {
+  async function handleToggle(moduleKey: ModuleKey, isEnabled: boolean) {
     await toggleModule({ moduleKey, isEnabled });
     router.refresh();
   }
@@ -548,7 +548,7 @@ function ModulesCard({ modules, toggleModule }: { modules: AdminModule[]; toggle
         <CardTitle className="text-base">{t("title")}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-2">
-        {TENANT_MODULE_KEYS.map((key) => {
+        {MODULE_KEYS.map((key) => {
           const isEnabled = modules.find((m) => m.moduleKey === key)?.isEnabled ?? false;
           return (
             <div key={key} className="flex items-center justify-between gap-2 rounded-md border border-border p-2 text-sm">

@@ -1,8 +1,7 @@
 import { z } from "zod";
 
 import { SUPPORTED_LOCALES } from "@/i18n/locales";
-
-import { TENANT_MODULE_KEYS } from "./modules";
+import { MODULE_KEYS } from "@/lib/modules/keys";
 
 export const SUPPORTED_CURRENCIES = ["TRY", "USD", "EUR", "GBP"] as const;
 export const SUPPORTED_TIMEZONES = [
@@ -51,7 +50,7 @@ export const localeToggleSchema = z.object({
 export type LocaleToggleInput = z.infer<typeof localeToggleSchema>;
 
 export const moduleToggleSchema = z.object({
-  moduleKey: z.enum(TENANT_MODULE_KEYS),
+  moduleKey: z.enum(MODULE_KEYS),
   isEnabled: z.boolean(),
 });
 export type ModuleToggleInput = z.infer<typeof moduleToggleSchema>;

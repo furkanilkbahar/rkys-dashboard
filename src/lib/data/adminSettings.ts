@@ -2,7 +2,7 @@ import "server-only";
 
 import { createClient } from "@/lib/supabase/server";
 import type { Locale } from "@/i18n/locales";
-import type { TenantModuleKey } from "@/lib/settings/modules";
+import type { ModuleKey } from "@/lib/modules/keys";
 
 export type AdminTenantSettings = {
   currency: string;
@@ -39,7 +39,7 @@ export type AdminLocale = {
 };
 
 export type AdminModule = {
-  moduleKey: TenantModuleKey;
+  moduleKey: ModuleKey;
   isEnabled: boolean;
 };
 
@@ -147,5 +147,5 @@ export async function getAdminModules(tenantId: string): Promise<AdminModule[]> 
   const supabase = await createClient();
   const { data } = await supabase.from("tenant_modules").select("module_key, is_enabled").eq("tenant_id", tenantId);
 
-  return (data ?? []).map((m) => ({ moduleKey: m.module_key as TenantModuleKey, isEnabled: m.is_enabled }));
+  return (data ?? []).map((m) => ({ moduleKey: m.module_key as ModuleKey, isEnabled: m.is_enabled }));
 }

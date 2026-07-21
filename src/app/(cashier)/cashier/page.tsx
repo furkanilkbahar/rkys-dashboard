@@ -1,24 +1,35 @@
-import { getTranslations } from "next-intl/server";
-import { redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 
-import { getCurrentActor } from "@/lib/auth/session";
-import { assertModuleEnabled } from "@/lib/modules/isEnabled";
+import { requireCashierActor } from "@/lib/auth/cashierGuard";
+import { getDefaultBranchId } from "@/lib/data/branch";
+import { getLastClosedShift, getOpenShift, getShiftMovements } from "@/lib/data/cashier";
+import { getCurrentTenant } from "@/lib/data/tenant";
+
+import { closeShift, openShift, recordCashMovement } from "./actions";
+import { ShiftWidget } from "./shift-widget";
 
 export default async function CashierHomePage() {
-  const actor = await getCurrentActor();
-
-  if (!actor) {
-    redirect("/admin/login");
+  const actor = await requireCashierActor();
+  const branchId = await getDefaultBranchId(actor.tenantId);
+  if (!branchId) {
+    notFound();
   }
 
-  // RULES #34: kapalı modül route/API/navigasyonda erişilemez olmalı.
-  await assertModuleEnabled(actor.tenantId, "pos_cash");
-
-  const t = await getTranslations("placeholders");
+  const [tenant, openCashShift, lastClosedShift] = await Promise.all([
+    getCurrentTenant(),
+    getOpenShift(actor.tenantId, branchId),
+    getLastClosedShift(actor.tenantId, branchId),
+  ]);
+  const movements = openCashShift ? await getShiftMovements(openCashShift.id) : [];
 
   return (
-    <main className="flex min-h-screen items-center justify-center">
-      <p className="text-sm text-muted-foreground">{t("cashier")}</p>
-    </main>
+    <ShiftWidget
+      branchId={branchId}
+      currency={tenant?.currency ?? "TRY"}
+      openShiftData={openCashShift}
+      lastClosedShift={lastClosedShift}
+      movements={movements}
+      actions={{ openShift, closeShift, recordCashMovement }}
+    />
   );
 }

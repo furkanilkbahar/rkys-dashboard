@@ -41,7 +41,7 @@ test("seed owner ile giriş /admin'de tenant+rol bilgisini gösterir", async ({ 
 test("pos_cash açık tenant'ta kasa erişilebilir, kapalı tenant'ta 404 döner", async ({ page, baseURL }) => {
   await loginAs(page, baseURL!, SEED.acme.slug, SEED.acme.ownerEmail);
   await page.goto(tenantUrl(baseURL!, SEED.acme.slug, "/cashier"));
-  await expect(page.getByText("RKYS Dashboard — kasa (Faz 3)")).toBeVisible();
+  await expect(page.getByText("Vardiya Aç")).toBeVisible();
 
   await loginAs(page, baseURL!, SEED.beta.slug, SEED.beta.ownerEmail);
   const betaCashierResponse = await page.goto(tenantUrl(baseURL!, SEED.beta.slug, "/cashier"));

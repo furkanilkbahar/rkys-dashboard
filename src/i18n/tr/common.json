@@ -13,10 +13,46 @@
     "marketing": "RKYS Dashboard — marketing (Faz 13)",
     "marketingCardBody": "Faz 0 tema/bileşen doğrulama kartı — marketing içeriği Faz 13'te gelecek.",
     "marketingCardButton": "Örnek buton",
-    "cashier": "RKYS Dashboard — kasa (Faz 3)",
-    "cashierModuleDisabled": "Kasa modülü bu tenant için kapalı.",
     "analytics": "RKYS Dashboard — analitik merkezi (Faz 5)",
     "platform": "RKYS Dashboard — süper admin (Faz 4)"
+  },
+  "cashier": {
+    "title": "Kasa",
+    "shift": {
+      "openTitle": "Vardiya Aç",
+      "openingBalance": "Açılış Bakiyesi ({currency})",
+      "openShift": "Vardiyayı Aç",
+      "openShiftTitle": "Açık Vardiya",
+      "open": "Açık",
+      "openingBalanceLabel": "Açılış bakiyesi",
+      "countedCash": "Sayılan Nakit",
+      "closeShift": "Vardiyayı Kapat",
+      "cashIn": "Nakit Giriş",
+      "cashOut": "Nakit Çıkış",
+      "amount": "Tutar",
+      "note": "Not",
+      "addMovement": "Ekle",
+      "movementsTitle": "Kasa Hareketleri",
+      "noMovements": "Henüz hareket yok.",
+      "movementType": {
+        "sale": "Satış",
+        "cash_in": "Nakit Giriş",
+        "cash_out": "Nakit Çıkış",
+        "refund": "İade"
+      },
+      "lastClosedTitle": "Son Kapanan Vardiya",
+      "expected": "Beklenen",
+      "counted": "Sayılan",
+      "variance": "Fark"
+    },
+    "errors": {
+      "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
+      "invalid_amount": "Geçerli bir tutar girin (örn. 45.00).",
+      "forbidden": "Bu işlem için yetkiniz yok.",
+      "already_open": "Bu şube için zaten açık bir vardiya var.",
+      "not_open": "Açık bir vardiya bulunamadı.",
+      "unknown": "Kaydedilemedi, tekrar deneyin."
+    }
   },
   "admin": {
     "nav": {

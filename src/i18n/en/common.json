@@ -13,10 +13,46 @@
     "marketing": "RKYS Dashboard — marketing (Phase 13)",
     "marketingCardBody": "Phase 0 theme/component verification card — real marketing content lands in Phase 13.",
     "marketingCardButton": "Example button",
-    "cashier": "RKYS Dashboard — cash register (Phase 3)",
-    "cashierModuleDisabled": "The cash register module is disabled for this tenant.",
     "analytics": "RKYS Dashboard — analytics hub (Phase 5)",
     "platform": "RKYS Dashboard — super admin (Phase 4)"
+  },
+  "cashier": {
+    "title": "Cashier",
+    "shift": {
+      "openTitle": "Open Shift",
+      "openingBalance": "Opening Balance ({currency})",
+      "openShift": "Open Shift",
+      "openShiftTitle": "Open Shift",
+      "open": "Open",
+      "openingBalanceLabel": "Opening balance",
+      "countedCash": "Counted Cash",
+      "closeShift": "Close Shift",
+      "cashIn": "Cash In",
+      "cashOut": "Cash Out",
+      "amount": "Amount",
+      "note": "Note",
+      "addMovement": "Add",
+      "movementsTitle": "Cash Movements",
+      "noMovements": "No movements yet.",
+      "movementType": {
+        "sale": "Sale",
+        "cash_in": "Cash In",
+        "cash_out": "Cash Out",
+        "refund": "Refund"
+      },
+      "lastClosedTitle": "Last Closed Shift",
+      "expected": "Expected",
+      "counted": "Counted",
+      "variance": "Variance"
+    },
+    "errors": {
+      "invalid_input": "Please check the information you entered.",
+      "invalid_amount": "Enter a valid amount (e.g. 45.00).",
+      "forbidden": "You don't have permission for this action.",
+      "already_open": "A shift is already open for this branch.",
+      "not_open": "No open shift was found.",
+      "unknown": "Could not save, please try again."
+    }
   },
   "admin": {
     "nav": {

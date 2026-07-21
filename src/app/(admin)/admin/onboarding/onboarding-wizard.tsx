@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { SUPPORTED_LOCALES, type Locale } from "@/i18n/locales";
 import type { ImageActionResult } from "@/lib/menu/schemas";
-import { TENANT_MODULE_KEYS, type TenantModuleKey } from "@/lib/settings/modules";
+import { MODULE_KEYS, type ModuleKey } from "@/lib/modules/keys";
 import { SUPPORTED_CURRENCIES, type SettingsActionResult } from "@/lib/settings/schemas";
 
 type Actions = {
@@ -308,9 +308,9 @@ function ModulesStep({
   toggleModule: Actions["toggleModule"];
 }) {
   const tModuleKeys = useTranslations("admin.settings.modules.keys");
-  const [enabled, setEnabled] = useState<Set<TenantModuleKey>>(new Set());
+  const [enabled, setEnabled] = useState<Set<ModuleKey>>(new Set());
 
-  async function handleToggle(moduleKey: TenantModuleKey, checked: boolean) {
+  async function handleToggle(moduleKey: ModuleKey, checked: boolean) {
     const result = await toggleModule({ moduleKey, isEnabled: checked });
     if (!result.ok) return;
     setEnabled((prev) => {
@@ -327,7 +327,7 @@ function ModulesStep({
         <CardTitle>{t("modules.title")}</CardTitle>
       </CardHeader>
       <CardContent className="flex max-h-72 flex-col gap-2 overflow-y-auto">
-        {TENANT_MODULE_KEYS.map((key) => (
+        {MODULE_KEYS.map((key) => (
           <div key={key} className="flex items-center justify-between gap-2 text-sm">
             <span>{tModuleKeys(key)}</span>
             <Switch checked={enabled.has(key)} onCheckedChange={(checked) => handleToggle(key, checked)} />
