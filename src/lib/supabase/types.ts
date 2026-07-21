@@ -1624,6 +1624,11 @@ export type Database = {
         Args: { p_reason: string; p_table_session_id: string }
         Returns: undefined
       }
+      create_staff_device: {
+        Args: { p_branch_id: string; p_label: string }
+        Returns: string
+      }
+      current_can: { Args: { p_permission_key: string }; Returns: boolean }
       current_guest_branch_id: { Args: never; Returns: string }
       current_role: { Args: never; Returns: string }
       current_table_session_id: { Args: never; Returns: string }
@@ -1680,6 +1685,10 @@ export type Database = {
         Args: { p_order_id: string; p_reason: string }
         Returns: undefined
       }
+      reset_staff_pin: {
+        Args: { p_new_pin: string; p_profile_id: string }
+        Returns: undefined
+      }
       resolve_tenant_by_domain: {
         Args: { p_domain: string }
         Returns: {
@@ -1688,6 +1697,7 @@ export type Database = {
           tenant_status: string
         }[]
       }
+      revoke_staff_device: { Args: { p_device_id: string }; Returns: undefined }
       submit_order: {
         Args: { p_idempotency_key: string; p_items: Json }
         Returns: {
@@ -1695,6 +1705,15 @@ export type Database = {
           order_status: string
           subtotal_minor: number
         }[]
+      }
+      update_staff_member: {
+        Args: {
+          p_badge_no: string
+          p_is_active: boolean
+          p_profile_id: string
+          p_role: string
+        }
+        Returns: undefined
       }
     }
     Enums: {
