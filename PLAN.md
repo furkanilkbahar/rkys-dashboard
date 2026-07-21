@@ -34,11 +34,11 @@
 - [x] Onboarding: demo veri (toplu temizleme) / sıfırdan kur (+**modül seçimi adımı**)
 
 ## Faz 3 — Kasa + Ödeme + İade/İkram + Temel Raporlar
-- [ ] **Kasa modülü:** vardiya aç/kapa, nakit sayım/fark, `cash_movements`, **POS-lite sipariş girişi**, gün sonu (`day_closures`)
-- [ ] iyzico online ödeme + webhook; Hesap İste bütünlüğü; **eşit bölüşme**; bahşiş çipleri
-- [ ] **İkram/indirim** (izin bayrağı + sebep kodu) + **tam iade** (online otomatik / kasa manuel)
-- [ ] Değerlendirme sistemi (garson puanlı + Google köprüsü)
-- [ ] Temel rapor seti + **manuel maliyet & marj raporu** + CSV/Excel + **muhasebe uyumlu exportlar** (gün sonu)
+- [x] **Kasa modülü:** vardiya aç/kapa, nakit sayım/fark, `cash_movements`, **POS-lite sipariş girişi**, gün sonu (`day_closures`)
+- [x] iyzico online ödeme + webhook; Hesap İste bütünlüğü; **eşit bölüşme**; bahşiş çipleri (iyzico: sandbox anahtarı gelene kadar mock ile doğrulandı, gerçek adaptör kodu tamamlandı)
+- [x] **İkram/indirim** (izin bayrağı + sebep kodu) + **tam iade** (online otomatik / kasa manuel)
+- [x] Değerlendirme sistemi (garson puanlı + Google köprüsü)
+- [x] Temel rapor seti + **manuel maliyet & marj raporu** + CSV export (Excel: UTF-8 BOM'lu CSV ile karşılandı; muhasebe API adaptörü ileri faz kapsamında — D61)
 
 ## Faz 4 — SaaS Katmanı
 - [ ] Süper Admin: tenant/şube, kullanım, **modül & plan-modül yönetimi**, duyurular (banner), 2FA zorunluluk anahtarı
