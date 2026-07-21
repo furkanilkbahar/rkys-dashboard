@@ -1216,6 +1216,58 @@ export type Database = {
           },
         ]
       }
+      table_zones: {
+        Row: {
+          branch_id: string
+          created_at: string
+          display_order: number
+          id: string
+          is_active: boolean
+          name: string
+          tenant_id: string
+        }
+        Insert: {
+          branch_id: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          name: string
+          tenant_id: string
+        }
+        Update: {
+          branch_id?: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "table_zones_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "table_zones_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "table_zones_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tables: {
         Row: {
           branch_id: string
@@ -1225,6 +1277,7 @@ export type Database = {
           label: string
           qr_token_hash: string
           tenant_id: string
+          zone_id: string | null
         }
         Insert: {
           branch_id: string
@@ -1234,6 +1287,7 @@ export type Database = {
           label: string
           qr_token_hash: string
           tenant_id: string
+          zone_id?: string | null
         }
         Update: {
           branch_id?: string
@@ -1243,6 +1297,7 @@ export type Database = {
           label?: string
           qr_token_hash?: string
           tenant_id?: string
+          zone_id?: string | null
         }
         Relationships: [
           {
@@ -1264,6 +1319,13 @@ export type Database = {
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tables_zone_id_fkey"
+            columns: ["zone_id"]
+            isOneToOne: false
+            referencedRelation: "table_zones"
             referencedColumns: ["id"]
           },
         ]
