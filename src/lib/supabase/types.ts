@@ -1965,6 +1965,14 @@ export type Database = {
           subtotal_minor: number
         }[]
       }
+      submit_staff_order: {
+        Args: { p_items: Json; p_table_id: string }
+        Returns: {
+          order_id: string
+          order_status: string
+          subtotal_minor: number
+        }[]
+      }
       update_staff_member: {
         Args: {
           p_badge_no: string
