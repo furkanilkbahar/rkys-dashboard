@@ -1205,6 +1205,78 @@ export type Database = {
           },
         ]
       }
+      ratings: {
+        Row: {
+          branch_id: string
+          comment: string | null
+          created_at: string
+          id: string
+          rated_staff_id: string | null
+          staff_stars: number | null
+          stars: number
+          table_session_id: string
+          tenant_id: string
+        }
+        Insert: {
+          branch_id: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rated_staff_id?: string | null
+          staff_stars?: number | null
+          stars: number
+          table_session_id: string
+          tenant_id: string
+        }
+        Update: {
+          branch_id?: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rated_staff_id?: string | null
+          staff_stars?: number | null
+          stars?: number
+          table_session_id?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ratings_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ratings_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "ratings_rated_staff_id_fkey"
+            columns: ["rated_staff_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ratings_table_session_id_fkey"
+            columns: ["table_session_id"]
+            isOneToOne: true
+            referencedRelation: "table_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ratings_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reason_codes: {
         Row: {
           category: string
@@ -2289,6 +2361,15 @@ export type Database = {
           order_status: string
           subtotal_minor: number
         }[]
+      }
+      submit_rating: {
+        Args: {
+          p_comment?: string
+          p_rated_staff_id?: string
+          p_staff_stars?: number
+          p_stars: number
+        }
+        Returns: string
       }
       submit_staff_order: {
         Args: { p_items: Json; p_table_id: string }
