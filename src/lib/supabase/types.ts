@@ -1990,6 +1990,20 @@ export type Database = {
         Returns: undefined
       }
       complete_onboarding: { Args: never; Returns: undefined }
+      complete_online_payment: {
+        Args: { p_provider: string; p_provider_ref: string }
+        Returns: undefined
+      }
+      create_pending_online_payment: {
+        Args: {
+          p_amount_minor: number
+          p_provider: string
+          p_provider_ref: string
+          p_table_session_id: string
+          p_tip_amount_minor: number
+        }
+        Returns: string
+      }
       create_staff_device: {
         Args: { p_branch_id: string; p_label: string }
         Returns: string
