@@ -131,6 +131,7 @@
       "staff": "Personel",
       "reservations": "Rezervasyon",
       "ratings": "Değerlendirmeler",
+      "reports": "Raporlar",
       "settings": "Ayarlar",
       "menuOpen": "Menüyü aç"
     },
@@ -461,6 +462,48 @@
       "empty": "Henüz değerlendirme yok.",
       "average": "Ortalama {stars} ★ ({count} değerlendirme)",
       "staffRating": "{badge} için {stars} ★"
+    },
+    "reports": {
+      "title": "Raporlar",
+      "date": "İş Günü",
+      "apply": "Uygula",
+      "exportCsv": "CSV indir",
+      "empty": "Bu tarih için veri yok.",
+      "revenueTitle": "Ciro",
+      "revenue": "Ciro",
+      "cash": "Nakit",
+      "cardManual": "Kart (Manuel)",
+      "online": "Online",
+      "tips": "Bahşiş",
+      "comps": "İkram/İndirim",
+      "refunds": "İade",
+      "topProductsTitle": "En Çok Satanlar",
+      "hourlyDensityTitle": "Saatlik Yoğunluk",
+      "shiftsTitle": "Vardiya Sayım/Fark",
+      "status": {
+        "open": "Açık",
+        "closed": "Kapalı"
+      },
+      "expected": "Beklenen",
+      "counted": "Sayılan",
+      "variance": "Fark",
+      "marginTitle": "Kâr Marjı",
+      "costs": {
+        "title": "Ürün Maliyetleri",
+        "cost": "Birim Maliyet",
+        "save": "Kaydet"
+      },
+      "closeDayTitle": "Gün Sonu",
+      "closeDay": "Günü Kapat",
+      "closingDay": "Kapatılıyor...",
+      "closeDayConfirm": "Günü kapatmak istediğinize emin misiniz? Bu tarihe yeni ödeme/kasa hareketi eklenemeyecek.",
+      "dayClosed": "Bu iş günü kapatıldı.",
+      "errors": {
+        "forbidden": "Bu sayfayı görüntüleme yetkiniz yok.",
+        "already_closed": "Bu iş günü zaten kapatılmış.",
+        "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
+        "unknown": "İşlem başarısız, tekrar deneyin."
+      }
     }
   },
   "waiter": {

@@ -131,6 +131,7 @@
       "staff": "Staff",
       "reservations": "Reservations",
       "ratings": "Ratings",
+      "reports": "Reports",
       "settings": "Settings",
       "menuOpen": "Open menu"
     },
@@ -461,6 +462,48 @@
       "empty": "No ratings yet.",
       "average": "Average {stars} ★ ({count} ratings)",
       "staffRating": "{stars} ★ for {badge}"
+    },
+    "reports": {
+      "title": "Reports",
+      "date": "Business Date",
+      "apply": "Apply",
+      "exportCsv": "Download CSV",
+      "empty": "No data for this date.",
+      "revenueTitle": "Revenue",
+      "revenue": "Revenue",
+      "cash": "Cash",
+      "cardManual": "Card (Manual)",
+      "online": "Online",
+      "tips": "Tips",
+      "comps": "Comps/Discounts",
+      "refunds": "Refunds",
+      "topProductsTitle": "Top Products",
+      "hourlyDensityTitle": "Hourly Density",
+      "shiftsTitle": "Shift Count/Variance",
+      "status": {
+        "open": "Open",
+        "closed": "Closed"
+      },
+      "expected": "Expected",
+      "counted": "Counted",
+      "variance": "Variance",
+      "marginTitle": "Profit Margin",
+      "costs": {
+        "title": "Product Costs",
+        "cost": "Unit Cost",
+        "save": "Save"
+      },
+      "closeDayTitle": "Day Close",
+      "closeDay": "Close Day",
+      "closingDay": "Closing...",
+      "closeDayConfirm": "Are you sure you want to close the business day? No new payments/cash movements can be added for this date afterward.",
+      "dayClosed": "This business day has been closed.",
+      "errors": {
+        "forbidden": "You don't have permission to view this page.",
+        "already_closed": "This business day has already been closed.",
+        "invalid_input": "Please check the information you entered.",
+        "unknown": "Operation failed, please try again."
+      }
     }
   },
   "waiter": {

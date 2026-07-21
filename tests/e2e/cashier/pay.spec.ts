@@ -8,7 +8,13 @@ test("S18: kasa — eşit bölüşme ve bahşiş akışı uçtan uca", async ({ 
   // Bahşiş çipi olmadan tip seçim adımı test edilemez — ayarlar üzerinden bir tane eklenir.
   await page.goto(acmeUrl(baseURL!, "/admin/settings"));
   const tipLabel = `E2E ${Date.now()}`;
-  await page.locator("#new-tip-label").fill(tipLabel);
+  // .fill() bazen WebKit'te react-hook-form'un controlled input state'ini
+  // güncellemeden DOM value'sunu set ediyor (input/change event'i doğru
+  // tetiklenmiyor) — pressSequentially() gerçek tuş vuruşu simüle ederek
+  // bunu güvenilir hale getirir (mobile-safari'de tekrarlanan zaman aşımı
+  // kök nedeni buydu, ürün kodu değil).
+  await page.locator("#new-tip-label").click();
+  await page.locator("#new-tip-label").pressSequentially(tipLabel);
   await page.locator("#new-tip-percentage").fill("10");
   await page.getByRole("button", { name: "+ Bahşiş Çipi Ekle" }).click();
   await page.waitForLoadState("networkidle");
