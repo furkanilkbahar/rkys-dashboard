@@ -854,6 +854,38 @@ export type Database = {
           },
         ]
       }
+      rating_settings: {
+        Row: {
+          created_at: string
+          google_review_url: string | null
+          is_enabled: boolean
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          google_review_url?: string | null
+          is_enabled?: boolean
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          google_review_url?: string | null
+          is_enabled?: boolean
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rating_settings_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: true
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       role_permissions: {
         Row: {
           allowed: boolean
@@ -1432,6 +1464,7 @@ export type Database = {
           order_mode: string
           session_timeout_minutes: number
           tenant_id: string
+          theme_key: string
           updated_at: string
         }
         Insert: {
@@ -1439,6 +1472,7 @@ export type Database = {
           order_mode?: string
           session_timeout_minutes?: number
           tenant_id: string
+          theme_key?: string
           updated_at?: string
         }
         Update: {
@@ -1446,6 +1480,7 @@ export type Database = {
           order_mode?: string
           session_timeout_minutes?: number
           tenant_id?: string
+          theme_key?: string
           updated_at?: string
         }
         Relationships: [
@@ -1487,6 +1522,44 @@ export type Database = {
           timezone?: string
         }
         Relationships: []
+      }
+      tip_presets: {
+        Row: {
+          created_at: string
+          display_order: number
+          id: string
+          is_active: boolean
+          label: string
+          percentage: number
+          tenant_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          label: string
+          percentage: number
+          tenant_id: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          label?: string
+          percentage?: number
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tip_presets_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       waiter_calls: {
         Row: {
@@ -1634,6 +1707,7 @@ export type Database = {
       current_table_session_id: { Args: never; Returns: string }
       current_tenant_id: { Args: never; Returns: string }
       custom_access_token_hook: { Args: { event: Json }; Returns: Json }
+      disable_tenant_locale: { Args: { p_locale: string }; Returns: undefined }
       is_platform_admin: { Args: never; Returns: boolean }
       is_staff: { Args: never; Returns: boolean }
       link_guest_device: {
@@ -1692,6 +1766,7 @@ export type Database = {
       resolve_tenant_by_domain: {
         Args: { p_domain: string }
         Returns: {
+          tenant_currency: string
           tenant_id: string
           tenant_slug: string
           tenant_status: string
@@ -1713,6 +1788,10 @@ export type Database = {
           p_profile_id: string
           p_role: string
         }
+        Returns: undefined
+      }
+      update_tenant_business_settings: {
+        Args: { p_currency: string; p_timezone: string }
         Returns: undefined
       }
     }
