@@ -18,6 +18,29 @@
   },
   "cashier": {
     "title": "Cashier",
+    "nav": {
+      "shift": "Shift",
+      "order": "New Order"
+    },
+    "order": {
+      "selectTable": "Select Table",
+      "counter": "Counter",
+      "addToOrder": "Add to Order",
+      "soldOut": "Sold out",
+      "cartTitle": "Order",
+      "emptyCart": "No items added yet.",
+      "subtotal": "Subtotal",
+      "removeLine": "Remove",
+      "submit": "Submit Order",
+      "submitting": "Submitting...",
+      "submitted": "Order submitted.",
+      "errors": {
+        "invalid_input": "Please check the information you entered.",
+        "forbidden": "You don't have permission for this action.",
+        "stock_unavailable": "An item in your order is no longer in stock.",
+        "unknown": "Order could not be submitted, please try again."
+      }
+    },
     "shift": {
       "openTitle": "Open Shift",
       "openingBalance": "Opening Balance ({currency})",

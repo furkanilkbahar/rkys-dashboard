@@ -18,6 +18,29 @@
   },
   "cashier": {
     "title": "Kasa",
+    "nav": {
+      "shift": "Vardiya",
+      "order": "Sipariş Gir"
+    },
+    "order": {
+      "selectTable": "Masa Seç",
+      "counter": "Tezgâh",
+      "addToOrder": "Siparişe Ekle",
+      "soldOut": "Tükendi",
+      "cartTitle": "Sipariş",
+      "emptyCart": "Henüz ürün eklenmedi.",
+      "subtotal": "Ara Toplam",
+      "removeLine": "Kaldır",
+      "submit": "Siparişi Gönder",
+      "submitting": "Gönderiliyor...",
+      "submitted": "Sipariş gönderildi.",
+      "errors": {
+        "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
+        "forbidden": "Bu işlem için yetkiniz yok.",
+        "stock_unavailable": "Sepetinizdeki bir ürün artık stokta yok.",
+        "unknown": "Sipariş gönderilemedi, tekrar deneyin."
+      }
+    },
     "shift": {
       "openTitle": "Vardiya Aç",
       "openingBalance": "Açılış Bakiyesi ({currency})",

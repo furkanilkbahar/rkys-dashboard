@@ -2,6 +2,26 @@ import "server-only";
 
 import { createClient } from "@/lib/supabase/server";
 
+export type CashierTable = {
+  id: string;
+  label: string;
+  isCounter: boolean;
+};
+
+export async function getCashierTables(tenantId: string, branchId: string): Promise<CashierTable[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("tables")
+    .select("id, label, is_counter")
+    .eq("tenant_id", tenantId)
+    .eq("branch_id", branchId)
+    .eq("is_active", true)
+    .order("is_counter", { ascending: false })
+    .order("label");
+
+  return (data ?? []).map((t) => ({ id: t.id, label: t.label, isCounter: t.is_counter }));
+}
+
 export type OpenCashShift = {
   id: string;
   openingBalanceMinor: number;
