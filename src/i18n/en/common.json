@@ -130,6 +130,7 @@
       "tables": "Tables",
       "staff": "Staff",
       "reservations": "Reservations",
+      "ratings": "Ratings",
       "settings": "Settings",
       "menuOpen": "Open menu"
     },
@@ -454,6 +455,12 @@
         "title": "Theme Preview",
         "comingSoon": "More themes will be added in Phase 6."
       }
+    },
+    "ratings": {
+      "title": "Ratings",
+      "empty": "No ratings yet.",
+      "average": "Average {stars} ★ ({count} ratings)",
+      "staffRating": "{stars} ★ for {badge}"
     }
   },
   "waiter": {
@@ -552,6 +559,26 @@
       "confirm": "Confirm Payment",
       "processing": "Processing...",
       "failed": "Payment could not be confirmed, please try again."
+    },
+    "rating": {
+      "title": "Rate your experience",
+      "starsLabel": "Star rating",
+      "star": "{n} stars",
+      "commentLabel": "Comment",
+      "commentPlaceholder": "Your comment (optional)",
+      "waiterLabel": "Who served you",
+      "staffFallback": "Staff",
+      "staffStarsLabel": "Staff rating",
+      "staffStar": "{n} stars for staff",
+      "skip": "Skip",
+      "submit": "Submit",
+      "submitting": "Submitting...",
+      "errors": {
+        "starsRequired": "Please select a star rating.",
+        "invalid_input": "Please check the information you entered.",
+        "no_session": "Your session could not be found.",
+        "unknown": "Could not submit, please try again."
+      }
     }
   }
 }

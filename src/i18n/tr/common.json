@@ -130,6 +130,7 @@
       "tables": "Masalar",
       "staff": "Personel",
       "reservations": "Rezervasyon",
+      "ratings": "Değerlendirmeler",
       "settings": "Ayarlar",
       "menuOpen": "Menüyü aç"
     },
@@ -454,6 +455,12 @@
         "title": "Tema Önizleme",
         "comingSoon": "Diğer temalar Faz 6'da eklenecek."
       }
+    },
+    "ratings": {
+      "title": "Değerlendirmeler",
+      "empty": "Henüz değerlendirme yok.",
+      "average": "Ortalama {stars} ★ ({count} değerlendirme)",
+      "staffRating": "{badge} için {stars} ★"
     }
   },
   "waiter": {
@@ -552,6 +559,26 @@
       "confirm": "Ödemeyi Onayla",
       "processing": "İşleniyor...",
       "failed": "Ödeme onaylanamadı, tekrar deneyin."
+    },
+    "rating": {
+      "title": "Deneyiminizi değerlendirin",
+      "starsLabel": "Yıldız puanı",
+      "star": "{n} yıldız",
+      "commentLabel": "Yorum",
+      "commentPlaceholder": "Yorumunuz (opsiyonel)",
+      "waiterLabel": "Size hizmet eden garson",
+      "staffFallback": "Personel",
+      "staffStarsLabel": "Garson puanı",
+      "staffStar": "Garson için {n} yıldız",
+      "skip": "Geç",
+      "submit": "Gönder",
+      "submitting": "Gönderiliyor...",
+      "errors": {
+        "starsRequired": "Lütfen bir yıldız puanı seçin.",
+        "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
+        "no_session": "Oturumunuz bulunamadı.",
+        "unknown": "Gönderilemedi, tekrar deneyin."
+      }
     }
   }
 }

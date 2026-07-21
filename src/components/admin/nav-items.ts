@@ -1,4 +1,4 @@
-import { CalendarClock, LayoutDashboard, Settings, Table2, Users, UtensilsCrossed } from "lucide-react";
+import { CalendarClock, LayoutDashboard, Settings, Star, Table2, Users, UtensilsCrossed } from "lucide-react";
 
 import type { ModuleKey } from "@/lib/modules/keys";
 
@@ -14,5 +14,6 @@ export const ADMIN_NAV_ITEMS = [
     exact: false,
     moduleKey: "reservations" satisfies ModuleKey,
   },
+  { href: "/admin/ratings", labelKey: "ratings", icon: Star, exact: false, moduleKey: null },
   { href: "/admin/settings", labelKey: "settings", icon: Settings, exact: false, moduleKey: null },
 ] as const;

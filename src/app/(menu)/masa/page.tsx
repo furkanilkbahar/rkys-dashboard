@@ -4,11 +4,13 @@ import { CartBar } from "@/components/menu/cart-bar";
 import { CartSessionSync } from "@/components/menu/cart-session-sync";
 import { CategorySection } from "@/components/menu/category-section";
 import { LanguageSwitcher } from "@/components/menu/language-switcher";
+import { RatingPrompt } from "@/components/menu/rating-prompt";
 import { SessionPanel } from "@/components/menu/session-panel";
 import { WaiterCallButton } from "@/components/menu/waiter-call-button";
 import type { Locale } from "@/i18n/locales";
 import { getCallTypes } from "@/lib/data/callTypes";
 import { getEffectiveMenu, getEnabledLocales } from "@/lib/data/menu";
+import { getGuestRatingSettings, getWaitersForRating, hasExistingRating } from "@/lib/data/ratings";
 import { getSessionOrders } from "@/lib/data/sessionOrders";
 import { getCurrentTenant } from "@/lib/data/tenant";
 import { getCurrentGuestSession } from "@/lib/guest/session";
@@ -30,16 +32,27 @@ export default async function MenuPage() {
   const locale = await getLocale();
   const tenant = await getCurrentTenant();
   const currency = tenant?.currency ?? "TRY";
-  const [categories, callTypes, sessionOrders, enabledLocales] = await Promise.all([
+  const [categories, callTypes, sessionOrders, enabledLocales, ratingSettings] = await Promise.all([
     getEffectiveMenu(guest.tenantId, guest.branchId, locale),
     getCallTypes(guest.tenantId, locale),
     getSessionOrders(guest.tableSessionId),
     getEnabledLocales(guest.tenantId),
+    getGuestRatingSettings(guest.tenantId),
   ]);
+  const [waiters, alreadyRated] = ratingSettings.isEnabled
+    ? await Promise.all([getWaitersForRating(guest.tenantId), hasExistingRating(guest.tableSessionId)])
+    : [[], false];
 
   return (
     <main className="mx-auto flex min-h-screen max-w-3xl flex-col gap-6 p-4 pb-24 sm:p-8">
       <CartSessionSync tableSessionId={guest.tableSessionId} />
+      <RatingPrompt
+        tableSessionId={guest.tableSessionId}
+        isEnabled={ratingSettings.isEnabled}
+        googleReviewUrl={ratingSettings.googleReviewUrl}
+        waiters={waiters}
+        alreadyRated={alreadyRated}
+      />
       <header className="flex items-center justify-between gap-4">
         <p className="text-sm text-muted-foreground">{t("connected")}</p>
         <div className="flex items-center gap-2">
