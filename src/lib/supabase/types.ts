@@ -352,6 +352,85 @@ export type Database = {
           },
         ]
       }
+      comps: {
+        Row: {
+          amount_minor: number
+          branch_id: string
+          created_at: string
+          created_by: string | null
+          id: string
+          note: string | null
+          order_id: string
+          reason_code_id: string
+          tenant_id: string
+        }
+        Insert: {
+          amount_minor: number
+          branch_id: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          note?: string | null
+          order_id: string
+          reason_code_id: string
+          tenant_id: string
+        }
+        Update: {
+          amount_minor?: number
+          branch_id?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          note?: string | null
+          order_id?: string
+          reason_code_id?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comps_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comps_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "comps_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comps_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comps_reason_code_id_fkey"
+            columns: ["reason_code_id"]
+            isOneToOne: false
+            referencedRelation: "reason_codes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comps_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       content_translations: {
         Row: {
           created_at: string
@@ -1157,6 +1236,88 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "reason_codes_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      refunds: {
+        Row: {
+          amount_minor: number
+          branch_id: string
+          created_at: string
+          created_by: string | null
+          id: string
+          note: string | null
+          payment_id: string
+          provider_ref: string | null
+          reason_code_id: string
+          tenant_id: string
+        }
+        Insert: {
+          amount_minor: number
+          branch_id: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          note?: string | null
+          payment_id: string
+          provider_ref?: string | null
+          reason_code_id: string
+          tenant_id: string
+        }
+        Update: {
+          amount_minor?: number
+          branch_id?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          note?: string | null
+          payment_id?: string
+          provider_ref?: string | null
+          reason_code_id?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "refunds_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "refunds_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "refunds_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "refunds_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: true
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "refunds_reason_code_id_fkey"
+            columns: ["reason_code_id"]
+            isOneToOne: false
+            referencedRelation: "reason_codes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "refunds_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "tenants"
@@ -2058,6 +2219,15 @@ export type Database = {
         }
         Returns: string
       }
+      record_comp: {
+        Args: {
+          p_amount_minor: number
+          p_note?: string
+          p_order_id: string
+          p_reason_code_id: string
+        }
+        Returns: string
+      }
       record_payment: {
         Args: {
           p_amount_minor: number
@@ -2065,6 +2235,15 @@ export type Database = {
           p_split_group?: string
           p_table_session_id: string
           p_tip_amount_minor?: number
+        }
+        Returns: string
+      }
+      record_refund: {
+        Args: {
+          p_note?: string
+          p_payment_id: string
+          p_provider_ref?: string
+          p_reason_code_id: string
         }
         Returns: string
       }

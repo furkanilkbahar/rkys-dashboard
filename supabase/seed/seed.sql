@@ -149,6 +149,37 @@ values
   ('00000000-0000-4000-8000-000000000003', 'call_type', '00000000-0000-4000-8000-000000000707', 'tr', 'name', 'Su İstiyorum')
 on conflict (entity_type, entity_id, locale, field) do nothing;
 
+-- Faz 3 Adım 4: comp/refund/cancel sebep kodları (acme + beta), call_types
+-- ile aynı desen.
+insert into public.reason_codes (id, tenant_id, category, key, display_order)
+values
+  ('00000000-0000-4000-8000-000000000801', '00000000-0000-4000-8000-000000000001', 'comp', 'goodwill', 0),
+  ('00000000-0000-4000-8000-000000000802', '00000000-0000-4000-8000-000000000001', 'comp', 'staff_meal', 1),
+  ('00000000-0000-4000-8000-000000000803', '00000000-0000-4000-8000-000000000001', 'refund', 'customer_complaint', 0),
+  ('00000000-0000-4000-8000-000000000804', '00000000-0000-4000-8000-000000000001', 'refund', 'wrong_order', 1),
+  ('00000000-0000-4000-8000-000000000805', '00000000-0000-4000-8000-000000000001', 'cancel', 'out_of_stock', 0),
+  ('00000000-0000-4000-8000-000000000806', '00000000-0000-4000-8000-000000000002', 'comp', 'goodwill', 0),
+  ('00000000-0000-4000-8000-000000000807', '00000000-0000-4000-8000-000000000002', 'refund', 'customer_complaint', 0)
+on conflict (id) do nothing;
+
+insert into public.content_translations (tenant_id, entity_type, entity_id, locale, field, value)
+values
+  ('00000000-0000-4000-8000-000000000001', 'reason_code', '00000000-0000-4000-8000-000000000801', 'tr', 'name', 'İyi Niyet İkramı'),
+  ('00000000-0000-4000-8000-000000000001', 'reason_code', '00000000-0000-4000-8000-000000000801', 'en', 'name', 'Goodwill Comp'),
+  ('00000000-0000-4000-8000-000000000001', 'reason_code', '00000000-0000-4000-8000-000000000802', 'tr', 'name', 'Personel Yemeği'),
+  ('00000000-0000-4000-8000-000000000001', 'reason_code', '00000000-0000-4000-8000-000000000802', 'en', 'name', 'Staff Meal'),
+  ('00000000-0000-4000-8000-000000000001', 'reason_code', '00000000-0000-4000-8000-000000000803', 'tr', 'name', 'Müşteri Şikayeti'),
+  ('00000000-0000-4000-8000-000000000001', 'reason_code', '00000000-0000-4000-8000-000000000803', 'en', 'name', 'Customer Complaint'),
+  ('00000000-0000-4000-8000-000000000001', 'reason_code', '00000000-0000-4000-8000-000000000804', 'tr', 'name', 'Yanlış Sipariş'),
+  ('00000000-0000-4000-8000-000000000001', 'reason_code', '00000000-0000-4000-8000-000000000804', 'en', 'name', 'Wrong Order'),
+  ('00000000-0000-4000-8000-000000000001', 'reason_code', '00000000-0000-4000-8000-000000000805', 'tr', 'name', 'Stok Tükendi'),
+  ('00000000-0000-4000-8000-000000000001', 'reason_code', '00000000-0000-4000-8000-000000000805', 'en', 'name', 'Out of Stock'),
+  ('00000000-0000-4000-8000-000000000002', 'reason_code', '00000000-0000-4000-8000-000000000806', 'tr', 'name', 'İyi Niyet İkramı'),
+  ('00000000-0000-4000-8000-000000000002', 'reason_code', '00000000-0000-4000-8000-000000000806', 'en', 'name', 'Goodwill Comp'),
+  ('00000000-0000-4000-8000-000000000002', 'reason_code', '00000000-0000-4000-8000-000000000807', 'tr', 'name', 'Müşteri Şikayeti'),
+  ('00000000-0000-4000-8000-000000000002', 'reason_code', '00000000-0000-4000-8000-000000000807', 'en', 'name', 'Customer Complaint')
+on conflict (entity_type, entity_id, locale, field) do nothing;
+
 -- Demo masalar + QR'lar (Faz 1): ham token'lar yalnızca lokalde, testlerin
 -- deterministik hedefleyebilmesi için sabit ve dokümante edilir (password123
 -- ile aynı "yalnızca lokal" deseni) — production seed'i böyle sabit token
