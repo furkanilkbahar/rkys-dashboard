@@ -40,7 +40,8 @@ cross join (values ('owner'), ('manager')) as r(role)
 cross join (
   values
     ('comp_discount'), ('refund'), ('reports.revenue'), ('reports.profit'),
-    ('menu.edit'), ('cash.open_close'), ('session.move'), ('reservations.manage')
+    ('menu.edit'), ('cash.open_close'), ('session.move'), ('reservations.manage'),
+    ('staff.manage')
 ) as p(permission_key)
 on conflict (tenant_id, role, permission_key) do nothing;
 

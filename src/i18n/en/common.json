@@ -157,6 +157,56 @@
         "unknown": "Could not save, please try again.",
         "required": "This field is required."
       }
+    },
+    "staff": {
+      "title": "Staff",
+      "role": {
+        "owner": "Owner",
+        "manager": "Manager",
+        "waiter": "Waiter",
+        "kitchen": "Kitchen",
+        "courier": "Courier"
+      },
+      "member": {
+        "badgeNo": "Badge No",
+        "active": "Active",
+        "save": "Save",
+        "resetPin": "Reset PIN",
+        "newPin": "New PIN (4-8 digits)",
+        "pinSet": "PIN set",
+        "pinNotSet": "No PIN"
+      },
+      "devices": {
+        "title": "Authorized Devices",
+        "label": "Device label",
+        "add": "+ Add Device",
+        "empty": "No authorized devices yet.",
+        "revoke": "Revoke",
+        "active": "Active",
+        "revoked": "Revoked",
+        "secretRevealTitle": "Device Secret",
+        "secretWarning": "This secret cannot be shown again — save it to the device now."
+      },
+      "permissions": {
+        "title": "Permission Flags",
+        "comp_discount": "Comp/Discount",
+        "refund": "Refund",
+        "reports_revenue": "Revenue Report",
+        "reports_profit": "Profit Report",
+        "menu_edit": "Menu Editing",
+        "cash_open_close": "Cash Register Open/Close",
+        "session_move": "Move Table",
+        "reservations_manage": "Manage Reservations",
+        "staff_manage": "Manage Staff"
+      },
+      "errors": {
+        "invalid_input": "Please check the information you entered.",
+        "forbidden": "You don't have permission for this action.",
+        "not_found": "Record not found.",
+        "last_owner": "The last owner cannot be demoted or deactivated.",
+        "unknown": "Could not save, please try again.",
+        "invalid_pin": "PIN must be 4-8 digits."
+      }
     }
   },
   "waiter": {

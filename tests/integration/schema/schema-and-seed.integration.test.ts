@@ -60,11 +60,11 @@ describe("Şema ve seed verisi (Supabase Studio manuel kontrolünün otomatik ka
     expect(beta?.is_enabled).toBe(false);
   });
 
-  it("seed: role_permissions 2 rol × 8 izin × 2 tenant = 32 satır", async () => {
+  it("seed: role_permissions 2 rol × 9 izin × 2 tenant = 36 satır", async () => {
     const { count, error } = await serviceRoleClient()
       .from("role_permissions")
       .select("*", { count: "exact", head: true });
     expect(error).toBeNull();
-    expect(count).toBe(32);
+    expect(count).toBe(36);
   });
 });

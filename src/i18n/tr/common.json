@@ -157,6 +157,56 @@
         "unknown": "Kaydedilemedi, tekrar deneyin.",
         "required": "Bu alan zorunlu."
       }
+    },
+    "staff": {
+      "title": "Personel",
+      "role": {
+        "owner": "Sahip",
+        "manager": "Yönetici",
+        "waiter": "Garson",
+        "kitchen": "Mutfak",
+        "courier": "Kurye"
+      },
+      "member": {
+        "badgeNo": "Rozet No",
+        "active": "Aktif",
+        "save": "Kaydet",
+        "resetPin": "PIN Sıfırla",
+        "newPin": "Yeni PIN (4-8 hane)",
+        "pinSet": "PIN tanımlı",
+        "pinNotSet": "PIN yok"
+      },
+      "devices": {
+        "title": "Yetkili Cihazlar",
+        "label": "Cihaz etiketi",
+        "add": "+ Cihaz Ekle",
+        "empty": "Henüz yetkili cihaz yok.",
+        "revoke": "İptal Et",
+        "active": "Aktif",
+        "revoked": "İptal edildi",
+        "secretRevealTitle": "Cihaz Şifresi",
+        "secretWarning": "Bu şifre bir daha gösterilemez — cihaza şimdi kaydedin."
+      },
+      "permissions": {
+        "title": "İzin Bayrakları",
+        "comp_discount": "İkram/İndirim",
+        "refund": "İade",
+        "reports_revenue": "Ciro Raporu",
+        "reports_profit": "Kâr Raporu",
+        "menu_edit": "Menü Düzenleme",
+        "cash_open_close": "Kasa Aç/Kapa",
+        "session_move": "Masa Taşıma",
+        "reservations_manage": "Rezervasyon Yönetimi",
+        "staff_manage": "Personel Yönetimi"
+      },
+      "errors": {
+        "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
+        "forbidden": "Bu işlem için yetkiniz yok.",
+        "not_found": "Kayıt bulunamadı.",
+        "last_owner": "Son sahip düşürülemez veya pasif yapılamaz.",
+        "unknown": "Kaydedilemedi, tekrar deneyin.",
+        "invalid_pin": "PIN 4-8 haneli rakam olmalı."
+      }
     }
   },
   "waiter": {

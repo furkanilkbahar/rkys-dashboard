@@ -2,20 +2,11 @@ import "server-only";
 
 import { createClient } from "@/lib/supabase/server";
 
+import { PERMISSION_KEYS, type PermissionKey } from "./permissions";
 import type { CurrentActor } from "./session";
 
-export const PERMISSION_KEYS = [
-  "comp_discount",
-  "refund",
-  "reports.revenue",
-  "reports.profit",
-  "menu.edit",
-  "cash.open_close",
-  "session.move",
-  "reservations.manage",
-] as const;
-
-export type PermissionKey = (typeof PERMISSION_KEYS)[number];
+export { PERMISSION_KEYS };
+export type { PermissionKey };
 
 export class PermissionDeniedError extends Error {
   constructor(permissionKey: PermissionKey) {
