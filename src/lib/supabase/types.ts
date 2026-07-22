@@ -1007,6 +1007,24 @@ export type Database = {
           },
         ]
       }
+      platform_admins: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          is_active?: boolean
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+        }
+        Relationships: []
+      }
       product_costs: {
         Row: {
           cost_minor: number

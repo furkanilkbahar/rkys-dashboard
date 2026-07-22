@@ -267,6 +267,17 @@ values
     now(), '{"provider":"email","providers":["email"]}', '{}',
     now(), now(),
     '', '', '', '', '', '', '', ''
+  ),
+  -- Faz 4 Adım 0: Süper Admin — tenant'a hiç bağlı değil, platform_admins'e
+  -- eklenerek custom_access_token_hook'un üçüncü dalını tetikler.
+  (
+    '00000000-0000-0000-0000-000000000000',
+    '00000000-0000-4000-8000-0000000000d1',
+    'authenticated', 'authenticated', 'platform@rkys.test',
+    crypt('password123', gen_salt('bf')),
+    now(), '{"provider":"email","providers":["email"]}', '{}',
+    now(), now(),
+    '', '', '', '', '', '', '', ''
   )
 on conflict (id) do nothing;
 
@@ -291,6 +302,10 @@ values
   (
     gen_random_uuid(), '00000000-0000-4000-8000-0000000000c1', '00000000-0000-4000-8000-0000000000c1',
     '{"sub":"00000000-0000-4000-8000-0000000000c1","email":"owner@gamma.test"}', 'email', now(), now()
+  ),
+  (
+    gen_random_uuid(), '00000000-0000-4000-8000-0000000000d1', '00000000-0000-4000-8000-0000000000d1',
+    '{"sub":"00000000-0000-4000-8000-0000000000d1","email":"platform@rkys.test"}', 'email', now(), now()
   )
 on conflict (provider_id, provider) do nothing;
 
@@ -301,4 +316,8 @@ values
   ('00000000-0000-4000-8000-0000000000a3', '00000000-0000-4000-8000-000000000001', 'waiter', true),
   ('00000000-0000-4000-8000-0000000000b1', '00000000-0000-4000-8000-000000000002', 'owner', true),
   ('00000000-0000-4000-8000-0000000000c1', '00000000-0000-4000-8000-000000000003', 'owner', true)
+on conflict (id) do nothing;
+
+insert into public.platform_admins (id, is_active)
+values ('00000000-0000-4000-8000-0000000000d1', true)
 on conflict (id) do nothing;
