@@ -659,7 +659,8 @@
     "nav": {
       "tenants": "Tenants",
       "announcements": "Announcements",
-      "settings": "Settings"
+      "settings": "Settings",
+      "licenses": "Licenses"
     },
     "topbar": {
       "logout": "Log out"
@@ -712,6 +713,21 @@
       "title": "Settings",
       "enforce2faLabel": "Enforce 2FA",
       "enforce2faDescription": "When enabled, two-factor authentication becomes mandatory for all staff."
+    },
+    "licenses": {
+      "title": "Licenses",
+      "tenant": "Tenant",
+      "licenseType": "License Type",
+      "type": {
+        "lifetime": "Lifetime",
+        "self_hosted": "Self-hosted"
+      },
+      "expiresAt": "Expiry date (optional)",
+      "expiresAtLabel": "Expires: {date}",
+      "generate": "Generate License",
+      "generatedTitle": "New license generated — copy it:",
+      "empty": "No licenses yet.",
+      "error": "Could not generate license, please try again."
     }
   }
 }

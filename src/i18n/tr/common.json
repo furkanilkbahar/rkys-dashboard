@@ -659,7 +659,8 @@
     "nav": {
       "tenants": "Tenantlar",
       "announcements": "Duyurular",
-      "settings": "Ayarlar"
+      "settings": "Ayarlar",
+      "licenses": "Lisanslar"
     },
     "topbar": {
       "logout": "Çıkış yap"
@@ -712,6 +713,21 @@
       "title": "Ayarlar",
       "enforce2faLabel": "2FA zorunluluğu",
       "enforce2faDescription": "Açılırsa tüm personel için iki faktörlü doğrulama zorunlu olur."
+    },
+    "licenses": {
+      "title": "Lisanslar",
+      "tenant": "Tenant",
+      "licenseType": "Lisans Tipi",
+      "type": {
+        "lifetime": "Lifetime",
+        "self_hosted": "Self-hosted"
+      },
+      "expiresAt": "Son kullanma tarihi (opsiyonel)",
+      "expiresAtLabel": "Son kullanma: {date}",
+      "generate": "Lisans Üret",
+      "generatedTitle": "Yeni lisans üretildi — kopyalayın:",
+      "empty": "Henüz lisans yok.",
+      "error": "Lisans üretilemedi, tekrar deneyin."
     }
   }
 }

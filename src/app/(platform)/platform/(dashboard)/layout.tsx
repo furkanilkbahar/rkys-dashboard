@@ -23,6 +23,9 @@ export default async function PlatformDashboardLayout({ children }: { children: 
             <Link href="/platform/settings" className="hover:text-foreground">
               {t("nav.settings")}
             </Link>
+            <Link href="/platform/licenses" className="hover:text-foreground">
+              {t("nav.licenses")}
+            </Link>
           </nav>
         </div>
         <PlatformLogoutButton />
