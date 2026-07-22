@@ -24,8 +24,15 @@ export type PlatformTenantDetail = {
   slug: string;
   name: string;
   status: "active" | "suspended";
+  planId: string | null;
   branches: { id: string; name: string; isDefault: boolean }[];
   enabledModules: string[];
+};
+
+export type PlatformPlan = {
+  id: string;
+  key: string;
+  name: string;
 };
 
 // Süper Admin salt-okunur görünümleri: gate zaten Next.js layer'ında
@@ -77,7 +84,7 @@ export async function getPlatformStats(): Promise<PlatformStats> {
 export async function getPlatformTenantDetail(tenantId: string): Promise<PlatformTenantDetail | null> {
   const service = createServiceRoleClient();
   const [{ data: tenant }, { data: branches }, { data: modules }] = await Promise.all([
-    service.from("tenants").select("id, slug, name, status").eq("id", tenantId).single(),
+    service.from("tenants").select("id, slug, name, status, plan_id").eq("id", tenantId).single(),
     service.from("branches").select("id, name, is_default").eq("tenant_id", tenantId),
     service.from("tenant_modules").select("module_key").eq("tenant_id", tenantId).eq("is_enabled", true),
   ]);
@@ -91,7 +98,15 @@ export async function getPlatformTenantDetail(tenantId: string): Promise<Platfor
     slug: tenant.slug,
     name: tenant.name,
     status: tenant.status as "active" | "suspended",
+    planId: tenant.plan_id,
     branches: (branches ?? []).map((b) => ({ id: b.id, name: b.name, isDefault: b.is_default })),
     enabledModules: (modules ?? []).map((m) => m.module_key),
   };
+}
+
+export async function getPlatformPlans(): Promise<PlatformPlan[]> {
+  const service = createServiceRoleClient();
+  const { data } = await service.from("plans").select("id, key, name").order("table_limit", { ascending: true, nullsFirst: false });
+
+  return (data ?? []).map((p) => ({ id: p.id, key: p.key, name: p.name }));
 }

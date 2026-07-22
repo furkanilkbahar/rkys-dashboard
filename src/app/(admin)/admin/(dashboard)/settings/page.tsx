@@ -10,8 +10,10 @@ import {
   getAdminTenantSettings,
   getAdminTipPresets,
 } from "@/lib/data/adminSettings";
+import { getAdminBranchesInfo } from "@/lib/data/branch";
 
 import {
+  createBranch,
   createCallType,
   createReasonCode,
   createTipPreset,
@@ -30,15 +32,17 @@ import { SettingsManager } from "./settings-manager";
 export default async function AdminSettingsPage() {
   const actor = await requireAdminActor();
 
-  const [settings, callTypes, reasonCodes, locales, tipPresets, ratingSettings, modules] = await Promise.all([
-    getAdminTenantSettings(actor.tenantId),
-    getAdminCallTypes(actor.tenantId),
-    getAdminReasonCodes(actor.tenantId),
-    getAdminLocales(actor.tenantId),
-    getAdminTipPresets(actor.tenantId),
-    getAdminRatingSettings(actor.tenantId),
-    getAdminModules(actor.tenantId),
-  ]);
+  const [settings, callTypes, reasonCodes, locales, tipPresets, ratingSettings, modules, branchesInfo] =
+    await Promise.all([
+      getAdminTenantSettings(actor.tenantId),
+      getAdminCallTypes(actor.tenantId),
+      getAdminReasonCodes(actor.tenantId),
+      getAdminLocales(actor.tenantId),
+      getAdminTipPresets(actor.tenantId),
+      getAdminRatingSettings(actor.tenantId),
+      getAdminModules(actor.tenantId),
+      getAdminBranchesInfo(actor.tenantId),
+    ]);
 
   if (!settings || !ratingSettings) {
     notFound();
@@ -54,6 +58,7 @@ export default async function AdminSettingsPage() {
       tipPresets={tipPresets}
       ratingSettings={ratingSettings}
       modules={modules}
+      branchesInfo={branchesInfo}
       actions={{
         updateOrderSettings,
         updateBusinessSettings,
@@ -67,6 +72,7 @@ export default async function AdminSettingsPage() {
         updateTipPreset,
         updateRatingSettings,
         toggleModule,
+        createBranch,
       }}
     />
   );

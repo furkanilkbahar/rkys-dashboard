@@ -24,16 +24,19 @@ import type {
   AdminTenantSettings,
   AdminTipPreset,
 } from "@/lib/data/adminSettings";
+import type { AdminBranchesInfo } from "@/lib/data/branch";
 import { MODULE_KEYS, type ModuleKey } from "@/lib/modules/keys";
 import {
   SUPPORTED_CURRENCIES,
   SUPPORTED_TIMEZONES,
+  branchFormSchema,
   businessSettingsFormSchema,
   callTypeFormSchema,
   orderSettingsFormSchema,
   ratingSettingsFormSchema,
   reasonCodeFormSchema,
   tipPresetFormSchema,
+  type BranchActionResult,
   type SettingsActionResult,
 } from "@/lib/settings/schemas";
 
@@ -50,6 +53,7 @@ type Actions = {
   updateTipPreset: (tipPresetId: string, input: unknown) => Promise<SettingsActionResult>;
   updateRatingSettings: (input: unknown) => Promise<SettingsActionResult>;
   toggleModule: (input: unknown) => Promise<SettingsActionResult>;
+  createBranch: (input: unknown) => Promise<BranchActionResult>;
 };
 
 function OrderSettingsCard({ settings, updateOrderSettings }: { settings: AdminTenantSettings; updateOrderSettings: Actions["updateOrderSettings"] }) {
@@ -702,6 +706,7 @@ export function SettingsManager({
   tipPresets,
   ratingSettings,
   modules,
+  branchesInfo,
   actions,
 }: {
   isOwner: boolean;
@@ -712,6 +717,7 @@ export function SettingsManager({
   tipPresets: AdminTipPreset[];
   ratingSettings: AdminRatingSettings;
   modules: AdminModule[];
+  branchesInfo: AdminBranchesInfo;
   actions: Actions;
 }) {
   const t = useTranslations("admin.settings");
@@ -729,6 +735,73 @@ export function SettingsManager({
       <RatingSettingsCard ratingSettings={ratingSettings} updateRatingSettings={actions.updateRatingSettings} />
       <ThemeCard themeKey={settings.themeKey} />
       <ModulesCard modules={modules} toggleModule={actions.toggleModule} />
+      {isOwner && <BranchesCard branchesInfo={branchesInfo} createBranch={actions.createBranch} />}
     </div>
+  );
+}
+
+function BranchesCard({
+  branchesInfo,
+  createBranch,
+}: {
+  branchesInfo: AdminBranchesInfo;
+  createBranch: Actions["createBranch"];
+}) {
+  const t = useTranslations("admin.settings.branches");
+  const tErrors = useTranslations("admin.settings.errors");
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+  const { register, handleSubmit, reset } = useForm({
+    resolver: standardSchemaResolver(branchFormSchema),
+    defaultValues: { name: "" },
+  });
+
+  async function onSubmit(values: { name: string }) {
+    setError(null);
+    setNotice(null);
+    const result = await createBranch(values);
+    if (!result.ok) {
+      setError(tErrors(result.error));
+      return;
+    }
+    if (result.extraFeeApplies) {
+      setNotice(t("extraFeeNotice"));
+    }
+    reset({ name: "" });
+    router.refresh();
+  }
+
+  const atIncludedLimit = branchesInfo.branches.length >= branchesInfo.includedBranchCount;
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base">{t("title")}</CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-3">
+        {branchesInfo.branches.length === 0 && <p className="text-sm text-muted-foreground">{t("empty")}</p>}
+        {branchesInfo.branches.map((branch) => (
+          <div key={branch.id} className="flex items-center justify-between rounded-md border border-border p-2 text-sm">
+            <span>{branch.name}</span>
+            {branch.isDefault && <Badge variant="secondary">{t("defaultBranch")}</Badge>}
+          </div>
+        ))}
+
+        {atIncludedLimit && <p className="text-xs text-muted-foreground">{t("extraFeeNotice")}</p>}
+
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-wrap items-end gap-2">
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="new-branch-name">{t("name")}</Label>
+            <Input id="new-branch-name" className="w-48" {...register("name")} />
+          </div>
+          <Button type="submit" size="sm">
+            {t("add")}
+          </Button>
+        </form>
+        {notice && <p className="text-xs text-muted-foreground">{notice}</p>}
+        {error && <p className="text-xs text-destructive">{error}</p>}
+      </CardContent>
+    </Card>
   );
 }

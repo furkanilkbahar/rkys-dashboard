@@ -262,7 +262,8 @@
         "forbidden": "You don't have permission for this action.",
         "not_found": "Record not found.",
         "unknown": "Could not save, please try again.",
-        "required": "This field is required."
+        "required": "This field is required.",
+        "plan_limit_reached": "You've reached your plan's table limit. Upgrade your plan to continue."
       }
     },
     "staff": {
@@ -395,6 +396,14 @@
         "not_found": "Record not found.",
         "last_locale": "At least one language must stay enabled.",
         "unknown": "Could not save, please try again."
+      },
+      "branches": {
+        "title": "Branches",
+        "name": "Branch name",
+        "add": "+ Add Branch",
+        "empty": "No branches yet.",
+        "defaultBranch": "Default",
+        "extraFeeNotice": "You've exceeded your plan's included free branch count — an extra branch fee applies."
       },
       "reasonCodes": {
         "title": "Reason Codes",
@@ -652,7 +661,9 @@
       "modulesTitle": "Enabled Modules",
       "noModules": "No modules enabled.",
       "suspend": "Suspend",
-      "reactivate": "Reactivate"
+      "reactivate": "Reactivate",
+      "planTitle": "Plan",
+      "planNone": "No plan assigned (unlimited)"
     },
     "announcements": {
       "title": "Announcements",

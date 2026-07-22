@@ -3,14 +3,15 @@ import { getTranslations } from "next-intl/server";
 
 import { Badge } from "@/components/ui/badge";
 import { SuspendToggleButton } from "@/components/platform/suspend-toggle-button";
-import { getPlatformTenantDetail } from "@/lib/data/platformTenants";
+import { PlanSelect } from "@/components/platform/plan-select";
+import { getPlatformPlans, getPlatformTenantDetail } from "@/lib/data/platformTenants";
 
-import { reactivateTenant, suspendTenant } from "../actions";
+import { assignTenantPlan, reactivateTenant, suspendTenant } from "../actions";
 
 export default async function PlatformTenantDetailPage({ params }: { params: Promise<{ tenantId: string }> }) {
   const { tenantId } = await params;
   const t = await getTranslations("platform");
-  const tenant = await getPlatformTenantDetail(tenantId);
+  const [tenant, plans] = await Promise.all([getPlatformTenantDetail(tenantId), getPlatformPlans()]);
 
   if (!tenant) {
     notFound();
@@ -29,6 +30,11 @@ export default async function PlatformTenantDetailPage({ params }: { params: Pro
         />
       </div>
       <p className="text-sm text-muted-foreground">{tenant.slug}</p>
+
+      <div className="flex flex-col gap-2">
+        <h2 className="text-base font-semibold">{t("tenantDetail.planTitle")}</h2>
+        <PlanSelect tenantId={tenant.id} planId={tenant.planId} plans={plans} assignTenantPlan={assignTenantPlan} />
+      </div>
 
       <div className="flex flex-col gap-2">
         <h2 className="text-base font-semibold">{t("tenantDetail.branchesTitle")}</h2>

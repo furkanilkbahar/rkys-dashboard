@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 
 import { getCurrentActor } from "@/lib/auth/session";
 import {
+  branchFormSchema,
   businessSettingsFormSchema,
   callTypeFormSchema,
   localeToggleSchema,
@@ -14,6 +15,7 @@ import {
   ratingSettingsFormSchema,
   reasonCodeFormSchema,
   tipPresetFormSchema,
+  type BranchActionResult,
   type SettingsActionResult,
 } from "@/lib/settings/schemas";
 import { createClient } from "@/lib/supabase/server";
@@ -276,6 +278,24 @@ export async function updateRatingSettings(input: unknown): Promise<SettingsActi
 
   revalidatePath("/admin/settings");
   return { ok: true };
+}
+
+export async function createBranch(input: unknown): Promise<BranchActionResult> {
+  const actor = await requireStaffActor();
+  if (!actor) return { ok: false, error: "forbidden" };
+
+  const parsed = branchFormSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: "invalid_input" };
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("create_branch", { p_name: parsed.data.name }).single();
+  if (error) {
+    if (error.message.includes("owner only")) return { ok: false, error: "forbidden" };
+    return { ok: false, error: "unknown" };
+  }
+
+  revalidatePath("/admin/settings");
+  return { ok: true, extraFeeApplies: data.extra_fee_applies };
 }
 
 export async function toggleModule(input: unknown): Promise<SettingsActionResult> {

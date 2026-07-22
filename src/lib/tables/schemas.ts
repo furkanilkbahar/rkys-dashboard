@@ -24,4 +24,4 @@ export type TableActionResult =
 
 export type QrRevealResult =
   | { ok: true; rawToken: string; guestPath: string }
-  | { ok: false; error: "invalid_input" | "forbidden" | "not_found" | "unknown" };
+  | { ok: false; error: "invalid_input" | "forbidden" | "not_found" | "plan_limit_reached" | "unknown" };

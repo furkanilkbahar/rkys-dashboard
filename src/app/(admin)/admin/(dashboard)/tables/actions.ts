@@ -71,7 +71,10 @@ export async function createTable(branchId: string, input: unknown): Promise<QrR
     is_active: parsed.data.isActive,
     qr_token_hash: hashToken(rawToken),
   });
-  if (error) return { ok: false, error: "unknown" };
+  if (error) {
+    if (error.message.includes("plan table limit reached")) return { ok: false, error: "plan_limit_reached" };
+    return { ok: false, error: "unknown" };
+  }
 
   revalidatePath("/admin/tables");
   return { ok: true, rawToken, guestPath: `/masa/t/${rawToken}` };

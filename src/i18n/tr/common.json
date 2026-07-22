@@ -262,7 +262,8 @@
         "forbidden": "Bu işlem için yetkiniz yok.",
         "not_found": "Kayıt bulunamadı.",
         "unknown": "Kaydedilemedi, tekrar deneyin.",
-        "required": "Bu alan zorunlu."
+        "required": "Bu alan zorunlu.",
+        "plan_limit_reached": "Planınızın masa limitine ulaştınız. Devam etmek için planınızı yükseltin."
       }
     },
     "staff": {
@@ -395,6 +396,14 @@
         "not_found": "Kayıt bulunamadı.",
         "last_locale": "En az bir dil etkin kalmalı.",
         "unknown": "Kaydedilemedi, tekrar deneyin."
+      },
+      "branches": {
+        "title": "Şubeler",
+        "name": "Şube adı",
+        "add": "+ Şube Ekle",
+        "empty": "Henüz şube yok.",
+        "defaultBranch": "Varsayılan",
+        "extraFeeNotice": "Planınızın dahil ettiği ücretsiz şube sayısını aştınız — ek şube ücreti uygulanır."
       },
       "reasonCodes": {
         "title": "Sebep Kodları",
@@ -652,7 +661,9 @@
       "modulesTitle": "Aktif Modüller",
       "noModules": "Hiçbir modül aktif değil.",
       "suspend": "Askıya al",
-      "reactivate": "Tekrar aktifleştir"
+      "reactivate": "Tekrar aktifleştir",
+      "planTitle": "Plan",
+      "planNone": "Plan atanmadı (sınırsız)"
     },
     "announcements": {
       "title": "Duyurular",

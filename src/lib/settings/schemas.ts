@@ -66,3 +66,12 @@ export type ModuleToggleInput = z.infer<typeof moduleToggleSchema>;
 export type SettingsActionResult =
   | { ok: true }
   | { ok: false; error: "invalid_input" | "forbidden" | "not_found" | "last_locale" | "unknown" };
+
+export const branchFormSchema = z.object({
+  name: z.string().min(1, "required"),
+});
+export type BranchFormInput = z.infer<typeof branchFormSchema>;
+
+export type BranchActionResult =
+  | { ok: true; extraFeeApplies: boolean }
+  | { ok: false; error: "invalid_input" | "forbidden" | "unknown" };
