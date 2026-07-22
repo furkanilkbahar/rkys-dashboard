@@ -137,3 +137,33 @@ export async function createThrowawayTenant(prefix: string) {
 
   return { tenantId, branchId, email, slug: `test-${prefix}-${suffix}` };
 }
+
+/**
+ * Faz 4: platform_admins'te bir satırı olan, tenant'a hiç bağlı olmayan bir
+ * kullanıcı — custom_access_token_hook'un üçüncü dalını (0036) tetikler.
+ * Çağıran taraf işini bitirince `service.auth.admin.deleteUser(userId)` ile
+ * temizleyebilir (platform_admins satırı cascade ile silinir).
+ */
+export async function createPlatformAdmin(prefix: string) {
+  const service = serviceRoleClient();
+  const suffix = crypto.randomUUID().slice(0, 8);
+  const email = `platform-${prefix}-${suffix}@test-throwaway.test`;
+
+  const { data: authUser, error: authUserError } = await service.auth.admin.createUser({
+    email,
+    password: SEED.password,
+    email_confirm: true,
+  });
+  if (authUserError || !authUser.user) {
+    throw new Error(`platform admin create failed: ${authUserError?.message}`);
+  }
+  await service.from("platform_admins").insert({ id: authUser.user.id, is_active: true });
+
+  const client = anonClient();
+  const { error: signInError } = await client.auth.signInWithPassword({ email, password: SEED.password });
+  if (signInError) {
+    throw new Error(`platform admin sign-in failed: ${signInError.message}`);
+  }
+
+  return { userId: authUser.user.id, email, client };
+}

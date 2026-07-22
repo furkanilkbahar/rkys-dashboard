@@ -13,8 +13,7 @@
     "marketing": "RKYS Dashboard — marketing (Faz 13)",
     "marketingCardBody": "Faz 0 tema/bileşen doğrulama kartı — marketing içeriği Faz 13'te gelecek.",
     "marketingCardButton": "Örnek buton",
-    "analytics": "RKYS Dashboard — analitik merkezi (Faz 5)",
-    "platform": "RKYS Dashboard — süper admin (Faz 4)"
+    "analytics": "RKYS Dashboard — analitik merkezi (Faz 5)"
   },
   "cashier": {
     "title": "Kasa",
@@ -622,6 +621,34 @@
         "no_session": "Oturumunuz bulunamadı.",
         "unknown": "Gönderilemedi, tekrar deneyin."
       }
+    }
+  },
+  "platform": {
+    "title": "RKYS Süper Admin",
+    "nav": {
+      "tenants": "Tenantlar"
+    },
+    "topbar": {
+      "logout": "Çıkış yap"
+    },
+    "status": {
+      "active": "Aktif",
+      "suspended": "Askıya Alındı"
+    },
+    "dashboard": {
+      "title": "Panel",
+      "totalTenants": "Toplam Tenant",
+      "activeTenants": "Aktif Tenant",
+      "totalBranches": "Toplam Şube",
+      "totalTables": "Toplam Masa",
+      "tenantsTitle": "Tenantlar",
+      "branchCount": "{count} şube"
+    },
+    "tenantDetail": {
+      "branchesTitle": "Şubeler",
+      "defaultBranch": "Varsayılan",
+      "modulesTitle": "Aktif Modüller",
+      "noModules": "Hiçbir modül aktif değil."
     }
   }
 }

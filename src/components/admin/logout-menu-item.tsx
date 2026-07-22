@@ -10,7 +10,7 @@ export function LogoutMenuItem() {
   const t = useTranslations("admin.topbar");
 
   return (
-    <DropdownMenuItem onClick={signOutCurrentDevice} variant="destructive">
+    <DropdownMenuItem onClick={() => signOutCurrentDevice()} variant="destructive">
       <LogOut className="size-4" aria-hidden="true" />
       {t("logout")}
     </DropdownMenuItem>

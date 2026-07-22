@@ -13,8 +13,7 @@
     "marketing": "RKYS Dashboard — marketing (Phase 13)",
     "marketingCardBody": "Phase 0 theme/component verification card — real marketing content lands in Phase 13.",
     "marketingCardButton": "Example button",
-    "analytics": "RKYS Dashboard — analytics hub (Phase 5)",
-    "platform": "RKYS Dashboard — super admin (Phase 4)"
+    "analytics": "RKYS Dashboard — analytics hub (Phase 5)"
   },
   "cashier": {
     "title": "Cashier",
@@ -622,6 +621,34 @@
         "no_session": "Your session could not be found.",
         "unknown": "Could not submit, please try again."
       }
+    }
+  },
+  "platform": {
+    "title": "RKYS Super Admin",
+    "nav": {
+      "tenants": "Tenants"
+    },
+    "topbar": {
+      "logout": "Log out"
+    },
+    "status": {
+      "active": "Active",
+      "suspended": "Suspended"
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "totalTenants": "Total Tenants",
+      "activeTenants": "Active Tenants",
+      "totalBranches": "Total Branches",
+      "totalTables": "Total Tables",
+      "tenantsTitle": "Tenants",
+      "branchCount": "{count} branches"
+    },
+    "tenantDetail": {
+      "branchesTitle": "Branches",
+      "defaultBranch": "Default",
+      "modulesTitle": "Enabled Modules",
+      "noModules": "No modules enabled."
     }
   }
 }
