@@ -1037,6 +1037,36 @@ export type Database = {
           },
         ]
       }
+      plans: {
+        Row: {
+          created_at: string
+          extra_branch_price_minor: number
+          id: string
+          included_branch_count: number
+          key: string
+          name: string
+          table_limit: number | null
+        }
+        Insert: {
+          created_at?: string
+          extra_branch_price_minor?: number
+          id?: string
+          included_branch_count?: number
+          key: string
+          name: string
+          table_limit?: number | null
+        }
+        Update: {
+          created_at?: string
+          extra_branch_price_minor?: number
+          id?: string
+          included_branch_count?: number
+          key?: string
+          name?: string
+          table_limit?: number | null
+        }
+        Relationships: []
+      }
       platform_admins: {
         Row: {
           created_at: string
@@ -2204,6 +2234,7 @@ export type Database = {
           logo_url: string | null
           name: string
           onboarding_completed_at: string | null
+          plan_id: string | null
           slug: string
           status: string
           timezone: string
@@ -2215,6 +2246,7 @@ export type Database = {
           logo_url?: string | null
           name: string
           onboarding_completed_at?: string | null
+          plan_id?: string | null
           slug: string
           status?: string
           timezone?: string
@@ -2226,11 +2258,20 @@ export type Database = {
           logo_url?: string | null
           name?: string
           onboarding_completed_at?: string | null
+          plan_id?: string | null
           slug?: string
           status?: string
           timezone?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "tenants_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tip_presets: {
         Row: {
@@ -2396,6 +2437,10 @@ export type Database = {
         Returns: undefined
       }
       approve_order: { Args: { p_order_id: string }; Returns: undefined }
+      assign_tenant_plan: {
+        Args: { p_plan_id: string; p_tenant_id: string }
+        Returns: undefined
+      }
       call_waiter: {
         Args: { p_call_type_key?: string; p_note?: string }
         Returns: string
@@ -2416,6 +2461,13 @@ export type Database = {
       complete_online_payment: {
         Args: { p_provider: string; p_provider_ref: string }
         Returns: undefined
+      }
+      create_branch: {
+        Args: { p_name: string }
+        Returns: {
+          branch_id: string
+          extra_fee_applies: boolean
+        }[]
       }
       create_pending_online_payment: {
         Args: {
