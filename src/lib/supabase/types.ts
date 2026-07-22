@@ -34,6 +34,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      announcements: {
+        Row: {
+          body: string
+          created_at: string
+          ends_at: string | null
+          id: string
+          is_active: boolean
+          starts_at: string
+          title: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean
+          starts_at?: string
+          title: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean
+          starts_at?: string
+          title?: string
+        }
+        Relationships: []
+      }
       branch_product_overrides: {
         Row: {
           branch_id: string
@@ -1022,6 +1052,24 @@ export type Database = {
           created_at?: string
           id?: string
           is_active?: boolean
+        }
+        Relationships: []
+      }
+      platform_settings: {
+        Row: {
+          enforce_2fa: boolean
+          id: boolean
+          updated_at: string
+        }
+        Insert: {
+          enforce_2fa?: boolean
+          id?: boolean
+          updated_at?: string
+        }
+        Update: {
+          enforce_2fa?: boolean
+          id?: boolean
+          updated_at?: string
         }
         Relationships: []
       }
@@ -2446,6 +2494,7 @@ export type Database = {
       }
       is_platform_admin: { Args: never; Returns: boolean }
       is_staff: { Args: never; Returns: boolean }
+      is_tenant_active: { Args: { p_tenant_id: string }; Returns: boolean }
       link_guest_device: {
         Args: {
           p_branch_id: string
@@ -2478,6 +2527,7 @@ export type Database = {
         Args: { p_branch_id: string; p_opening_balance_minor: number }
         Returns: string
       }
+      reactivate_tenant: { Args: { p_tenant_id: string }; Returns: undefined }
       record_cash_movement: {
         Args: {
           p_amount_minor: number
@@ -2575,6 +2625,7 @@ export type Database = {
           subtotal_minor: number
         }[]
       }
+      suspend_tenant: { Args: { p_tenant_id: string }; Returns: undefined }
       update_staff_member: {
         Args: {
           p_badge_no: string
