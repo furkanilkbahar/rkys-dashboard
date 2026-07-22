@@ -21,3 +21,14 @@ export type LicenseFormInput = z.infer<typeof licenseFormSchema>;
 export type CreateLicenseResult =
   | { ok: true; licenseKey: string }
   | { ok: false; error: "invalid_input" | "forbidden" | "unknown" };
+
+export const incidentFormSchema = z.object({
+  title: z.string().min(1, "required"),
+});
+export type IncidentFormInput = z.infer<typeof incidentFormSchema>;
+
+export const incidentUpdateFormSchema = z.object({
+  body: z.string().min(1, "required"),
+  status: z.enum(["investigating", "identified", "monitoring", "resolved"]),
+});
+export type IncidentUpdateFormInput = z.infer<typeof incidentUpdateFormSchema>;

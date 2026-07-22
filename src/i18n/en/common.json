@@ -686,7 +686,8 @@
       "announcements": "Announcements",
       "settings": "Settings",
       "licenses": "Licenses",
-      "support": "Support"
+      "support": "Support",
+      "incidents": "Incidents"
     },
     "topbar": {
       "logout": "Log out"
@@ -771,6 +772,21 @@
       "replyPlaceholder": "Write your reply...",
       "reply": "Send",
       "resolve": "Mark as Resolved"
+    },
+    "incidents": {
+      "title": "Incidents",
+      "newTitle": "Incident title",
+      "create": "Create Incident",
+      "empty": "No incidents yet.",
+      "error": "Something went wrong, please try again.",
+      "updateBodyPlaceholder": "Write an update...",
+      "addUpdate": "Add Update",
+      "status": {
+        "investigating": "Investigating",
+        "identified": "Identified",
+        "monitoring": "Monitoring",
+        "resolved": "Resolved"
+      }
     }
   },
   "marketing": {
@@ -864,6 +880,22 @@
       "p1": "You have the right to request the permanent deletion of your account and all data belonging to your business.",
       "p2": "A deletion request is irreversible; once received, our team will delete your data, subject to legally required retention periods.",
       "cta": "To delete your account, go to Settings → Delete My Account in your admin panel."
+    }
+  },
+  "status": {
+    "title": "System Status",
+    "systemStatus": {
+      "operational": "All systems operational",
+      "degraded": "Some systems are experiencing issues"
+    },
+    "activeIncidentsTitle": "Active Incidents",
+    "historyTitle": "History",
+    "historyEmpty": "No past incidents.",
+    "incidentStatus": {
+      "investigating": "Investigating",
+      "identified": "Identified",
+      "monitoring": "Monitoring",
+      "resolved": "Resolved"
     }
   }
 }

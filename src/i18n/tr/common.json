@@ -686,7 +686,8 @@
       "announcements": "Duyurular",
       "settings": "Ayarlar",
       "licenses": "Lisanslar",
-      "support": "Destek"
+      "support": "Destek",
+      "incidents": "Olaylar"
     },
     "topbar": {
       "logout": "Çıkış yap"
@@ -771,6 +772,21 @@
       "replyPlaceholder": "Yanıtınızı yazın...",
       "reply": "Gönder",
       "resolve": "Çözüldü Olarak İşaretle"
+    },
+    "incidents": {
+      "title": "Olaylar",
+      "newTitle": "Olay başlığı",
+      "create": "Olay Oluştur",
+      "empty": "Henüz olay yok.",
+      "error": "Bir hata oluştu, tekrar deneyin.",
+      "updateBodyPlaceholder": "Güncelleme yazın...",
+      "addUpdate": "Güncelleme Ekle",
+      "status": {
+        "investigating": "İnceleniyor",
+        "identified": "Tespit Edildi",
+        "monitoring": "İzleniyor",
+        "resolved": "Çözüldü"
+      }
     }
   },
   "marketing": {
@@ -864,6 +880,22 @@
       "p1": "Hesabınızı ve işletmenize ait tüm verileri kalıcı olarak silinmesini talep etme hakkınız vardır (KVKK).",
       "p2": "Silme talebi geri alınamaz bir işlemdir; talebiniz alındıktan sonra ekibimiz verilerinizi yasal saklama süreleri saklı kalmak kaydıyla siler.",
       "cta": "Hesabınızı silmek için admin panelinizde Ayarlar → Hesabımı Sil bölümünden talep oluşturabilirsiniz."
+    }
+  },
+  "status": {
+    "title": "Sistem Durumu",
+    "systemStatus": {
+      "operational": "Tüm sistemler çalışıyor",
+      "degraded": "Bazı sistemlerde sorun var"
+    },
+    "activeIncidentsTitle": "Aktif Olaylar",
+    "historyTitle": "Geçmiş",
+    "historyEmpty": "Geçmiş olay yok.",
+    "incidentStatus": {
+      "investigating": "İnceleniyor",
+      "identified": "Tespit Edildi",
+      "monitoring": "İzleniyor",
+      "resolved": "Çözüldü"
     }
   }
 }
