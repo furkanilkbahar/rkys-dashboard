@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import type { ActiveAnnouncement } from "@/lib/data/announcements";
 import type { ModuleKey } from "@/lib/modules/keys";
 
 import { LogoutMenuItem } from "./logout-menu-item";
@@ -24,11 +25,13 @@ export function AdminShell({
   tenantLabel,
   role,
   enabledModules,
+  announcement,
   children,
 }: {
   tenantLabel: string;
   role: string;
   enabledModules: ModuleKey[];
+  announcement?: ActiveAnnouncement | null;
   children: ReactNode;
 }) {
   const t = useTranslations("admin");
@@ -76,6 +79,17 @@ export function AdminShell({
             </DropdownMenuContent>
           </DropdownMenu>
         </header>
+
+        {announcement && (
+          <div
+            data-slot="announcement-banner"
+            className="border-b border-border bg-amber-100 px-4 py-2 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-100"
+          >
+            <span className="font-medium">{announcement.title}</span>
+            {" — "}
+            <span>{announcement.body}</span>
+          </div>
+        )}
 
         <main className="flex-1 p-4 lg:p-6">{children}</main>
       </div>

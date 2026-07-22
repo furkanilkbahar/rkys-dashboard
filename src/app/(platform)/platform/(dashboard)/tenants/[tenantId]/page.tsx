@@ -2,7 +2,10 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
 import { Badge } from "@/components/ui/badge";
+import { SuspendToggleButton } from "@/components/platform/suspend-toggle-button";
 import { getPlatformTenantDetail } from "@/lib/data/platformTenants";
+
+import { reactivateTenant, suspendTenant } from "../actions";
 
 export default async function PlatformTenantDetailPage({ params }: { params: Promise<{ tenantId: string }> }) {
   const { tenantId } = await params;
@@ -18,6 +21,12 @@ export default async function PlatformTenantDetailPage({ params }: { params: Pro
       <div className="flex items-center gap-3">
         <h1 className="text-xl font-semibold">{tenant.name}</h1>
         <Badge variant={tenant.status === "active" ? "secondary" : "destructive"}>{t(`status.${tenant.status}`)}</Badge>
+        <SuspendToggleButton
+          tenantId={tenant.id}
+          status={tenant.status}
+          suspendTenant={suspendTenant}
+          reactivateTenant={reactivateTenant}
+        />
       </div>
       <p className="text-sm text-muted-foreground">{tenant.slug}</p>
 

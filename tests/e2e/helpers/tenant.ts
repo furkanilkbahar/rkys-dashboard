@@ -30,3 +30,13 @@ export async function loginAsBetaOwner(page: Page, baseURL: string) {
   await page.getByRole("button", { name: "Giriş yap" }).click();
   await page.waitForURL(/\/admin$/);
 }
+
+// Süper Admin kabuğu kök domain altında (subdomain'siz) yaşıyor — bkz.
+// src/proxy.ts'in ROOT_DOMAIN erken çıkışı.
+export async function loginAsPlatformAdmin(page: Page, baseURL: string) {
+  await page.goto(`${baseURL}/platform/login`);
+  await page.getByLabel("E-posta").fill("platform@rkys.test");
+  await page.getByLabel("Şifre").fill("password123");
+  await page.getByRole("button", { name: "Giriş yap" }).click();
+  await page.waitForURL(/\/platform$/);
+}

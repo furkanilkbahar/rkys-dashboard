@@ -35,5 +35,12 @@ export async function getCurrentGuestSession(): Promise<CurrentGuestSession | nu
     return null;
   }
 
+  // Faz 4 Adım 1 (S14): bkz. getCurrentActor (lib/auth/session.ts) — aynı
+  // gerekçe ve aynı is_tenant_active() RPC'si, misafir tarafı için.
+  const { data: isActive } = await supabase.rpc("is_tenant_active", { p_tenant_id: tenantId });
+  if (!isActive) {
+    return null;
+  }
+
   return { userId, tenantId, branchId, tableSessionId };
 }

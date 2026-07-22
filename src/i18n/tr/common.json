@@ -626,7 +626,9 @@
   "platform": {
     "title": "RKYS Süper Admin",
     "nav": {
-      "tenants": "Tenantlar"
+      "tenants": "Tenantlar",
+      "announcements": "Duyurular",
+      "settings": "Ayarlar"
     },
     "topbar": {
       "logout": "Çıkış yap"
@@ -648,7 +650,25 @@
       "branchesTitle": "Şubeler",
       "defaultBranch": "Varsayılan",
       "modulesTitle": "Aktif Modüller",
-      "noModules": "Hiçbir modül aktif değil."
+      "noModules": "Hiçbir modül aktif değil.",
+      "suspend": "Askıya al",
+      "reactivate": "Tekrar aktifleştir"
+    },
+    "announcements": {
+      "title": "Duyurular",
+      "titleLabel": "Başlık",
+      "bodyLabel": "Metin",
+      "endsAtLabel": "Bitiş tarihi (opsiyonel)",
+      "create": "Duyuru oluştur",
+      "empty": "Henüz duyuru yok.",
+      "active": "Aktif",
+      "inactive": "Pasif",
+      "delete": "Sil"
+    },
+    "settings": {
+      "title": "Ayarlar",
+      "enforce2faLabel": "2FA zorunluluğu",
+      "enforce2faDescription": "Açılırsa tüm personel için iki faktörlü doğrulama zorunlu olur."
     }
   }
 }

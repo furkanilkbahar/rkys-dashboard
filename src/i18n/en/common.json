@@ -626,7 +626,9 @@
   "platform": {
     "title": "RKYS Super Admin",
     "nav": {
-      "tenants": "Tenants"
+      "tenants": "Tenants",
+      "announcements": "Announcements",
+      "settings": "Settings"
     },
     "topbar": {
       "logout": "Log out"
@@ -648,7 +650,25 @@
       "branchesTitle": "Branches",
       "defaultBranch": "Default",
       "modulesTitle": "Enabled Modules",
-      "noModules": "No modules enabled."
+      "noModules": "No modules enabled.",
+      "suspend": "Suspend",
+      "reactivate": "Reactivate"
+    },
+    "announcements": {
+      "title": "Announcements",
+      "titleLabel": "Title",
+      "bodyLabel": "Body",
+      "endsAtLabel": "End date (optional)",
+      "create": "Create announcement",
+      "empty": "No announcements yet.",
+      "active": "Active",
+      "inactive": "Inactive",
+      "delete": "Delete"
+    },
+    "settings": {
+      "title": "Settings",
+      "enforce2faLabel": "Enforce 2FA",
+      "enforce2faDescription": "When enabled, two-factor authentication becomes mandatory for all staff."
     }
   }
 }
