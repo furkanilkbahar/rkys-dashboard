@@ -37,6 +37,31 @@ export default async function PlatformTenantDetailPage({ params }: { params: Pro
       </div>
 
       <div className="flex flex-col gap-2">
+        <h2 className="text-base font-semibold">{t("tenantDetail.subscriptionTitle")}</h2>
+        {tenant.subscription ? (
+          <div className="flex items-center gap-2 text-sm">
+            <Badge variant={tenant.subscription.status === "active" ? "secondary" : "outline"}>
+              {t(`tenantDetail.subscriptionStatus.${tenant.subscription.status}`)}
+            </Badge>
+            {tenant.subscription.status === "trialing" && tenant.subscription.trialEndsAt && (
+              <span className="text-muted-foreground">
+                {t("tenantDetail.trialEndsAt", { date: new Date(tenant.subscription.trialEndsAt).toLocaleDateString("tr-TR") })}
+              </span>
+            )}
+            {tenant.subscription.status === "active" && tenant.subscription.currentPeriodEnd && (
+              <span className="text-muted-foreground">
+                {t("tenantDetail.currentPeriodEnd", {
+                  date: new Date(tenant.subscription.currentPeriodEnd).toLocaleDateString("tr-TR"),
+                })}
+              </span>
+            )}
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">{t("tenantDetail.noSubscription")}</p>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-2">
         <h2 className="text-base font-semibold">{t("tenantDetail.branchesTitle")}</h2>
         {tenant.branches.map((branch) => (
           <div key={branch.id} className="flex items-center justify-between rounded-md border border-border p-2 text-sm">

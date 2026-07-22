@@ -421,6 +421,28 @@
         }
       }
     },
+    "billing": {
+      "title": "Faturalandırma",
+      "statusTitle": "Abonelik Durumu",
+      "status": {
+        "trialing": "Deneme Sürümü",
+        "active": "Aktif",
+        "past_due": "Ödeme Gecikti",
+        "canceled": "İptal Edildi"
+      },
+      "trialDaysLeft": "{count} gün kaldı",
+      "selectPlan": "Plan seçin",
+      "payNow": "Ödeme Yap",
+      "cancel": "Aboneliği İptal Et",
+      "error": "Bir hata oluştu, tekrar deneyin.",
+      "mock": {
+        "title": "Sahte Ödeme Sayfası",
+        "disclaimer": "Bu bir test ödeme sayfasıdır — gerçek para hareketi olmaz.",
+        "confirm": "Ödemeyi Onayla",
+        "processing": "İşleniyor...",
+        "failed": "Ödeme başarısız oldu."
+      }
+    },
     "onboarding": {
       "entry": {
         "title": "İşletmenizi kuralım",
@@ -663,7 +685,17 @@
       "suspend": "Askıya al",
       "reactivate": "Tekrar aktifleştir",
       "planTitle": "Plan",
-      "planNone": "Plan atanmadı (sınırsız)"
+      "planNone": "Plan atanmadı (sınırsız)",
+      "subscriptionTitle": "Abonelik",
+      "subscriptionStatus": {
+        "trialing": "Deneme Sürümü",
+        "active": "Aktif",
+        "past_due": "Ödeme Gecikti",
+        "canceled": "İptal Edildi"
+      },
+      "trialEndsAt": "Deneme sonu: {date}",
+      "currentPeriodEnd": "Yenileme: {date}",
+      "noSubscription": "Abonelik kaydı yok."
     },
     "announcements": {
       "title": "Duyurular",

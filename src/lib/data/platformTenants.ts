@@ -27,6 +27,11 @@ export type PlatformTenantDetail = {
   planId: string | null;
   branches: { id: string; name: string; isDefault: boolean }[];
   enabledModules: string[];
+  subscription: {
+    status: "trialing" | "active" | "past_due" | "canceled";
+    trialEndsAt: string | null;
+    currentPeriodEnd: string | null;
+  } | null;
 };
 
 export type PlatformPlan = {
@@ -83,10 +88,11 @@ export async function getPlatformStats(): Promise<PlatformStats> {
 
 export async function getPlatformTenantDetail(tenantId: string): Promise<PlatformTenantDetail | null> {
   const service = createServiceRoleClient();
-  const [{ data: tenant }, { data: branches }, { data: modules }] = await Promise.all([
+  const [{ data: tenant }, { data: branches }, { data: modules }, { data: subscription }] = await Promise.all([
     service.from("tenants").select("id, slug, name, status, plan_id").eq("id", tenantId).single(),
     service.from("branches").select("id, name, is_default").eq("tenant_id", tenantId),
     service.from("tenant_modules").select("module_key").eq("tenant_id", tenantId).eq("is_enabled", true),
+    service.from("subscriptions").select("status, trial_ends_at, current_period_end").eq("tenant_id", tenantId).maybeSingle(),
   ]);
 
   if (!tenant) {
@@ -101,6 +107,13 @@ export async function getPlatformTenantDetail(tenantId: string): Promise<Platfor
     planId: tenant.plan_id,
     branches: (branches ?? []).map((b) => ({ id: b.id, name: b.name, isDefault: b.is_default })),
     enabledModules: (modules ?? []).map((m) => m.module_key),
+    subscription: subscription
+      ? {
+          status: subscription.status as "trialing" | "active" | "past_due" | "canceled",
+          trialEndsAt: subscription.trial_ends_at,
+          currentPeriodEnd: subscription.current_period_end,
+        }
+      : null,
   };
 }
 

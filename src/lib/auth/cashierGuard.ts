@@ -2,6 +2,7 @@ import "server-only";
 
 import { redirect } from "next/navigation";
 
+import { isSubscriptionActive } from "@/lib/data/subscription";
 import { assertModuleEnabled } from "@/lib/modules/isEnabled";
 
 import { getCurrentActor, type CurrentActor } from "./session";
@@ -16,6 +17,11 @@ export async function requireCashierActor(): Promise<CurrentActor> {
 
   if (!actor) {
     redirect("/admin/login");
+  }
+
+  // Faz 4 Adım 3 (S13): admin panelle aynı kısıtlama, bkz. (dashboard)/layout.tsx.
+  if (!(await isSubscriptionActive(actor.tenantId))) {
+    redirect("/admin/billing");
   }
 
   // RULES #34: kapalı modül route/API/navigasyonda erişilemez olmalı.

@@ -421,6 +421,28 @@
         }
       }
     },
+    "billing": {
+      "title": "Billing",
+      "statusTitle": "Subscription Status",
+      "status": {
+        "trialing": "Trial",
+        "active": "Active",
+        "past_due": "Past Due",
+        "canceled": "Canceled"
+      },
+      "trialDaysLeft": "{count} days left",
+      "selectPlan": "Select a plan",
+      "payNow": "Pay Now",
+      "cancel": "Cancel Subscription",
+      "error": "Something went wrong, please try again.",
+      "mock": {
+        "title": "Mock Payment Page",
+        "disclaimer": "This is a test payment page — no real money moves.",
+        "confirm": "Confirm Payment",
+        "processing": "Processing...",
+        "failed": "Payment failed."
+      }
+    },
     "onboarding": {
       "entry": {
         "title": "Let's set up your business",
@@ -663,7 +685,17 @@
       "suspend": "Suspend",
       "reactivate": "Reactivate",
       "planTitle": "Plan",
-      "planNone": "No plan assigned (unlimited)"
+      "planNone": "No plan assigned (unlimited)",
+      "subscriptionTitle": "Subscription",
+      "subscriptionStatus": {
+        "trialing": "Trial",
+        "active": "Active",
+        "past_due": "Past Due",
+        "canceled": "Canceled"
+      },
+      "trialEndsAt": "Trial ends: {date}",
+      "currentPeriodEnd": "Renews: {date}",
+      "noSubscription": "No subscription record."
     },
     "announcements": {
       "title": "Announcements",
