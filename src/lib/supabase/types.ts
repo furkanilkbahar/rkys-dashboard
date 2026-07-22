@@ -2357,6 +2357,7 @@ export type Database = {
         Row: {
           created_at: string
           currency: string
+          deletion_requested_at: string | null
           id: string
           logo_url: string | null
           name: string
@@ -2369,6 +2370,7 @@ export type Database = {
         Insert: {
           created_at?: string
           currency?: string
+          deletion_requested_at?: string | null
           id?: string
           logo_url?: string | null
           name: string
@@ -2381,6 +2383,7 @@ export type Database = {
         Update: {
           created_at?: string
           currency?: string
+          deletion_requested_at?: string | null
           id?: string
           logo_url?: string | null
           name?: string
@@ -2812,6 +2815,7 @@ export type Database = {
         Args: { p_category_id: string; p_ids: string[] }
         Returns: undefined
       }
+      request_account_deletion: { Args: never; Returns: undefined }
       request_order_cancellation: {
         Args: { p_order_id: string; p_reason: string }
         Returns: undefined
