@@ -5,6 +5,7 @@ import { CloseDayButton } from "@/components/admin/close-day-button";
 import { ProductCostRow } from "@/components/admin/product-cost-row";
 import { can } from "@/lib/auth/can";
 import { requireAdminActor } from "@/lib/auth/adminGuard";
+import { getAdminTenantSettings } from "@/lib/data/adminSettings";
 import { getDefaultBranchId } from "@/lib/data/branch";
 import { getProductsWithCosts } from "@/lib/data/productCosts";
 import {
@@ -15,18 +16,23 @@ import {
   getTopProducts,
   isBusinessDateClosed,
 } from "@/lib/data/reports";
-import { getCurrentTenant } from "@/lib/data/tenant";
 import { formatPrice } from "@/lib/utils/currency";
 
-function todayIso() {
-  return new Date().toISOString().slice(0, 10);
+// close_business_day/get_revenue_report "business_date"i tenant saat
+// diliminde hesaplar (0035, is_business_date_closed) — "bugün" burada da
+// aynı saat dilimiyle hesaplanmazsa (ör. sunucu UTC'siyle) tenant'ın
+// Istanbul günü ile sunucunun UTC günü farklılaştığı ~3 saatlik pencerede
+// rapor yanlış (boş) günü gösterir.
+function todayIso(timezone: string) {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: timezone }).format(new Date());
 }
 
 export default async function AdminReportsPage({ searchParams }: { searchParams: Promise<{ date?: string }> }) {
   const actor = await requireAdminActor();
   const t = await getTranslations("admin.reports");
   const { date } = await searchParams;
-  const businessDate = date ?? todayIso();
+  const tenantSettings = await getAdminTenantSettings(actor.tenantId);
+  const businessDate = date ?? todayIso(tenantSettings?.timezone ?? "UTC");
 
   const canViewRevenue = await can(actor, "reports.revenue");
   if (!canViewRevenue) {
@@ -44,8 +50,7 @@ export default async function AdminReportsPage({ searchParams }: { searchParams:
     notFound();
   }
 
-  const tenant = await getCurrentTenant();
-  const currency = tenant?.currency ?? "TRY";
+  const currency = tenantSettings?.currency ?? "TRY";
 
   const [revenue, topProducts, hourlyDensity, shifts, dayClosed, marginRows, products] = await Promise.all([
     getRevenueReport(branchId, businessDate),
