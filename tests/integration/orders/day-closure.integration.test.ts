@@ -2,6 +2,16 @@ import { afterAll, describe, expect, it } from "vitest";
 
 import { SEED, createThrowawayTenant, serviceRoleClient, signInAsSeededOwner } from "../../helpers/testClients";
 
+// close_business_day/get_revenue_report "business_date"i tenant saat
+// diliminde (Europe/Istanbul, tüm test tenant'larının varsayılanı) hesaplar
+// (0035, is_business_date_closed). UTC gün sınırının Istanbul'dan ~3 saat
+// geride olduğu pencerede (21:00-24:00 UTC) new Date().toISOString()'in
+// verdiği UTC tarih farklı bir güne düşebilir — bu yüzden "bugün" burada da
+// aynı saat dilimiyle hesaplanır.
+function todayInTenantTimezone(): string {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Istanbul" }).format(new Date());
+}
+
 const cleanupTenantIds = new Set<string>();
 
 afterAll(async () => {
@@ -72,7 +82,7 @@ describe("RPC: close_business_day + rapor seti (S9)", () => {
     const waiter = await signInAsSeededOwner(SEED.acme.waiterEmail);
     const { error } = await waiter.rpc("get_revenue_report", {
       p_branch_id: SEED.acme.branchId,
-      p_business_date: new Date().toISOString().slice(0, 10),
+      p_business_date: todayInTenantTimezone(),
     });
     expect(error).not.toBeNull();
     expect(error?.message).toContain("forbidden");
@@ -82,7 +92,7 @@ describe("RPC: close_business_day + rapor seti (S9)", () => {
     const { branchId, productId, counterTableId, owner } = await setupClosableTenant();
     const { subtotalMinor } = await orderAndPay(owner, counterTableId, productId);
 
-    const today = new Date().toISOString().slice(0, 10);
+    const today = todayInTenantTimezone();
     const { data: revenue } = await owner.rpc("get_revenue_report", { p_branch_id: branchId, p_business_date: today });
     expect(revenue![0].revenue_minor).toBe(subtotalMinor);
     expect(revenue![0].cash_minor).toBe(subtotalMinor);
