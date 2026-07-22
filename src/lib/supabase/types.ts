@@ -637,6 +637,62 @@ export type Database = {
           },
         ]
       }
+      incident_updates: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          incident_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          incident_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          incident_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "incident_updates_incident_id_fkey"
+            columns: ["incident_id"]
+            isOneToOne: false
+            referencedRelation: "incidents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      incidents: {
+        Row: {
+          created_at: string
+          id: string
+          resolved_at: string | null
+          started_at: string
+          status: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          resolved_at?: string | null
+          started_at?: string
+          status?: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          resolved_at?: string | null
+          started_at?: string
+          status?: string
+          title?: string
+        }
+        Relationships: []
+      }
       licenses: {
         Row: {
           created_at: string
