@@ -1930,6 +1930,51 @@ export type Database = {
           },
         ]
       }
+      support_tickets: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          status: string
+          subject: string
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          status?: string
+          subject: string
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          status?: string
+          subject?: string
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_tickets_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "support_tickets_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       table_session_devices: {
         Row: {
           branch_id: string
@@ -2351,6 +2396,48 @@ export type Database = {
             columns: ["plan_id"]
             isOneToOne: false
             referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ticket_messages: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          sender: string
+          tenant_id: string
+          ticket_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          sender: string
+          tenant_id: string
+          ticket_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          sender?: string
+          tenant_id?: string
+          ticket_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ticket_messages_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ticket_messages_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "support_tickets"
             referencedColumns: ["id"]
           },
         ]
