@@ -131,6 +131,7 @@
       "reservations": "Reservations",
       "ratings": "Ratings",
       "reports": "Reports",
+      "support": "Support",
       "settings": "Settings",
       "menuOpen": "Open menu"
     },
@@ -443,6 +444,26 @@
         "failed": "Payment failed."
       }
     },
+    "support": {
+      "title": "Support",
+      "subject": "Subject",
+      "message": "Message",
+      "create": "Create Ticket",
+      "empty": "You have no support tickets yet.",
+      "error": "Something went wrong, please try again.",
+      "status": {
+        "open": "Open",
+        "answered": "Answered",
+        "resolved": "Resolved"
+      },
+      "sender": {
+        "tenant": "You",
+        "platform": "RKYS Support"
+      },
+      "replyPlaceholder": "Write your reply...",
+      "reply": "Send",
+      "resolve": "Mark as Resolved"
+    },
     "onboarding": {
       "entry": {
         "title": "Let's set up your business",
@@ -660,7 +681,8 @@
       "tenants": "Tenants",
       "announcements": "Announcements",
       "settings": "Settings",
-      "licenses": "Licenses"
+      "licenses": "Licenses",
+      "support": "Support"
     },
     "topbar": {
       "logout": "Log out"
@@ -728,6 +750,23 @@
       "generatedTitle": "New license generated — copy it:",
       "empty": "No licenses yet.",
       "error": "Could not generate license, please try again."
+    },
+    "support": {
+      "title": "Support Queue",
+      "empty": "No support tickets yet.",
+      "error": "Something went wrong, please try again.",
+      "status": {
+        "open": "Open",
+        "answered": "Answered",
+        "resolved": "Resolved"
+      },
+      "sender": {
+        "tenant": "Tenant",
+        "platform": "You"
+      },
+      "replyPlaceholder": "Write your reply...",
+      "reply": "Send",
+      "resolve": "Mark as Resolved"
     }
   }
 }

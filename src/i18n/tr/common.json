@@ -131,6 +131,7 @@
       "reservations": "Rezervasyon",
       "ratings": "Değerlendirmeler",
       "reports": "Raporlar",
+      "support": "Destek",
       "settings": "Ayarlar",
       "menuOpen": "Menüyü aç"
     },
@@ -443,6 +444,26 @@
         "failed": "Ödeme başarısız oldu."
       }
     },
+    "support": {
+      "title": "Destek",
+      "subject": "Konu",
+      "message": "Mesaj",
+      "create": "Ticket Oluştur",
+      "empty": "Henüz destek talebiniz yok.",
+      "error": "Bir hata oluştu, tekrar deneyin.",
+      "status": {
+        "open": "Açık",
+        "answered": "Yanıtlandı",
+        "resolved": "Çözüldü"
+      },
+      "sender": {
+        "tenant": "Siz",
+        "platform": "RKYS Destek"
+      },
+      "replyPlaceholder": "Yanıtınızı yazın...",
+      "reply": "Gönder",
+      "resolve": "Çözüldü Olarak İşaretle"
+    },
     "onboarding": {
       "entry": {
         "title": "İşletmenizi kuralım",
@@ -660,7 +681,8 @@
       "tenants": "Tenantlar",
       "announcements": "Duyurular",
       "settings": "Ayarlar",
-      "licenses": "Lisanslar"
+      "licenses": "Lisanslar",
+      "support": "Destek"
     },
     "topbar": {
       "logout": "Çıkış yap"
@@ -728,6 +750,23 @@
       "generatedTitle": "Yeni lisans üretildi — kopyalayın:",
       "empty": "Henüz lisans yok.",
       "error": "Lisans üretilemedi, tekrar deneyin."
+    },
+    "support": {
+      "title": "Destek Kuyruğu",
+      "empty": "Henüz destek talebi yok.",
+      "error": "Bir hata oluştu, tekrar deneyin.",
+      "status": {
+        "open": "Açık",
+        "answered": "Yanıtlandı",
+        "resolved": "Çözüldü"
+      },
+      "sender": {
+        "tenant": "Tenant",
+        "platform": "Siz"
+      },
+      "replyPlaceholder": "Yanıtınızı yazın...",
+      "reply": "Gönder",
+      "resolve": "Çözüldü Olarak İşaretle"
     }
   }
 }
