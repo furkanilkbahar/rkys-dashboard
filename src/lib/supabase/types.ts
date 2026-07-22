@@ -1848,6 +1848,50 @@ export type Database = {
           },
         ]
       }
+      subscriptions: {
+        Row: {
+          created_at: string
+          current_period_end: string | null
+          id: string
+          provider: string | null
+          provider_ref: string | null
+          status: string
+          tenant_id: string
+          trial_ends_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          current_period_end?: string | null
+          id?: string
+          provider?: string | null
+          provider_ref?: string | null
+          status?: string
+          tenant_id: string
+          trial_ends_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          current_period_end?: string | null
+          id?: string
+          provider?: string | null
+          provider_ref?: string | null
+          status?: string
+          tenant_id?: string
+          trial_ends_at?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: true
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       table_session_devices: {
         Row: {
           branch_id: string
@@ -2428,6 +2472,10 @@ export type Database = {
         Args: { p_call_id: string }
         Returns: undefined
       }
+      activate_subscription: {
+        Args: { p_provider: string; p_provider_ref: string }
+        Returns: undefined
+      }
       advance_order_status: {
         Args: { p_order_id: string; p_to_status: string }
         Returns: undefined
@@ -2446,6 +2494,7 @@ export type Database = {
         Returns: string
       }
       cancel_order: { Args: { p_order_id: string }; Returns: undefined }
+      cancel_subscription: { Args: never; Returns: undefined }
       clear_demo_data: { Args: never; Returns: undefined }
       close_business_day: { Args: { p_branch_id: string }; Returns: string }
       close_shift: {
@@ -2546,6 +2595,10 @@ export type Database = {
       }
       is_platform_admin: { Args: never; Returns: boolean }
       is_staff: { Args: never; Returns: boolean }
+      is_subscription_active: {
+        Args: { p_tenant_id: string }
+        Returns: boolean
+      }
       is_tenant_active: { Args: { p_tenant_id: string }; Returns: boolean }
       link_guest_device: {
         Args: {
@@ -2652,6 +2705,10 @@ export type Database = {
         }[]
       }
       revoke_staff_device: { Args: { p_device_id: string }; Returns: undefined }
+      set_subscription_checkout_ref: {
+        Args: { p_provider: string; p_provider_ref: string }
+        Returns: undefined
+      }
       submit_order: {
         Args: { p_idempotency_key: string; p_items: Json }
         Returns: {
