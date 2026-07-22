@@ -637,6 +637,44 @@ export type Database = {
           },
         ]
       }
+      licenses: {
+        Row: {
+          created_at: string
+          expires_at: string | null
+          id: string
+          issued_at: string
+          license_key: string
+          license_type: string
+          tenant_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          issued_at?: string
+          license_key: string
+          license_type: string
+          tenant_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          issued_at?: string
+          license_key?: string
+          license_type?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "licenses_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       menu_categories: {
         Row: {
           created_at: string
