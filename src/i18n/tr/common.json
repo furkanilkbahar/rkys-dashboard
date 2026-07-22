@@ -10,9 +10,6 @@
     "title": "Tenant bulunamadı."
   },
   "placeholders": {
-    "marketing": "RKYS Dashboard — marketing (Faz 13)",
-    "marketingCardBody": "Faz 0 tema/bileşen doğrulama kartı — marketing içeriği Faz 13'te gelecek.",
-    "marketingCardButton": "Örnek buton",
     "analytics": "RKYS Dashboard — analitik merkezi (Faz 5)"
   },
   "cashier": {
@@ -406,6 +403,13 @@
         "defaultBranch": "Varsayılan",
         "extraFeeNotice": "Planınızın dahil ettiği ücretsiz şube sayısını aştınız — ek şube ücreti uygulanır."
       },
+      "dangerZone": {
+        "title": "Tehlikeli Bölge",
+        "description": "Hesabınızı ve tüm işletme verilerinizi kalıcı olarak silinmesini talep edebilirsiniz. Bu işlem geri alınamaz.",
+        "requestButton": "Hesabımı Sil",
+        "confirm": "Hesabınızı silme talebi oluşturmak istediğinize emin misiniz? Bu işlem geri alınamaz.",
+        "requested": "Silme talebiniz {date} tarihinde alındı. Ekibimiz sizinle iletişime geçecek."
+      },
       "reasonCodes": {
         "title": "Sebep Kodları",
         "nameTr": "Ad (Türkçe)",
@@ -767,6 +771,99 @@
       "replyPlaceholder": "Yanıtınızı yazın...",
       "reply": "Gönder",
       "resolve": "Çözüldü Olarak İşaretle"
+    }
+  },
+  "marketing": {
+    "nav": {
+      "register": "Kayıt Ol"
+    },
+    "hero": {
+      "title": "Restoran ve kafenizi tek panelden yönetin",
+      "subtitle": "QR menüden mutfak ekranına, kasadan raporlara — ihtiyacınız olan modülleri açın, gerisini kapalı bırakın.",
+      "cta": "Ücretsiz Deneyin",
+      "trialNote": "14 gün kartsız deneme — istediğiniz zaman iptal edin."
+    },
+    "features": {
+      "qrMenu": {
+        "title": "QR Menü",
+        "body": "Misafirleriniz masadaki kodu okutup anında sipariş versin, garson beklemesin."
+      },
+      "kitchenDisplay": {
+        "title": "Mutfak Ekranı",
+        "body": "Siparişler mutfağa gerçek zamanlı düşer, hazır olunca misafir haberdar olur."
+      },
+      "cashier": {
+        "title": "Kasa & Ödeme",
+        "body": "Nakit, kart ve online ödeme; hesap bölme, bahşiş ve gün sonu raporu tek yerde."
+      },
+      "reports": {
+        "title": "Raporlar",
+        "body": "Ciro, en çok satanlar ve kâr marjını anlık görün, günü tek tıkla kapatın."
+      },
+      "modular": {
+        "title": "Modüler Yapı",
+        "body": "Çekirdek QR menü her zaman açık; rezervasyon, sadakat gibi modülleri istediğinizde ekleyin."
+      }
+    },
+    "pricing": {
+      "title": "Planlar",
+      "draftNotice": "Kesin fiyatlar lansmanda açıklanacaktır — aşağıdaki limitler taslaktır.",
+      "tableCount": "{count} masa",
+      "branchCount": "{count} şube dahil",
+      "enterpriseBody": "Lifetime lisans veya kendi sunucunuzda (self-hosted) çalıştırmak mı istiyorsunuz?",
+      "enterpriseCta": "Bize Ulaşın"
+    },
+    "footer": {
+      "kvkk": "KVKK",
+      "cerez": "Çerez Politikası",
+      "sozlesme": "Kullanım Sözleşmesi",
+      "veriSilme": "Veri Silme"
+    }
+  },
+  "registration": {
+    "title": "İşletmenizi Kaydedin",
+    "businessName": "İşletme Adı",
+    "slug": "Alt Alan Adı",
+    "slugPreview": "Panel adresiniz: {domain}",
+    "email": "E-posta",
+    "password": "Şifre",
+    "submit": "Kayıt Ol",
+    "errors": {
+      "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
+      "invalid_slug": "Alt alan adı yalnızca küçük harf, rakam ve tire içerebilir (3-32 karakter).",
+      "slug_reserved": "Bu alt alan adı kullanılamaz.",
+      "slug_taken": "Bu alt alan adı zaten kullanılıyor.",
+      "email_taken": "Bu e-posta adresiyle zaten bir hesap var.",
+      "unknown": "Bir hata oluştu, tekrar deneyin."
+    }
+  },
+  "legal": {
+    "draftNotice": "Bu sayfa taslak metindir; kesin hukuki metin lansmanda yayınlanacaktır.",
+    "kvkk": {
+      "title": "KVKK Aydınlatma Metni",
+      "p1": "RKYS Dashboard olarak, 6698 sayılı Kişisel Verilerin Korunması Kanunu kapsamında kişisel verilerinizi işlerken veri sorumlusu sıfatıyla hareket ederiz.",
+      "p2": "Hesabınızı oluştururken sağladığınız ad, e-posta ve işletme bilgileri; hizmetin sunulması, faturalandırma ve destek talepleriniz için işlenir.",
+      "p3": "Verileriniz yalnızca hizmetin sunulması için gerekli süre boyunca saklanır ve yasal zorunluluklar dışında üçüncü taraflarla paylaşılmaz.",
+      "p4": "KVKK kapsamındaki haklarınızı kullanmak için destek@rkys.app adresinden bizimle iletişime geçebilirsiniz."
+    },
+    "cerez": {
+      "title": "Çerez Politikası",
+      "p1": "Bu site, oturumunuzu açık tutmak ve tercihlerinizi hatırlamak için zorunlu çerezler kullanır.",
+      "p2": "Zorunlu çerezler dışında, kullanım istatistikleri için tercihe bağlı analiz çerezleri kullanılabilir.",
+      "p3": "Tarayıcı ayarlarınızdan çerezleri istediğiniz zaman silebilir veya engelleyebilirsiniz; bu, bazı özelliklerin çalışmamasına yol açabilir."
+    },
+    "sozlesme": {
+      "title": "Kullanım Sözleşmesi",
+      "p1": "Bu sözleşme, RKYS Dashboard hizmetini kullanan işletmeler (\"tenant\") ile platform arasındaki ilişkiyi düzenler.",
+      "p2": "Hizmet \"olduğu gibi\" sunulur; 14 günlük deneme süresi sonunda hizmetin devamı için bir plana abone olmanız gerekir.",
+      "p3": "Tenant, kendi müşterilerine ve personeline ait verilerin doğruluğundan ve yasal uyumluluğundan kendisi sorumludur.",
+      "p4": "Platform, kötüye kullanım veya ödeme gecikmesi durumunda hesabı askıya alma hakkını saklı tutar."
+    },
+    "veriSilme": {
+      "title": "Veri Silme Talebi",
+      "p1": "Hesabınızı ve işletmenize ait tüm verileri kalıcı olarak silinmesini talep etme hakkınız vardır (KVKK).",
+      "p2": "Silme talebi geri alınamaz bir işlemdir; talebiniz alındıktan sonra ekibimiz verilerinizi yasal saklama süreleri saklı kalmak kaydıyla siler.",
+      "cta": "Hesabınızı silmek için admin panelinizde Ayarlar → Hesabımı Sil bölümünden talep oluşturabilirsiniz."
     }
   }
 }

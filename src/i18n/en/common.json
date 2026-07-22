@@ -10,9 +10,6 @@
     "title": "Tenant not found."
   },
   "placeholders": {
-    "marketing": "RKYS Dashboard — marketing (Phase 13)",
-    "marketingCardBody": "Phase 0 theme/component verification card — real marketing content lands in Phase 13.",
-    "marketingCardButton": "Example button",
     "analytics": "RKYS Dashboard — analytics hub (Phase 5)"
   },
   "cashier": {
@@ -406,6 +403,13 @@
         "defaultBranch": "Default",
         "extraFeeNotice": "You've exceeded your plan's included free branch count — an extra branch fee applies."
       },
+      "dangerZone": {
+        "title": "Danger Zone",
+        "description": "You can request permanent deletion of your account and all business data. This action cannot be undone.",
+        "requestButton": "Delete My Account",
+        "confirm": "Are you sure you want to request deletion of your account? This action cannot be undone.",
+        "requested": "Your deletion request was received on {date}. Our team will contact you."
+      },
       "reasonCodes": {
         "title": "Reason Codes",
         "nameTr": "Name (Turkish)",
@@ -767,6 +771,99 @@
       "replyPlaceholder": "Write your reply...",
       "reply": "Send",
       "resolve": "Mark as Resolved"
+    }
+  },
+  "marketing": {
+    "nav": {
+      "register": "Sign Up"
+    },
+    "hero": {
+      "title": "Run your restaurant or cafe from one dashboard",
+      "subtitle": "From QR menus to the kitchen display, from the register to reports — turn on the modules you need, leave the rest off.",
+      "cta": "Try It Free",
+      "trialNote": "14-day free trial, no card required — cancel anytime."
+    },
+    "features": {
+      "qrMenu": {
+        "title": "QR Menu",
+        "body": "Guests scan the code at their table and order instantly — no waiting for a waiter."
+      },
+      "kitchenDisplay": {
+        "title": "Kitchen Display",
+        "body": "Orders land in the kitchen in real time; guests are notified the moment it's ready."
+      },
+      "cashier": {
+        "title": "Cashier & Payments",
+        "body": "Cash, card and online payment; bill splitting, tips and end-of-day reports in one place."
+      },
+      "reports": {
+        "title": "Reports",
+        "body": "See revenue, best-sellers and profit margin at a glance, close the day with one click."
+      },
+      "modular": {
+        "title": "Modular by Design",
+        "body": "The core QR menu is always on; add modules like reservations or loyalty whenever you need them."
+      }
+    },
+    "pricing": {
+      "title": "Plans",
+      "draftNotice": "Final pricing will be announced at launch — the limits below are a draft.",
+      "tableCount": "{count} tables",
+      "branchCount": "{count} branches included",
+      "enterpriseBody": "Looking for a lifetime license or to run it on your own server (self-hosted)?",
+      "enterpriseCta": "Contact Us"
+    },
+    "footer": {
+      "kvkk": "Privacy Notice",
+      "cerez": "Cookie Policy",
+      "sozlesme": "Terms of Use",
+      "veriSilme": "Data Deletion"
+    }
+  },
+  "registration": {
+    "title": "Register Your Business",
+    "businessName": "Business Name",
+    "slug": "Subdomain",
+    "slugPreview": "Your dashboard address: {domain}",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign Up",
+    "errors": {
+      "invalid_input": "Please check the information you entered.",
+      "invalid_slug": "Subdomain can only contain lowercase letters, digits and hyphens (3-32 characters).",
+      "slug_reserved": "This subdomain is not available.",
+      "slug_taken": "This subdomain is already taken.",
+      "email_taken": "An account with this email already exists.",
+      "unknown": "Something went wrong, please try again."
+    }
+  },
+  "legal": {
+    "draftNotice": "This page is draft text — the final legal wording will be published at launch.",
+    "kvkk": {
+      "title": "Privacy Notice",
+      "p1": "As RKYS Dashboard, we act as the data controller when processing your personal data under applicable data protection law.",
+      "p2": "The name, email and business information you provide when creating an account are processed to deliver the service, for billing, and to handle your support requests.",
+      "p3": "Your data is retained only for as long as necessary to provide the service and is not shared with third parties except where legally required.",
+      "p4": "To exercise your data protection rights, you can contact us at support@rkys.app."
+    },
+    "cerez": {
+      "title": "Cookie Policy",
+      "p1": "This site uses essential cookies to keep you signed in and remember your preferences.",
+      "p2": "Beyond essential cookies, optional analytics cookies may be used for usage statistics.",
+      "p3": "You can delete or block cookies at any time from your browser settings; this may cause some features to stop working."
+    },
+    "sozlesme": {
+      "title": "Terms of Use",
+      "p1": "This agreement governs the relationship between businesses (\"tenants\") using the RKYS Dashboard service and the platform.",
+      "p2": "The service is provided \"as is\"; after the 14-day trial period, you must subscribe to a plan to continue using it.",
+      "p3": "The tenant is solely responsible for the accuracy and legal compliance of the data belonging to its own customers and staff.",
+      "p4": "The platform reserves the right to suspend an account in case of misuse or payment delay."
+    },
+    "veriSilme": {
+      "title": "Data Deletion Request",
+      "p1": "You have the right to request the permanent deletion of your account and all data belonging to your business.",
+      "p2": "A deletion request is irreversible; once received, our team will delete your data, subject to legally required retention periods.",
+      "cta": "To delete your account, go to Settings → Delete My Account in your admin panel."
     }
   }
 }

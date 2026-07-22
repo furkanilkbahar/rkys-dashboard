@@ -10,6 +10,7 @@ export type AdminTenantSettings = {
   orderMode: "direct" | "approval";
   sessionTimeoutMinutes: number;
   themeKey: string;
+  deletionRequestedAt: string | null;
 };
 
 export type AdminCallType = {
@@ -55,7 +56,7 @@ export type AdminModule = {
 export async function getAdminTenantSettings(tenantId: string): Promise<AdminTenantSettings | null> {
   const supabase = await createClient();
   const [{ data: tenant }, { data: settings }] = await Promise.all([
-    supabase.from("tenants").select("currency, timezone").eq("id", tenantId).single(),
+    supabase.from("tenants").select("currency, timezone, deletion_requested_at").eq("id", tenantId).single(),
     supabase
       .from("tenant_settings")
       .select("order_mode, session_timeout_minutes, theme_key")
@@ -73,6 +74,7 @@ export async function getAdminTenantSettings(tenantId: string): Promise<AdminTen
     orderMode: settings.order_mode as "direct" | "approval",
     sessionTimeoutMinutes: settings.session_timeout_minutes,
     themeKey: settings.theme_key,
+    deletionRequestedAt: tenant.deletion_requested_at,
   };
 }
 

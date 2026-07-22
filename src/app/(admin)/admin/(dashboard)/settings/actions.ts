@@ -318,3 +318,18 @@ export async function toggleModule(input: unknown): Promise<SettingsActionResult
   revalidatePath("/admin", "layout");
   return { ok: true };
 }
+
+// D34: gerçek silme geri dönüşü olmayan bir işlem olduğundan owner yalnızca
+// bir TALEP oluşturur (request_account_deletion, 0042) — fiili silme Süper
+// Admin tarafından manuel yürütülür.
+export async function requestAccountDeletion(): Promise<SettingsActionResult> {
+  const actor = await requireStaffActor();
+  if (!actor) return { ok: false, error: "forbidden" };
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("request_account_deletion");
+  if (error) return { ok: false, error: "forbidden" };
+
+  revalidatePath("/admin/settings");
+  return { ok: true };
+}

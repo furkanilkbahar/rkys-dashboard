@@ -17,6 +17,7 @@ import {
   createCallType,
   createReasonCode,
   createTipPreset,
+  requestAccountDeletion,
   setDefaultLocale,
   toggleLocale,
   toggleModule,
@@ -73,6 +74,7 @@ export default async function AdminSettingsPage() {
         updateRatingSettings,
         toggleModule,
         createBranch,
+        requestAccountDeletion,
       }}
     />
   );

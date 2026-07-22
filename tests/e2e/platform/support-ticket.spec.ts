@@ -3,8 +3,6 @@ import { expect, test } from "@playwright/test";
 
 import { betaUrl, loginAsBetaOwner, loginAsPlatformAdmin } from "../helpers/tenant";
 
-const BETA_TENANT_ID = "00000000-0000-4000-8000-000000000002";
-
 // Aynı sabit lokal demo anahtarları — session-panel.spec.ts'deki desenle aynı.
 function serviceClient() {
   return createClient(

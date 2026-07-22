@@ -54,6 +54,7 @@ type Actions = {
   updateRatingSettings: (input: unknown) => Promise<SettingsActionResult>;
   toggleModule: (input: unknown) => Promise<SettingsActionResult>;
   createBranch: (input: unknown) => Promise<BranchActionResult>;
+  requestAccountDeletion: () => Promise<SettingsActionResult>;
 };
 
 function OrderSettingsCard({ settings, updateOrderSettings }: { settings: AdminTenantSettings; updateOrderSettings: Actions["updateOrderSettings"] }) {
@@ -736,6 +737,9 @@ export function SettingsManager({
       <ThemeCard themeKey={settings.themeKey} />
       <ModulesCard modules={modules} toggleModule={actions.toggleModule} />
       {isOwner && <BranchesCard branchesInfo={branchesInfo} createBranch={actions.createBranch} />}
+      {isOwner && (
+        <DangerZoneCard deletionRequestedAt={settings.deletionRequestedAt} requestAccountDeletion={actions.requestAccountDeletion} />
+      )}
     </div>
   );
 }
@@ -801,6 +805,48 @@ function BranchesCard({
         </form>
         {notice && <p className="text-xs text-muted-foreground">{notice}</p>}
         {error && <p className="text-xs text-destructive">{error}</p>}
+      </CardContent>
+    </Card>
+  );
+}
+
+function DangerZoneCard({
+  deletionRequestedAt,
+  requestAccountDeletion,
+}: {
+  deletionRequestedAt: string | null;
+  requestAccountDeletion: Actions["requestAccountDeletion"];
+}) {
+  const t = useTranslations("admin.settings.dangerZone");
+  const router = useRouter();
+  const [isPending, setIsPending] = useState(false);
+
+  async function handleDelete() {
+    if (!window.confirm(t("confirm"))) return;
+    setIsPending(true);
+    await requestAccountDeletion();
+    setIsPending(false);
+    router.refresh();
+  }
+
+  return (
+    <Card className="border-destructive/50">
+      <CardHeader>
+        <CardTitle className="text-base text-destructive">{t("title")}</CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-3">
+        {deletionRequestedAt ? (
+          <p className="text-sm text-muted-foreground">
+            {t("requested", { date: new Date(deletionRequestedAt).toLocaleDateString("tr-TR") })}
+          </p>
+        ) : (
+          <>
+            <p className="text-sm text-muted-foreground">{t("description")}</p>
+            <Button type="button" variant="destructive" disabled={isPending} onClick={handleDelete} className="self-start">
+              {t("requestButton")}
+            </Button>
+          </>
+        )}
       </CardContent>
     </Card>
   );

@@ -39,6 +39,7 @@ Bir faz şunlar olmadan kapanmaz:
 | S17 | Şube: ikinci şube açılınca seçici belirir; şube override fiyatı doğru uygulanır | 4+ |
 | S18 | Hesap bölme (eşit) ve bahşiş akışı uçtan uca | 3/6 |
 | S19 | Değerlendirme: oturum kapanınca yıldız+yorum+garson puanı istenir; 4-5★ Google'a yönlenir, ≤3★ içeride kalır | 3 |
+| S20 | Kayıt: pazarlama sitesinden self-servis kayıt → yeni tenant oluşur, otomatik giriş yapılıp onboarding'e düşer; aynı alt alan adı ikinci kez kullanılamaz | 4 |
 
 ## 4. RLS İzolasyon Testleri (entegrasyon, zorunlu şablon)
 Her yeni tablo için otomatik üretilen test çifti:
