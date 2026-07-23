@@ -3807,6 +3807,15 @@ export type Database = {
           revenue_minor: number
         }[]
       }
+      get_campaign_performance_report: {
+        Args: { p_end_date: string; p_start_date: string }
+        Returns: {
+          campaign_id: string
+          campaign_name: string
+          redemption_count: number
+          total_discount_minor: number
+        }[]
+      }
       get_goal_progress: {
         Args: { p_branch_id: string; p_period_month: string }
         Returns: {
@@ -3829,6 +3838,15 @@ export type Database = {
           reason_code_id: string
           reason_key: string
           source: string
+        }[]
+      }
+      get_loyalty_performance_report: {
+        Args: { p_end_date: string; p_start_date: string }
+        Returns: {
+          active_customers: number
+          points_earned: number
+          points_redeemed: number
+          redemption_count: number
         }[]
       }
       get_margin_report: {
