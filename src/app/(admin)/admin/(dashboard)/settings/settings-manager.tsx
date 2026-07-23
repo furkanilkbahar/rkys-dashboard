@@ -331,7 +331,7 @@ function ReasonCodeRow({ reasonCode, updateReasonCode }: { reasonCode: AdminReas
     },
   });
 
-  async function onSubmit(values: { category: "comp" | "refund" | "cancel"; nameTr: string; nameEn: string; isActive: boolean }) {
+  async function onSubmit(values: { category: "comp" | "refund" | "cancel" | "campaign"; nameTr: string; nameEn: string; isActive: boolean }) {
     setError(null);
     const result = await updateReasonCode(reasonCode.id, values);
     if (!result.ok) {
@@ -382,7 +382,7 @@ function ReasonCodesCard({
     defaultValues: { category: "comp" as const, nameTr: "", nameEn: "", isActive: true },
   });
 
-  async function onSubmit(values: { category: "comp" | "refund" | "cancel"; nameTr: string; nameEn: string; isActive: boolean }) {
+  async function onSubmit(values: { category: "comp" | "refund" | "cancel" | "campaign"; nameTr: string; nameEn: string; isActive: boolean }) {
     setError(null);
     const result = await createReasonCode(values);
     if (!result.ok) {
@@ -419,6 +419,7 @@ function ReasonCodesCard({
                     <SelectItem value="comp">{t("category.comp")}</SelectItem>
                     <SelectItem value="refund">{t("category.refund")}</SelectItem>
                     <SelectItem value="cancel">{t("category.cancel")}</SelectItem>
+                    <SelectItem value="campaign">{t("category.campaign")}</SelectItem>
                   </SelectContent>
                 </Select>
               )}

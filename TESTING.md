@@ -46,6 +46,7 @@ Bir faz şunlar olmadan kapanmaz:
 | S24 | Zamanlanmış rapor oluşturulur; "Şimdi Gönder" ile anlık tetiklenir, PDF üretilip mock e-postaya kaydedilir, son gönderim zamanı güncellenir | 5 |
 | S25 | Kasa — kalem seçerek ödeme: hesap yalnızca seçilen kalemler ödendiğinde kapanır, kalan kalemler için açık kalır | 6 |
 | S26 | Kasa — kısmi iade: ödeme "kısmen iade edildi" olur, kalan tutar için ikinci kısmi iade tam iadeye tamamlar | 6 |
+| S27 | Kampanya/kupon: admin yüzde indirimli kampanya + kupon oluşturur, misafir sepetinde kupon kodunu uygular, indirim comps'a yazılır | 6 |
 
 ## 4. RLS İzolasyon Testleri (entegrasyon, zorunlu şablon)
 Her yeni tablo için otomatik üretilen test çifti:

@@ -137,6 +137,7 @@
       "staff": "Staff",
       "reservations": "Reservations",
       "ratings": "Ratings",
+      "campaigns": "Campaigns",
       "reports": "Reports",
       "support": "Support",
       "settings": "Settings",
@@ -451,7 +452,8 @@
           "label": "Category",
           "comp": "Comp/Discount",
           "refund": "Refund",
-          "cancel": "Cancel"
+          "cancel": "Cancel",
+          "campaign": "Campaign"
         }
       }
     },
@@ -635,6 +637,41 @@
         "branch_comparison": "Branch Comparison (Last 30 Days)",
         "anomaly_alerts": "Anomaly Alerts"
       }
+    },
+    "campaigns": {
+      "pageTitle": "Campaigns",
+      "title": "Campaigns",
+      "empty": "No campaigns yet.",
+      "name": "Name",
+      "ruleTypeLabel": "Rule Type",
+      "ruleType": {
+        "bogo": "Buy One Get One",
+        "time_window": "Time Window Discount",
+        "category_discount": "Category Discount",
+        "percentage_off": "Percentage Off"
+      },
+      "percentage": "Percentage (%)",
+      "product": "Product",
+      "category": "Category",
+      "startHour": "Start Hour",
+      "endHour": "End Hour",
+      "add": "+ Add Campaign",
+      "delete": "Delete",
+      "errors": {
+        "invalid_input": "Please check the information you entered.",
+        "forbidden": "You don't have permission for this action.",
+        "unknown": "Could not save, please try again."
+      },
+      "coupons": {
+        "title": "Coupon Codes",
+        "empty": "No coupons yet.",
+        "needCampaign": "Create a campaign first to add a coupon.",
+        "campaign": "Campaign",
+        "code": "Code",
+        "usageLimit": "Usage Limit",
+        "add": "+ Add Coupon",
+        "delete": "Delete"
+      }
     }
   },
   "waiter": {
@@ -717,6 +754,20 @@
         "no_session": "Your session was not found, please rescan the QR code.",
         "nothing_to_pay": "There's nothing to pay.",
         "unknown": "Could not start payment, please try again."
+      },
+      "couponPlaceholder": "Coupon Code",
+      "couponApply": "Apply",
+      "couponApplied": "Coupon applied: {amount} off",
+      "couponErrors": {
+        "invalid_input": "Please enter a valid coupon code.",
+        "no_session": "Your session was not found, please rescan the QR code.",
+        "forbidden": "You don't have permission for this action.",
+        "invalid_code": "Invalid coupon code.",
+        "limit_reached": "This coupon's usage limit has been reached.",
+        "already_applied": "This coupon has already been applied.",
+        "not_active": "This campaign is not currently active.",
+        "not_applicable": "This coupon cannot be applied to this order.",
+        "unknown": "Could not apply coupon, please try again."
       },
       "status": {
         "pending": "Awaiting approval",

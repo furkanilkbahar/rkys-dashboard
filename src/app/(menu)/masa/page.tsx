@@ -14,8 +14,10 @@ import { getGuestRatingSettings, getWaitersForRating, hasExistingRating } from "
 import { getSessionOrders } from "@/lib/data/sessionOrders";
 import { getCurrentTenant } from "@/lib/data/tenant";
 import { getCurrentGuestSession } from "@/lib/guest/session";
+import { isEnabled } from "@/lib/modules/isEnabled";
 
 import { submitOrder } from "./actions";
+import { applyCoupon } from "./coupon-actions";
 
 export default async function MenuPage() {
   const guest = await getCurrentGuestSession();
@@ -32,12 +34,13 @@ export default async function MenuPage() {
   const locale = await getLocale();
   const tenant = await getCurrentTenant();
   const currency = tenant?.currency ?? "TRY";
-  const [categories, callTypes, sessionOrders, enabledLocales, ratingSettings] = await Promise.all([
+  const [categories, callTypes, sessionOrders, enabledLocales, ratingSettings, campaignsEnabled] = await Promise.all([
     getEffectiveMenu(guest.tenantId, guest.branchId, locale),
     getCallTypes(guest.tenantId, locale),
     getSessionOrders(guest.tableSessionId),
     getEnabledLocales(guest.tenantId),
     getGuestRatingSettings(guest.tenantId),
+    isEnabled(guest.tenantId, "campaigns"),
   ]);
   const [waiters, alreadyRated] = ratingSettings.isEnabled
     ? await Promise.all([getWaitersForRating(guest.tenantId), hasExistingRating(guest.tableSessionId)])
@@ -56,7 +59,13 @@ export default async function MenuPage() {
       <header className="flex items-center justify-between gap-4">
         <p className="text-sm text-muted-foreground">{t("connected")}</p>
         <div className="flex items-center gap-2">
-          <SessionPanel tableSessionId={guest.tableSessionId} currency={currency} initialOrders={sessionOrders} />
+          <SessionPanel
+            tableSessionId={guest.tableSessionId}
+            currency={currency}
+            initialOrders={sessionOrders}
+            campaignsEnabled={campaignsEnabled}
+            applyCoupon={applyCoupon}
+          />
           <LanguageSwitcher enabledLocales={enabledLocales as Locale[]} />
         </div>
       </header>

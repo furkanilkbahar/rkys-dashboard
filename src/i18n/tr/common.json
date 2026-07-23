@@ -137,6 +137,7 @@
       "staff": "Personel",
       "reservations": "Rezervasyon",
       "ratings": "Değerlendirmeler",
+      "campaigns": "Kampanyalar",
       "reports": "Raporlar",
       "support": "Destek",
       "settings": "Ayarlar",
@@ -451,7 +452,8 @@
           "label": "Kategori",
           "comp": "İkram/İndirim",
           "refund": "İade",
-          "cancel": "İptal"
+          "cancel": "İptal",
+          "campaign": "Kampanya"
         }
       }
     },
@@ -635,6 +637,41 @@
         "branch_comparison": "Şube Kıyası (Son 30 Gün)",
         "anomaly_alerts": "Anomali Uyarıları"
       }
+    },
+    "campaigns": {
+      "pageTitle": "Kampanyalar",
+      "title": "Kampanyalar",
+      "empty": "Henüz kampanya yok.",
+      "name": "Ad",
+      "ruleTypeLabel": "Kural Tipi",
+      "ruleType": {
+        "bogo": "2 Al 1 Öde",
+        "time_window": "Saat Aralığı İndirimi",
+        "category_discount": "Kategori İndirimi",
+        "percentage_off": "Yüzde İndirim"
+      },
+      "percentage": "Yüzde (%)",
+      "product": "Ürün",
+      "category": "Kategori",
+      "startHour": "Başlangıç Saati",
+      "endHour": "Bitiş Saati",
+      "add": "+ Kampanya Ekle",
+      "delete": "Sil",
+      "errors": {
+        "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
+        "forbidden": "Bu işlem için yetkiniz yok.",
+        "unknown": "Kaydedilemedi, tekrar deneyin."
+      },
+      "coupons": {
+        "title": "Kupon Kodları",
+        "empty": "Henüz kupon yok.",
+        "needCampaign": "Kupon eklemek için önce bir kampanya oluşturun.",
+        "campaign": "Kampanya",
+        "code": "Kod",
+        "usageLimit": "Kullanım Limiti",
+        "add": "+ Kupon Ekle",
+        "delete": "Sil"
+      }
     }
   },
   "waiter": {
@@ -717,6 +754,20 @@
         "no_session": "Oturumunuz bulunamadı, lütfen QR kodu tekrar okutun.",
         "nothing_to_pay": "Ödenecek bir tutar yok.",
         "unknown": "Ödeme başlatılamadı, tekrar deneyin."
+      },
+      "couponPlaceholder": "Kupon Kodu",
+      "couponApply": "Uygula",
+      "couponApplied": "Kupon uygulandı: {amount} indirim",
+      "couponErrors": {
+        "invalid_input": "Geçerli bir kupon kodu girin.",
+        "no_session": "Oturumunuz bulunamadı, lütfen QR kodu tekrar okutun.",
+        "forbidden": "Bu işlem için yetkiniz yok.",
+        "invalid_code": "Geçersiz kupon kodu.",
+        "limit_reached": "Bu kuponun kullanım limiti doldu.",
+        "already_applied": "Bu kupon zaten uygulandı.",
+        "not_active": "Bu kampanya şu anda aktif değil.",
+        "not_applicable": "Bu kupon bu siparişe uygulanamıyor.",
+        "unknown": "Kupon uygulanamadı, tekrar deneyin."
       },
       "status": {
         "pending": "Onay bekliyor",

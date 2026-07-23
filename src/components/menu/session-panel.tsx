@@ -8,6 +8,7 @@ import { startOnlinePayment } from "@/app/(menu)/masa/pay-actions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { ApplyCouponResult } from "@/lib/campaigns/schemas";
 import type { SessionOrder } from "@/lib/data/sessionOrders";
 import type { OrderStatus } from "@/lib/orders/stateMachine";
 import { playBeep, useSoundUnlock } from "@/lib/sound/insistentAlert";
@@ -18,10 +19,14 @@ export function SessionPanel({
   tableSessionId,
   currency,
   initialOrders,
+  campaignsEnabled,
+  applyCoupon,
 }: {
   tableSessionId: string;
   currency: string;
   initialOrders: SessionOrder[];
+  campaignsEnabled: boolean;
+  applyCoupon: (input: unknown) => Promise<ApplyCouponResult>;
 }) {
   const t = useTranslations("menu.sessionPanel");
   const [open, setOpen] = useState(false);
@@ -30,6 +35,10 @@ export function SessionPanel({
   const [checkRequested, setCheckRequested] = useState(false);
   const [paying, setPaying] = useState(false);
   const [payError, setPayError] = useState<string | null>(null);
+  const [couponCode, setCouponCode] = useState("");
+  const [couponSubmitting, setCouponSubmitting] = useState(false);
+  const [couponError, setCouponError] = useState<string | null>(null);
+  const [couponSuccess, setCouponSuccess] = useState<number | null>(null);
   const { unlocked, unlock } = useSoundUnlock();
   const unlockedRef = useRef(unlocked);
   useEffect(() => {
@@ -164,6 +173,28 @@ export function SessionPanel({
     }
   }
 
+  // v1 basitleştirmesi: kupon, oturumun EN SON (iptal edilmemiş) siparişine
+  // uygulanır — comps (ve dolayısıyla kampanya indirimi) her zaman tek bir
+  // order_id'ye bağlıdır, session-level bir indirim tablosu yok (RULES #18
+  // ile tutarlı mevcut ikram deseni). Kullanıcı hangi siparişi seçeceğini
+  // belirtmez, bu yüzden en doğal varsayılan "az önce eklenen sipariş".
+  async function handleApplyCoupon() {
+    const latestOrder = [...orders].filter((o) => o.status !== "cancelled").sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
+    if (!latestOrder || !couponCode.trim()) return;
+
+    setCouponSubmitting(true);
+    setCouponError(null);
+    setCouponSuccess(null);
+    const result = await applyCoupon({ orderId: latestOrder.id, code: couponCode.trim().toUpperCase() });
+    setCouponSubmitting(false);
+    if (!result.ok) {
+      setCouponError(t(`couponErrors.${result.error}`));
+      return;
+    }
+    setCouponSuccess(result.discountMinor);
+    setCouponCode("");
+  }
+
   return (
     <div className="relative">
       {readyToast && (
@@ -226,6 +257,27 @@ export function SessionPanel({
               {paying ? t("payingOnline") : t("payOnline")}
             </Button>
             {payError && <p className="text-xs text-destructive">{payError}</p>}
+
+            {campaignsEnabled && orders.some((o) => o.status !== "cancelled") && (
+              <div className="flex flex-col gap-1 border-t border-border pt-2">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value)}
+                    placeholder={t("couponPlaceholder")}
+                    className="h-8 flex-1 rounded-lg border border-input bg-transparent px-2.5 text-sm uppercase"
+                  />
+                  <Button type="button" size="sm" variant="outline" disabled={couponSubmitting || !couponCode.trim()} onClick={handleApplyCoupon}>
+                    {t("couponApply")}
+                  </Button>
+                </div>
+                {couponSuccess !== null && (
+                  <p className="text-xs text-primary">{t("couponApplied", { amount: formatPrice(couponSuccess, currency) })}</p>
+                )}
+                {couponError && <p className="text-xs text-destructive">{couponError}</p>}
+              </div>
+            )}
           </div>
         </div>
       )}

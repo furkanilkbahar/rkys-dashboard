@@ -31,7 +31,7 @@ export const callTypeFormSchema = z.object({
 export type CallTypeFormInput = z.infer<typeof callTypeFormSchema>;
 
 export const reasonCodeFormSchema = z.object({
-  category: z.enum(["comp", "refund", "cancel"]),
+  category: z.enum(["comp", "refund", "cancel", "campaign"]),
   nameTr: z.string().min(1, "required"),
   nameEn: z.string().min(1, "required"),
   isActive: z.boolean(),

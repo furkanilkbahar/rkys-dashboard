@@ -12,17 +12,17 @@ export type { ModuleKey };
 /**
  * Kapalı modül hiçbir yüzeyde görünmez (RULES #34) — satır yoksa (henüz
  * seed edilmemiş) fail-closed: false. Server-only, client'tan çağrılamaz.
+ *
+ * tenant_modules RLS'i staff-only (0007) — misafir tarafının kendi
+ * tenant'ındaki bir modülün durumunu sorabilmesi için doğrudan tablo yerine
+ * is_module_enabled RPC'si (0051) kullanılır, is_tenant_active (0037) ile
+ * aynı desen.
  */
 export async function isEnabled(tenantId: string, moduleKey: ModuleKey): Promise<boolean> {
   const supabase = await createClient();
-  const { data } = await supabase
-    .from("tenant_modules")
-    .select("is_enabled")
-    .eq("tenant_id", tenantId)
-    .eq("module_key", moduleKey)
-    .maybeSingle();
+  const { data } = await supabase.rpc("is_module_enabled", { p_tenant_id: tenantId, p_module_key: moduleKey });
 
-  return data?.is_enabled ?? false;
+  return data ?? false;
 }
 
 /** Route/API guard'ı: modül kapalıysa 404 — kapalı modülün varlığı bile sızmaz. */
