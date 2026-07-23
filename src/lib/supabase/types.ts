@@ -64,6 +64,58 @@ export type Database = {
         }
         Relationships: []
       }
+      anomaly_alerts: {
+        Row: {
+          acknowledged_at: string | null
+          branch_id: string
+          business_date: string
+          created_at: string
+          id: string
+          message: string
+          tenant_id: string
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          branch_id: string
+          business_date: string
+          created_at?: string
+          id?: string
+          message: string
+          tenant_id: string
+        }
+        Update: {
+          acknowledged_at?: string | null
+          branch_id?: string
+          business_date?: string
+          created_at?: string
+          id?: string
+          message?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "anomaly_alerts_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "anomaly_alerts_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "anomaly_alerts_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       branch_product_overrides: {
         Row: {
           branch_id: string
@@ -742,6 +794,55 @@ export type Database = {
           },
           {
             foreignKeyName: "generic_qr_codes_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      goals: {
+        Row: {
+          branch_id: string
+          created_at: string
+          period_month: string
+          target_revenue_minor: number
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          branch_id: string
+          created_at?: string
+          period_month: string
+          target_revenue_minor: number
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          branch_id?: string
+          created_at?: string
+          period_month?: string
+          target_revenue_minor?: number
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "goals_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "goals_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "goals_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "tenants"
@@ -2774,6 +2875,10 @@ export type Database = {
       }
     }
     Functions: {
+      acknowledge_anomaly_alert: {
+        Args: { p_alert_id: string }
+        Returns: undefined
+      }
       acknowledge_waiter_call: {
         Args: { p_call_id: string }
         Returns: undefined
@@ -2844,7 +2949,17 @@ export type Database = {
       current_table_session_id: { Args: never; Returns: string }
       current_tenant_id: { Args: never; Returns: string }
       custom_access_token_hook: { Args: { event: Json }; Returns: Json }
+      detect_revenue_anomalies: { Args: never; Returns: undefined }
       disable_tenant_locale: { Args: { p_locale: string }; Returns: undefined }
+      get_active_anomaly_alerts: {
+        Args: { p_branch_id: string }
+        Returns: {
+          business_date: string
+          created_at: string
+          id: string
+          message: string
+        }[]
+      }
       get_branch_comparison: {
         Args: { p_end_date: string; p_start_date: string }
         Returns: {
@@ -2852,6 +2967,13 @@ export type Database = {
           branch_name: string
           order_count: number
           revenue_minor: number
+        }[]
+      }
+      get_goal_progress: {
+        Args: { p_branch_id: string; p_period_month: string }
+        Returns: {
+          actual_revenue_minor: number
+          target_revenue_minor: number
         }[]
       }
       get_hourly_density: {
@@ -3044,6 +3166,14 @@ export type Database = {
         }[]
       }
       revoke_staff_device: { Args: { p_device_id: string }; Returns: undefined }
+      set_monthly_goal: {
+        Args: {
+          p_branch_id: string
+          p_period_month: string
+          p_target_revenue_minor: number
+        }
+        Returns: undefined
+      }
       set_subscription_checkout_ref: {
         Args: { p_provider: string; p_provider_ref: string }
         Returns: undefined
