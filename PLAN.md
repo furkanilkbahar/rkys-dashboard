@@ -49,10 +49,10 @@
 - [x] **Status sayfası** + uptime izleme (OPERATIONS) — D72 sınırı: veri modeli + manuel giriş, gerçek 3.parti alerting production'a ertelendi
 
 ## Faz 5 — Analitik Merkezi
-- [ ] Widget dashboard (sürükle-bırak) + şube kıyası
-- [ ] Hedefler + anomali uyarıları (`daily_sales_summary` altyapısı)
-- [ ] **Zamanlanmış e-posta/PDF raporları**
-- [ ] Rol/izin bazlı rapor erişimi; dönem + geçen yıl karşılaştırmaları; kayıp-kaçak (sebep kodlu) raporu
+- [x] Widget dashboard (sürükle-bırak) + şube kıyası (`(analytics)/analytics`, 6 widget, kullanıcı bazlı kalıcı düzen)
+- [x] Hedefler + anomali uyarıları (`daily_sales_summary` altyapısı) — gecelik pg_cron taraması, %30+ ciro düşüşünde uyarı
+- [x] **Zamanlanmış e-posta/PDF raporları** — lib/email (mock-first, Resend adaptörü D72 sınırı: anahtar gelene kadar doğrulanmadı) + @react-pdf/renderer
+- [x] Rol/izin bazlı rapor erişimi; dönem + geçen yıl karşılaştırmaları; kayıp-kaçak (sebep kodlu) raporu — `reports.loss` izni, iptal sebep kodu için `orders.cancel_reason_code_id` eklendi (onay UI'ı ayrı bir Faz 1 eksiği olarak not edildi)
 
 ## Faz 6 — Gelişmiş Ödeme + Kampanya + Tema/Self-Hosted
 - [ ] **Kalem bazlı hesap bölme** + **kısmi iade** (ortak altyapı)
