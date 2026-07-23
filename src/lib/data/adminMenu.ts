@@ -12,6 +12,7 @@ export type AdminCategory = {
   name: AdminTranslation;
   productCount: number;
   imageUrl: string | null;
+  station: string | null;
 };
 
 export type AdminProduct = {
@@ -100,7 +101,7 @@ export async function getAdminCategories(tenantId: string): Promise<AdminCategor
 
   const { data: categories } = await supabase
     .from("menu_categories")
-    .select("id, layout, display_order, is_active, image_url, products(count)")
+    .select("id, layout, display_order, is_active, image_url, station, products(count)")
     .eq("tenant_id", tenantId)
     .order("display_order");
 
@@ -115,6 +116,7 @@ export async function getAdminCategories(tenantId: string): Promise<AdminCategor
     name: readTranslation(nameMap, "menu_category", c.id, "name"),
     productCount: c.products?.[0]?.count ?? 0,
     imageUrl: c.image_url,
+    station: c.station,
   }));
 }
 
@@ -123,7 +125,7 @@ export async function getAdminCategory(tenantId: string, categoryId: string): Pr
 
   const { data: category } = await supabase
     .from("menu_categories")
-    .select("id, layout, display_order, is_active, image_url")
+    .select("id, layout, display_order, is_active, image_url, station")
     .eq("tenant_id", tenantId)
     .eq("id", categoryId)
     .maybeSingle();
@@ -142,6 +144,7 @@ export async function getAdminCategory(tenantId: string, categoryId: string): Pr
     name: readTranslation(nameMap, "menu_category", categoryId, "name"),
     productCount: 0,
     imageUrl: category.image_url,
+    station: category.station,
   };
 }
 

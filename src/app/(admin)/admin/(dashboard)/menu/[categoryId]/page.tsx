@@ -42,6 +42,7 @@ export default async function CategoryDetailPage({ params }: { params: Promise<{
               nameTr: category.name.tr,
               nameEn: category.name.en,
               isActive: category.isActive,
+              station: category.station ?? "",
             }}
             action={updateCategory.bind(null, categoryId)}
             redirectTo={`/admin/menu/${categoryId}`}

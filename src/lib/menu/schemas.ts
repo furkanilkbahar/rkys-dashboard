@@ -23,10 +23,16 @@ export const categoryFormSchema = z.object({
   nameTr: z.string().min(1, "required"),
   nameEn: z.string(),
   isActive: z.boolean(),
+  station: z.string(),
 });
 export type CategoryFormInput = z.infer<typeof categoryFormSchema>;
 
-export const categoryServerSchema = categoryFormSchema;
+// station serbest metin alanı: boş bırakılırsa "istasyonsuz" (null) anlamına
+// gelir — KDS'nin istasyon filtresi olmadan bugünkü gibi tek ekran davranışı.
+export const categoryServerSchema = categoryFormSchema.transform((v) => ({
+  ...v,
+  station: v.station.trim() === "" ? null : v.station.trim(),
+}));
 
 export const productFormSchema = z.object({
   categoryId: z.uuid(),

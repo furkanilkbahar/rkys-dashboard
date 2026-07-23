@@ -1,14 +1,18 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { advanceOrder } from "@/app/(kitchen)/kitchen/actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { StaffOrderView } from "@/lib/data/staffOrders";
 import { useConnectivity, type ChannelState } from "@/lib/realtime/useConnectivity";
 import { createClient } from "@/lib/supabase/client";
+
+const ALL_STATIONS = "__all__";
 
 const NEXT_STATUS: Record<string, "preparing" | "ready" | "served" | undefined> = {
   approved: "preparing",
@@ -20,15 +24,24 @@ export function KdsPanel({
   tenantId,
   branchId,
   initialOrders,
+  stations,
+  selectedStation,
 }: {
   tenantId: string;
   branchId: string;
   initialOrders: StaffOrderView[];
+  stations: string[];
+  selectedStation: string;
 }) {
   const t = useTranslations("kitchen");
+  const router = useRouter();
   const [orders, setOrders] = useState(initialOrders);
   const [channelState, setChannelState] = useState<ChannelState>("connecting");
   const isConnected = useConnectivity(channelState);
+
+  function handleStationChange(value: string | null) {
+    router.push(!value || value === ALL_STATIONS ? "/kitchen" : `/kitchen?station=${encodeURIComponent(value)}`);
+  }
 
   useEffect(() => {
     const supabase = createClient();
@@ -63,9 +76,26 @@ export function KdsPanel({
     <main className="mx-auto flex min-h-screen max-w-5xl flex-col gap-6 p-4 sm:p-8">
       <header className="flex items-center justify-between gap-4">
         <h1 className="text-lg font-semibold">{t("title")}</h1>
-        <span className={isConnected ? "text-xs text-primary" : "text-xs text-destructive"}>
-          {isConnected ? t("connected") : t("disconnected")}
-        </span>
+        <div className="flex items-center gap-3">
+          {stations.length > 0 && (
+            <Select value={selectedStation === "" ? ALL_STATIONS : selectedStation} onValueChange={handleStationChange}>
+              <SelectTrigger className="w-40">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={ALL_STATIONS}>{t("allStations")}</SelectItem>
+                {stations.map((station) => (
+                  <SelectItem key={station} value={station}>
+                    {station}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+          <span className={isConnected ? "text-xs text-primary" : "text-xs text-destructive"}>
+            {isConnected ? t("connected") : t("disconnected")}
+          </span>
+        </div>
       </header>
 
       {orders.length === 0 && <p className="text-sm text-muted-foreground">{t("noOrders")}</p>}

@@ -178,7 +178,9 @@
         "layoutShowcase": "Showcase",
         "active": "Active",
         "inactive": "Inactive",
-        "productCount": "{count} products"
+        "productCount": "{count} products",
+        "station": "Station",
+        "stationPlaceholder": "e.g. Grill, Salad, Dessert (empty = no station)"
       },
       "product": {
         "createTitle": "New Product",
@@ -688,6 +690,7 @@
   },
   "kitchen": {
     "title": "Kitchen Display",
+    "allStations": "All Stations",
     "connected": "Connected",
     "disconnected": "Disconnected",
     "noOrders": "No orders pending.",

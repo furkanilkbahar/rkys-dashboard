@@ -24,6 +24,7 @@ type CategoryFormValues = {
   nameTr: string;
   nameEn: string;
   isActive: boolean;
+  station: string;
 };
 
 export function CategoryForm({
@@ -46,7 +47,7 @@ export function CategoryForm({
     formState: { errors, isSubmitting },
   } = useForm<CategoryFormValues>({
     resolver: standardSchemaResolver(categoryFormSchema),
-    defaultValues: initial ?? { layout: "grid", nameTr: "", nameEn: "", isActive: true },
+    defaultValues: initial ?? { layout: "grid", nameTr: "", nameEn: "", isActive: true, station: "" },
   });
 
   async function onSubmit(values: CategoryFormValues) {
@@ -94,6 +95,11 @@ export function CategoryForm({
             </Select>
           )}
         />
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <Label htmlFor="station">{t("category.station")}</Label>
+        <Input id="station" {...register("station")} placeholder={t("category.stationPlaceholder")} />
       </div>
 
       <div className="flex items-center gap-2">

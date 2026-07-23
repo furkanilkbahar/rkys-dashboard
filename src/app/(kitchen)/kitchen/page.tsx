@@ -4,10 +4,14 @@ import { KdsPanel } from "@/components/kitchen/kds-panel";
 import { getCurrentActor } from "@/lib/auth/session";
 import { assertStaffRole } from "@/lib/auth/staffGuard";
 import { getDefaultBranchId } from "@/lib/data/branch";
-import { getOrdersByStatus } from "@/lib/data/staffOrders";
+import { getOrdersByStatus, getStations } from "@/lib/data/staffOrders";
 import { isSubscriptionActive } from "@/lib/data/subscription";
 
-export default async function KitchenHomePage() {
+export default async function KitchenHomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ station?: string }>;
+}) {
   const actor = await getCurrentActor();
   if (!actor) {
     redirect("/admin/login");
@@ -23,7 +27,25 @@ export default async function KitchenHomePage() {
     notFound();
   }
 
-  const orders = await getOrdersByStatus(actor.tenantId, branchId, ["approved", "preparing", "ready"]);
+  const { station } = await searchParams;
+  const [orders, stations] = await Promise.all([
+    getOrdersByStatus(actor.tenantId, branchId, ["approved", "preparing", "ready"], station),
+    getStations(actor.tenantId),
+  ]);
 
-  return <KdsPanel tenantId={actor.tenantId} branchId={branchId} initialOrders={orders} />;
+  return (
+    // KdsPanel'in `orders` state'i useState(initialOrders) ile yalnızca ilk
+    // mount'ta okunur — router.push ile ?station= değişince aynı bileşen
+    // örneği yeniden kullanılırsa yeni (filtrelenmiş) initialOrders prop'u
+    // hiç işlenmez (bkz. CouponsCard'daki aynı desen, Faz 6 Adım 2). key ile
+    // istasyon değişince tam remount zorlanır.
+    <KdsPanel
+      key={station ?? "all"}
+      tenantId={actor.tenantId}
+      branchId={branchId}
+      initialOrders={orders}
+      stations={stations}
+      selectedStation={station ?? ""}
+    />
+  );
 }

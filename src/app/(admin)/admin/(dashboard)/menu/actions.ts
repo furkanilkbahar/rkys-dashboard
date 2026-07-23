@@ -57,7 +57,7 @@ export async function createCategory(input: unknown): Promise<MenuActionResult> 
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("menu_categories")
-    .insert({ tenant_id: actor.tenantId, layout: parsed.data.layout, is_active: parsed.data.isActive })
+    .insert({ tenant_id: actor.tenantId, layout: parsed.data.layout, is_active: parsed.data.isActive, station: parsed.data.station })
     .select("id")
     .single();
 
@@ -81,7 +81,7 @@ export async function updateCategory(categoryId: string, input: unknown): Promis
   const supabase = await createClient();
   const { error } = await supabase
     .from("menu_categories")
-    .update({ layout: parsed.data.layout, is_active: parsed.data.isActive })
+    .update({ layout: parsed.data.layout, is_active: parsed.data.isActive, station: parsed.data.station })
     .eq("id", categoryId)
     .eq("tenant_id", actor.tenantId);
 

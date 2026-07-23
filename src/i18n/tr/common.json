@@ -178,7 +178,9 @@
         "layoutShowcase": "Vitrin",
         "active": "Aktif",
         "inactive": "Pasif",
-        "productCount": "{count} ürün"
+        "productCount": "{count} ürün",
+        "station": "İstasyon",
+        "stationPlaceholder": "ör. Izgara, Salata, Tatlı (boş = istasyonsuz)"
       },
       "product": {
         "createTitle": "Yeni Ürün",
@@ -688,6 +690,7 @@
   },
   "kitchen": {
     "title": "Mutfak Ekranı (KDS)",
+    "allStations": "Tüm İstasyonlar",
     "connected": "Bağlı",
     "disconnected": "Bağlantı koptu",
     "noOrders": "Bekleyen sipariş yok.",
