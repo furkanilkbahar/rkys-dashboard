@@ -1016,6 +1016,130 @@ export type Database = {
           },
         ]
       }
+      gift_card_transactions: {
+        Row: {
+          amount_minor: number
+          branch_id: string | null
+          created_at: string
+          created_by: string | null
+          gift_card_id: string
+          id: string
+          order_id: string | null
+          payment_id: string | null
+          tenant_id: string
+          type: string
+        }
+        Insert: {
+          amount_minor: number
+          branch_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          gift_card_id: string
+          id?: string
+          order_id?: string | null
+          payment_id?: string | null
+          tenant_id: string
+          type: string
+        }
+        Update: {
+          amount_minor?: number
+          branch_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          gift_card_id?: string
+          id?: string
+          order_id?: string | null
+          payment_id?: string | null
+          tenant_id?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gift_card_transactions_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gift_card_transactions_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "gift_card_transactions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gift_card_transactions_gift_card_id_fkey"
+            columns: ["gift_card_id"]
+            isOneToOne: false
+            referencedRelation: "gift_cards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gift_card_transactions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gift_card_transactions_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gift_card_transactions_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gift_cards: {
+        Row: {
+          balance_minor: number
+          code: string
+          created_at: string
+          id: string
+          is_active: boolean
+          tenant_id: string
+        }
+        Insert: {
+          balance_minor?: number
+          code: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          tenant_id: string
+        }
+        Update: {
+          balance_minor?: number
+          code?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gift_cards_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       goals: {
         Row: {
           branch_id: string
@@ -3778,6 +3902,10 @@ export type Database = {
         Returns: boolean
       }
       is_tenant_active: { Args: { p_tenant_id: string }; Returns: boolean }
+      issue_gift_card: {
+        Args: { p_code: string; p_initial_balance_minor: number }
+        Returns: string
+      }
       link_guest_device: {
         Args: {
           p_branch_id: string
@@ -3832,6 +3960,7 @@ export type Database = {
       record_payment: {
         Args: {
           p_amount_minor: number
+          p_gift_card_code?: string
           p_item_allocations?: Json
           p_method: string
           p_split_group?: string
