@@ -505,6 +505,73 @@ export type Database = {
           },
         ]
       }
+      daily_sales_summary: {
+        Row: {
+          branch_id: string
+          business_date: string
+          card_manual_minor: number
+          cash_minor: number
+          comps_minor: number
+          created_at: string
+          online_minor: number
+          order_count: number
+          refunds_minor: number
+          revenue_minor: number
+          tenant_id: string
+          tips_minor: number
+        }
+        Insert: {
+          branch_id: string
+          business_date: string
+          card_manual_minor: number
+          cash_minor: number
+          comps_minor: number
+          created_at?: string
+          online_minor: number
+          order_count: number
+          refunds_minor: number
+          revenue_minor: number
+          tenant_id: string
+          tips_minor: number
+        }
+        Update: {
+          branch_id?: string
+          business_date?: string
+          card_manual_minor?: number
+          cash_minor?: number
+          comps_minor?: number
+          created_at?: string
+          online_minor?: number
+          order_count?: number
+          refunds_minor?: number
+          revenue_minor?: number
+          tenant_id?: string
+          tips_minor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "daily_sales_summary_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "daily_sales_summary_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "daily_sales_summary_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       day_closures: {
         Row: {
           branch_id: string
