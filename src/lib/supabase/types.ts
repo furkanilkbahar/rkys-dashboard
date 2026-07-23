@@ -1033,6 +1033,7 @@ export type Database = {
       orders: {
         Row: {
           branch_id: string
+          cancel_reason_code_id: string | null
           cancel_requested_at: string | null
           cancel_requested_reason: string | null
           channel: string
@@ -1048,6 +1049,7 @@ export type Database = {
         }
         Insert: {
           branch_id: string
+          cancel_reason_code_id?: string | null
           cancel_requested_at?: string | null
           cancel_requested_reason?: string | null
           channel?: string
@@ -1063,6 +1065,7 @@ export type Database = {
         }
         Update: {
           branch_id?: string
+          cancel_reason_code_id?: string | null
           cancel_requested_at?: string | null
           cancel_requested_reason?: string | null
           channel?: string
@@ -1090,6 +1093,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "effective_menu_items"
             referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "orders_cancel_reason_code_id_fkey"
+            columns: ["cancel_reason_code_id"]
+            isOneToOne: false
+            referencedRelation: "reason_codes"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "orders_placed_by_device_id_fkey"
@@ -2732,7 +2742,7 @@ export type Database = {
         Returns: undefined
       }
       approve_cancellation_request: {
-        Args: { p_order_id: string }
+        Args: { p_order_id: string; p_reason_code_id?: string }
         Returns: undefined
       }
       approve_order: { Args: { p_order_id: string }; Returns: undefined }
@@ -2790,11 +2800,30 @@ export type Database = {
       current_tenant_id: { Args: never; Returns: string }
       custom_access_token_hook: { Args: { event: Json }; Returns: Json }
       disable_tenant_locale: { Args: { p_locale: string }; Returns: undefined }
+      get_branch_comparison: {
+        Args: { p_end_date: string; p_start_date: string }
+        Returns: {
+          branch_id: string
+          branch_name: string
+          order_count: number
+          revenue_minor: number
+        }[]
+      }
       get_hourly_density: {
         Args: { p_branch_id: string; p_business_date: string }
         Returns: {
           hour_of_day: number
           order_count: number
+        }[]
+      }
+      get_loss_report: {
+        Args: { p_branch_id: string; p_end_date: string; p_start_date: string }
+        Returns: {
+          amount_minor: number
+          item_count: number
+          reason_code_id: string
+          reason_key: string
+          source: string
         }[]
       }
       get_margin_report: {
@@ -2805,6 +2834,19 @@ export type Database = {
           product_name: string
           quantity: number
           revenue_minor: number
+        }[]
+      }
+      get_period_revenue_report: {
+        Args: { p_branch_id: string; p_end_date: string; p_start_date: string }
+        Returns: {
+          card_manual_minor: number
+          cash_minor: number
+          comps_minor: number
+          online_minor: number
+          order_count: number
+          refunds_minor: number
+          revenue_minor: number
+          tips_minor: number
         }[]
       }
       get_revenue_report: {
