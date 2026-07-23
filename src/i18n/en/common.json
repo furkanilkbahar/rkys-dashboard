@@ -467,7 +467,8 @@
           "comp": "Comp/Discount",
           "refund": "Refund",
           "cancel": "Cancel",
-          "campaign": "Campaign"
+          "campaign": "Campaign",
+          "loyalty": "Loyalty"
         }
       }
     },

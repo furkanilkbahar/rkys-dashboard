@@ -467,7 +467,8 @@
           "comp": "İkram/İndirim",
           "refund": "İade",
           "cancel": "İptal",
-          "campaign": "Kampanya"
+          "campaign": "Kampanya",
+          "loyalty": "Sadakat"
         }
       }
     },
