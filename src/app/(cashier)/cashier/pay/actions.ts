@@ -106,6 +106,7 @@ export async function recordPayment(input: unknown): Promise<RecordPaymentResult
     p_tip_amount_minor: parsed.data.tipAmountMinor,
     p_split_group: parsed.data.splitGroup ?? undefined,
     p_item_allocations: parsed.data.itemAllocations ?? undefined,
+    p_gift_card_code: parsed.data.giftCardCode ?? undefined,
   });
 
   if (error) {
@@ -113,6 +114,10 @@ export async function recordPayment(input: unknown): Promise<RecordPaymentResult
     if (error.message.includes("do not match amount") || error.message.includes("invalid order item allocation") || error.message.includes("exceeds ordered quantity")) {
       return { ok: false, error: "invalid_input" };
     }
+    if (error.message.includes("invalid gift card code") || error.message.includes("gift card code required")) {
+      return { ok: false, error: "invalid_gift_card" };
+    }
+    if (error.message.includes("insufficient gift card balance")) return { ok: false, error: "insufficient_gift_card_balance" };
     return { ok: false, error: "forbidden" };
   }
 

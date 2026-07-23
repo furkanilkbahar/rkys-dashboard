@@ -37,6 +37,8 @@
       "method": "Ödeme Yöntemi",
       "cash": "Nakit",
       "cardManual": "Kart (Manuel)",
+      "giftCard": "Hediye Kartı",
+      "giftCardCode": "Hediye Kartı Kodu",
       "startPaying": "Ödemeye Başla",
       "sharesTitle": "Ödeme Payları",
       "share": "Pay {index}",
@@ -51,7 +53,9 @@
         "exceeds_subtotal": "İkram tutarı sipariş toplamını aşamaz.",
         "not_refundable": "Bu ödeme iade edilemez.",
         "provider_failed": "Sağlayıcıdan iade alınamadı, tekrar deneyin.",
-        "exceeds_remaining": "İade tutarı kalan bakiyeyi aşamaz."
+        "exceeds_remaining": "İade tutarı kalan bakiyeyi aşamaz.",
+        "invalid_gift_card": "Geçersiz hediye kartı kodu.",
+        "insufficient_gift_card_balance": "Hediye kartında yeterli bakiye yok."
       },
       "comp": {
         "title": "İkram / İndirim",
@@ -139,6 +143,7 @@
       "ratings": "Değerlendirmeler",
       "campaigns": "Kampanyalar",
       "loyalty": "Sadakat",
+      "giftCards": "Hediye Kartları",
       "reports": "Raporlar",
       "support": "Destek",
       "settings": "Ayarlar",
@@ -705,6 +710,21 @@
         "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
         "forbidden": "Bu işlem için yetkiniz yok.",
         "unknown": "Kaydedilemedi, tekrar deneyin."
+      }
+    },
+    "giftCards": {
+      "pageTitle": "Hediye Kartları",
+      "title": "Hediye Kartları",
+      "empty": "Henüz hediye kartı yok.",
+      "code": "Kod",
+      "initialBalance": "İlk Bakiye (₺)",
+      "issue": "+ Kart Oluştur",
+      "errors": {
+        "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
+        "forbidden": "Bu işlem için yetkiniz yok.",
+        "duplicate_code": "Bu kod zaten kullanılıyor.",
+        "not_enabled": "Hediye kartı modülü aktif değil.",
+        "unknown": "Oluşturulamadı, tekrar deneyin."
       }
     }
   },

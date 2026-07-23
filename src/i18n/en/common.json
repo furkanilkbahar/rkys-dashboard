@@ -37,6 +37,8 @@
       "method": "Payment Method",
       "cash": "Cash",
       "cardManual": "Card (Manual)",
+      "giftCard": "Gift Card",
+      "giftCardCode": "Gift Card Code",
       "startPaying": "Start Checkout",
       "sharesTitle": "Payment Shares",
       "share": "Share {index}",
@@ -51,6 +53,8 @@
         "exceeds_subtotal": "Comp amount cannot exceed the order total.",
         "not_refundable": "This payment cannot be refunded.",
         "provider_failed": "Could not process refund with the provider, please try again.",
+        "invalid_gift_card": "Invalid gift card code.",
+        "insufficient_gift_card_balance": "This gift card doesn't have enough balance.",
         "exceeds_remaining": "Refund amount cannot exceed the remaining balance."
       },
       "comp": {
@@ -139,6 +143,7 @@
       "ratings": "Ratings",
       "campaigns": "Campaigns",
       "loyalty": "Loyalty",
+      "giftCards": "Gift Cards",
       "reports": "Reports",
       "support": "Support",
       "settings": "Settings",
@@ -705,6 +710,21 @@
         "invalid_input": "Please check the information you entered.",
         "forbidden": "You don't have permission for this action.",
         "unknown": "Could not save, please try again."
+      }
+    },
+    "giftCards": {
+      "pageTitle": "Gift Cards",
+      "title": "Gift Cards",
+      "empty": "No gift cards yet.",
+      "code": "Code",
+      "initialBalance": "Initial Balance ($)",
+      "issue": "+ Issue Card",
+      "errors": {
+        "invalid_input": "Please check the information you entered.",
+        "forbidden": "You don't have permission for this action.",
+        "duplicate_code": "This code is already in use.",
+        "not_enabled": "The gift card module is not active.",
+        "unknown": "Could not issue, please try again."
       }
     }
   },

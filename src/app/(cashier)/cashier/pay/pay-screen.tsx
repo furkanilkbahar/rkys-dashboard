@@ -273,6 +273,7 @@ export function PayScreen({
   compReasons,
   refundReasons,
   recentPayments,
+  giftCardsEnabled,
   recordPayment,
   recordComp,
   refundPayment,
@@ -284,6 +285,7 @@ export function PayScreen({
   compReasons: ReasonCodeOption[];
   refundReasons: ReasonCodeOption[];
   recentPayments: RecentPayment[];
+  giftCardsEnabled: boolean;
   recordPayment: (input: unknown) => Promise<RecordPaymentResult>;
   recordComp: (input: unknown) => Promise<RecordCompResult>;
   refundPayment: (input: unknown) => Promise<RefundPaymentResult>;
@@ -294,7 +296,8 @@ export function PayScreen({
   const [paymentMode, setPaymentMode] = useState<"amount" | "items">("amount");
   const [splitCount, setSplitCount] = useState(1);
   const [tipPercentage, setTipPercentage] = useState(0);
-  const [method, setMethod] = useState<"cash" | "card_manual">("cash");
+  const [method, setMethod] = useState<"cash" | "card_manual" | "gift_card">("cash");
+  const [giftCardCode, setGiftCardCode] = useState("");
   const [splitGroup, setSplitGroup] = useState<string | null>(null);
   const [shares, setShares] = useState<Share[]>([]);
   const [selectedItemIds, setSelectedItemIds] = useState<Set<string>>(new Set());
@@ -334,6 +337,7 @@ export function PayScreen({
     setSplitGroup(crypto.randomUUID());
     setShares([]);
     setSelectedItemIds(new Set());
+    setGiftCardCode("");
     setError(null);
   }
 
@@ -364,6 +368,7 @@ export function PayScreen({
       tipAmountMinor: 0,
       splitGroup: null,
       itemAllocations,
+      giftCardCode: method === "gift_card" ? giftCardCode.trim().toUpperCase() : null,
     });
 
     if (!result.ok) {
@@ -390,6 +395,7 @@ export function PayScreen({
       amountMinor: share.amountMinor,
       tipAmountMinor: share.tipAmountMinor,
       splitGroup: splitCount > 1 ? splitGroup : null,
+      giftCardCode: method === "gift_card" ? giftCardCode.trim().toUpperCase() : null,
     });
 
     if (!result.ok) {
@@ -542,16 +548,29 @@ export function PayScreen({
 
             <div className="flex flex-col gap-1">
               <Label>{t("method")}</Label>
-              <Select value={method} onValueChange={(v) => v && setMethod(v as "cash" | "card_manual")}>
+              <Select value={method} onValueChange={(v) => v && setMethod(v as "cash" | "card_manual" | "gift_card")}>
                 <SelectTrigger className="w-40" aria-label={t("method")}>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="cash">{t("cash")}</SelectItem>
                   <SelectItem value="card_manual">{t("cardManual")}</SelectItem>
+                  {giftCardsEnabled && <SelectItem value="gift_card">{t("giftCard")}</SelectItem>}
                 </SelectContent>
               </Select>
             </div>
+
+            {method === "gift_card" && (
+              <div className="flex flex-col gap-1">
+                <Label htmlFor="gift-card-code-input">{t("giftCardCode")}</Label>
+                <Input
+                  id="gift-card-code-input"
+                  className="w-40 uppercase"
+                  value={giftCardCode}
+                  onChange={(e) => setGiftCardCode(e.target.value)}
+                />
+              </div>
+            )}
 
             {paymentMode === "amount" ? (
               <Button type="button" onClick={startPaying}>
