@@ -1933,6 +1933,64 @@ export type Database = {
           },
         ]
       }
+      report_schedules: {
+        Row: {
+          branch_id: string
+          created_at: string
+          frequency: string
+          id: string
+          is_active: boolean
+          last_sent_at: string | null
+          recipient_email: string
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          branch_id: string
+          created_at?: string
+          frequency: string
+          id?: string
+          is_active?: boolean
+          last_sent_at?: string | null
+          recipient_email: string
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          branch_id?: string
+          created_at?: string
+          frequency?: string
+          id?: string
+          is_active?: boolean
+          last_sent_at?: string | null
+          recipient_email?: string
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_schedules_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_schedules_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "report_schedules_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       role_permissions: {
         Row: {
           allowed: boolean
@@ -1961,6 +2019,44 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "role_permissions_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sent_emails: {
+        Row: {
+          created_at: string
+          has_attachment: boolean
+          id: string
+          provider: string
+          subject: string
+          tenant_id: string
+          to_email: string
+        }
+        Insert: {
+          created_at?: string
+          has_attachment?: boolean
+          id?: string
+          provider: string
+          subject: string
+          tenant_id: string
+          to_email: string
+        }
+        Update: {
+          created_at?: string
+          has_attachment?: boolean
+          id?: string
+          provider?: string
+          subject?: string
+          tenant_id?: string
+          to_email?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sent_emails_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "tenants"
@@ -3204,6 +3300,7 @@ export type Database = {
         }[]
       }
       suspend_tenant: { Args: { p_tenant_id: string }; Returns: undefined }
+      trigger_scheduled_reports_digest: { Args: never; Returns: undefined }
       update_staff_member: {
         Args: {
           p_badge_no: string
