@@ -2352,6 +2352,85 @@ export type Database = {
           },
         ]
       }
+      purchases: {
+        Row: {
+          branch_id: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          ingredient_id: string
+          quantity: number
+          supplier_id: string | null
+          tenant_id: string
+          unit_cost_minor: number
+        }
+        Insert: {
+          branch_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          ingredient_id: string
+          quantity: number
+          supplier_id?: string | null
+          tenant_id: string
+          unit_cost_minor: number
+        }
+        Update: {
+          branch_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          ingredient_id?: string
+          quantity?: number
+          supplier_id?: string | null
+          tenant_id?: string
+          unit_cost_minor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "purchases_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "purchases_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "purchases_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "purchases_ingredient_id_fkey"
+            columns: ["ingredient_id"]
+            isOneToOne: false
+            referencedRelation: "ingredients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "purchases_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "purchases_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rating_settings: {
         Row: {
           created_at: string
@@ -3235,6 +3314,41 @@ export type Database = {
             foreignKeyName: "subscriptions_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: true
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      suppliers: {
+        Row: {
+          contact_info: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          tenant_id: string
+        }
+        Insert: {
+          contact_info?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          tenant_id: string
+        }
+        Update: {
+          contact_info?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "suppliers_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
             referencedRelation: "tenants"
             referencedColumns: ["id"]
           },
@@ -4230,6 +4344,15 @@ export type Database = {
           p_split_group?: string
           p_table_session_id: string
           p_tip_amount_minor?: number
+        }
+        Returns: string
+      }
+      record_purchase: {
+        Args: {
+          p_ingredient_id: string
+          p_quantity: number
+          p_supplier_id?: string
+          p_unit_cost_minor: number
         }
         Returns: string
       }
