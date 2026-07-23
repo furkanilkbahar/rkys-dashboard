@@ -401,6 +401,24 @@
         "defaultBranch": "Varsayılan",
         "extraFeeNotice": "Planınızın dahil ettiği ücretsiz şube sayısını aştınız — ek şube ücreti uygulanır."
       },
+      "reportSchedules": {
+        "title": "Zamanlanmış Raporlar",
+        "empty": "Henüz zamanlanmış rapor yok.",
+        "branch": "Şube",
+        "frequencyLabel": "Sıklık",
+        "frequency": {
+          "daily": "Günlük",
+          "weekly": "Haftalık"
+        },
+        "recipientEmail": "Alıcı E-posta",
+        "add": "+ Ekle",
+        "delete": "Sil",
+        "sendNow": "Şimdi Gönder",
+        "sending": "Gönderiliyor...",
+        "sent": "Gönderildi",
+        "lastSent": "Son gönderim: {date}",
+        "neverSent": "Henüz gönderilmedi"
+      },
       "dangerZone": {
         "title": "Tehlikeli Bölge",
         "description": "Hesabınızı ve tüm işletme verilerinizi kalıcı olarak silinmesini talep edebilirsiniz. Bu işlem geri alınamaz.",

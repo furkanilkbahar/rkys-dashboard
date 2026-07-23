@@ -5,6 +5,7 @@ import { randomUUID } from "crypto";
 import { revalidatePath } from "next/cache";
 
 import { getCurrentActor } from "@/lib/auth/session";
+import { runOneReportSchedule } from "@/lib/reports/scheduledDigest";
 import {
   branchFormSchema,
   businessSettingsFormSchema,
@@ -14,6 +15,7 @@ import {
   orderSettingsFormSchema,
   ratingSettingsFormSchema,
   reasonCodeFormSchema,
+  reportScheduleFormSchema,
   tipPresetFormSchema,
   type BranchActionResult,
   type SettingsActionResult,
@@ -329,6 +331,78 @@ export async function requestAccountDeletion(): Promise<SettingsActionResult> {
   const supabase = await createClient();
   const { error } = await supabase.rpc("request_account_deletion");
   if (error) return { ok: false, error: "forbidden" };
+
+  revalidatePath("/admin/settings");
+  return { ok: true };
+}
+
+export async function createReportSchedule(input: unknown): Promise<SettingsActionResult> {
+  const actor = await requireStaffActor();
+  if (!actor) return { ok: false, error: "forbidden" };
+
+  const parsed = reportScheduleFormSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: "invalid_input" };
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("report_schedules").insert({
+    tenant_id: actor.tenantId,
+    branch_id: parsed.data.branchId,
+    frequency: parsed.data.frequency,
+    recipient_email: parsed.data.recipientEmail,
+  });
+  if (error) return { ok: false, error: "unknown" };
+
+  revalidatePath("/admin/settings");
+  return { ok: true };
+}
+
+export async function toggleReportSchedule(scheduleId: string, isActive: boolean): Promise<SettingsActionResult> {
+  const actor = await requireStaffActor();
+  if (!actor) return { ok: false, error: "forbidden" };
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("report_schedules")
+    .update({ is_active: isActive })
+    .eq("id", scheduleId)
+    .eq("tenant_id", actor.tenantId);
+  if (error) return { ok: false, error: "unknown" };
+
+  revalidatePath("/admin/settings");
+  return { ok: true };
+}
+
+export async function deleteReportSchedule(scheduleId: string): Promise<SettingsActionResult> {
+  const actor = await requireStaffActor();
+  if (!actor) return { ok: false, error: "forbidden" };
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("report_schedules").delete().eq("id", scheduleId).eq("tenant_id", actor.tenantId);
+  if (error) return { ok: false, error: "unknown" };
+
+  revalidatePath("/admin/settings");
+  return { ok: true };
+}
+
+// "Şimdi Gönder" (test): gerçek cron zamanlamasını beklemeden, tek bir
+// program için anlık dijest üretip gönderir — pg_net/internal route'a hiç
+// uğramaz, aynı runOneReportSchedule fonksiyonunu doğrudan çağırır (S24 E2E
+// bu butonla doğrulanabilir olsun diye).
+export async function sendReportNow(scheduleId: string): Promise<SettingsActionResult> {
+  const actor = await requireStaffActor();
+  if (!actor) return { ok: false, error: "forbidden" };
+
+  const supabase = await createClient();
+  const { data: schedule } = await supabase
+    .from("report_schedules")
+    .select("id")
+    .eq("id", scheduleId)
+    .eq("tenant_id", actor.tenantId)
+    .single();
+  if (!schedule) return { ok: false, error: "not_found" };
+
+  const result = await runOneReportSchedule(scheduleId);
+  if (!result.ok) return { ok: false, error: "unknown" };
 
   revalidatePath("/admin/settings");
   return { ok: true };

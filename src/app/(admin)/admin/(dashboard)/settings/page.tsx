@@ -11,16 +11,21 @@ import {
   getAdminTipPresets,
 } from "@/lib/data/adminSettings";
 import { getAdminBranchesInfo } from "@/lib/data/branch";
+import { getReportSchedules } from "@/lib/data/reportSchedules";
 
 import {
   createBranch,
   createCallType,
   createReasonCode,
+  createReportSchedule,
   createTipPreset,
+  deleteReportSchedule,
   requestAccountDeletion,
+  sendReportNow,
   setDefaultLocale,
   toggleLocale,
   toggleModule,
+  toggleReportSchedule,
   updateBusinessSettings,
   updateCallType,
   updateOrderSettings,
@@ -33,7 +38,7 @@ import { SettingsManager } from "./settings-manager";
 export default async function AdminSettingsPage() {
   const actor = await requireAdminActor();
 
-  const [settings, callTypes, reasonCodes, locales, tipPresets, ratingSettings, modules, branchesInfo] =
+  const [settings, callTypes, reasonCodes, locales, tipPresets, ratingSettings, modules, branchesInfo, reportSchedules] =
     await Promise.all([
       getAdminTenantSettings(actor.tenantId),
       getAdminCallTypes(actor.tenantId),
@@ -43,6 +48,7 @@ export default async function AdminSettingsPage() {
       getAdminRatingSettings(actor.tenantId),
       getAdminModules(actor.tenantId),
       getAdminBranchesInfo(actor.tenantId),
+      getReportSchedules(actor.tenantId),
     ]);
 
   if (!settings || !ratingSettings) {
@@ -60,6 +66,7 @@ export default async function AdminSettingsPage() {
       ratingSettings={ratingSettings}
       modules={modules}
       branchesInfo={branchesInfo}
+      reportSchedules={reportSchedules}
       actions={{
         updateOrderSettings,
         updateBusinessSettings,
@@ -75,6 +82,10 @@ export default async function AdminSettingsPage() {
         toggleModule,
         createBranch,
         requestAccountDeletion,
+        createReportSchedule,
+        toggleReportSchedule,
+        deleteReportSchedule,
+        sendReportNow,
       }}
     />
   );

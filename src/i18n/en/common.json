@@ -401,6 +401,24 @@
         "defaultBranch": "Default",
         "extraFeeNotice": "You've exceeded your plan's included free branch count — an extra branch fee applies."
       },
+      "reportSchedules": {
+        "title": "Scheduled Reports",
+        "empty": "No scheduled reports yet.",
+        "branch": "Branch",
+        "frequencyLabel": "Frequency",
+        "frequency": {
+          "daily": "Daily",
+          "weekly": "Weekly"
+        },
+        "recipientEmail": "Recipient Email",
+        "add": "+ Add",
+        "delete": "Delete",
+        "sendNow": "Send Now",
+        "sending": "Sending...",
+        "sent": "Sent",
+        "lastSent": "Last sent: {date}",
+        "neverSent": "Never sent"
+      },
       "dangerZone": {
         "title": "Danger Zone",
         "description": "You can request permanent deletion of your account and all business data. This action cannot be undone.",

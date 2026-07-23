@@ -63,6 +63,13 @@ export const moduleToggleSchema = z.object({
 });
 export type ModuleToggleInput = z.infer<typeof moduleToggleSchema>;
 
+export const reportScheduleFormSchema = z.object({
+  branchId: z.uuid(),
+  frequency: z.enum(["daily", "weekly"]),
+  recipientEmail: z.email(),
+});
+export type ReportScheduleFormInput = z.infer<typeof reportScheduleFormSchema>;
+
 export type SettingsActionResult =
   | { ok: true }
   | { ok: false; error: "invalid_input" | "forbidden" | "not_found" | "last_locale" | "unknown" };

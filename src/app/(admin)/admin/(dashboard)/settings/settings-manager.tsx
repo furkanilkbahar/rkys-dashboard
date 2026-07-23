@@ -24,7 +24,8 @@ import type {
   AdminTenantSettings,
   AdminTipPreset,
 } from "@/lib/data/adminSettings";
-import type { AdminBranchesInfo } from "@/lib/data/branch";
+import type { AdminBranch, AdminBranchesInfo } from "@/lib/data/branch";
+import type { ReportSchedule } from "@/lib/data/reportSchedules";
 import { MODULE_KEYS, type ModuleKey } from "@/lib/modules/keys";
 import {
   SUPPORTED_CURRENCIES,
@@ -35,6 +36,7 @@ import {
   orderSettingsFormSchema,
   ratingSettingsFormSchema,
   reasonCodeFormSchema,
+  reportScheduleFormSchema,
   tipPresetFormSchema,
   type BranchActionResult,
   type SettingsActionResult,
@@ -55,6 +57,10 @@ type Actions = {
   toggleModule: (input: unknown) => Promise<SettingsActionResult>;
   createBranch: (input: unknown) => Promise<BranchActionResult>;
   requestAccountDeletion: () => Promise<SettingsActionResult>;
+  createReportSchedule: (input: unknown) => Promise<SettingsActionResult>;
+  toggleReportSchedule: (scheduleId: string, isActive: boolean) => Promise<SettingsActionResult>;
+  deleteReportSchedule: (scheduleId: string) => Promise<SettingsActionResult>;
+  sendReportNow: (scheduleId: string) => Promise<SettingsActionResult>;
 };
 
 function OrderSettingsCard({ settings, updateOrderSettings }: { settings: AdminTenantSettings; updateOrderSettings: Actions["updateOrderSettings"] }) {
@@ -708,6 +714,7 @@ export function SettingsManager({
   ratingSettings,
   modules,
   branchesInfo,
+  reportSchedules,
   actions,
 }: {
   isOwner: boolean;
@@ -719,6 +726,7 @@ export function SettingsManager({
   ratingSettings: AdminRatingSettings;
   modules: AdminModule[];
   branchesInfo: AdminBranchesInfo;
+  reportSchedules: ReportSchedule[];
   actions: Actions;
 }) {
   const t = useTranslations("admin.settings");
@@ -736,6 +744,14 @@ export function SettingsManager({
       <RatingSettingsCard ratingSettings={ratingSettings} updateRatingSettings={actions.updateRatingSettings} />
       <ThemeCard themeKey={settings.themeKey} />
       <ModulesCard modules={modules} toggleModule={actions.toggleModule} />
+      <ReportSchedulesCard
+        schedules={reportSchedules}
+        branches={branchesInfo.branches}
+        createReportSchedule={actions.createReportSchedule}
+        toggleReportSchedule={actions.toggleReportSchedule}
+        deleteReportSchedule={actions.deleteReportSchedule}
+        sendReportNow={actions.sendReportNow}
+      />
       {isOwner && <BranchesCard branchesInfo={branchesInfo} createBranch={actions.createBranch} />}
       {isOwner && (
         <DangerZoneCard deletionRequestedAt={settings.deletionRequestedAt} requestAccountDeletion={actions.requestAccountDeletion} />
@@ -804,6 +820,152 @@ function BranchesCard({
           </Button>
         </form>
         {notice && <p className="text-xs text-muted-foreground">{notice}</p>}
+        {error && <p className="text-xs text-destructive">{error}</p>}
+      </CardContent>
+    </Card>
+  );
+}
+
+function ReportSchedulesCard({
+  schedules,
+  branches,
+  createReportSchedule,
+  toggleReportSchedule,
+  deleteReportSchedule,
+  sendReportNow,
+}: {
+  schedules: ReportSchedule[];
+  branches: AdminBranch[];
+  createReportSchedule: Actions["createReportSchedule"];
+  toggleReportSchedule: Actions["toggleReportSchedule"];
+  deleteReportSchedule: Actions["deleteReportSchedule"];
+  sendReportNow: Actions["sendReportNow"];
+}) {
+  const t = useTranslations("admin.settings.reportSchedules");
+  const tErrors = useTranslations("admin.settings.errors");
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const [sendingId, setSendingId] = useState<string | null>(null);
+  const [sentId, setSentId] = useState<string | null>(null);
+  const { register, control, handleSubmit, reset } = useForm({
+    resolver: standardSchemaResolver(reportScheduleFormSchema),
+    defaultValues: { branchId: branches[0]?.id ?? "", frequency: "weekly" as const, recipientEmail: "" },
+  });
+
+  async function onCreate(values: { branchId: string; frequency: "daily" | "weekly"; recipientEmail: string }) {
+    setError(null);
+    const result = await createReportSchedule(values);
+    if (!result.ok) {
+      setError(tErrors(result.error));
+      return;
+    }
+    reset({ branchId: branches[0]?.id ?? "", frequency: "weekly", recipientEmail: "" });
+    router.refresh();
+  }
+
+  async function handleToggle(scheduleId: string, isActive: boolean) {
+    await toggleReportSchedule(scheduleId, isActive);
+    router.refresh();
+  }
+
+  async function handleDelete(scheduleId: string) {
+    await deleteReportSchedule(scheduleId);
+    router.refresh();
+  }
+
+  async function handleSendNow(scheduleId: string) {
+    setSendingId(scheduleId);
+    setSentId(null);
+    const result = await sendReportNow(scheduleId);
+    setSendingId(null);
+    if (result.ok) {
+      setSentId(scheduleId);
+    }
+    router.refresh();
+  }
+
+  function branchName(branchId: string): string {
+    return branches.find((b) => b.id === branchId)?.name ?? branchId;
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base">{t("title")}</CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-3">
+        {schedules.length === 0 && <p className="text-sm text-muted-foreground">{t("empty")}</p>}
+        {schedules.map((schedule) => (
+          <div key={schedule.id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border p-2 text-sm">
+            <div className="flex flex-col">
+              <span>
+                {branchName(schedule.branchId)} — {t(`frequency.${schedule.frequency}`)} — {schedule.recipientEmail}
+              </span>
+              <span className="text-xs text-muted-foreground">
+                {schedule.lastSentAt ? t("lastSent", { date: new Date(schedule.lastSentAt).toLocaleString("tr-TR") }) : t("neverSent")}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              {sentId === schedule.id && <span className="text-xs text-primary">{t("sent")}</span>}
+              <Button type="button" variant="outline" size="sm" disabled={sendingId === schedule.id} onClick={() => handleSendNow(schedule.id)}>
+                {sendingId === schedule.id ? t("sending") : t("sendNow")}
+              </Button>
+              <Switch checked={schedule.isActive} onCheckedChange={(checked) => handleToggle(schedule.id, checked)} />
+              <Button type="button" variant="ghost" size="sm" onClick={() => handleDelete(schedule.id)}>
+                {t("delete")}
+              </Button>
+            </div>
+          </div>
+        ))}
+
+        <form onSubmit={handleSubmit(onCreate)} className="flex flex-wrap items-end gap-2">
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="report-schedule-branch">{t("branch")}</Label>
+            <Controller
+              control={control}
+              name="branchId"
+              render={({ field }) => (
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger id="report-schedule-branch" className="w-40">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {branches.map((branch) => (
+                      <SelectItem key={branch.id} value={branch.id}>
+                        {branch.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="report-schedule-frequency">{t("frequencyLabel")}</Label>
+            <Controller
+              control={control}
+              name="frequency"
+              render={({ field }) => (
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger id="report-schedule-frequency" className="w-32">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="daily">{t("frequency.daily")}</SelectItem>
+                    <SelectItem value="weekly">{t("frequency.weekly")}</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="report-schedule-email">{t("recipientEmail")}</Label>
+            <Input id="report-schedule-email" type="email" className="w-56" {...register("recipientEmail")} />
+          </div>
+          <Button type="submit" size="sm">
+            {t("add")}
+          </Button>
+        </form>
         {error && <p className="text-xs text-destructive">{error}</p>}
       </CardContent>
     </Card>
