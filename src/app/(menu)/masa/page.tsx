@@ -11,6 +11,7 @@ import type { Locale } from "@/i18n/locales";
 import { getCallTypes } from "@/lib/data/callTypes";
 import { getSessionCustomerId } from "@/lib/data/customers";
 import { getEffectiveMenu, getEnabledLocales } from "@/lib/data/menu";
+import { getSessionLoyaltyBalance } from "@/lib/data/loyalty";
 import { getGuestRatingSettings, getWaitersForRating, hasExistingRating } from "@/lib/data/ratings";
 import { getSessionOrders } from "@/lib/data/sessionOrders";
 import { getCurrentTenant } from "@/lib/data/tenant";
@@ -19,7 +20,7 @@ import { isEnabled } from "@/lib/modules/isEnabled";
 
 import { submitOrder } from "./actions";
 import { applyCoupon } from "./coupon-actions";
-import { requestLoyaltyOtp, verifyLoyaltyOtp } from "./loyalty-actions";
+import { redeemLoyaltyPoints, requestLoyaltyOtp, verifyLoyaltyOtp } from "./loyalty-actions";
 
 export default async function MenuPage() {
   const guest = await getCurrentGuestSession();
@@ -50,6 +51,7 @@ export default async function MenuPage() {
   const [waiters, alreadyRated] = ratingSettings.isEnabled
     ? await Promise.all([getWaitersForRating(guest.tenantId), hasExistingRating(guest.tableSessionId)])
     : [[], false];
+  const loyaltyBalance = sessionCustomerId ? await getSessionLoyaltyBalance(sessionCustomerId) : 0;
 
   return (
     <main className="mx-auto flex min-h-screen max-w-3xl flex-col gap-6 p-4 pb-24 sm:p-8">
@@ -72,8 +74,10 @@ export default async function MenuPage() {
             applyCoupon={applyCoupon}
             crmLoyaltyEnabled={crmLoyaltyEnabled}
             sessionCustomerId={sessionCustomerId}
+            loyaltyBalance={loyaltyBalance}
             requestLoyaltyOtp={requestLoyaltyOtp}
             verifyLoyaltyOtp={verifyLoyaltyOtp}
+            redeemLoyaltyPoints={redeemLoyaltyPoints}
           />
           <LanguageSwitcher enabledLocales={enabledLocales as Locale[]} />
         </div>

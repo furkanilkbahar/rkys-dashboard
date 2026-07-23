@@ -138,6 +138,7 @@
       "reservations": "Reservations",
       "ratings": "Ratings",
       "campaigns": "Campaigns",
+      "loyalty": "Loyalty",
       "reports": "Reports",
       "support": "Support",
       "settings": "Settings",
@@ -679,6 +680,32 @@
         "add": "+ Add Coupon",
         "delete": "Delete"
       }
+    },
+    "loyalty": {
+      "pageTitle": "Loyalty Program",
+      "program": {
+        "title": "Program Settings",
+        "modeLabel": "Model",
+        "mode": {
+          "stamp": "Stamp",
+          "points": "Points"
+        },
+        "active": "Active",
+        "threshold": "Stamp Threshold",
+        "rewardValue": "Reward Value ($)",
+        "earnRate": "Earn Rate (points per $100)",
+        "redeemRate": "Point Value ($)",
+        "save": "Save"
+      },
+      "customers": {
+        "title": "Loyalty Members",
+        "empty": "No members yet."
+      },
+      "errors": {
+        "invalid_input": "Please check the information you entered.",
+        "forbidden": "You don't have permission for this action.",
+        "unknown": "Could not save, please try again."
+      }
     }
   },
   "waiter": {
@@ -783,13 +810,26 @@
       "loyaltyCodePlaceholder": "Verification code",
       "loyaltyKvkkConsent": "I consent to my personal data being processed for the loyalty program.",
       "loyaltyVerify": "Verify",
-      "loyaltyJoined": "You've joined the loyalty program!",
       "loyaltyErrors": {
         "invalid_input": "Please enter a valid phone number/code.",
         "no_session": "Your session was not found, please rescan the QR code.",
         "rate_limited": "Too many attempts, please try again in a few minutes.",
         "not_enabled": "The loyalty program is not active at this business.",
         "invalid_code": "The code is incorrect or has expired.",
+        "unknown": "Could not complete, please try again."
+      },
+      "loyaltyBalance": "Loyalty balance: {balance}",
+      "loyaltyRedeem": "Redeem",
+      "loyaltyRedeemApplied": "Loyalty discount applied: {amount}",
+      "loyaltyRedeemErrors": {
+        "invalid_input": "Invalid request.",
+        "no_session": "Your session was not found, please rescan the QR code.",
+        "forbidden": "You don't have permission for this action.",
+        "not_enabled": "The loyalty program is not active at this business.",
+        "no_customer": "You need to join the loyalty program first.",
+        "not_active": "The loyalty program is not currently active.",
+        "insufficient_balance": "You don't have enough balance.",
+        "not_applicable": "This can't be applied to this order.",
         "unknown": "Could not complete, please try again."
       },
       "status": {

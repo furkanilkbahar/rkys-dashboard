@@ -138,6 +138,7 @@
       "reservations": "Rezervasyon",
       "ratings": "Değerlendirmeler",
       "campaigns": "Kampanyalar",
+      "loyalty": "Sadakat",
       "reports": "Raporlar",
       "support": "Destek",
       "settings": "Ayarlar",
@@ -679,6 +680,32 @@
         "add": "+ Kupon Ekle",
         "delete": "Sil"
       }
+    },
+    "loyalty": {
+      "pageTitle": "Sadakat Programı",
+      "program": {
+        "title": "Program Ayarları",
+        "modeLabel": "Model",
+        "mode": {
+          "stamp": "Damga",
+          "points": "Puan"
+        },
+        "active": "Aktif",
+        "threshold": "Damga Eşiği",
+        "rewardValue": "Ödül Tutarı (₺)",
+        "earnRate": "Kazanım Oranı (100₺'de puan)",
+        "redeemRate": "Puan Değeri (₺)",
+        "save": "Kaydet"
+      },
+      "customers": {
+        "title": "Sadakat Üyeleri",
+        "empty": "Henüz üye yok."
+      },
+      "errors": {
+        "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
+        "forbidden": "Bu işlem için yetkiniz yok.",
+        "unknown": "Kaydedilemedi, tekrar deneyin."
+      }
     }
   },
   "waiter": {
@@ -783,13 +810,26 @@
       "loyaltyCodePlaceholder": "Doğrulama kodu",
       "loyaltyKvkkConsent": "Kişisel verilerimin sadakat programı kapsamında işlenmesini onaylıyorum.",
       "loyaltyVerify": "Doğrula",
-      "loyaltyJoined": "Sadakat programına katıldınız!",
       "loyaltyErrors": {
         "invalid_input": "Geçerli bir telefon numarası/kod girin.",
         "no_session": "Oturumunuz bulunamadı, lütfen QR kodu tekrar okutun.",
         "rate_limited": "Çok fazla deneme yapıldı, birkaç dakika sonra tekrar deneyin.",
         "not_enabled": "Sadakat programı bu işletmede aktif değil.",
         "invalid_code": "Kod hatalı veya süresi dolmuş.",
+        "unknown": "İşlem tamamlanamadı, tekrar deneyin."
+      },
+      "loyaltyBalance": "Sadakat bakiyeniz: {balance}",
+      "loyaltyRedeem": "Kullan",
+      "loyaltyRedeemApplied": "Sadakat indirimi uygulandı: {amount}",
+      "loyaltyRedeemErrors": {
+        "invalid_input": "Geçersiz istek.",
+        "no_session": "Oturumunuz bulunamadı, lütfen QR kodu tekrar okutun.",
+        "forbidden": "Bu işlem için yetkiniz yok.",
+        "not_enabled": "Sadakat programı bu işletmede aktif değil.",
+        "no_customer": "Önce sadakat programına katılmalısınız.",
+        "not_active": "Sadakat programı şu anda aktif değil.",
+        "insufficient_balance": "Yeterli bakiyeniz yok.",
+        "not_applicable": "Bu siparişe uygulanamıyor.",
         "unknown": "İşlem tamamlanamadı, tekrar deneyin."
       },
       "status": {

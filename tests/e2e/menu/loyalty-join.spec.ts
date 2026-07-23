@@ -82,7 +82,7 @@ test("S30: misafir telefon+OTP+KVKK ile sadakat programına katılır", async ({
     await page.getByPlaceholder("Doğrulama kodu").fill(code!);
     await page.getByLabel(/kişisel verilerimin/i).check();
     await page.getByRole("button", { name: "Doğrula" }).click();
-    await expect(page.getByText("Sadakat programına katıldınız!")).toBeVisible();
+    await expect(page.getByText("Sadakat bakiyeniz: 0")).toBeVisible();
 
     const { data: customers } = await service.from("customers").select("id").eq("tenant_id", tenantId);
     expect(customers).toHaveLength(1);

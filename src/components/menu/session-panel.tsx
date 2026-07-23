@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { callWaiter } from "@/app/(menu)/masa/waiter-call-actions";
@@ -11,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { ApplyCouponResult } from "@/lib/campaigns/schemas";
 import type { RequestOtpResult, VerifyOtpResult } from "@/lib/customer/schemas";
 import type { SessionOrder } from "@/lib/data/sessionOrders";
+import type { RedeemLoyaltyResult } from "@/lib/loyalty/schemas";
 import type { OrderStatus } from "@/lib/orders/stateMachine";
 import { playBeep, useSoundUnlock } from "@/lib/sound/insistentAlert";
 import { createClient } from "@/lib/supabase/client";
@@ -24,8 +26,10 @@ export function SessionPanel({
   applyCoupon,
   crmLoyaltyEnabled,
   sessionCustomerId,
+  loyaltyBalance,
   requestLoyaltyOtp,
   verifyLoyaltyOtp,
+  redeemLoyaltyPoints,
 }: {
   tableSessionId: string;
   currency: string;
@@ -34,10 +38,13 @@ export function SessionPanel({
   applyCoupon: (input: unknown) => Promise<ApplyCouponResult>;
   crmLoyaltyEnabled: boolean;
   sessionCustomerId: string | null;
+  loyaltyBalance: number;
   requestLoyaltyOtp: (input: unknown) => Promise<RequestOtpResult>;
   verifyLoyaltyOtp: (input: unknown) => Promise<VerifyOtpResult>;
+  redeemLoyaltyPoints: (input: unknown) => Promise<RedeemLoyaltyResult>;
 }) {
   const t = useTranslations("menu.sessionPanel");
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [orders, setOrders] = useState(initialOrders);
   const [readyToast, setReadyToast] = useState(false);
@@ -55,6 +62,9 @@ export function SessionPanel({
   const [loyaltySubmitting, setLoyaltySubmitting] = useState(false);
   const [loyaltyError, setLoyaltyError] = useState<string | null>(null);
   const [joinedLoyalty, setJoinedLoyalty] = useState(sessionCustomerId !== null);
+  const [redeemSubmitting, setRedeemSubmitting] = useState(false);
+  const [redeemError, setRedeemError] = useState<string | null>(null);
+  const [redeemSuccess, setRedeemSuccess] = useState<number | null>(null);
   const { unlocked, unlock } = useSoundUnlock();
   const unlockedRef = useRef(unlocked);
   useEffect(() => {
@@ -236,6 +246,30 @@ export function SessionPanel({
     }
     setJoinedLoyalty(true);
     setLoyaltyStep("idle");
+    // loyaltyBalance sunucudan gelen bir prop (state'e kopyalanmıyor) —
+    // katılım anında bakiye her zaman 0'dır ama sessionCustomerId'nin
+    // sunucu tarafında da güncellenmesi (sonraki ödeme/kazanım sonrası
+    // gösterilecek taze veri için) router.refresh() gerektirir.
+    router.refresh();
+  }
+
+  // v1 basitleştirmesi: handleApplyCoupon ile aynı gerekçe — en son
+  // (iptal edilmemiş) siparişe uygulanır.
+  async function handleRedeemLoyalty() {
+    const latestOrder = [...orders].filter((o) => o.status !== "cancelled").sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
+    if (!latestOrder) return;
+
+    setRedeemSubmitting(true);
+    setRedeemError(null);
+    setRedeemSuccess(null);
+    const result = await redeemLoyaltyPoints({ orderId: latestOrder.id });
+    setRedeemSubmitting(false);
+    if (!result.ok) {
+      setRedeemError(t(`loyaltyRedeemErrors.${result.error}`));
+      return;
+    }
+    setRedeemSuccess(result.discountMinor);
+    router.refresh();
   }
 
   return (
@@ -325,7 +359,24 @@ export function SessionPanel({
             {crmLoyaltyEnabled && orders.some((o) => o.status !== "cancelled") && (
               <div className="flex flex-col gap-2 border-t border-border pt-2">
                 {joinedLoyalty ? (
-                  <p className="text-xs text-primary">{t("loyaltyJoined")}</p>
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs text-primary">{t("loyaltyBalance", { balance: loyaltyBalance })}</p>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        disabled={redeemSubmitting || loyaltyBalance <= 0}
+                        onClick={handleRedeemLoyalty}
+                      >
+                        {t("loyaltyRedeem")}
+                      </Button>
+                    </div>
+                    {redeemSuccess !== null && (
+                      <p className="text-xs text-primary">{t("loyaltyRedeemApplied", { amount: formatPrice(redeemSuccess, currency) })}</p>
+                    )}
+                    {redeemError && <p className="text-xs text-destructive">{redeemError}</p>}
+                  </div>
                 ) : loyaltyStep === "idle" ? (
                   <Button type="button" size="sm" variant="outline" onClick={() => setLoyaltyStep("phone")}>
                     {t("loyaltyJoin")}
