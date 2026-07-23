@@ -140,3 +140,26 @@ export async function getCampaignPerformanceReport(startDate: string, endDate: s
     totalDiscountMinor: r.total_discount_minor,
   }));
 }
+
+export type MenuEngineeringCategory = "star" | "plowhorse" | "puzzle" | "dog";
+export type MenuEngineeringRow = {
+  productName: string;
+  quantity: number;
+  revenueMinor: number;
+  costMinor: number;
+  marginMinor: number;
+  category: MenuEngineeringCategory;
+};
+
+export async function getMenuEngineeringMatrix(branchId: string, startDate: string, endDate: string): Promise<MenuEngineeringRow[]> {
+  const supabase = await createClient();
+  const { data } = await supabase.rpc("get_menu_engineering_matrix", { p_branch_id: branchId, p_start_date: startDate, p_end_date: endDate });
+  return (data ?? []).map((r) => ({
+    productName: r.product_name,
+    quantity: r.quantity,
+    revenueMinor: r.revenue_minor,
+    costMinor: r.cost_minor,
+    marginMinor: r.margin_minor,
+    category: r.category as MenuEngineeringCategory,
+  }));
+}

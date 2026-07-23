@@ -170,6 +170,12 @@ export async function saveRecipe(input: unknown): Promise<InventoryActionResult>
   );
   if (itemsError) return { ok: false, error: "unknown" };
 
+  // Otomatik maliyet yalnızca ürün-seviyesi reçeteden hesaplanır (bkz. 0060).
+  if (!parsed.data.variantId) {
+    await supabase.rpc("recompute_product_cost", { p_product_id: parsed.data.productId });
+  }
+
   revalidatePath(`/admin/ingredients/recipes/${parsed.data.productId}`);
+  revalidatePath("/admin/reports");
   return { ok: true };
 }

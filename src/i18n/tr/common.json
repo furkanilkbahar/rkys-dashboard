@@ -636,7 +636,16 @@
         "pointsRedeemed": "Harcanan Puan/Damga",
         "activeCustomers": "Aktif Müşteri",
         "redemptionCount": "Harcama Sayısı",
-        "campaignEmpty": "Bu dönemde kampanya kullanımı yok."
+        "campaignEmpty": "Bu dönemde kampanya kullanımı yok.",
+        "menuEngineeringTitle": "Menü Mühendisliği Matrisi",
+        "menuEngineeringEmpty": "Bu dönemde maliyeti hesaplanmış satış yok.",
+        "menuEngineeringMargin": "marj",
+        "menuEngineering": {
+          "star": "Yıldız — öne çıkar",
+          "plowhorse": "Beygir — fiyatı gözden geçir",
+          "puzzle": "Bilmece — tanıtımını artır",
+          "dog": "Zayıf — menüden çıkarmayı düşün"
+        }
       }
     },
     "analytics": {

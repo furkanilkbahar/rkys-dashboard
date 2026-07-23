@@ -11,6 +11,7 @@ import {
   getCampaignPerformanceReport,
   getLossReport,
   getLoyaltyPerformanceReport,
+  getMenuEngineeringMatrix,
   getPeriodRevenueReport,
 } from "@/lib/data/periodReports";
 import { getProductsWithCosts } from "@/lib/data/productCosts";
@@ -95,6 +96,7 @@ export default async function AdminReportsPage({
     lossRows,
     loyaltyPerformance,
     campaignPerformance,
+    menuEngineering,
   ] = await Promise.all([
     getRevenueReport(branchId, businessDate),
     getTopProducts(branchId, businessDate),
@@ -108,6 +110,7 @@ export default async function AdminReportsPage({
     canViewLoss ? getLossReport(actor.tenantId, branchId, periodStartDate, periodEndDate, locale) : Promise.resolve([]),
     getLoyaltyPerformanceReport(periodStartDate, periodEndDate),
     getCampaignPerformanceReport(periodStartDate, periodEndDate),
+    canViewProfit ? getMenuEngineeringMatrix(branchId, periodStartDate, periodEndDate) : Promise.resolve([]),
   ]);
 
   return (
@@ -333,6 +336,39 @@ export default async function AdminReportsPage({
             ))
           )}
         </div>
+
+        {canViewProfit && (
+          <div className="flex flex-col gap-2">
+            <h3 className="text-sm font-semibold">{t("period.menuEngineeringTitle")}</h3>
+            {menuEngineering.length === 0 ? (
+              <p className="text-sm text-muted-foreground">{t("period.menuEngineeringEmpty")}</p>
+            ) : (
+              menuEngineering.map((row) => (
+                <div key={row.productName} className="flex items-center justify-between gap-2 text-sm">
+                  <span className="flex items-center gap-2">
+                    <span
+                      className={`rounded px-1.5 py-0.5 text-xs font-medium ${
+                        row.category === "star"
+                          ? "bg-emerald-500/10 text-emerald-600"
+                          : row.category === "plowhorse"
+                            ? "bg-amber-500/10 text-amber-600"
+                            : row.category === "puzzle"
+                              ? "bg-sky-500/10 text-sky-600"
+                              : "bg-destructive/10 text-destructive"
+                      }`}
+                    >
+                      {t(`period.menuEngineering.${row.category}`)}
+                    </span>
+                    {row.productName}
+                  </span>
+                  <span>
+                    {row.quantity} × — {formatPrice(row.marginMinor, currency)} {t("period.menuEngineeringMargin")}
+                  </span>
+                </div>
+              ))
+            )}
+          </div>
+        )}
       </section>
 
       <section className="flex flex-col gap-2">

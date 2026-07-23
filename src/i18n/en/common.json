@@ -636,7 +636,16 @@
         "pointsRedeemed": "Points/Stamps Redeemed",
         "activeCustomers": "Active Customers",
         "redemptionCount": "Redemption Count",
-        "campaignEmpty": "No campaign usage in this period."
+        "campaignEmpty": "No campaign usage in this period.",
+        "menuEngineeringTitle": "Menu Engineering Matrix",
+        "menuEngineeringEmpty": "No sales with computed cost in this period.",
+        "menuEngineeringMargin": "margin",
+        "menuEngineering": {
+          "star": "Star — feature it",
+          "plowhorse": "Plowhorse — review the price",
+          "puzzle": "Puzzle — promote it more",
+          "dog": "Dog — consider removing"
+        }
       }
     },
     "analytics": {
