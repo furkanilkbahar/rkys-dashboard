@@ -7,6 +7,7 @@ export const WIDGET_KEYS = [
   "hourly_density",
   "top_products",
   "branch_comparison",
+  "anomaly_alerts",
 ] as const;
 
 export type WidgetKey = (typeof WIDGET_KEYS)[number];

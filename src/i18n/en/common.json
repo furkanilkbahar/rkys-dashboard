@@ -586,12 +586,23 @@
       "revenue": "Revenue",
       "hideWidget": "Hide {widget} widget",
       "hiddenWidgets": "Hidden widgets:",
+      "goal": {
+        "title": "Monthly Revenue Goal",
+        "notSet": "No goal set for this month yet.",
+        "targetLabel": "Target Amount",
+        "save": "Save"
+      },
+      "anomaly": {
+        "empty": "No active anomaly alerts.",
+        "acknowledge": "Acknowledge alert"
+      },
       "widgets": {
         "revenue_today": "Today's Revenue",
         "order_count_today": "Today's Order Count",
         "hourly_density": "Hourly Density",
         "top_products": "Top Products",
-        "branch_comparison": "Branch Comparison (Last 30 Days)"
+        "branch_comparison": "Branch Comparison (Last 30 Days)",
+        "anomaly_alerts": "Anomaly Alerts"
       }
     }
   },

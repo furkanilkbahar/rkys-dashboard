@@ -1,14 +1,18 @@
 "use client";
 
-import { EyeOff } from "lucide-react";
+import { Check, EyeOff } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 import { SortableList } from "@/components/admin/sortable-list";
 import { Button } from "@/components/ui/button";
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import type { WidgetKey } from "@/lib/analytics/widgets";
+import type { AnomalyAlert, GoalProgress } from "@/lib/data/goals";
 import type { BranchComparisonRow } from "@/lib/data/periodReports";
 import type { HourlyDensityRow, RevenueReport, TopProductRow } from "@/lib/data/reports";
 import { formatPrice } from "@/lib/utils/currency";
@@ -22,26 +26,112 @@ function EmptyState({ label }: { label: string }) {
 const CHART_TICK_STYLE = { fontSize: 12, fill: "var(--muted-foreground)" };
 const TOOLTIP_STYLE = { background: "var(--card)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 13 };
 
+function GoalSection({
+  branchId,
+  periodMonth,
+  currency,
+  goalProgress,
+  onSave,
+}: {
+  branchId: string;
+  periodMonth: string;
+  currency: string;
+  goalProgress: GoalProgress;
+  onSave: (branchId: string, periodMonth: string, input: unknown) => Promise<unknown>;
+}) {
+  const t = useTranslations("admin.analytics");
+  const router = useRouter();
+  const [targetRevenue, setTargetRevenue] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+  const percent = goalProgress.targetRevenueMinor > 0
+    ? Math.min(100, Math.round((goalProgress.actualRevenueMinor / goalProgress.targetRevenueMinor) * 100))
+    : 0;
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setIsSaving(true);
+    await onSave(branchId, periodMonth, { targetRevenue });
+    setIsSaving(false);
+    setTargetRevenue("");
+    router.refresh();
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-sm font-medium">{t("goal.title")}</CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-4">
+        {goalProgress.targetRevenueMinor > 0 ? (
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center justify-between text-sm">
+              <span>
+                {formatPrice(goalProgress.actualRevenueMinor, currency)} / {formatPrice(goalProgress.targetRevenueMinor, currency)}
+              </span>
+              <span className="font-medium tabular-nums">%{percent}</span>
+            </div>
+            <div className="h-2 w-full overflow-hidden rounded-full bg-muted" role="progressbar" aria-valuenow={percent} aria-valuemin={0} aria-valuemax={100}>
+              <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${percent}%` }} />
+            </div>
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">{t("goal.notSet")}</p>
+        )}
+
+        <form onSubmit={handleSubmit} className="flex items-end gap-2">
+          <div className="flex flex-1 flex-col gap-1">
+            <Label htmlFor="goal-target">{t("goal.targetLabel")}</Label>
+            <Input
+              id="goal-target"
+              type="text"
+              inputMode="decimal"
+              placeholder="50000"
+              value={targetRevenue}
+              onChange={(e) => setTargetRevenue(e.target.value)}
+              required
+            />
+          </div>
+          <Button type="submit" disabled={isSaving}>
+            {t("goal.save")}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
+  );
+}
+
 export function AnalyticsDashboard({
   layout,
   currency,
+  branchId,
+  periodMonth,
   revenueToday,
   orderCountToday,
   hourlyDensity,
   topProducts,
   branchComparison,
+  goalProgress,
+  anomalyAlerts,
   reorderWidgets,
   toggleWidget,
+  setGoal,
+  acknowledgeAlert,
 }: {
   layout: WidgetLayoutItem[];
   currency: string;
+  branchId: string;
+  periodMonth: string;
   revenueToday: RevenueReport | null;
   orderCountToday: number;
   hourlyDensity: HourlyDensityRow[];
   topProducts: TopProductRow[];
   branchComparison: BranchComparisonRow[];
+  goalProgress: GoalProgress;
+  anomalyAlerts: AnomalyAlert[];
   reorderWidgets: (orderedKeys: string[]) => Promise<unknown>;
   toggleWidget: (widgetKey: string, isVisible: boolean) => Promise<unknown>;
+  setGoal: (branchId: string, periodMonth: string, input: unknown) => Promise<unknown>;
+  acknowledgeAlert: (alertId: string) => Promise<unknown>;
 }) {
   const t = useTranslations("admin.analytics");
   const router = useRouter();
@@ -55,6 +145,11 @@ export function AnalyticsDashboard({
 
   async function handleShow(widgetKey: WidgetKey) {
     await toggleWidget(widgetKey, true);
+    router.refresh();
+  }
+
+  async function handleAcknowledge(alertId: string) {
+    await acknowledgeAlert(alertId);
     router.refresh();
   }
 
@@ -113,11 +208,38 @@ export function AnalyticsDashboard({
             </BarChart>
           </ResponsiveContainer>
         );
+
+      case "anomaly_alerts":
+        if (anomalyAlerts.length === 0) return <EmptyState label={t("anomaly.empty")} />;
+        return (
+          <div className="flex flex-col gap-2">
+            {anomalyAlerts.map((alert) => (
+              <div key={alert.id} className="flex items-center justify-between gap-2 rounded-md border border-border p-2 text-sm">
+                <div className="flex flex-col">
+                  <span>{alert.message}</span>
+                  <span className="text-xs text-muted-foreground">{alert.businessDate}</span>
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="size-11 shrink-0"
+                  aria-label={t("anomaly.acknowledge")}
+                  onClick={() => handleAcknowledge(alert.id)}
+                >
+                  <Check className="size-4" aria-hidden="true" />
+                </Button>
+              </div>
+            ))}
+          </div>
+        );
     }
   }
 
   return (
     <div className="flex flex-col gap-6">
+      <GoalSection branchId={branchId} periodMonth={periodMonth} currency={currency} goalProgress={goalProgress} onSave={setGoal} />
+
       <SortableList
         items={visible.map((item) => ({ id: item.widgetKey, ...item }))}
         onReorder={reorderWidgets}

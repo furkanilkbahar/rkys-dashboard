@@ -7,11 +7,12 @@ import { can } from "@/lib/auth/can";
 import { getAdminTenantSettings } from "@/lib/data/adminSettings";
 import { getDefaultBranchId } from "@/lib/data/branch";
 import { getDashboardWidgetLayout } from "@/lib/data/dashboardWidgets";
+import { getActiveAnomalyAlerts, getGoalProgress } from "@/lib/data/goals";
 import { getBranchComparison } from "@/lib/data/periodReports";
 import { getHourlyDensity, getRevenueReport, getTopProducts } from "@/lib/data/reports";
 import { isSubscriptionActive } from "@/lib/data/subscription";
 
-import { reorderDashboardWidgets, toggleDashboardWidget } from "./actions";
+import { acknowledgeAlert, reorderDashboardWidgets, setGoal, toggleDashboardWidget } from "./actions";
 
 function todayIso(timezone: string): string {
   return new Intl.DateTimeFormat("en-CA", { timeZone: timezone }).format(new Date());
@@ -48,12 +49,16 @@ export default async function AnalyticsHomePage() {
   const currency = tenantSettings?.currency ?? "TRY";
   const today = todayIso(tenantSettings?.timezone ?? "UTC");
 
-  const [revenueToday, hourlyDensity, topProducts, branchComparison, layout] = await Promise.all([
+  const currentMonth = `${today.slice(0, 7)}-01`;
+
+  const [revenueToday, hourlyDensity, topProducts, branchComparison, layout, goalProgress, anomalyAlerts] = await Promise.all([
     getRevenueReport(branchId, today),
     getHourlyDensity(branchId, today),
     getTopProducts(branchId, today),
     getBranchComparison(daysBeforeIso(today, 29), today),
     getDashboardWidgetLayout(actor.userId),
+    getGoalProgress(branchId, currentMonth),
+    getActiveAnomalyAlerts(branchId),
   ]);
   const orderCountToday = hourlyDensity.reduce((sum, row) => sum + row.orderCount, 0);
 
@@ -63,13 +68,19 @@ export default async function AnalyticsHomePage() {
       <AnalyticsDashboard
         layout={layout}
         currency={currency}
+        branchId={branchId}
+        periodMonth={currentMonth}
         revenueToday={revenueToday}
         orderCountToday={orderCountToday}
         hourlyDensity={hourlyDensity}
         topProducts={topProducts}
         branchComparison={branchComparison}
+        goalProgress={goalProgress}
+        anomalyAlerts={anomalyAlerts}
         reorderWidgets={reorderDashboardWidgets}
         toggleWidget={toggleDashboardWidget}
+        setGoal={setGoal}
+        acknowledgeAlert={acknowledgeAlert}
       />
     </div>
   );

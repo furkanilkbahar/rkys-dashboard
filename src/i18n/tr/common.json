@@ -586,12 +586,23 @@
       "revenue": "Ciro",
       "hideWidget": "{widget} widget'ını gizle",
       "hiddenWidgets": "Gizli widget'lar:",
+      "goal": {
+        "title": "Aylık Ciro Hedefi",
+        "notSet": "Bu ay için henüz hedef belirlenmedi.",
+        "targetLabel": "Hedef Tutar",
+        "save": "Kaydet"
+      },
+      "anomaly": {
+        "empty": "Aktif anomali uyarısı yok.",
+        "acknowledge": "Uyarıyı onayla"
+      },
       "widgets": {
         "revenue_today": "Bugünün Cirosu",
         "order_count_today": "Bugünün Sipariş Sayısı",
         "hourly_density": "Saatlik Yoğunluk",
         "top_products": "En Çok Satanlar",
-        "branch_comparison": "Şube Kıyası (Son 30 Gün)"
+        "branch_comparison": "Şube Kıyası (Son 30 Gün)",
+        "anomaly_alerts": "Anomali Uyarıları"
       }
     }
   },

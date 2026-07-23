@@ -42,6 +42,7 @@ Bir faz şunlar olmadan kapanmaz:
 | S20 | Kayıt: pazarlama sitesinden self-servis kayıt → yeni tenant oluşur, otomatik giriş yapılıp onboarding'e düşer; aynı alt alan adı ikinci kez kullanılamaz | 4 |
 | S21 | Dönem Raporu: tarih aralığı seçilince toplam + geçen yıl kıyası güncellenir; `reports.loss` izni olan personel kayıp-kaçak tablosunu görür | 5 |
 | S22 | Analitik paneli: widget'lar görünür, sürükle-bırak sıralaması ve gizle/göster durumu kullanıcı bazlı kalıcı olur | 5 |
+| S23 | Hedef: aylık ciro hedefi girilir, ilerleme (ciro/hedef) gösterilir; anomali uyarısı panelde görünür, onaylanınca kaybolur | 5 |
 
 ## 4. RLS İzolasyon Testleri (entegrasyon, zorunlu şablon)
 Her yeni tablo için otomatik üretilen test çifti:
