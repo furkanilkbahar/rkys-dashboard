@@ -1270,6 +1270,75 @@ export type Database = {
           },
         ]
       }
+      payment_item_allocations: {
+        Row: {
+          amount_minor: number
+          branch_id: string
+          created_at: string
+          id: string
+          order_item_id: string
+          payment_id: string
+          quantity: number
+          tenant_id: string
+        }
+        Insert: {
+          amount_minor: number
+          branch_id: string
+          created_at?: string
+          id?: string
+          order_item_id: string
+          payment_id: string
+          quantity: number
+          tenant_id: string
+        }
+        Update: {
+          amount_minor?: number
+          branch_id?: string
+          created_at?: string
+          id?: string
+          order_item_id?: string
+          payment_id?: string
+          quantity?: number
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_item_allocations_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_item_allocations_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "payment_item_allocations_order_item_id_fkey"
+            columns: ["order_item_id"]
+            isOneToOne: false
+            referencedRelation: "order_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_item_allocations_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_item_allocations_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount_minor: number
@@ -3210,6 +3279,7 @@ export type Database = {
       record_payment: {
         Args: {
           p_amount_minor: number
+          p_item_allocations?: Json
           p_method: string
           p_split_group?: string
           p_table_session_id: string
