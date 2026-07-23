@@ -4222,6 +4222,17 @@ export type Database = {
           revenue_minor: number
         }[]
       }
+      get_menu_engineering_matrix: {
+        Args: { p_branch_id: string; p_end_date: string; p_start_date: string }
+        Returns: {
+          category: string
+          cost_minor: number
+          margin_minor: number
+          product_name: string
+          quantity: number
+          revenue_minor: number
+        }[]
+      }
       get_period_revenue_report: {
         Args: { p_branch_id: string; p_end_date: string; p_start_date: string }
         Returns: {
@@ -4320,6 +4331,14 @@ export type Database = {
         Returns: string
       }
       reactivate_tenant: { Args: { p_tenant_id: string }; Returns: undefined }
+      recompute_costs_for_ingredient: {
+        Args: { p_ingredient_id: string }
+        Returns: undefined
+      }
+      recompute_product_cost: {
+        Args: { p_product_id: string }
+        Returns: undefined
+      }
       record_cash_movement: {
         Args: {
           p_amount_minor: number
