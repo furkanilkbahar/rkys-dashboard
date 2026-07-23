@@ -55,10 +55,10 @@
 - [x] Rol/izin bazlı rapor erişimi; dönem + geçen yıl karşılaştırmaları; kayıp-kaçak (sebep kodlu) raporu — `reports.loss` izni, iptal sebep kodu için `orders.cancel_reason_code_id` eklendi (onay UI'ı ayrı bir Faz 1 eksiği olarak not edildi)
 
 ## Faz 6 — Gelişmiş Ödeme + Kampanya + Tema/Self-Hosted
-- [ ] **Kalem bazlı hesap bölme** + **kısmi iade** (ortak altyapı)
-- [ ] **Pricing Rules motoru v1** + **kural bazlı kampanya/kupon** (kod üretimi, limitler)
-- [ ] Mutfak **istasyon ekranları** aktivasyonu
-- [ ] Tema yönetimi UI + 1 ek tema; **self-hosted paket** (docker-compose + lisans entegrasyonu)
+- [x] **Kalem bazlı hesap bölme** + **kısmi iade** (ortak altyapı) — S25 (Adım 0), S26 (Adım 1)
+- [x] **Pricing Rules motoru v1** + **kural bazlı kampanya/kupon** (kod üretimi, limitler) — S27 (Adım 2)
+- [x] Mutfak **istasyon ekranları** aktivasyonu — S28 (Adım 3)
+- [x] Tema yönetimi UI + 1 ek tema; **self-hosted paket** (docker-compose + lisans entegrasyonu) — S29 (Adım 4), yerel `docker build`+`docker-compose up` ile doğrulandı
 
 ## Faz 7 — CRM & Sadakat
 - [ ] Telefon+OTP müşteri hesabı (KVKK onaylı) + müşteri kartları
