@@ -214,11 +214,13 @@ export function PayScreen({
   const t = useTranslations("cashier.pay");
   const router = useRouter();
   const [sessionId, setSessionId] = useState<string>("");
+  const [paymentMode, setPaymentMode] = useState<"amount" | "items">("amount");
   const [splitCount, setSplitCount] = useState(1);
   const [tipPercentage, setTipPercentage] = useState(0);
   const [method, setMethod] = useState<"cash" | "card_manual">("cash");
   const [splitGroup, setSplitGroup] = useState<string | null>(null);
   const [shares, setShares] = useState<Share[]>([]);
+  const [selectedItemIds, setSelectedItemIds] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
 
   const session = sessions.find((s) => s.tableSessionId === sessionId) ?? null;
@@ -231,13 +233,69 @@ export function PayScreen({
     return amountShares.map((amountMinor, i) => ({ amountMinor, tipAmountMinor: tipShares[i] }));
   }, [session, splitCount, tipTotalMinor]);
 
+  const remainingItems = useMemo(() => {
+    if (!session) return [];
+    return (ordersBySession[session.tableSessionId] ?? [])
+      .filter((o) => o.status !== "cancelled")
+      .flatMap((o) => o.items)
+      .filter((item) => item.quantity - item.paidQuantity > 0);
+  }, [session, ordersBySession]);
+
+  const selectedItemsTotalMinor = useMemo(
+    () =>
+      remainingItems
+        .filter((item) => selectedItemIds.has(item.id))
+        .reduce((sum, item) => sum + item.unitPriceMinor * (item.quantity - item.paidQuantity), 0),
+    [remainingItems, selectedItemIds],
+  );
+
   function selectSession(id: string) {
     setSessionId(id);
+    setPaymentMode("amount");
     setSplitCount(1);
     setTipPercentage(0);
     setSplitGroup(crypto.randomUUID());
     setShares([]);
+    setSelectedItemIds(new Set());
     setError(null);
+  }
+
+  function toggleItemSelection(itemId: string) {
+    setSelectedItemIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(itemId)) next.delete(itemId);
+      else next.add(itemId);
+      return next;
+    });
+  }
+
+  async function payForSelectedItems() {
+    if (!session || selectedItemsTotalMinor <= 0) return;
+    setError(null);
+    const itemAllocations = remainingItems
+      .filter((item) => selectedItemIds.has(item.id))
+      .map((item) => ({
+        orderItemId: item.id,
+        quantity: item.quantity - item.paidQuantity,
+        amountMinor: item.unitPriceMinor * (item.quantity - item.paidQuantity),
+      }));
+
+    const result = await recordPayment({
+      tableSessionId: session.tableSessionId,
+      method,
+      amountMinor: selectedItemsTotalMinor,
+      tipAmountMinor: 0,
+      splitGroup: null,
+      itemAllocations,
+    });
+
+    if (!result.ok) {
+      setError(t(`errors.${result.error}`));
+      return;
+    }
+
+    setSelectedItemIds(new Set());
+    router.refresh();
   }
 
   function startPaying() {
@@ -305,6 +363,20 @@ export function PayScreen({
               {t("balance")}: {formatPrice(session.balanceMinor, currency)}
             </p>
 
+            <div className="flex flex-col gap-1">
+              <Label>{t("paymentMode.label")}</Label>
+              <div className="flex flex-wrap gap-2">
+                <Button type="button" size="sm" variant={paymentMode === "amount" ? "default" : "outline"} onClick={() => setPaymentMode("amount")}>
+                  {t("paymentMode.amount")}
+                </Button>
+                {remainingItems.length > 0 && (
+                  <Button type="button" size="sm" variant={paymentMode === "items" ? "default" : "outline"} onClick={() => setPaymentMode("items")}>
+                    {t("paymentMode.items")}
+                  </Button>
+                )}
+              </div>
+            </div>
+
             {compReasons.length > 0 && (ordersBySession[session.tableSessionId]?.length ?? 0) > 0 && (
               <div className="flex flex-col gap-2">
                 <Label>{t("comp.title")}</Label>
@@ -321,7 +393,7 @@ export function PayScreen({
               </div>
             )}
 
-            {tipPresets.length > 0 && (
+            {paymentMode === "amount" && tipPresets.length > 0 && (
               <div className="flex flex-col gap-1">
                 <Label>{t("tip")}</Label>
                 <div className="flex flex-wrap gap-2">
@@ -348,18 +420,48 @@ export function PayScreen({
               </div>
             )}
 
-            <div className="flex flex-col gap-1">
-              <Label htmlFor="split-count">{t("splitCount")}</Label>
-              <Input
-                id="split-count"
-                type="number"
-                min={1}
-                max={10}
-                className="w-24"
-                value={splitCount}
-                onChange={(e) => setSplitCount(Math.min(10, Math.max(1, parseInt(e.target.value, 10) || 1)))}
-              />
-            </div>
+            {paymentMode === "amount" && (
+              <div className="flex flex-col gap-1">
+                <Label htmlFor="split-count">{t("splitCount")}</Label>
+                <Input
+                  id="split-count"
+                  type="number"
+                  min={1}
+                  max={10}
+                  className="w-24"
+                  value={splitCount}
+                  onChange={(e) => setSplitCount(Math.min(10, Math.max(1, parseInt(e.target.value, 10) || 1)))}
+                />
+              </div>
+            )}
+
+            {paymentMode === "items" && (
+              <div className="flex flex-col gap-2">
+                <Label>{t("paymentMode.itemsTitle")}</Label>
+                {remainingItems.map((item) => (
+                  <label
+                    key={item.id}
+                    className="flex items-center justify-between gap-2 rounded-md border border-border p-2 text-sm"
+                  >
+                    <span className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        aria-label={item.name}
+                        checked={selectedItemIds.has(item.id)}
+                        onChange={() => toggleItemSelection(item.id)}
+                        className="size-4"
+                      />
+                      {item.name}
+                      {item.variantName ? ` (${item.variantName})` : ""} × {item.quantity - item.paidQuantity}
+                    </span>
+                    <span>{formatPrice(item.unitPriceMinor * (item.quantity - item.paidQuantity), currency)}</span>
+                  </label>
+                ))}
+                <p className="text-sm font-medium">
+                  {t("paymentMode.selectedTotal")}: {formatPrice(selectedItemsTotalMinor, currency)}
+                </p>
+              </div>
+            )}
 
             <div className="flex flex-col gap-1">
               <Label>{t("method")}</Label>
@@ -374,9 +476,16 @@ export function PayScreen({
               </Select>
             </div>
 
-            <Button type="button" onClick={startPaying}>
-              {t("startPaying")}
-            </Button>
+            {paymentMode === "amount" ? (
+              <Button type="button" onClick={startPaying}>
+                {t("startPaying")}
+              </Button>
+            ) : (
+              <Button type="button" onClick={payForSelectedItems} disabled={selectedItemsTotalMinor <= 0}>
+                {t("paymentMode.pay")}
+              </Button>
+            )}
+            {paymentMode === "items" && error && <p className="text-xs text-destructive">{error}</p>}
           </CardContent>
         </Card>
       )}

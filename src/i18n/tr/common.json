@@ -26,6 +26,14 @@
       "noTip": "Bahşiş Yok",
       "tipAmount": "Bahşiş tutarı",
       "splitCount": "Kaç Kişi Bölüşecek",
+      "paymentMode": {
+        "label": "Ödeme Şekli",
+        "amount": "Tutar/Eşit Bölüş",
+        "items": "Kalem Seç",
+        "itemsTitle": "Ödenecek Kalemler",
+        "selectedTotal": "Seçilen Toplam",
+        "pay": "Öde"
+      },
       "method": "Ödeme Yöntemi",
       "cash": "Nakit",
       "cardManual": "Kart (Manuel)",

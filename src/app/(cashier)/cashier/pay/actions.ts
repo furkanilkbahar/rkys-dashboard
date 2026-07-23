@@ -99,10 +99,14 @@ export async function recordPayment(input: unknown): Promise<RecordPaymentResult
     p_amount_minor: parsed.data.amountMinor,
     p_tip_amount_minor: parsed.data.tipAmountMinor,
     p_split_group: parsed.data.splitGroup ?? undefined,
+    p_item_allocations: parsed.data.itemAllocations ?? undefined,
   });
 
   if (error) {
     if (error.message.includes("not active")) return { ok: false, error: "not_open" };
+    if (error.message.includes("do not match amount") || error.message.includes("invalid order item allocation") || error.message.includes("exceeds ordered quantity")) {
+      return { ok: false, error: "invalid_input" };
+    }
     return { ok: false, error: "forbidden" };
   }
 

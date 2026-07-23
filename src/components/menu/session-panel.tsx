@@ -57,7 +57,7 @@ export function SessionPanel({
         .select(
           `id, status, created_at, subtotal_minor,
            table_session_devices(device_label),
-           order_items(product_name_snapshot, variant_name_snapshot, quantity, line_subtotal_minor)`,
+           order_items(id, product_name_snapshot, variant_name_snapshot, quantity, unit_price_minor, line_subtotal_minor)`,
         )
         .eq("table_session_id", tableSessionId)
         .order("created_at");
@@ -73,10 +73,15 @@ export function SessionPanel({
         createdAt: order.created_at,
         subtotalMinor: order.subtotal_minor,
         items: order.order_items.map((item) => ({
+          id: item.id,
           name: item.product_name_snapshot,
           variantName: item.variant_name_snapshot,
           quantity: item.quantity,
+          unitPriceMinor: item.unit_price_minor,
           lineSubtotalMinor: item.line_subtotal_minor,
+          // Misafir görünümü ödeme durumunu göstermez — kasa tarafının
+          // "kalem seç" modu için eklenen alan burada kullanılmaz.
+          paidQuantity: 0,
         })),
       }));
 

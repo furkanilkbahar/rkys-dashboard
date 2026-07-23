@@ -26,6 +26,14 @@
       "noTip": "No Tip",
       "tipAmount": "Tip amount",
       "splitCount": "Split Between",
+      "paymentMode": {
+        "label": "Payment Mode",
+        "amount": "Amount/Equal Split",
+        "items": "Select Items",
+        "itemsTitle": "Items to Pay",
+        "selectedTotal": "Selected Total",
+        "pay": "Pay"
+      },
       "method": "Payment Method",
       "cash": "Cash",
       "cardManual": "Card (Manual)",
