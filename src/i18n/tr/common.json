@@ -9,9 +9,6 @@
   "tenantNotFound": {
     "title": "Tenant bulunamadı."
   },
-  "placeholders": {
-    "analytics": "RKYS Dashboard — analitik merkezi (Faz 5)"
-  },
   "cashier": {
     "title": "Kasa",
     "nav": {
@@ -579,6 +576,22 @@
         "noReason": "Sebep belirtilmemiş",
         "amount": "Tutar",
         "count": "Adet"
+      }
+    },
+    "analytics": {
+      "title": "Analitik Merkezi",
+      "forbidden": "Bu sayfayı görüntüleme yetkiniz yok.",
+      "empty": "Bu widget için henüz veri yok.",
+      "orderCount": "Sipariş Sayısı",
+      "revenue": "Ciro",
+      "hideWidget": "{widget} widget'ını gizle",
+      "hiddenWidgets": "Gizli widget'lar:",
+      "widgets": {
+        "revenue_today": "Bugünün Cirosu",
+        "order_count_today": "Bugünün Sipariş Sayısı",
+        "hourly_density": "Saatlik Yoğunluk",
+        "top_products": "En Çok Satanlar",
+        "branch_comparison": "Şube Kıyası (Son 30 Gün)"
       }
     }
   },

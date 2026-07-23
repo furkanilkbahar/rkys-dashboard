@@ -21,8 +21,6 @@ import { GripVertical } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, type ReactNode } from "react";
 
-import type { MenuActionResult } from "@/lib/menu/schemas";
-
 function SortableItem({ id, children }: { id: string; children: (dragHandle: ReactNode) => ReactNode }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
   const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 };
@@ -52,7 +50,7 @@ export function SortableList<T extends { id: string }>({
   className,
 }: {
   items: T[];
-  onReorder: (orderedIds: string[]) => Promise<MenuActionResult>;
+  onReorder: (orderedIds: string[]) => Promise<unknown>;
   renderItem: (item: T, dragHandle: ReactNode) => ReactNode;
   className?: string;
 }) {

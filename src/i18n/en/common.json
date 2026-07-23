@@ -9,9 +9,6 @@
   "tenantNotFound": {
     "title": "Tenant not found."
   },
-  "placeholders": {
-    "analytics": "RKYS Dashboard — analytics hub (Phase 5)"
-  },
   "cashier": {
     "title": "Cashier",
     "nav": {
@@ -579,6 +576,22 @@
         "noReason": "No reason specified",
         "amount": "Amount",
         "count": "Count"
+      }
+    },
+    "analytics": {
+      "title": "Analytics Center",
+      "forbidden": "You don't have permission to view this page.",
+      "empty": "No data for this widget yet.",
+      "orderCount": "Order Count",
+      "revenue": "Revenue",
+      "hideWidget": "Hide {widget} widget",
+      "hiddenWidgets": "Hidden widgets:",
+      "widgets": {
+        "revenue_today": "Today's Revenue",
+        "order_count_today": "Today's Order Count",
+        "hourly_density": "Hourly Density",
+        "top_products": "Top Products",
+        "branch_comparison": "Branch Comparison (Last 30 Days)"
       }
     }
   },
