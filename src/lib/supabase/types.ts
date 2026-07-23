@@ -3200,6 +3200,7 @@ export type Database = {
           created_by: string | null
           id: string
           ingredient_id: string
+          note: string | null
           order_id: string | null
           quantity_delta: number
           tenant_id: string
@@ -3212,6 +3213,7 @@ export type Database = {
           created_by?: string | null
           id?: string
           ingredient_id: string
+          note?: string | null
           order_id?: string | null
           quantity_delta: number
           tenant_id: string
@@ -3224,6 +3226,7 @@ export type Database = {
           created_by?: string | null
           id?: string
           ingredient_id?: string
+          note?: string | null
           order_id?: string | null
           quantity_delta?: number
           tenant_id?: string
@@ -4366,6 +4369,14 @@ export type Database = {
           p_reason_code_id: string
         }
         Returns: string
+      }
+      record_stock_count: {
+        Args: { p_counted_quantity: number; p_ingredient_id: string }
+        Returns: undefined
+      }
+      record_stock_waste: {
+        Args: { p_ingredient_id: string; p_note?: string; p_quantity: number }
+        Returns: undefined
       }
       redeem_loyalty_to_order: { Args: { p_order_id: string }; Returns: number }
       reject_cancellation_request: {
