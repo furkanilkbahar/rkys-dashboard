@@ -1920,6 +1920,75 @@ export type Database = {
           },
         ]
       }
+      refund_item_allocations: {
+        Row: {
+          amount_minor: number
+          branch_id: string
+          created_at: string
+          id: string
+          order_item_id: string
+          quantity: number
+          refund_id: string
+          tenant_id: string
+        }
+        Insert: {
+          amount_minor: number
+          branch_id: string
+          created_at?: string
+          id?: string
+          order_item_id: string
+          quantity: number
+          refund_id: string
+          tenant_id: string
+        }
+        Update: {
+          amount_minor?: number
+          branch_id?: string
+          created_at?: string
+          id?: string
+          order_item_id?: string
+          quantity?: number
+          refund_id?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "refund_item_allocations_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "refund_item_allocations_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "refund_item_allocations_order_item_id_fkey"
+            columns: ["order_item_id"]
+            isOneToOne: false
+            referencedRelation: "order_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "refund_item_allocations_refund_id_fkey"
+            columns: ["refund_id"]
+            isOneToOne: false
+            referencedRelation: "refunds"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "refund_item_allocations_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       refunds: {
         Row: {
           amount_minor: number
@@ -1982,7 +2051,7 @@ export type Database = {
           {
             foreignKeyName: "refunds_payment_id_fkey"
             columns: ["payment_id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "payments"
             referencedColumns: ["id"]
           },
@@ -3289,6 +3358,8 @@ export type Database = {
       }
       record_refund: {
         Args: {
+          p_amount_minor: number
+          p_item_allocations?: Json
           p_note?: string
           p_payment_id: string
           p_provider_ref?: string
