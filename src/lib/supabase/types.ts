@@ -708,6 +708,70 @@ export type Database = {
           },
         ]
       }
+      customer_segments: {
+        Row: {
+          created_at: string
+          criteria: Json
+          id: string
+          name: string
+          tenant_id: string
+        }
+        Insert: {
+          created_at?: string
+          criteria?: Json
+          id?: string
+          name: string
+          tenant_id: string
+        }
+        Update: {
+          created_at?: string
+          criteria?: Json
+          id?: string
+          name?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_segments_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customers: {
+        Row: {
+          created_at: string
+          id: string
+          kvkk_consented_at: string
+          phone: string
+          tenant_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kvkk_consented_at: string
+          phone: string
+          tenant_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kvkk_consented_at?: string
+          phone?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customers_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       daily_sales_summary: {
         Row: {
           branch_id: string
@@ -1414,6 +1478,44 @@ export type Database = {
           },
           {
             foreignKeyName: "orders_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      otp_codes: {
+        Row: {
+          code_hash: string
+          consumed_at: string | null
+          created_at: string
+          expires_at: string
+          id: string
+          phone: string
+          tenant_id: string
+        }
+        Insert: {
+          code_hash: string
+          consumed_at?: string | null
+          created_at?: string
+          expires_at: string
+          id?: string
+          phone: string
+          tenant_id: string
+        }
+        Update: {
+          code_hash?: string
+          consumed_at?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          phone?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "otp_codes_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "tenants"
@@ -2353,6 +2455,41 @@ export type Database = {
           },
         ]
       }
+      sent_sms: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          phone: string
+          provider: string
+          tenant_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          phone: string
+          provider: string
+          tenant_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          phone?: string
+          provider?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sent_sms_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       session_events: {
         Row: {
           actor_profile_id: string | null
@@ -2707,6 +2844,7 @@ export type Database = {
           close_reason: string | null
           closed_at: string | null
           created_at: string
+          customer_id: string | null
           id: string
           last_activity_at: string
           opened_at: string
@@ -2719,6 +2857,7 @@ export type Database = {
           close_reason?: string | null
           closed_at?: string | null
           created_at?: string
+          customer_id?: string | null
           id?: string
           last_activity_at?: string
           opened_at?: string
@@ -2731,6 +2870,7 @@ export type Database = {
           close_reason?: string | null
           closed_at?: string | null
           created_at?: string
+          customer_id?: string | null
           id?: string
           last_activity_at?: string
           opened_at?: string
@@ -2752,6 +2892,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "effective_menu_items"
             referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "table_sessions_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "table_sessions_table_id_fkey"
@@ -3572,6 +3719,14 @@ export type Database = {
         Returns: undefined
       }
       request_account_deletion: { Args: never; Returns: undefined }
+      request_loyalty_otp: {
+        Args: {
+          p_code_hash: string
+          p_phone: string
+          p_table_session_id: string
+        }
+        Returns: undefined
+      }
       request_order_cancellation: {
         Args: { p_order_id: string; p_reason: string }
         Returns: undefined
@@ -3644,6 +3799,15 @@ export type Database = {
         Returns: undefined
       }
       update_tenant_logo: { Args: { p_logo_url: string }; Returns: undefined }
+      verify_loyalty_otp: {
+        Args: {
+          p_code_hash: string
+          p_kvkk_consent: boolean
+          p_phone: string
+          p_table_session_id: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
