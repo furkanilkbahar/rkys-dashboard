@@ -750,6 +750,7 @@
       "unit": "Unit",
       "criticalLevel": "Critical Level",
       "criticalBadge": "Critical",
+      "criticalSummary": "{count} ingredient(s) below critical level: {names}",
       "stock": "Current Stock",
       "add": "+ Add Ingredient",
       "save": "Save",
@@ -762,6 +763,19 @@
         "save": "Save",
         "cancel": "Cancel",
         "savedHint": "Purchase recorded."
+      },
+      "waste": {
+        "toggle": "Record Waste",
+        "quantity": "Quantity",
+        "note": "Note (optional)",
+        "save": "Save",
+        "cancel": "Cancel"
+      },
+      "count": {
+        "toggle": "Record Count",
+        "countedQuantity": "Counted Quantity",
+        "save": "Save",
+        "cancel": "Cancel"
       },
       "recipe": {
         "pageTitle": "Recipe",

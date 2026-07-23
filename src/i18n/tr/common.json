@@ -750,6 +750,7 @@
       "unit": "Birim",
       "criticalLevel": "Kritik Seviye",
       "criticalBadge": "Kritik",
+      "criticalSummary": "{count} malzeme kritik seviyenin altında: {names}",
       "stock": "Mevcut Stok",
       "add": "+ Malzeme Ekle",
       "save": "Kaydet",
@@ -762,6 +763,19 @@
         "save": "Kaydet",
         "cancel": "Vazgeç",
         "savedHint": "Alım kaydedildi."
+      },
+      "waste": {
+        "toggle": "Fire Kaydet",
+        "quantity": "Miktar",
+        "note": "Not (opsiyonel)",
+        "save": "Kaydet",
+        "cancel": "Vazgeç"
+      },
+      "count": {
+        "toggle": "Sayım Gir",
+        "countedQuantity": "Sayılan Miktar",
+        "save": "Kaydet",
+        "cancel": "Vazgeç"
       },
       "recipe": {
         "pageTitle": "Reçete",

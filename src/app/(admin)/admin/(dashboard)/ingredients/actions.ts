@@ -3,7 +3,15 @@
 import { revalidatePath } from "next/cache";
 
 import { getCurrentActor } from "@/lib/auth/session";
-import { ingredientFormSchema, purchaseFormSchema, recipeFormSchema, unitCostMinor, type InventoryActionResult } from "@/lib/inventory/schemas";
+import {
+  countFormSchema,
+  ingredientFormSchema,
+  purchaseFormSchema,
+  recipeFormSchema,
+  unitCostMinor,
+  wasteFormSchema,
+  type InventoryActionResult,
+} from "@/lib/inventory/schemas";
 import { isEnabled } from "@/lib/modules/isEnabled";
 import { createClient } from "@/lib/supabase/server";
 
@@ -60,6 +68,51 @@ export async function recordPurchase(input: unknown): Promise<InventoryActionRes
     ...(parsed.data.supplierId ? { p_supplier_id: parsed.data.supplierId } : {}),
     p_quantity: parsed.data.quantity,
     p_unit_cost_minor: unitCostMinor(parsed.data),
+  });
+  if (error) {
+    if (error.message.includes("inventory module not enabled")) return { ok: false, error: "not_enabled" };
+    if (error.message.includes("staff only")) return { ok: false, error: "forbidden" };
+    return { ok: false, error: "unknown" };
+  }
+
+  revalidatePath("/admin/ingredients");
+  return { ok: true };
+}
+
+export async function recordWaste(input: unknown): Promise<InventoryActionResult> {
+  const actor = await getCurrentActor();
+  if (!actor) return { ok: false, error: "forbidden" };
+
+  const parsed = wasteFormSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: "invalid_input" };
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("record_stock_waste", {
+    p_ingredient_id: parsed.data.ingredientId,
+    p_quantity: parsed.data.quantity,
+    ...(parsed.data.note ? { p_note: parsed.data.note } : {}),
+  });
+  if (error) {
+    if (error.message.includes("inventory module not enabled")) return { ok: false, error: "not_enabled" };
+    if (error.message.includes("staff only")) return { ok: false, error: "forbidden" };
+    return { ok: false, error: "unknown" };
+  }
+
+  revalidatePath("/admin/ingredients");
+  return { ok: true };
+}
+
+export async function recordCount(input: unknown): Promise<InventoryActionResult> {
+  const actor = await getCurrentActor();
+  if (!actor) return { ok: false, error: "forbidden" };
+
+  const parsed = countFormSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: "invalid_input" };
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("record_stock_count", {
+    p_ingredient_id: parsed.data.ingredientId,
+    p_counted_quantity: parsed.data.countedQuantity,
   });
   if (error) {
     if (error.message.includes("inventory module not enabled")) return { ok: false, error: "not_enabled" };

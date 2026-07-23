@@ -49,3 +49,16 @@ export type PurchaseFormInput = z.infer<typeof purchaseFormSchema>;
 export function unitCostMinor(input: PurchaseFormInput): number {
   return priceMinorFromMajor(input.unitCost);
 }
+
+export const wasteFormSchema = z.object({
+  ingredientId: z.uuid(),
+  quantity: z.coerce.number().positive(),
+  note: z.string(),
+});
+export type WasteFormInput = z.infer<typeof wasteFormSchema>;
+
+export const countFormSchema = z.object({
+  ingredientId: z.uuid(),
+  countedQuantity: z.coerce.number().min(0),
+});
+export type CountFormInput = z.infer<typeof countFormSchema>;

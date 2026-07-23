@@ -14,10 +14,19 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { AdminIngredient } from "@/lib/data/ingredients";
 import type { AdminSupplier } from "@/lib/data/suppliers";
-import { INGREDIENT_UNITS, ingredientFormSchema, purchaseFormSchema, type InventoryActionResult } from "@/lib/inventory/schemas";
+import {
+  countFormSchema,
+  INGREDIENT_UNITS,
+  ingredientFormSchema,
+  purchaseFormSchema,
+  wasteFormSchema,
+  type InventoryActionResult,
+} from "@/lib/inventory/schemas";
 
 type IngredientFormValues = z.input<typeof ingredientFormSchema>;
 type PurchaseFormValues = z.input<typeof purchaseFormSchema>;
+type WasteFormValues = z.input<typeof wasteFormSchema>;
+type CountFormValues = z.input<typeof countFormSchema>;
 
 export function IngredientsManager({
   ingredients,
@@ -25,12 +34,16 @@ export function IngredientsManager({
   createIngredient,
   updateIngredient,
   recordPurchase,
+  recordWaste,
+  recordCount,
 }: {
   ingredients: AdminIngredient[];
   suppliers: AdminSupplier[];
   createIngredient: (input: unknown) => Promise<InventoryActionResult>;
   updateIngredient: (ingredientId: string, input: unknown) => Promise<InventoryActionResult>;
   recordPurchase: (input: unknown) => Promise<InventoryActionResult>;
+  recordWaste: (input: unknown) => Promise<InventoryActionResult>;
+  recordCount: (input: unknown) => Promise<InventoryActionResult>;
 }) {
   const t = useTranslations("admin.ingredients");
   const tErrors = useTranslations("admin.ingredients.errors");
@@ -52,9 +65,16 @@ export function IngredientsManager({
     router.refresh();
   }
 
+  const criticalIngredients = ingredients.filter((i) => i.currentStock <= i.criticalLevel);
+
   return (
     <div className="flex flex-col gap-8">
       <h1 className="text-xl font-semibold">{t("pageTitle")}</h1>
+      {criticalIngredients.length > 0 && (
+        <div className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          {t("criticalSummary", { count: criticalIngredients.length, names: criticalIngredients.map((i) => i.name).join(", ") })}
+        </div>
+      )}
       <Card>
         <CardHeader>
           <CardTitle className="text-base">{t("title")}</CardTitle>
@@ -68,6 +88,8 @@ export function IngredientsManager({
               suppliers={suppliers}
               updateIngredient={updateIngredient}
               recordPurchase={recordPurchase}
+              recordWaste={recordWaste}
+              recordCount={recordCount}
             />
           ))}
 
@@ -112,26 +134,36 @@ export function IngredientsManager({
   );
 }
 
+type Panel = "purchase" | "waste" | "count" | null;
+
 function IngredientRow({
   ingredient,
   suppliers,
   updateIngredient,
   recordPurchase,
+  recordWaste,
+  recordCount,
 }: {
   ingredient: AdminIngredient;
   suppliers: AdminSupplier[];
   updateIngredient: (ingredientId: string, input: unknown) => Promise<InventoryActionResult>;
   recordPurchase: (input: unknown) => Promise<InventoryActionResult>;
+  recordWaste: (input: unknown) => Promise<InventoryActionResult>;
+  recordCount: (input: unknown) => Promise<InventoryActionResult>;
 }) {
   const t = useTranslations("admin.ingredients");
   const router = useRouter();
   const [criticalLevel, setCriticalLevel] = useState(String(ingredient.criticalLevel));
-  const [purchaseOpen, setPurchaseOpen] = useState(false);
+  const [panel, setPanel] = useState<Panel>(null);
   const isCritical = ingredient.currentStock <= ingredient.criticalLevel;
 
   async function handleSave() {
     await updateIngredient(ingredient.id, { name: ingredient.name, unit: ingredient.unit, criticalLevel });
     router.refresh();
+  }
+
+  function togglePanel(next: Panel) {
+    setPanel((current) => (current === next ? null : next));
   }
 
   return (
@@ -161,13 +193,23 @@ function IngredientRow({
           <Button type="button" size="sm" variant="secondary" onClick={handleSave}>
             {t("save")}
           </Button>
-          <Button type="button" size="sm" variant="outline" onClick={() => setPurchaseOpen((v) => !v)}>
+          <Button type="button" size="sm" variant="outline" onClick={() => togglePanel("purchase")}>
             {t("purchase.toggle")}
+          </Button>
+          <Button type="button" size="sm" variant="outline" onClick={() => togglePanel("waste")}>
+            {t("waste.toggle")}
+          </Button>
+          <Button type="button" size="sm" variant="outline" onClick={() => togglePanel("count")}>
+            {t("count.toggle")}
           </Button>
         </div>
       </div>
-      {purchaseOpen && (
-        <PurchaseForm ingredientId={ingredient.id} suppliers={suppliers} recordPurchase={recordPurchase} onDone={() => setPurchaseOpen(false)} />
+      {panel === "purchase" && (
+        <PurchaseForm ingredientId={ingredient.id} suppliers={suppliers} recordPurchase={recordPurchase} onDone={() => setPanel(null)} />
+      )}
+      {panel === "waste" && <WasteForm ingredientId={ingredient.id} recordWaste={recordWaste} onDone={() => setPanel(null)} />}
+      {panel === "count" && (
+        <CountForm ingredientId={ingredient.id} currentStock={ingredient.currentStock} recordCount={recordCount} onDone={() => setPanel(null)} />
       )}
     </div>
   );
@@ -236,6 +278,106 @@ function PurchaseForm({
             </Select>
           )}
         />
+      </div>
+      <Button type="submit" size="sm">
+        {t("save")}
+      </Button>
+      <Button type="button" size="sm" variant="ghost" onClick={onDone}>
+        {t("cancel")}
+      </Button>
+      {error && <p className="text-xs text-destructive">{error}</p>}
+    </form>
+  );
+}
+
+function WasteForm({
+  ingredientId,
+  recordWaste,
+  onDone,
+}: {
+  ingredientId: string;
+  recordWaste: (input: unknown) => Promise<InventoryActionResult>;
+  onDone: () => void;
+}) {
+  const t = useTranslations("admin.ingredients.waste");
+  const tErrors = useTranslations("admin.ingredients.errors");
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const { register, handleSubmit } = useForm({
+    resolver: standardSchemaResolver(wasteFormSchema),
+    defaultValues: { ingredientId, quantity: "1", note: "" },
+  });
+
+  async function onSubmit(values: WasteFormValues) {
+    setError(null);
+    const result = await recordWaste(values);
+    if (!result.ok) {
+      setError(tErrors(result.error));
+      return;
+    }
+    router.refresh();
+    onDone();
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-wrap items-end gap-2 border-t border-border pt-2">
+      <input type="hidden" {...register("ingredientId")} />
+      <div className="flex flex-col gap-1">
+        <Label htmlFor={`waste-qty-${ingredientId}`}>{t("quantity")}</Label>
+        <Input id={`waste-qty-${ingredientId}`} className="w-20" inputMode="decimal" {...register("quantity")} />
+      </div>
+      <div className="flex flex-col gap-1">
+        <Label htmlFor={`waste-note-${ingredientId}`}>{t("note")}</Label>
+        <Input id={`waste-note-${ingredientId}`} className="w-48" {...register("note")} />
+      </div>
+      <Button type="submit" size="sm">
+        {t("save")}
+      </Button>
+      <Button type="button" size="sm" variant="ghost" onClick={onDone}>
+        {t("cancel")}
+      </Button>
+      {error && <p className="text-xs text-destructive">{error}</p>}
+    </form>
+  );
+}
+
+function CountForm({
+  ingredientId,
+  currentStock,
+  recordCount,
+  onDone,
+}: {
+  ingredientId: string;
+  currentStock: number;
+  recordCount: (input: unknown) => Promise<InventoryActionResult>;
+  onDone: () => void;
+}) {
+  const t = useTranslations("admin.ingredients.count");
+  const tErrors = useTranslations("admin.ingredients.errors");
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const { register, handleSubmit } = useForm({
+    resolver: standardSchemaResolver(countFormSchema),
+    defaultValues: { ingredientId, countedQuantity: String(currentStock) },
+  });
+
+  async function onSubmit(values: CountFormValues) {
+    setError(null);
+    const result = await recordCount(values);
+    if (!result.ok) {
+      setError(tErrors(result.error));
+      return;
+    }
+    router.refresh();
+    onDone();
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-wrap items-end gap-2 border-t border-border pt-2">
+      <input type="hidden" {...register("ingredientId")} />
+      <div className="flex flex-col gap-1">
+        <Label htmlFor={`count-qty-${ingredientId}`}>{t("countedQuantity")}</Label>
+        <Input id={`count-qty-${ingredientId}`} className="w-24" inputMode="decimal" {...register("countedQuantity")} />
       </div>
       <Button type="submit" size="sm">
         {t("save")}

@@ -3,7 +3,7 @@ import { getAdminIngredients } from "@/lib/data/ingredients";
 import { getAdminSuppliers } from "@/lib/data/suppliers";
 import { assertModuleEnabled } from "@/lib/modules/isEnabled";
 
-import { createIngredient, recordPurchase, updateIngredient } from "./actions";
+import { createIngredient, recordCount, recordPurchase, recordWaste, updateIngredient } from "./actions";
 import { IngredientsManager } from "./ingredients-manager";
 
 export default async function AdminIngredientsPage() {
@@ -19,6 +19,8 @@ export default async function AdminIngredientsPage() {
       createIngredient={createIngredient}
       updateIngredient={updateIngredient}
       recordPurchase={recordPurchase}
+      recordWaste={recordWaste}
+      recordCount={recordCount}
     />
   );
 }
