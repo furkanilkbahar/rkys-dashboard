@@ -55,10 +55,10 @@ describe("Hediye kartı: oluşturma (Faz 7 Adım 2, S32)", () => {
     expect(error).toBeNull();
 
     const service = serviceRoleClient();
-    const { data: card } = await service.from("gift_cards").select("balance_minor").eq("id", giftCardId).single();
+    const { data: card } = await service.from("gift_cards").select("balance_minor").eq("id", giftCardId!).single();
     expect(card?.balance_minor).toBe(10000);
 
-    const { data: txns } = await service.from("gift_card_transactions").select("amount_minor, type").eq("gift_card_id", giftCardId);
+    const { data: txns } = await service.from("gift_card_transactions").select("amount_minor, type").eq("gift_card_id", giftCardId!);
     expect(txns).toHaveLength(1);
     expect(txns![0]).toEqual({ amount_minor: 10000, type: "issue" });
   });

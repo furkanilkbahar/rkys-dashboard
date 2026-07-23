@@ -7,7 +7,12 @@ import { can } from "@/lib/auth/can";
 import { requireAdminActor } from "@/lib/auth/adminGuard";
 import { getAdminTenantSettings } from "@/lib/data/adminSettings";
 import { getDefaultBranchId } from "@/lib/data/branch";
-import { getLossReport, getPeriodRevenueReport } from "@/lib/data/periodReports";
+import {
+  getCampaignPerformanceReport,
+  getLossReport,
+  getLoyaltyPerformanceReport,
+  getPeriodRevenueReport,
+} from "@/lib/data/periodReports";
 import { getProductsWithCosts } from "@/lib/data/productCosts";
 import {
   getHourlyDensity,
@@ -77,19 +82,33 @@ export default async function AdminReportsPage({
 
   const currency = tenantSettings?.currency ?? "TRY";
 
-  const [revenue, topProducts, hourlyDensity, shifts, dayClosed, marginRows, products, periodRevenue, previousYearRevenue, lossRows] =
-    await Promise.all([
-      getRevenueReport(branchId, businessDate),
-      getTopProducts(branchId, businessDate),
-      getHourlyDensity(branchId, businessDate),
-      getShiftsForDate(branchId, businessDate),
-      isBusinessDateClosed(branchId),
-      canViewProfit ? getMarginReport(branchId, businessDate) : Promise.resolve([]),
-      canViewProfit ? getProductsWithCosts(actor.tenantId) : Promise.resolve([]),
-      getPeriodRevenueReport(branchId, periodStartDate, periodEndDate),
-      getPeriodRevenueReport(branchId, shiftYear(periodStartDate, -1), shiftYear(periodEndDate, -1)),
-      canViewLoss ? getLossReport(actor.tenantId, branchId, periodStartDate, periodEndDate, locale) : Promise.resolve([]),
-    ]);
+  const [
+    revenue,
+    topProducts,
+    hourlyDensity,
+    shifts,
+    dayClosed,
+    marginRows,
+    products,
+    periodRevenue,
+    previousYearRevenue,
+    lossRows,
+    loyaltyPerformance,
+    campaignPerformance,
+  ] = await Promise.all([
+    getRevenueReport(branchId, businessDate),
+    getTopProducts(branchId, businessDate),
+    getHourlyDensity(branchId, businessDate),
+    getShiftsForDate(branchId, businessDate),
+    isBusinessDateClosed(branchId),
+    canViewProfit ? getMarginReport(branchId, businessDate) : Promise.resolve([]),
+    canViewProfit ? getProductsWithCosts(actor.tenantId) : Promise.resolve([]),
+    getPeriodRevenueReport(branchId, periodStartDate, periodEndDate),
+    getPeriodRevenueReport(branchId, shiftYear(periodStartDate, -1), shiftYear(periodEndDate, -1)),
+    canViewLoss ? getLossReport(actor.tenantId, branchId, periodStartDate, periodEndDate, locale) : Promise.resolve([]),
+    getLoyaltyPerformanceReport(periodStartDate, periodEndDate),
+    getCampaignPerformanceReport(periodStartDate, periodEndDate),
+  ]);
 
   return (
     <div className="flex flex-col gap-8">
@@ -290,6 +309,30 @@ export default async function AdminReportsPage({
             ))}
           </div>
         )}
+
+        <div className="flex flex-col gap-2">
+          <h3 className="text-sm font-semibold">{t("period.loyaltyCampaignTitle")}</h3>
+          {loyaltyPerformance && (
+            <div className="grid grid-cols-2 gap-2 text-sm sm:grid-cols-4">
+              <p>{t("period.pointsEarned")}: {loyaltyPerformance.pointsEarned}</p>
+              <p>{t("period.pointsRedeemed")}: {loyaltyPerformance.pointsRedeemed}</p>
+              <p>{t("period.activeCustomers")}: {loyaltyPerformance.activeCustomers}</p>
+              <p>{t("period.redemptionCount")}: {loyaltyPerformance.redemptionCount}</p>
+            </div>
+          )}
+          {campaignPerformance.length === 0 ? (
+            <p className="text-sm text-muted-foreground">{t("period.campaignEmpty")}</p>
+          ) : (
+            campaignPerformance.map((row) => (
+              <div key={row.campaignId} className="flex items-center justify-between text-sm">
+                <span>{row.campaignName}</span>
+                <span>
+                  {row.redemptionCount} {t("period.count")} — {formatPrice(row.totalDiscountMinor, currency)}
+                </span>
+              </div>
+            ))
+          )}
+        </div>
       </section>
 
       <section className="flex flex-col gap-2">

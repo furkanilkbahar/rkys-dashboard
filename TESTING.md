@@ -52,6 +52,7 @@ Bir faz şunlar olmadan kapanmaz:
 | S30 | Müşteri kimliği: misafir telefon+OTP+KVKK onayıyla sadakat programına katılır, mevcut masa oturumu (sipariş/ödeme akışı) hiç değişmeden oturuma bağlanır | 7 |
 | S31 | Sadakat motoru: admin puan modunu (kazanım/harcama oranı) ayarlar, misafir bakiyesini kendi siparişine indirim olarak kullanır, indirim comps'a yazılır | 7 |
 | S32 | Hediye kartı: admin kart oluşturur (kod+ilk bakiye), kasa hediye kartıyla ödeme alır, bakiye düşer ve hesap kapanır | 7 |
+| S33 | Sadakat/kampanya performans raporu: dönem içindeki kazanım/harcama, aktif müşteri ve kampanya kullanım sayıları/indirim toplamı doğru hesaplanır | 7 |
 
 ## 4. RLS İzolasyon Testleri (entegrasyon, zorunlu şablon)
 Her yeni tablo için otomatik üretilen test çifti:

@@ -102,3 +102,41 @@ export async function getLossReport(
     itemCount: r.item_count,
   }));
 }
+
+export type LoyaltyPerformanceReport = {
+  pointsEarned: number;
+  pointsRedeemed: number;
+  activeCustomers: number;
+  redemptionCount: number;
+};
+
+export async function getLoyaltyPerformanceReport(startDate: string, endDate: string): Promise<LoyaltyPerformanceReport | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("get_loyalty_performance_report", { p_start_date: startDate, p_end_date: endDate });
+  if (error || !data || data.length === 0) return null;
+  const row = data[0];
+  return {
+    pointsEarned: row.points_earned,
+    pointsRedeemed: row.points_redeemed,
+    activeCustomers: row.active_customers,
+    redemptionCount: row.redemption_count,
+  };
+}
+
+export type CampaignPerformanceRow = {
+  campaignId: string;
+  campaignName: string;
+  redemptionCount: number;
+  totalDiscountMinor: number;
+};
+
+export async function getCampaignPerformanceReport(startDate: string, endDate: string): Promise<CampaignPerformanceRow[]> {
+  const supabase = await createClient();
+  const { data } = await supabase.rpc("get_campaign_performance_report", { p_start_date: startDate, p_end_date: endDate });
+  return (data ?? []).map((r) => ({
+    campaignId: r.campaign_id,
+    campaignName: r.campaign_name,
+    redemptionCount: r.redemption_count,
+    totalDiscountMinor: r.total_discount_minor,
+  }));
+}

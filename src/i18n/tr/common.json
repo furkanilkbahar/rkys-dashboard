@@ -621,7 +621,13 @@
         },
         "noReason": "Sebep belirtilmemiş",
         "amount": "Tutar",
-        "count": "Adet"
+        "count": "Adet",
+        "loyaltyCampaignTitle": "Sadakat & Kampanya Performansı",
+        "pointsEarned": "Kazanılan Puan/Damga",
+        "pointsRedeemed": "Harcanan Puan/Damga",
+        "activeCustomers": "Aktif Müşteri",
+        "redemptionCount": "Harcama Sayısı",
+        "campaignEmpty": "Bu dönemde kampanya kullanımı yok."
       }
     },
     "analytics": {

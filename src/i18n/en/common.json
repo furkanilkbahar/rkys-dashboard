@@ -621,7 +621,13 @@
         },
         "noReason": "No reason specified",
         "amount": "Amount",
-        "count": "Count"
+        "count": "Count",
+        "loyaltyCampaignTitle": "Loyalty & Campaign Performance",
+        "pointsEarned": "Points/Stamps Earned",
+        "pointsRedeemed": "Points/Stamps Redeemed",
+        "activeCustomers": "Active Customers",
+        "redemptionCount": "Redemption Count",
+        "campaignEmpty": "No campaign usage in this period."
       }
     },
     "analytics": {
