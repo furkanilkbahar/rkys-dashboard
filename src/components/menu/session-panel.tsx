@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { ApplyCouponResult } from "@/lib/campaigns/schemas";
+import type { RequestOtpResult, VerifyOtpResult } from "@/lib/customer/schemas";
 import type { SessionOrder } from "@/lib/data/sessionOrders";
 import type { OrderStatus } from "@/lib/orders/stateMachine";
 import { playBeep, useSoundUnlock } from "@/lib/sound/insistentAlert";
@@ -21,12 +22,20 @@ export function SessionPanel({
   initialOrders,
   campaignsEnabled,
   applyCoupon,
+  crmLoyaltyEnabled,
+  sessionCustomerId,
+  requestLoyaltyOtp,
+  verifyLoyaltyOtp,
 }: {
   tableSessionId: string;
   currency: string;
   initialOrders: SessionOrder[];
   campaignsEnabled: boolean;
   applyCoupon: (input: unknown) => Promise<ApplyCouponResult>;
+  crmLoyaltyEnabled: boolean;
+  sessionCustomerId: string | null;
+  requestLoyaltyOtp: (input: unknown) => Promise<RequestOtpResult>;
+  verifyLoyaltyOtp: (input: unknown) => Promise<VerifyOtpResult>;
 }) {
   const t = useTranslations("menu.sessionPanel");
   const [open, setOpen] = useState(false);
@@ -39,6 +48,13 @@ export function SessionPanel({
   const [couponSubmitting, setCouponSubmitting] = useState(false);
   const [couponError, setCouponError] = useState<string | null>(null);
   const [couponSuccess, setCouponSuccess] = useState<number | null>(null);
+  const [loyaltyStep, setLoyaltyStep] = useState<"idle" | "phone" | "otp">("idle");
+  const [loyaltyPhone, setLoyaltyPhone] = useState("");
+  const [loyaltyCode, setLoyaltyCode] = useState("");
+  const [loyaltyKvkkConsent, setLoyaltyKvkkConsent] = useState(false);
+  const [loyaltySubmitting, setLoyaltySubmitting] = useState(false);
+  const [loyaltyError, setLoyaltyError] = useState<string | null>(null);
+  const [joinedLoyalty, setJoinedLoyalty] = useState(sessionCustomerId !== null);
   const { unlocked, unlock } = useSoundUnlock();
   const unlockedRef = useRef(unlocked);
   useEffect(() => {
@@ -195,6 +211,33 @@ export function SessionPanel({
     setCouponCode("");
   }
 
+  async function handleRequestLoyaltyOtp() {
+    if (!loyaltyPhone.trim()) return;
+    setLoyaltySubmitting(true);
+    setLoyaltyError(null);
+    const result = await requestLoyaltyOtp({ phone: loyaltyPhone.trim() });
+    setLoyaltySubmitting(false);
+    if (!result.ok) {
+      setLoyaltyError(t(`loyaltyErrors.${result.error}`));
+      return;
+    }
+    setLoyaltyStep("otp");
+  }
+
+  async function handleVerifyLoyaltyOtp() {
+    if (!loyaltyCode.trim() || !loyaltyKvkkConsent) return;
+    setLoyaltySubmitting(true);
+    setLoyaltyError(null);
+    const result = await verifyLoyaltyOtp({ phone: loyaltyPhone.trim(), code: loyaltyCode.trim(), kvkkConsent: loyaltyKvkkConsent });
+    setLoyaltySubmitting(false);
+    if (!result.ok) {
+      setLoyaltyError(t(`loyaltyErrors.${result.error}`));
+      return;
+    }
+    setJoinedLoyalty(true);
+    setLoyaltyStep("idle");
+  }
+
   return (
     <div className="relative">
       {readyToast && (
@@ -276,6 +319,56 @@ export function SessionPanel({
                   <p className="text-xs text-primary">{t("couponApplied", { amount: formatPrice(couponSuccess, currency) })}</p>
                 )}
                 {couponError && <p className="text-xs text-destructive">{couponError}</p>}
+              </div>
+            )}
+
+            {crmLoyaltyEnabled && orders.some((o) => o.status !== "cancelled") && (
+              <div className="flex flex-col gap-2 border-t border-border pt-2">
+                {joinedLoyalty ? (
+                  <p className="text-xs text-primary">{t("loyaltyJoined")}</p>
+                ) : loyaltyStep === "idle" ? (
+                  <Button type="button" size="sm" variant="outline" onClick={() => setLoyaltyStep("phone")}>
+                    {t("loyaltyJoin")}
+                  </Button>
+                ) : loyaltyStep === "phone" ? (
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="tel"
+                      value={loyaltyPhone}
+                      onChange={(e) => setLoyaltyPhone(e.target.value)}
+                      placeholder={t("loyaltyPhonePlaceholder")}
+                      className="h-8 flex-1 rounded-lg border border-input bg-transparent px-2.5 text-sm"
+                    />
+                    <Button type="button" size="sm" variant="outline" disabled={loyaltySubmitting || !loyaltyPhone.trim()} onClick={handleRequestLoyaltyOtp}>
+                      {t("loyaltySendCode")}
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-2">
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      value={loyaltyCode}
+                      onChange={(e) => setLoyaltyCode(e.target.value)}
+                      placeholder={t("loyaltyCodePlaceholder")}
+                      className="h-8 rounded-lg border border-input bg-transparent px-2.5 text-sm"
+                    />
+                    <label className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <input type="checkbox" checked={loyaltyKvkkConsent} onChange={(e) => setLoyaltyKvkkConsent(e.target.checked)} />
+                      {t("loyaltyKvkkConsent")}
+                    </label>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      disabled={loyaltySubmitting || !loyaltyCode.trim() || !loyaltyKvkkConsent}
+                      onClick={handleVerifyLoyaltyOtp}
+                    >
+                      {t("loyaltyVerify")}
+                    </Button>
+                  </div>
+                )}
+                {loyaltyError && <p className="text-xs text-destructive">{loyaltyError}</p>}
               </div>
             )}
           </div>

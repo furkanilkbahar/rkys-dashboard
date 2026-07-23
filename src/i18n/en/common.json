@@ -777,6 +777,21 @@
         "not_applicable": "This coupon cannot be applied to this order.",
         "unknown": "Could not apply coupon, please try again."
       },
+      "loyaltyJoin": "Join Loyalty Program",
+      "loyaltyPhonePlaceholder": "Phone number",
+      "loyaltySendCode": "Send Code",
+      "loyaltyCodePlaceholder": "Verification code",
+      "loyaltyKvkkConsent": "I consent to my personal data being processed for the loyalty program.",
+      "loyaltyVerify": "Verify",
+      "loyaltyJoined": "You've joined the loyalty program!",
+      "loyaltyErrors": {
+        "invalid_input": "Please enter a valid phone number/code.",
+        "no_session": "Your session was not found, please rescan the QR code.",
+        "rate_limited": "Too many attempts, please try again in a few minutes.",
+        "not_enabled": "The loyalty program is not active at this business.",
+        "invalid_code": "The code is incorrect or has expired.",
+        "unknown": "Could not complete, please try again."
+      },
       "status": {
         "pending": "Awaiting approval",
         "approved": "Approved",

@@ -777,6 +777,21 @@
         "not_applicable": "Bu kupon bu siparişe uygulanamıyor.",
         "unknown": "Kupon uygulanamadı, tekrar deneyin."
       },
+      "loyaltyJoin": "Sadakat Programına Katıl",
+      "loyaltyPhonePlaceholder": "Telefon numarası",
+      "loyaltySendCode": "Kod Gönder",
+      "loyaltyCodePlaceholder": "Doğrulama kodu",
+      "loyaltyKvkkConsent": "Kişisel verilerimin sadakat programı kapsamında işlenmesini onaylıyorum.",
+      "loyaltyVerify": "Doğrula",
+      "loyaltyJoined": "Sadakat programına katıldınız!",
+      "loyaltyErrors": {
+        "invalid_input": "Geçerli bir telefon numarası/kod girin.",
+        "no_session": "Oturumunuz bulunamadı, lütfen QR kodu tekrar okutun.",
+        "rate_limited": "Çok fazla deneme yapıldı, birkaç dakika sonra tekrar deneyin.",
+        "not_enabled": "Sadakat programı bu işletmede aktif değil.",
+        "invalid_code": "Kod hatalı veya süresi dolmuş.",
+        "unknown": "İşlem tamamlanamadı, tekrar deneyin."
+      },
       "status": {
         "pending": "Onay bekliyor",
         "approved": "Onaylandı",

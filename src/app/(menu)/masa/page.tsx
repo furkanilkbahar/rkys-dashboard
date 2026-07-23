@@ -9,6 +9,7 @@ import { SessionPanel } from "@/components/menu/session-panel";
 import { WaiterCallButton } from "@/components/menu/waiter-call-button";
 import type { Locale } from "@/i18n/locales";
 import { getCallTypes } from "@/lib/data/callTypes";
+import { getSessionCustomerId } from "@/lib/data/customers";
 import { getEffectiveMenu, getEnabledLocales } from "@/lib/data/menu";
 import { getGuestRatingSettings, getWaitersForRating, hasExistingRating } from "@/lib/data/ratings";
 import { getSessionOrders } from "@/lib/data/sessionOrders";
@@ -18,6 +19,7 @@ import { isEnabled } from "@/lib/modules/isEnabled";
 
 import { submitOrder } from "./actions";
 import { applyCoupon } from "./coupon-actions";
+import { requestLoyaltyOtp, verifyLoyaltyOtp } from "./loyalty-actions";
 
 export default async function MenuPage() {
   const guest = await getCurrentGuestSession();
@@ -34,14 +36,17 @@ export default async function MenuPage() {
   const locale = await getLocale();
   const tenant = await getCurrentTenant();
   const currency = tenant?.currency ?? "TRY";
-  const [categories, callTypes, sessionOrders, enabledLocales, ratingSettings, campaignsEnabled] = await Promise.all([
-    getEffectiveMenu(guest.tenantId, guest.branchId, locale),
-    getCallTypes(guest.tenantId, locale),
-    getSessionOrders(guest.tableSessionId),
-    getEnabledLocales(guest.tenantId),
-    getGuestRatingSettings(guest.tenantId),
-    isEnabled(guest.tenantId, "campaigns"),
-  ]);
+  const [categories, callTypes, sessionOrders, enabledLocales, ratingSettings, campaignsEnabled, crmLoyaltyEnabled, sessionCustomerId] =
+    await Promise.all([
+      getEffectiveMenu(guest.tenantId, guest.branchId, locale),
+      getCallTypes(guest.tenantId, locale),
+      getSessionOrders(guest.tableSessionId),
+      getEnabledLocales(guest.tenantId),
+      getGuestRatingSettings(guest.tenantId),
+      isEnabled(guest.tenantId, "campaigns"),
+      isEnabled(guest.tenantId, "crm_loyalty"),
+      getSessionCustomerId(guest.tableSessionId),
+    ]);
   const [waiters, alreadyRated] = ratingSettings.isEnabled
     ? await Promise.all([getWaitersForRating(guest.tenantId), hasExistingRating(guest.tableSessionId)])
     : [[], false];
@@ -65,6 +70,10 @@ export default async function MenuPage() {
             initialOrders={sessionOrders}
             campaignsEnabled={campaignsEnabled}
             applyCoupon={applyCoupon}
+            crmLoyaltyEnabled={crmLoyaltyEnabled}
+            sessionCustomerId={sessionCustomerId}
+            requestLoyaltyOtp={requestLoyaltyOtp}
+            verifyLoyaltyOtp={verifyLoyaltyOtp}
           />
           <LanguageSwitcher enabledLocales={enabledLocales as Locale[]} />
         </div>

@@ -49,6 +49,7 @@ Bir faz şunlar olmadan kapanmaz:
 | S27 | Kampanya/kupon: admin yüzde indirimli kampanya + kupon oluşturur, misafir sepetinde kupon kodunu uygular, indirim comps'a yazılır | 6 |
 | S28 | Mutfak istasyon filtresi: kategoriye istasyon atanır, KDS'de istasyon seçilince yalnızca o istasyonun kalemleri (ve o kalemleri içeren siparişler) görünür | 6 |
 | S29 | Tema yönetimi: admin ayarlardan temayı değiştirir, hem admin hem misafir menü tarafında doğru `data-theme` uygulanır; self-hosted paket yerel `docker build`+`docker-compose up` ile doğrulanır | 6 |
+| S30 | Müşteri kimliği: misafir telefon+OTP+KVKK onayıyla sadakat programına katılır, mevcut masa oturumu (sipariş/ödeme akışı) hiç değişmeden oturuma bağlanır | 7 |
 
 ## 4. RLS İzolasyon Testleri (entegrasyon, zorunlu şablon)
 Her yeni tablo için otomatik üretilen test çifti:
