@@ -1245,6 +1245,53 @@ export type Database = {
         }
         Relationships: []
       }
+      ingredients: {
+        Row: {
+          avg_cost_minor_per_unit: number
+          created_at: string
+          critical_level: number
+          current_stock: number
+          id: string
+          is_active: boolean
+          name: string
+          tenant_id: string
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          avg_cost_minor_per_unit?: number
+          created_at?: string
+          critical_level?: number
+          current_stock?: number
+          id?: string
+          is_active?: boolean
+          name: string
+          tenant_id: string
+          unit: string
+          updated_at?: string
+        }
+        Update: {
+          avg_cost_minor_per_unit?: number
+          created_at?: string
+          critical_level?: number
+          current_stock?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          tenant_id?: string
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ingredients_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       licenses: {
         Row: {
           created_at: string
@@ -2447,6 +2494,112 @@ export type Database = {
           },
         ]
       }
+      recipe_items: {
+        Row: {
+          id: string
+          ingredient_id: string
+          quantity_per_unit: number
+          recipe_id: string
+          tenant_id: string
+        }
+        Insert: {
+          id?: string
+          ingredient_id: string
+          quantity_per_unit: number
+          recipe_id: string
+          tenant_id: string
+        }
+        Update: {
+          id?: string
+          ingredient_id?: string
+          quantity_per_unit?: number
+          recipe_id?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recipe_items_ingredient_id_fkey"
+            columns: ["ingredient_id"]
+            isOneToOne: false
+            referencedRelation: "ingredients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recipe_items_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recipe_items_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      recipes: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string
+          tenant_id: string
+          variant_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id: string
+          tenant_id: string
+          variant_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string
+          tenant_id?: string
+          variant_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recipes_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "recipes_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recipes_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recipes_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["variant_id"]
+          },
+          {
+            foreignKeyName: "recipes_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "product_variants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       refund_item_allocations: {
         Row: {
           amount_minor: number
@@ -2954,6 +3107,88 @@ export type Database = {
           },
           {
             foreignKeyName: "staff_devices_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stock_movements: {
+        Row: {
+          branch_id: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          ingredient_id: string
+          order_id: string | null
+          quantity_delta: number
+          tenant_id: string
+          type: string
+          unit_cost_minor_snapshot: number
+        }
+        Insert: {
+          branch_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          ingredient_id: string
+          order_id?: string | null
+          quantity_delta: number
+          tenant_id: string
+          type: string
+          unit_cost_minor_snapshot?: number
+        }
+        Update: {
+          branch_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          ingredient_id?: string
+          order_id?: string | null
+          quantity_delta?: number
+          tenant_id?: string
+          type?: string
+          unit_cost_minor_snapshot?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_movements_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_movements_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "stock_movements_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_movements_ingredient_id_fkey"
+            columns: ["ingredient_id"]
+            isOneToOne: false
+            referencedRelation: "ingredients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_movements_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_movements_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "tenants"
@@ -3787,6 +4022,17 @@ export type Database = {
       current_table_session_id: { Args: never; Returns: string }
       current_tenant_id: { Args: never; Returns: string }
       custom_access_token_hook: { Args: { event: Json }; Returns: Json }
+      deduct_recipe_stock: {
+        Args: {
+          p_branch_id: string
+          p_order_id: string
+          p_product_id: string
+          p_quantity: number
+          p_tenant_id: string
+          p_variant_id: string
+        }
+        Returns: undefined
+      }
       detect_revenue_anomalies: { Args: never; Returns: undefined }
       disable_tenant_locale: { Args: { p_locale: string }; Returns: undefined }
       get_active_anomaly_alerts: {
