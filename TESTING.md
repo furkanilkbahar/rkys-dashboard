@@ -71,3 +71,6 @@ Kullanıcı fiilen manuel test yapmak istemiyor ama neyin test edildiğini görm
 ## 6. Kapsam Dışı (bilinçli)
 - %100 kapsama hedefi yok; hedef **kritik akışların** korunması.
 - Görsel piksel-regresyon testi, yük/performans testi → Faz 12 havuzu.
+
+## 7. Bilinen Test Açıkları
+- `tests/e2e/admin/menu-reorder.spec.ts` (Faz 2, kategori sürükle-bırak sıralaması): chromium-desktop ve mobile-safari'de, izole/seri çalıştırmada bile tutarlı şekilde başarısız oluyor. Faz 6 kapanış commit'inde (`1cbccf0`) de aynı şekilde başarısız olduğu doğrulandı (Faz 7 kapanışında, 2026-07-24) — sonraki fazların sebep olduğu bir regresyon değil, muhtemelen dnd-kit'in senkron `page.mouse` simülasyonuyla uyumsuzluğu. Ayrı bir görevde ele alınacak, faz kapanışlarını bloklamıyor.

@@ -61,10 +61,10 @@
 - [x] Tema yönetimi UI + 1 ek tema; **self-hosted paket** (docker-compose + lisans entegrasyonu) — S29 (Adım 4), yerel `docker build`+`docker-compose up` ile doğrulandı
 
 ## Faz 7 — CRM & Sadakat
-- [ ] Telefon+OTP müşteri hesabı (KVKK onaylı) + müşteri kartları
-- [ ] **Sadakat motoru:** damga/puan (tenant seçer) + kazanım/harcama akışları
-- [ ] **Hediye kartı modülü** (bakiye muhasebesiyle)
-- [ ] Sadakat/kampanya performans raporları
+- [x] Telefon+OTP müşteri hesabı (KVKK onaylı) + müşteri kartları — S30 (Adım 0)
+- [x] **Sadakat motoru:** damga/puan (tenant seçer) + kazanım/harcama akışları — S31 (Adım 1)
+- [x] **Hediye kartı modülü** (bakiye muhasebesiyle) — S32 (Adım 2)
+- [x] Sadakat/kampanya performans raporları — S33 (Adım 3)
 
 ## Faz 8 — Stok Derinliği & Maliyet
 - [ ] Malzeme + **reçete motoru** (satışta otomatik düşüm, ürün başına mod seçimi) + fire/sayım hareketleri
