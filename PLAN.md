@@ -41,12 +41,12 @@
 - [x] Temel rapor seti + **manuel maliyet & marj raporu** + CSV export (Excel: UTF-8 BOM'lu CSV ile karşılandı; muhasebe API adaptörü ileri faz kapsamında — D61)
 
 ## Faz 4 — SaaS Katmanı
-- [ ] Süper Admin: tenant/şube, kullanım, **modül & plan-modül yönetimi**, duyurular (banner), 2FA zorunluluk anahtarı
-- [ ] Planlar: masa limiti + **dahil şube + ek şube ücreti** enforcement; 14g kartsız trial; iyzico abonelik
-- [ ] Lisans modülü (lifetime/self-hosted) + doğrulama API
-- [ ] Pazarlama sitesi (TR/EN, modüler anlatım) + kayıt akışı + yasal set (KVKK/çerez/sözleşme/veri silme)
-- [ ] **Destek ticket modülü** (tenant talep → Süper Admin kuyruğu)
-- [ ] **Status sayfası** + uptime izleme (OPERATIONS)
+- [x] Süper Admin: tenant/şube, kullanım, **modül & plan-modül yönetimi**, duyurular (banner), 2FA zorunluluk anahtarı
+- [x] Planlar: masa limiti + **dahil şube + ek şube ücreti** enforcement; 14g kartsız trial; iyzico abonelik (mock-first)
+- [x] Lisans modülü (lifetime/self-hosted) + doğrulama API (tamamen offline, imzalı dosya)
+- [x] Pazarlama sitesi (TR/EN, modüler anlatım) + kayıt akışı + yasal set (KVKK/çerez/sözleşme/veri silme)
+- [x] **Destek ticket modülü** (tenant talep → Süper Admin kuyruğu)
+- [x] **Status sayfası** + uptime izleme (OPERATIONS) — D72 sınırı: veri modeli + manuel giriş, gerçek 3.parti alerting production'a ertelendi
 
 ## Faz 5 — Analitik Merkezi
 - [ ] Widget dashboard (sürükle-bırak) + şube kıyası
