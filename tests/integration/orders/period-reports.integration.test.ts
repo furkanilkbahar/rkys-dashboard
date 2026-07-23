@@ -189,12 +189,16 @@ describe("get_loss_report (Faz 5 Adım 1, S21)", () => {
     const { tableSessionId: refundSessionId } = await submitAndPay(owner, counterTableId, productId);
     const { data: payment } = await service
       .from("payments")
-      .select("id")
+      .select("id, amount_minor, tip_amount_minor")
       .eq("table_session_id", refundSessionId)
       .order("created_at", { ascending: false })
       .limit(1)
       .single();
-    const { data: refundId } = await owner.rpc("record_refund", { p_payment_id: payment!.id, p_reason_code_id: refundReasonId });
+    const { data: refundId } = await owner.rpc("record_refund", {
+      p_payment_id: payment!.id,
+      p_amount_minor: payment!.amount_minor + payment!.tip_amount_minor,
+      p_reason_code_id: refundReasonId,
+    });
     expect(refundId).toBeTruthy();
 
     // İptal (sebep kodlu): preparing aşamasına ilerletilir, misafir istek simülasyonu

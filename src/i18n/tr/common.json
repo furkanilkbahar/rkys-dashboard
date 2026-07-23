@@ -50,7 +50,8 @@
         "unknown": "Kaydedilemedi, tekrar deneyin.",
         "exceeds_subtotal": "İkram tutarı sipariş toplamını aşamaz.",
         "not_refundable": "Bu ödeme iade edilemez.",
-        "provider_failed": "Sağlayıcıdan iade alınamadı, tekrar deneyin."
+        "provider_failed": "Sağlayıcıdan iade alınamadı, tekrar deneyin.",
+        "exceeds_remaining": "İade tutarı kalan bakiyeyi aşamaz."
       },
       "comp": {
         "title": "İkram / İndirim",
@@ -66,7 +67,11 @@
         "button": "İade Et",
         "reason": "Sebep",
         "confirm": "İadeyi Onayla",
-        "refunded": "İade edildi"
+        "refunded": "İade edildi",
+        "partiallyRefunded": "Kısmen iade edildi",
+        "remaining": "Kalan iade edilebilir tutar",
+        "itemsTitle": "İade Edilecek Kalemler",
+        "amount": "Tutar"
       }
     },
     "order": {

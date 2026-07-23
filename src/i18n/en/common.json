@@ -50,7 +50,8 @@
         "unknown": "Could not save, please try again.",
         "exceeds_subtotal": "Comp amount cannot exceed the order total.",
         "not_refundable": "This payment cannot be refunded.",
-        "provider_failed": "Could not process refund with the provider, please try again."
+        "provider_failed": "Could not process refund with the provider, please try again.",
+        "exceeds_remaining": "Refund amount cannot exceed the remaining balance."
       },
       "comp": {
         "title": "Comp / Discount",
@@ -66,7 +67,11 @@
         "button": "Refund",
         "reason": "Reason",
         "confirm": "Confirm Refund",
-        "refunded": "Refunded"
+        "refunded": "Refunded",
+        "partiallyRefunded": "Partially refunded",
+        "remaining": "Remaining refundable amount",
+        "itemsTitle": "Items to Refund",
+        "amount": "Amount"
       }
     },
     "order": {

@@ -60,7 +60,7 @@ export async function refundPayment(input: unknown): Promise<RefundPaymentResult
     try {
       const result = await provider.refund({
         providerRef: payment.provider_ref,
-        amountMinor: payment.amount_minor + payment.tip_amount_minor,
+        amountMinor: parsed.data.amountMinor,
       });
       providerRef = result.refundRef;
     } catch {
@@ -70,13 +70,19 @@ export async function refundPayment(input: unknown): Promise<RefundPaymentResult
 
   const { data, error } = await supabase.rpc("record_refund", {
     p_payment_id: parsed.data.paymentId,
+    p_amount_minor: parsed.data.amountMinor,
     p_reason_code_id: parsed.data.reasonCodeId,
     p_note: parsed.data.note ?? undefined,
     p_provider_ref: providerRef ?? undefined,
+    p_item_allocations: parsed.data.itemAllocations ?? undefined,
   });
 
   if (error) {
     if (error.message.includes("not refundable")) return { ok: false, error: "not_refundable" };
+    if (error.message.includes("exceeds remaining payment balance") || error.message.includes("item refund exceeds paid quantity")) {
+      return { ok: false, error: "exceeds_remaining" };
+    }
+    if (error.message.includes("do not match amount")) return { ok: false, error: "invalid_input" };
     if (error.message.includes("forbidden")) return { ok: false, error: "forbidden" };
     return { ok: false, error: "unknown" };
   }

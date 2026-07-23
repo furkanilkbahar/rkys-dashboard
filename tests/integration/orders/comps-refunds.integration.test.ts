@@ -176,6 +176,7 @@ describe("RPC: record_refund (S11)", () => {
     const waiter = await signInAsSeededOwner(SEED.acme.waiterEmail);
     const { error } = await waiter.rpc("record_refund", {
       p_payment_id: paymentId!,
+      p_amount_minor: subtotalMinor,
       p_reason_code_id: reasonCodeId,
     });
     expect(error).not.toBeNull();
@@ -197,6 +198,7 @@ describe("RPC: record_refund (S11)", () => {
 
     const { data: refundId, error } = await owner.rpc("record_refund", {
       p_payment_id: paymentId!,
+      p_amount_minor: subtotalMinor + 300,
       p_reason_code_id: reasonCodeId,
       p_note: "müşteri şikayeti",
     });
@@ -243,6 +245,7 @@ describe("RPC: record_refund (S11)", () => {
     const mockRefundRef = `mock-refund-${providerRef}`;
     const { data: refundId, error } = await owner.rpc("record_refund", {
       p_payment_id: payment!.id,
+      p_amount_minor: 8000,
       p_reason_code_id: reasonCodeId,
       p_provider_ref: mockRefundRef,
     });
@@ -263,10 +266,18 @@ describe("RPC: record_refund (S11)", () => {
     });
     const reasonCodeId = await getReasonCodeId("refund");
 
-    const { error: firstError } = await owner.rpc("record_refund", { p_payment_id: paymentId!, p_reason_code_id: reasonCodeId });
+    const { error: firstError } = await owner.rpc("record_refund", {
+      p_payment_id: paymentId!,
+      p_amount_minor: subtotalMinor,
+      p_reason_code_id: reasonCodeId,
+    });
     expect(firstError).toBeNull();
 
-    const { error: secondError } = await owner.rpc("record_refund", { p_payment_id: paymentId!, p_reason_code_id: reasonCodeId });
+    const { error: secondError } = await owner.rpc("record_refund", {
+      p_payment_id: paymentId!,
+      p_amount_minor: subtotalMinor,
+      p_reason_code_id: reasonCodeId,
+    });
     expect(secondError).not.toBeNull();
     expect(secondError?.message).toContain("not refundable");
   });

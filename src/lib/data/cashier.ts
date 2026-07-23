@@ -158,6 +158,14 @@ export async function getActiveSessionBalances(tenantId: string, branchId: strin
     .sort((a, b) => Number(b.checkRequested) - Number(a.checkRequested));
 }
 
+export type RefundableItem = {
+  orderItemId: string;
+  name: string;
+  variantName: string | null;
+  unitPriceMinor: number;
+  remainingQuantity: number;
+};
+
 export type RecentPayment = {
   id: string;
   tableLabel: string;
@@ -165,14 +173,16 @@ export type RecentPayment = {
   provider: string;
   amountMinor: number;
   tipAmountMinor: number;
-  status: "pending" | "completed" | "failed" | "refunded";
+  refundedMinor: number;
+  status: "pending" | "completed" | "failed" | "refunded" | "partially_refunded";
   createdAt: string;
+  refundableItems: RefundableItem[];
 };
 
-// İade akışı için son ödemeler (S11): şubenin en son N ödemesi, iade
-// düğmesinin hedefleyeceği liste. Gün sonu/raporlama Adım 6'da ayrı bir
-// business-date bazlı sorgu ile gelecek — burası yalnızca kasa ekranının
-// "son işlemler" görünümü.
+// İade akışı için son ödemeler (S11, kısmi/kalem iade Faz 6 Adım 1): şubenin
+// en son N ödemesi + kalan iade edilebilir tutar + (varsa) kalem bazlı iade
+// için kalan miktarlar. refundableItems yalnızca "kalem seç" modunda ödenmiş
+// payment_item_allocations'ı olan ödemeler için doludur.
 export async function getRecentPayments(tenantId: string, branchId: string, limit = 20): Promise<RecentPayment[]> {
   const supabase = await createClient();
   const { data } = await supabase
@@ -180,19 +190,67 @@ export async function getRecentPayments(tenantId: string, branchId: string, limi
     .select("id, method, provider, amount_minor, tip_amount_minor, status, created_at, table_sessions(tables(label))")
     .eq("tenant_id", tenantId)
     .eq("branch_id", branchId)
-    .in("status", ["completed", "refunded"])
+    .in("status", ["completed", "refunded", "partially_refunded"])
     .order("created_at", { ascending: false })
     .limit(limit);
 
-  return (data ?? []).map((p) => ({
+  const payments = data ?? [];
+  const paymentIds = payments.map((p) => p.id);
+  if (paymentIds.length === 0) return [];
+
+  const [refundsRes, allocationsRes] = await Promise.all([
+    supabase.from("refunds").select("id, payment_id, amount_minor").in("payment_id", paymentIds),
+    supabase
+      .from("payment_item_allocations")
+      .select("payment_id, order_item_id, quantity, order_items(product_name_snapshot, variant_name_snapshot, unit_price_minor)")
+      .in("payment_id", paymentIds),
+  ]);
+
+  const refundedMinorByPayment = new Map<string, number>();
+  const refundIdsByPayment = new Map<string, string[]>();
+  for (const r of refundsRes.data ?? []) {
+    refundedMinorByPayment.set(r.payment_id, (refundedMinorByPayment.get(r.payment_id) ?? 0) + r.amount_minor);
+    refundIdsByPayment.set(r.payment_id, [...(refundIdsByPayment.get(r.payment_id) ?? []), r.id]);
+  }
+
+  const allRefundIds = [...refundIdsByPayment.values()].flat();
+  const refundedQuantityByItem = new Map<string, number>();
+  if (allRefundIds.length > 0) {
+    const { data: refundAllocations } = await supabase
+      .from("refund_item_allocations")
+      .select("refund_id, order_item_id, quantity")
+      .in("refund_id", allRefundIds);
+    for (const ra of refundAllocations ?? []) {
+      refundedQuantityByItem.set(ra.order_item_id, (refundedQuantityByItem.get(ra.order_item_id) ?? 0) + ra.quantity);
+    }
+  }
+
+  const refundableItemsByPayment = new Map<string, RefundableItem[]>();
+  for (const a of allocationsRes.data ?? []) {
+    const remainingQuantity = a.quantity - (refundedQuantityByItem.get(a.order_item_id) ?? 0);
+    if (remainingQuantity <= 0 || !a.order_items) continue;
+    const list = refundableItemsByPayment.get(a.payment_id) ?? [];
+    list.push({
+      orderItemId: a.order_item_id,
+      name: a.order_items.product_name_snapshot,
+      variantName: a.order_items.variant_name_snapshot,
+      unitPriceMinor: a.order_items.unit_price_minor,
+      remainingQuantity,
+    });
+    refundableItemsByPayment.set(a.payment_id, list);
+  }
+
+  return payments.map((p) => ({
     id: p.id,
     tableLabel: p.table_sessions?.tables?.label ?? "?",
     method: p.method as RecentPayment["method"],
     provider: p.provider,
     amountMinor: p.amount_minor,
     tipAmountMinor: p.tip_amount_minor,
+    refundedMinor: refundedMinorByPayment.get(p.id) ?? 0,
     status: p.status as RecentPayment["status"],
     createdAt: p.created_at,
+    refundableItems: refundableItemsByPayment.get(p.id) ?? [],
   }));
 }
 

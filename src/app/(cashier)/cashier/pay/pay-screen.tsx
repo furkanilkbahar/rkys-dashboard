@@ -131,7 +131,25 @@ function RecentPaymentRow({
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [reasonCodeId, setReasonCodeId] = useState(refundReasons[0]?.id ?? "");
+  const [selectedItemIds, setSelectedItemIds] = useState<Set<string>>(new Set());
+  const [manualAmount, setManualAmount] = useState("");
   const [error, setError] = useState<string | null>(null);
+
+  const remainingMinor = payment.amountMinor + payment.tipAmountMinor - payment.refundedMinor;
+  const isRefundable = payment.status === "completed" || payment.status === "partially_refunded";
+
+  const selectedItemsAmountMinor = payment.refundableItems
+    .filter((item) => selectedItemIds.has(item.orderItemId))
+    .reduce((sum, item) => sum + item.unitPriceMinor * item.remainingQuantity, 0);
+
+  function toggleItemSelection(itemId: string) {
+    setSelectedItemIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(itemId)) next.delete(itemId);
+      else next.add(itemId);
+      return next;
+    });
+  }
 
   async function submit() {
     setError(null);
@@ -139,7 +157,27 @@ function RecentPaymentRow({
       setError(tErrors("invalid_input"));
       return;
     }
-    const result = await refundPayment({ paymentId: payment.id, reasonCodeId });
+
+    if (selectedItemIds.size > 0) {
+      const itemAllocations = payment.refundableItems
+        .filter((item) => selectedItemIds.has(item.orderItemId))
+        .map((item) => ({ orderItemId: item.orderItemId, quantity: item.remainingQuantity, amountMinor: item.unitPriceMinor * item.remainingQuantity }));
+      const result = await refundPayment({ paymentId: payment.id, amountMinor: selectedItemsAmountMinor, reasonCodeId, itemAllocations });
+      if (!result.ok) {
+        setError(tErrors(result.error));
+        return;
+      }
+      setSelectedItemIds(new Set());
+      router.refresh();
+      return;
+    }
+
+    const amountMinor = Math.round(parseFloat(manualAmount.replace(",", ".")) * 100);
+    if (!amountMinor || amountMinor <= 0) {
+      setError(tErrors("invalid_input"));
+      return;
+    }
+    const result = await refundPayment({ paymentId: payment.id, amountMinor, reasonCodeId });
     if (!result.ok) {
       setError(tErrors(result.error));
       return;
@@ -153,34 +191,73 @@ function RecentPaymentRow({
         <span>
           {payment.tableLabel} — {formatPrice(payment.amountMinor + payment.tipAmountMinor, currency)}
         </span>
-        {payment.status === "refunded" ? (
-          <Badge variant="secondary">{t("refunded")}</Badge>
-        ) : open ? null : (
-          <Button type="button" size="sm" variant="outline" onClick={() => setOpen(true)}>
-            {t("button")}
-          </Button>
-        )}
+        <span className="flex items-center gap-2">
+          {payment.status === "refunded" && <Badge variant="secondary">{t("refunded")}</Badge>}
+          {payment.status === "partially_refunded" && <Badge variant="secondary">{t("partiallyRefunded")}</Badge>}
+          {isRefundable && !open && (
+            <Button type="button" size="sm" variant="outline" onClick={() => { setOpen(true); setManualAmount((remainingMinor / 100).toString()); }}>
+              {t("button")}
+            </Button>
+          )}
+        </span>
       </div>
-      {open && payment.status === "completed" && (
-        <div className="flex flex-wrap items-end gap-2">
-          <div className="flex flex-col gap-1">
-            <Label htmlFor={`refund-reason-${payment.id}`}>{t("reason")}</Label>
-            <Select value={reasonCodeId} onValueChange={(v) => v && setReasonCodeId(v)}>
-              <SelectTrigger id={`refund-reason-${payment.id}`} className="w-36" aria-label={t("reason")}>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {refundReasons.map((r) => (
-                  <SelectItem key={r.id} value={r.id}>
-                    {r.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+      {open && isRefundable && (
+        <div className="flex flex-col gap-2">
+          <p className="text-xs text-muted-foreground">
+            {t("remaining")}: {formatPrice(remainingMinor, currency)}
+          </p>
+
+          {payment.refundableItems.length > 0 && (
+            <div className="flex flex-col gap-1">
+              <Label>{t("itemsTitle")}</Label>
+              {payment.refundableItems.map((item) => (
+                <label key={item.orderItemId} className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    aria-label={item.name}
+                    checked={selectedItemIds.has(item.orderItemId)}
+                    onChange={() => toggleItemSelection(item.orderItemId)}
+                    className="size-4"
+                  />
+                  {item.name}
+                  {item.variantName ? ` (${item.variantName})` : ""} × {item.remainingQuantity} —{" "}
+                  {formatPrice(item.unitPriceMinor * item.remainingQuantity, currency)}
+                </label>
+              ))}
+            </div>
+          )}
+
+          <div className="flex flex-wrap items-end gap-2">
+            <div className="flex flex-col gap-1">
+              <Label htmlFor={`refund-amount-${payment.id}`}>{t("amount")}</Label>
+              <Input
+                id={`refund-amount-${payment.id}`}
+                className="w-24"
+                inputMode="decimal"
+                value={manualAmount}
+                disabled={selectedItemIds.size > 0}
+                onChange={(e) => setManualAmount(e.target.value)}
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <Label htmlFor={`refund-reason-${payment.id}`}>{t("reason")}</Label>
+              <Select value={reasonCodeId} onValueChange={(v) => v && setReasonCodeId(v)}>
+                <SelectTrigger id={`refund-reason-${payment.id}`} className="w-36" aria-label={t("reason")}>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {refundReasons.map((r) => (
+                    <SelectItem key={r.id} value={r.id}>
+                      {r.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <Button type="button" size="sm" onClick={submit}>
+              {t("confirm")}
+            </Button>
           </div>
-          <Button type="button" size="sm" onClick={submit}>
-            {t("confirm")}
-          </Button>
           {error && <p className="text-xs text-destructive">{error}</p>}
         </div>
       )}
