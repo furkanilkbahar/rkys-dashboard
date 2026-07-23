@@ -144,6 +144,7 @@
       "campaigns": "Kampanyalar",
       "loyalty": "Sadakat",
       "giftCards": "Hediye Kartları",
+      "ingredients": "Malzemeler",
       "reports": "Raporlar",
       "support": "Destek",
       "settings": "Ayarlar",
@@ -206,6 +207,12 @@
         "price": "Fiyat (₺)",
         "stock": "Stok",
         "stockUnlimitedHint": "Boş bırakılırsa stok takip edilmez.",
+        "trackMode": {
+          "label": "Stok Takip Modu",
+          "simple": "Basit adet",
+          "recipe": "Reçeteden düş",
+          "editRecipe": "Reçeteyi Düzenle →"
+        },
         "soldOut": "Tükendi olarak işaretle",
         "active": "Aktif",
         "addProduct": "+ Ürün Ekle",
@@ -732,6 +739,37 @@
         "duplicate_code": "Bu kod zaten kullanılıyor.",
         "not_enabled": "Hediye kartı modülü aktif değil.",
         "unknown": "Oluşturulamadı, tekrar deneyin."
+      }
+    },
+    "ingredients": {
+      "pageTitle": "Malzemeler",
+      "title": "Malzemeler",
+      "empty": "Henüz malzeme yok.",
+      "name": "Ad",
+      "unit": "Birim",
+      "criticalLevel": "Kritik Seviye",
+      "criticalBadge": "Kritik",
+      "stock": "Mevcut Stok",
+      "add": "+ Malzeme Ekle",
+      "save": "Kaydet",
+      "recipe": {
+        "pageTitle": "Reçete",
+        "productLevel": "Ürün (varyantsız)",
+        "items": "Malzemeler",
+        "emptyItems": "Henüz malzeme eklenmedi.",
+        "ingredient": "Malzeme",
+        "quantity": "Miktar",
+        "remove": "Kaldır",
+        "addItem": "+ Malzeme Ekle",
+        "noIngredientsHint": "Önce Malzemeler sayfasından malzeme ekleyin.",
+        "save": "Reçeteyi Kaydet",
+        "savedHint": "Kaydedildi."
+      },
+      "errors": {
+        "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
+        "forbidden": "Bu işlem için yetkiniz yok.",
+        "not_enabled": "Stok modülü aktif değil.",
+        "unknown": "Kaydedilemedi, tekrar deneyin."
       }
     }
   },

@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireAdminActor } from "@/lib/auth/adminGuard";
 import { getAdminCategory } from "@/lib/data/adminMenu";
+import { isEnabled } from "@/lib/modules/isEnabled";
 
 import { createProduct } from "../../../actions";
 import { ProductForm } from "../product-form";
@@ -18,6 +19,7 @@ export default async function NewProductPage({ params }: { params: Promise<{ cat
   if (!category) {
     notFound();
   }
+  const recipesEnabled = await isEnabled(actor.tenantId, "recipes");
 
   return (
     <div className="flex flex-col gap-4">
@@ -29,7 +31,12 @@ export default async function NewProductPage({ params }: { params: Promise<{ cat
           <CardTitle>{t("product.createTitle")}</CardTitle>
         </CardHeader>
         <CardContent>
-          <ProductForm categoryId={categoryId} action={createProduct} redirectTo={`/admin/menu/${categoryId}`} />
+          <ProductForm
+            categoryId={categoryId}
+            recipesEnabled={recipesEnabled}
+            action={createProduct}
+            redirectTo={`/admin/menu/${categoryId}`}
+          />
         </CardContent>
       </Card>
     </div>

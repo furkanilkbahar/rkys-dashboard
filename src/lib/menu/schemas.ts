@@ -38,6 +38,7 @@ export const productFormSchema = z.object({
   categoryId: z.uuid(),
   basePrice: z.string().regex(PRICE_PATTERN, "invalid_price"),
   stockQuantity: z.union([z.literal(""), z.string().regex(STOCK_PATTERN, "invalid_stock")]),
+  trackMode: z.enum(["simple", "recipe"]),
   isSoldOut: z.boolean(),
   isActive: z.boolean(),
   nameTr: z.string().min(1, "required"),

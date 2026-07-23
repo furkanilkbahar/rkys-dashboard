@@ -144,6 +144,7 @@
       "campaigns": "Campaigns",
       "loyalty": "Loyalty",
       "giftCards": "Gift Cards",
+      "ingredients": "Ingredients",
       "reports": "Reports",
       "support": "Support",
       "settings": "Settings",
@@ -206,6 +207,12 @@
         "price": "Price (₺)",
         "stock": "Stock",
         "stockUnlimitedHint": "Leave empty to skip stock tracking.",
+        "trackMode": {
+          "label": "Stock Tracking Mode",
+          "simple": "Simple count",
+          "recipe": "Deduct from recipe",
+          "editRecipe": "Edit Recipe →"
+        },
         "soldOut": "Mark as sold out",
         "active": "Active",
         "addProduct": "+ Add Product",
@@ -732,6 +739,37 @@
         "duplicate_code": "This code is already in use.",
         "not_enabled": "The gift card module is not active.",
         "unknown": "Could not issue, please try again."
+      }
+    },
+    "ingredients": {
+      "pageTitle": "Ingredients",
+      "title": "Ingredients",
+      "empty": "No ingredients yet.",
+      "name": "Name",
+      "unit": "Unit",
+      "criticalLevel": "Critical Level",
+      "criticalBadge": "Critical",
+      "stock": "Current Stock",
+      "add": "+ Add Ingredient",
+      "save": "Save",
+      "recipe": {
+        "pageTitle": "Recipe",
+        "productLevel": "Product (no variant)",
+        "items": "Ingredients",
+        "emptyItems": "No ingredients added yet.",
+        "ingredient": "Ingredient",
+        "quantity": "Quantity",
+        "remove": "Remove",
+        "addItem": "+ Add Ingredient",
+        "noIngredientsHint": "Add ingredients on the Ingredients page first.",
+        "save": "Save Recipe",
+        "savedHint": "Saved."
+      },
+      "errors": {
+        "invalid_input": "Please check the information you entered.",
+        "forbidden": "You don't have permission for this action.",
+        "not_enabled": "The inventory module is not active.",
+        "unknown": "Could not save, please try again."
       }
     }
   },

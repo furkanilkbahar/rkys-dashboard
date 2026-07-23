@@ -2,6 +2,7 @@
 
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { useTranslations } from "next-intl";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -9,6 +10,7 @@ import { Controller, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { productFormSchema, type MenuActionResult } from "@/lib/menu/schemas";
@@ -17,6 +19,7 @@ type ProductFormValues = {
   categoryId: string;
   basePrice: string;
   stockQuantity: string;
+  trackMode: "simple" | "recipe";
   isSoldOut: boolean;
   isActive: boolean;
   nameTr: string;
@@ -31,14 +34,18 @@ function toMajor(priceMinor: number): string {
 
 export function ProductForm({
   categoryId,
+  productId,
   initial,
+  recipesEnabled = false,
   action,
   redirectTo,
 }: {
   categoryId: string;
+  productId?: string;
   initial?: {
     basePriceMinor: number;
     stockQuantity: number | null;
+    trackMode: "simple" | "recipe";
     isSoldOut: boolean;
     isActive: boolean;
     nameTr: string;
@@ -46,6 +53,7 @@ export function ProductForm({
     descriptionTr: string;
     descriptionEn: string;
   };
+  recipesEnabled?: boolean;
   action: (input: unknown) => Promise<MenuActionResult>;
   redirectTo: string;
 }) {
@@ -65,6 +73,7 @@ export function ProductForm({
           categoryId,
           basePrice: toMajor(initial.basePriceMinor),
           stockQuantity: initial.stockQuantity === null ? "" : String(initial.stockQuantity),
+          trackMode: initial.trackMode,
           isSoldOut: initial.isSoldOut,
           isActive: initial.isActive,
           nameTr: initial.nameTr,
@@ -76,6 +85,7 @@ export function ProductForm({
           categoryId,
           basePrice: "",
           stockQuantity: "",
+          trackMode: "simple",
           isSoldOut: false,
           isActive: true,
           nameTr: "",
@@ -84,6 +94,10 @@ export function ProductForm({
           descriptionEn: "",
         },
   });
+  // watch() React Compiler'ı devre dışı bırakıyor (loyalty-manager.tsx ile
+  // aynı çözüm) — Controller'ın onChange'i hem react-hook-form state'ini hem
+  // bu yerel state'i günceller.
+  const [trackMode, setTrackMode] = useState<"simple" | "recipe">(initial?.trackMode ?? "simple");
 
   async function onSubmit(values: ProductFormValues) {
     setServerError(null);
@@ -137,6 +151,38 @@ export function ProductForm({
           <p className="text-xs text-muted-foreground">{t("product.stockUnlimitedHint")}</p>
         </div>
       </div>
+
+      {recipesEnabled && (
+        <div className="flex flex-col gap-1">
+          <Label htmlFor="trackMode">{t("product.trackMode.label")}</Label>
+          <Controller
+            control={control}
+            name="trackMode"
+            render={({ field }) => (
+              <Select
+                value={field.value}
+                onValueChange={(value) => {
+                  field.onChange(value);
+                  setTrackMode((value ?? "simple") as "simple" | "recipe");
+                }}
+              >
+                <SelectTrigger id="trackMode" aria-label={t("product.trackMode.label")} className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="simple">{t("product.trackMode.simple")}</SelectItem>
+                  <SelectItem value="recipe">{t("product.trackMode.recipe")}</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          />
+          {trackMode === "recipe" && productId && (
+            <Link href={`/admin/ingredients/recipes/${productId}`} className="text-xs text-primary hover:underline">
+              {t("product.trackMode.editRecipe")}
+            </Link>
+          )}
+        </div>
+      )}
 
       <div className="flex items-center gap-2">
         <Controller

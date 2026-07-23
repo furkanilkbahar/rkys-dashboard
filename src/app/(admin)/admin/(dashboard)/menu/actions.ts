@@ -109,7 +109,7 @@ export async function createProduct(input: unknown): Promise<MenuActionResult> {
     .insert({
       tenant_id: actor.tenantId,
       category_id: parsed.data.categoryId,
-      track_mode: "simple",
+      track_mode: parsed.data.trackMode,
       base_price_minor: parsed.data.basePrice,
       stock_quantity: parsed.data.stockQuantity,
       is_sold_out: parsed.data.isSoldOut,
@@ -141,6 +141,7 @@ export async function updateProduct(productId: string, input: unknown): Promise<
     .from("products")
     .update({
       category_id: parsed.data.categoryId,
+      track_mode: parsed.data.trackMode,
       base_price_minor: parsed.data.basePrice,
       stock_quantity: parsed.data.stockQuantity,
       is_sold_out: parsed.data.isSoldOut,

@@ -6,6 +6,7 @@ import { ImageUploader } from "@/components/admin/image-uploader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireAdminActor } from "@/lib/auth/adminGuard";
 import { getAdminCategory, getAdminProduct, getProductGallery } from "@/lib/data/adminMenu";
+import { isEnabled } from "@/lib/modules/isEnabled";
 
 import {
   createExtra,
@@ -38,6 +39,7 @@ export default async function ProductDetailPage({
 
   const { product, variants, extras } = result;
   const gallery = await getProductGallery(actor.tenantId);
+  const recipesEnabled = await isEnabled(actor.tenantId, "recipes");
 
   return (
     <div className="flex flex-col gap-6">
@@ -58,9 +60,12 @@ export default async function ProductDetailPage({
           />
           <ProductForm
             categoryId={categoryId}
+            productId={productId}
+            recipesEnabled={recipesEnabled}
             initial={{
               basePriceMinor: product.basePriceMinor,
               stockQuantity: product.stockQuantity,
+              trackMode: product.trackMode,
               isSoldOut: product.isSoldOut,
               isActive: product.isActive,
               nameTr: product.name.tr,
