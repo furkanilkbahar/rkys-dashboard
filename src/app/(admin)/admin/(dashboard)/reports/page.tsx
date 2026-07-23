@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 
 import { CloseDayButton } from "@/components/admin/close-day-button";
 import { ProductCostRow } from "@/components/admin/product-cost-row";
@@ -7,6 +7,7 @@ import { can } from "@/lib/auth/can";
 import { requireAdminActor } from "@/lib/auth/adminGuard";
 import { getAdminTenantSettings } from "@/lib/data/adminSettings";
 import { getDefaultBranchId } from "@/lib/data/branch";
+import { getLossReport, getPeriodRevenueReport } from "@/lib/data/periodReports";
 import { getProductsWithCosts } from "@/lib/data/productCosts";
 import {
   getHourlyDensity,
@@ -27,12 +28,35 @@ function todayIso(timezone: string) {
   return new Intl.DateTimeFormat("en-CA", { timeZone: timezone }).format(new Date());
 }
 
-export default async function AdminReportsPage({ searchParams }: { searchParams: Promise<{ date?: string }> }) {
+// YoY kıyası: aynı aralığın bir önceki yılı — takvim tarihi aritmetiği,
+// saat dilimi dönüşümü gerekmez (ikisi de zaten tenant saat dilimindeki
+// business_date'ler üzerinden hesaplanmış daily_sales_summary'den gelir).
+function shiftYear(dateIso: string, deltaYears: number): string {
+  const [year, month, day] = dateIso.split("-").map(Number);
+  const shifted = new Date(Date.UTC(year + deltaYears, month - 1, day));
+  return shifted.toISOString().slice(0, 10);
+}
+
+function daysBeforeIso(dateIso: string, days: number): string {
+  const [year, month, day] = dateIso.split("-").map(Number);
+  const shifted = new Date(Date.UTC(year, month - 1, day - days));
+  return shifted.toISOString().slice(0, 10);
+}
+
+export default async function AdminReportsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ date?: string; periodStart?: string; periodEnd?: string }>;
+}) {
   const actor = await requireAdminActor();
   const t = await getTranslations("admin.reports");
-  const { date } = await searchParams;
+  const locale = await getLocale();
+  const { date, periodStart, periodEnd } = await searchParams;
   const tenantSettings = await getAdminTenantSettings(actor.tenantId);
-  const businessDate = date ?? todayIso(tenantSettings?.timezone ?? "UTC");
+  const today = todayIso(tenantSettings?.timezone ?? "UTC");
+  const businessDate = date ?? today;
+  const periodStartDate = periodStart ?? daysBeforeIso(today, 29);
+  const periodEndDate = periodEnd ?? today;
 
   const canViewRevenue = await can(actor, "reports.revenue");
   if (!canViewRevenue) {
@@ -45,6 +69,7 @@ export default async function AdminReportsPage({ searchParams }: { searchParams:
   }
 
   const canViewProfit = await can(actor, "reports.profit");
+  const canViewLoss = await can(actor, "reports.loss");
   const branchId = await getDefaultBranchId(actor.tenantId);
   if (!branchId) {
     notFound();
@@ -52,15 +77,19 @@ export default async function AdminReportsPage({ searchParams }: { searchParams:
 
   const currency = tenantSettings?.currency ?? "TRY";
 
-  const [revenue, topProducts, hourlyDensity, shifts, dayClosed, marginRows, products] = await Promise.all([
-    getRevenueReport(branchId, businessDate),
-    getTopProducts(branchId, businessDate),
-    getHourlyDensity(branchId, businessDate),
-    getShiftsForDate(branchId, businessDate),
-    isBusinessDateClosed(branchId),
-    canViewProfit ? getMarginReport(branchId, businessDate) : Promise.resolve([]),
-    canViewProfit ? getProductsWithCosts(actor.tenantId) : Promise.resolve([]),
-  ]);
+  const [revenue, topProducts, hourlyDensity, shifts, dayClosed, marginRows, products, periodRevenue, previousYearRevenue, lossRows] =
+    await Promise.all([
+      getRevenueReport(branchId, businessDate),
+      getTopProducts(branchId, businessDate),
+      getHourlyDensity(branchId, businessDate),
+      getShiftsForDate(branchId, businessDate),
+      isBusinessDateClosed(branchId),
+      canViewProfit ? getMarginReport(branchId, businessDate) : Promise.resolve([]),
+      canViewProfit ? getProductsWithCosts(actor.tenantId) : Promise.resolve([]),
+      getPeriodRevenueReport(branchId, periodStartDate, periodEndDate),
+      getPeriodRevenueReport(branchId, shiftYear(periodStartDate, -1), shiftYear(periodEndDate, -1)),
+      canViewLoss ? getLossReport(actor.tenantId, branchId, periodStartDate, periodEndDate, locale) : Promise.resolve([]),
+    ]);
 
   return (
     <div className="flex flex-col gap-8">
@@ -180,6 +209,88 @@ export default async function AdminReportsPage({ searchParams }: { searchParams:
           ))}
         </section>
       )}
+
+      <section className="flex flex-col gap-4">
+        <h2 className="text-base font-semibold">{t("period.title")}</h2>
+        <form className="flex flex-wrap items-end gap-2">
+          <div className="flex flex-col gap-1">
+            <label htmlFor="period-start" className="text-sm font-medium">
+              {t("period.start")}
+            </label>
+            <input
+              id="period-start"
+              type="date"
+              name="periodStart"
+              defaultValue={periodStartDate}
+              className="h-8 rounded-lg border border-input bg-transparent px-2.5 text-sm"
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label htmlFor="period-end" className="text-sm font-medium">
+              {t("period.end")}
+            </label>
+            <input
+              id="period-end"
+              type="date"
+              name="periodEnd"
+              defaultValue={periodEndDate}
+              className="h-8 rounded-lg border border-input bg-transparent px-2.5 text-sm"
+            />
+          </div>
+          <button type="submit" className="h-8 rounded-lg border border-input px-3 text-sm">
+            {t("period.apply")}
+          </button>
+        </form>
+
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="flex flex-col gap-2 rounded-md border border-border p-3">
+            <h3 className="text-sm font-semibold">{t("period.currentPeriod")}</h3>
+            {periodRevenue ? (
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <p>{t("revenue")}: {formatPrice(periodRevenue.revenueMinor, currency)}</p>
+                <p>{t("period.orderCount")}: {periodRevenue.orderCount}</p>
+                <p>{t("comps")}: {formatPrice(periodRevenue.compsMinor, currency)}</p>
+                <p>{t("refunds")}: {formatPrice(periodRevenue.refundsMinor, currency)}</p>
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">{t("period.empty")}</p>
+            )}
+          </div>
+          <div className="flex flex-col gap-2 rounded-md border border-border p-3">
+            <h3 className="text-sm font-semibold">{t("period.previousYear")}</h3>
+            {previousYearRevenue ? (
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <p>{t("revenue")}: {formatPrice(previousYearRevenue.revenueMinor, currency)}</p>
+                <p>{t("period.orderCount")}: {previousYearRevenue.orderCount}</p>
+                <p>{t("comps")}: {formatPrice(previousYearRevenue.compsMinor, currency)}</p>
+                <p>{t("refunds")}: {formatPrice(previousYearRevenue.refundsMinor, currency)}</p>
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">{t("period.empty")}</p>
+            )}
+          </div>
+        </div>
+
+        {canViewLoss && (
+          <div className="flex flex-col gap-2">
+            <h3 className="text-sm font-semibold">{t("period.lossTitle")}</h3>
+            {lossRows.length === 0 && <p className="text-sm text-muted-foreground">{t("period.lossEmpty")}</p>}
+            {lossRows.map((row, index) => (
+              <div
+                key={`${row.source}-${row.reasonCodeId ?? "none"}-${index}`}
+                className="flex items-center justify-between text-sm"
+              >
+                <span>
+                  {t(`period.source.${row.source}`)} — {row.reasonKey ?? t("period.noReason")}
+                </span>
+                <span>
+                  {formatPrice(row.amountMinor, currency)} ({row.itemCount} {t("period.count")})
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
 
       <section className="flex flex-col gap-2">
         <h2 className="text-base font-semibold">{t("closeDayTitle")}</h2>

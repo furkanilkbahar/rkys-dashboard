@@ -3,6 +3,7 @@ export const PERMISSION_KEYS = [
   "refund",
   "reports.revenue",
   "reports.profit",
+  "reports.loss",
   "menu.edit",
   "cash.open_close",
   "session.move",

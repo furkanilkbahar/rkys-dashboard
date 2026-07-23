@@ -23,6 +23,14 @@ export async function loginAsAcmeOwner(page: Page, baseURL: string) {
   await page.waitForURL(/\/admin$/);
 }
 
+export async function loginAsAcmeManager(page: Page, baseURL: string) {
+  await page.goto(acmeUrl(baseURL, "/admin/login"));
+  await page.getByLabel("E-posta").fill("manager@acme.test");
+  await page.getByLabel("Şifre").fill("password123");
+  await page.getByRole("button", { name: "Giriş yap" }).click();
+  await page.waitForURL(/\/admin$/);
+}
+
 export async function loginAsBetaOwner(page: Page, baseURL: string) {
   await page.goto(betaUrl(baseURL, "/admin/login"));
   await page.getByLabel("E-posta").fill("owner@beta.test");

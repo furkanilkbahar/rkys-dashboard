@@ -40,6 +40,7 @@ Bir faz şunlar olmadan kapanmaz:
 | S18 | Hesap bölme (eşit) ve bahşiş akışı uçtan uca | 3/6 |
 | S19 | Değerlendirme: oturum kapanınca yıldız+yorum+garson puanı istenir; 4-5★ Google'a yönlenir, ≤3★ içeride kalır | 3 |
 | S20 | Kayıt: pazarlama sitesinden self-servis kayıt → yeni tenant oluşur, otomatik giriş yapılıp onboarding'e düşer; aynı alt alan adı ikinci kez kullanılamaz | 4 |
+| S21 | Dönem Raporu: tarih aralığı seçilince toplam + geçen yıl kıyası güncellenir; `reports.loss` izni olan personel kayıp-kaçak tablosunu görür | 5 |
 
 ## 4. RLS İzolasyon Testleri (entegrasyon, zorunlu şablon)
 Her yeni tablo için otomatik üretilen test çifti:

@@ -299,6 +299,7 @@
         "refund": "İade",
         "reports_revenue": "Ciro Raporu",
         "reports_profit": "Kâr Raporu",
+        "reports_loss": "Kayıp-Kaçak Raporu",
         "menu_edit": "Menü Düzenleme",
         "cash_open_close": "Kasa Aç/Kapa",
         "session_move": "Masa Taşıma",
@@ -558,6 +559,26 @@
         "already_closed": "Bu iş günü zaten kapatılmış.",
         "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
         "unknown": "İşlem başarısız, tekrar deneyin."
+      },
+      "period": {
+        "title": "Dönem Raporu",
+        "start": "Başlangıç",
+        "end": "Bitiş",
+        "apply": "Uygula",
+        "empty": "Bu dönem için veri yok.",
+        "currentPeriod": "Seçilen Dönem",
+        "previousYear": "Geçen Yıl (Aynı Dönem)",
+        "orderCount": "Sipariş Sayısı",
+        "lossTitle": "Kayıp-Kaçak Raporu",
+        "lossEmpty": "Bu dönemde kayıp-kaçak kaydı yok.",
+        "source": {
+          "comp": "İkram/İndirim",
+          "refund": "İade",
+          "cancel": "İptal"
+        },
+        "noReason": "Sebep belirtilmemiş",
+        "amount": "Tutar",
+        "count": "Adet"
       }
     }
   },

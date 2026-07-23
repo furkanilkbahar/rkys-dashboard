@@ -299,6 +299,7 @@
         "refund": "Refund",
         "reports_revenue": "Revenue Report",
         "reports_profit": "Profit Report",
+        "reports_loss": "Loss Report",
         "menu_edit": "Menu Editing",
         "cash_open_close": "Cash Register Open/Close",
         "session_move": "Move Table",
@@ -558,6 +559,26 @@
         "already_closed": "This business day has already been closed.",
         "invalid_input": "Please check the information you entered.",
         "unknown": "Operation failed, please try again."
+      },
+      "period": {
+        "title": "Period Report",
+        "start": "Start",
+        "end": "End",
+        "apply": "Apply",
+        "empty": "No data for this period.",
+        "currentPeriod": "Selected Period",
+        "previousYear": "Last Year (Same Period)",
+        "orderCount": "Order Count",
+        "lossTitle": "Loss Report",
+        "lossEmpty": "No loss records for this period.",
+        "source": {
+          "comp": "Comp/Discount",
+          "refund": "Refund",
+          "cancel": "Cancellation"
+        },
+        "noReason": "No reason specified",
+        "amount": "Amount",
+        "count": "Count"
       }
     }
   },
