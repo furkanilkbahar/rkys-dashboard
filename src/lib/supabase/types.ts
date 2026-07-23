@@ -278,6 +278,53 @@ export type Database = {
           },
         ]
       }
+      campaigns: {
+        Row: {
+          created_at: string
+          ends_at: string | null
+          id: string
+          is_active: boolean
+          name: string
+          rule_config: Json
+          rule_type: string
+          starts_at: string | null
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          rule_config?: Json
+          rule_type: string
+          starts_at?: string | null
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          rule_config?: Json
+          rule_type?: string
+          starts_at?: string | null
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaigns_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cash_movements: {
         Row: {
           amount_minor: number
@@ -550,6 +597,110 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "content_translations_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      coupon_redemptions: {
+        Row: {
+          comp_id: string | null
+          coupon_id: string
+          created_at: string
+          id: string
+          order_id: string
+          tenant_id: string
+        }
+        Insert: {
+          comp_id?: string | null
+          coupon_id: string
+          created_at?: string
+          id?: string
+          order_id: string
+          tenant_id: string
+        }
+        Update: {
+          comp_id?: string | null
+          coupon_id?: string
+          created_at?: string
+          id?: string
+          order_id?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coupon_redemptions_comp_id_fkey"
+            columns: ["comp_id"]
+            isOneToOne: false
+            referencedRelation: "comps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coupon_redemptions_coupon_id_fkey"
+            columns: ["coupon_id"]
+            isOneToOne: false
+            referencedRelation: "coupons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coupon_redemptions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coupon_redemptions_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      coupons: {
+        Row: {
+          campaign_id: string
+          code: string
+          created_at: string
+          id: string
+          is_active: boolean
+          tenant_id: string
+          usage_limit: number | null
+          used_count: number
+        }
+        Insert: {
+          campaign_id: string
+          code: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          tenant_id: string
+          usage_limit?: number | null
+          used_count?: number
+        }
+        Update: {
+          campaign_id?: string
+          code?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          tenant_id?: string
+          usage_limit?: number | null
+          used_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coupons_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coupons_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "tenants"
@@ -3125,6 +3276,10 @@ export type Database = {
         Args: { p_order_id: string; p_to_status: string }
         Returns: undefined
       }
+      apply_coupon_to_order: {
+        Args: { p_code: string; p_order_id: string }
+        Returns: number
+      }
       approve_cancellation_request: {
         Args: { p_order_id: string; p_reason_code_id?: string }
         Returns: undefined
@@ -3285,6 +3440,10 @@ export type Database = {
       }
       is_business_date_closed: {
         Args: { p_at?: string; p_branch_id: string }
+        Returns: boolean
+      }
+      is_module_enabled: {
+        Args: { p_module_key: string; p_tenant_id: string }
         Returns: boolean
       }
       is_platform_admin: { Args: never; Returns: boolean }
