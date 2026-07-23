@@ -3015,6 +3015,13 @@ export type Database = {
             referencedRelation: "tenants"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "tenant_settings_theme_key_fkey"
+            columns: ["theme_key"]
+            isOneToOne: false
+            referencedRelation: "themes"
+            referencedColumns: ["key"]
+          },
         ]
       }
       tenants: {
@@ -3066,6 +3073,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      themes: {
+        Row: {
+          created_at: string
+          is_public: boolean
+          key: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          is_public?: boolean
+          key: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          is_public?: boolean
+          key?: string
+          name?: string
+        }
+        Relationships: []
       }
       ticket_messages: {
         Row: {
@@ -3559,6 +3587,7 @@ export type Database = {
           tenant_id: string
           tenant_slug: string
           tenant_status: string
+          tenant_theme_key: string
         }[]
       }
       revoke_staff_device: { Args: { p_device_id: string }; Returns: undefined }
