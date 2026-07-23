@@ -31,6 +31,7 @@ export async function proxy(request: NextRequest) {
   requestHeaders.set("x-rkys-tenant-id", tenant.tenant_id);
   requestHeaders.set("x-rkys-tenant-slug", tenant.tenant_slug);
   requestHeaders.set("x-rkys-tenant-currency", tenant.tenant_currency);
+  requestHeaders.set("x-rkys-tenant-theme", tenant.tenant_theme_key);
 
   const response = NextResponse.next({ request: { headers: requestHeaders } });
   return updateSession(request, response);

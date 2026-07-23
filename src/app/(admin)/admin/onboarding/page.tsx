@@ -1,10 +1,11 @@
 import { redirect } from "next/navigation";
 
 import { requireAdminActor } from "@/lib/auth/adminGuard";
+import { getAdminTenantSettings, getPublicThemes } from "@/lib/data/adminSettings";
 import { getDefaultBranchId } from "@/lib/data/branch";
 import { isOnboardingCompleted } from "@/lib/data/onboarding";
 
-import { toggleLocale, toggleModule, updateBusinessSettings } from "@/app/(admin)/admin/(dashboard)/settings/actions";
+import { toggleLocale, toggleModule, updateBusinessSettings, updateTheme } from "@/app/(admin)/admin/(dashboard)/settings/actions";
 import {
   applyMenuTemplate,
   clearDemoData,
@@ -26,10 +27,14 @@ export default async function OnboardingPage() {
     redirect("/admin/login");
   }
 
+  const [themes, settings] = await Promise.all([getPublicThemes(), getAdminTenantSettings(actor.tenantId)]);
+
   return (
     <OnboardingWizard
       isOwner={actor.role === "owner"}
       branchId={branchId}
+      themes={themes}
+      themeKey={settings?.themeKey ?? "warm-luxury"}
       actions={{
         clearDemoData,
         applyMenuTemplate,
@@ -39,6 +44,7 @@ export default async function OnboardingPage() {
         toggleLocale,
         toggleModule,
         updateBusinessSettings,
+        updateTheme,
       }}
     />
   );

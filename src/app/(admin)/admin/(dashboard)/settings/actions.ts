@@ -16,6 +16,7 @@ import {
   ratingSettingsFormSchema,
   reasonCodeFormSchema,
   reportScheduleFormSchema,
+  themeFormSchema,
   tipPresetFormSchema,
   type BranchActionResult,
   type SettingsActionResult,
@@ -38,6 +39,27 @@ export async function updateOrderSettings(input: unknown): Promise<SettingsActio
     .from("tenant_settings")
     .update({ order_mode: parsed.data.orderMode, session_timeout_minutes: parsed.data.sessionTimeoutMinutes })
     .eq("tenant_id", actor.tenantId);
+
+  if (error) return { ok: false, error: "unknown" };
+  revalidatePath("/admin/settings");
+  return { ok: true };
+}
+
+export async function updateTheme(input: unknown): Promise<SettingsActionResult> {
+  const actor = await requireStaffActor();
+  if (!actor) return { ok: false, error: "forbidden" };
+
+  const parsed = themeFormSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: "invalid_input" };
+
+  const supabase = await createClient();
+  // is_public=true dışındaki (platform_admin'e ayrılmış) bir tema anahtarı
+  // burada seçilemez — Select zaten yalnızca public temaları listeler, bu
+  // ek kontrol doğrudan API çağrısına karşı savunma.
+  const { data: theme } = await supabase.from("themes").select("key").eq("key", parsed.data.themeKey).eq("is_public", true).maybeSingle();
+  if (!theme) return { ok: false, error: "invalid_input" };
+
+  const { error } = await supabase.from("tenant_settings").update({ theme_key: parsed.data.themeKey }).eq("tenant_id", actor.tenantId);
 
   if (error) return { ok: false, error: "unknown" };
   revalidatePath("/admin/settings");

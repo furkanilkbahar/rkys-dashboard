@@ -2,7 +2,7 @@ import { beforeAll, describe, expect, it } from "vitest";
 
 import { signLicense } from "@/lib/licensing/sign";
 import type { LicensePayload } from "@/lib/licensing/types";
-import { verifyLicense } from "@/lib/licensing/verify";
+import { resolveLicenseGateRedirect, verifyLicense } from "@/lib/licensing/verify";
 
 // Sabit lokal demo anahtarı — verify.ts'e gömülü public key'in eşi (gizli
 // değil, .env.ci'de de aynı değer committed — mock.ts'deki sağlayıcı
@@ -78,5 +78,27 @@ describe("lisans imzalama/doğrulama (Faz 4 Adım 4)", () => {
 
     const result = verifyLicense(licenseKey);
     expect(result.valid).toBe(true);
+  });
+});
+
+describe("resolveLicenseGateRedirect (Faz 6 Adım 4, S29 — self-hosted lisans kapısı)", () => {
+  it("LICENSE_KEY set edilmemişse (SaaS/cloud) kapı hiç devreye girmez", () => {
+    expect(resolveLicenseGateRedirect(undefined)).toBeNull();
+  });
+
+  it("geçerli bir self_hosted lisansı olan kurulumda kapı açıktır", () => {
+    const licenseKey = signLicense(makePayload({ licenseType: "self_hosted" }));
+    expect(resolveLicenseGateRedirect(licenseKey)).toBeNull();
+  });
+
+  it("geçersiz format için license-invalid'e sebep parametresiyle yönlendirir", () => {
+    expect(resolveLicenseGateRedirect("not-a-valid-license-string")).toBe("/admin/license-invalid?reason=invalid_format");
+  });
+
+  it("süresi dolmuş lisans için license-invalid'e sebep parametresiyle yönlendirir", () => {
+    const licenseKey = signLicense(
+      makePayload({ licenseType: "self_hosted", expiresAt: new Date(Date.now() - 60 * 60 * 1000).toISOString() }),
+    );
+    expect(resolveLicenseGateRedirect(licenseKey)).toBe("/admin/license-invalid?reason=expired");
   });
 });

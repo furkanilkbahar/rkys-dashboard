@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { SEED, serviceRoleClient, signInAsSeededOwner } from "../../helpers/testClients";
+import { anonClient, SEED, serviceRoleClient, signInAsSeededOwner } from "../../helpers/testClients";
 
 describe("RPC/tablo: ayarlar", () => {
   it("staff sipariş ayarlarını günceller", async () => {
@@ -163,5 +163,54 @@ describe("RPC/tablo: ayarlar", () => {
     expect(error).toBeNull();
 
     await serviceRoleClient().from("tenant_settings").update({ session_timeout_minutes: 180 }).eq("tenant_id", SEED.acme.tenantId);
+  });
+});
+
+describe("Tema yönetimi (Faz 6 Adım 4, S29)", () => {
+  it("staff yalnızca public temaları görür", async () => {
+    const owner = await signInAsSeededOwner(SEED.acme.ownerEmail);
+    const { data, error } = await owner.from("themes").select("key, is_public");
+    expect(error).toBeNull();
+    expect(data!.every((t) => t.is_public)).toBe(true);
+    expect(data!.map((t) => t.key)).toEqual(expect.arrayContaining(["warm-luxury", "sage-bistro"]));
+  });
+
+  it("private (is_public=false) bir tema staff'a hiç görünmez", async () => {
+    const service = serviceRoleClient();
+    await service.from("themes").insert({ key: "test-private-theme", name: "Private", is_public: false });
+
+    const owner = await signInAsSeededOwner(SEED.acme.ownerEmail);
+    const { data } = await owner.from("themes").select("key").eq("key", "test-private-theme");
+    expect(data).toHaveLength(0);
+
+    await service.from("themes").delete().eq("key", "test-private-theme");
+  });
+
+  it("staff tenant_settings.theme_key'i geçerli bir temaya değiştirebilir", async () => {
+    const owner = await signInAsSeededOwner(SEED.acme.ownerEmail);
+    const { error } = await owner.from("tenant_settings").update({ theme_key: "sage-bistro" }).eq("tenant_id", SEED.acme.tenantId);
+    expect(error).toBeNull();
+
+    const { data } = await serviceRoleClient().from("tenant_settings").select("theme_key").eq("tenant_id", SEED.acme.tenantId).single();
+    expect(data?.theme_key).toBe("sage-bistro");
+
+    await serviceRoleClient().from("tenant_settings").update({ theme_key: "warm-luxury" }).eq("tenant_id", SEED.acme.tenantId);
+  });
+
+  it("themes'te bulunmayan bir theme_key FK kısıtına takılır", async () => {
+    const { error } = await serviceRoleClient()
+      .from("tenant_settings")
+      .update({ theme_key: "does-not-exist" })
+      .eq("tenant_id", SEED.acme.tenantId);
+    expect(error).not.toBeNull();
+  });
+
+  it("resolve_tenant_by_domain tenant_theme_key'i döndürür", async () => {
+    const service = serviceRoleClient();
+    const { data: domainRow } = await service.from("tenant_domains").select("domain").eq("tenant_id", SEED.acme.tenantId).limit(1).single();
+
+    const { data, error } = await anonClient().rpc("resolve_tenant_by_domain", { p_domain: domainRow!.domain });
+    expect(error).toBeNull();
+    expect(data![0].tenant_theme_key).toBe("warm-luxury");
   });
 });

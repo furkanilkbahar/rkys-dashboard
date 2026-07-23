@@ -48,6 +48,7 @@ Bir faz şunlar olmadan kapanmaz:
 | S26 | Kasa — kısmi iade: ödeme "kısmen iade edildi" olur, kalan tutar için ikinci kısmi iade tam iadeye tamamlar | 6 |
 | S27 | Kampanya/kupon: admin yüzde indirimli kampanya + kupon oluşturur, misafir sepetinde kupon kodunu uygular, indirim comps'a yazılır | 6 |
 | S28 | Mutfak istasyon filtresi: kategoriye istasyon atanır, KDS'de istasyon seçilince yalnızca o istasyonun kalemleri (ve o kalemleri içeren siparişler) görünür | 6 |
+| S29 | Tema yönetimi: admin ayarlardan temayı değiştirir, hem admin hem misafir menü tarafında doğru `data-theme` uygulanır; self-hosted paket yerel `docker build`+`docker-compose up` ile doğrulanır | 6 |
 
 ## 4. RLS İzolasyon Testleri (entegrasyon, zorunlu şablon)
 Her yeni tablo için otomatik üretilen test çifti:

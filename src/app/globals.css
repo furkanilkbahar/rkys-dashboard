@@ -2,6 +2,7 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "../themes/premium/warm-luxury/tokens.css";
+@import "../themes/premium/sage-bistro/tokens.css";
 
 @custom-variant dark (&:is(.dark *));
 

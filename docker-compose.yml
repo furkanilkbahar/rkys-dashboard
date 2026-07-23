@@ -1,0 +1,29 @@
+# Self-hosted paket (Faz 6 Adım 4, S29) — yalnızca Next.js uygulamasını
+# ayağa kaldırır. Supabase (Postgres/Auth/Realtime/Storage) bu compose'un
+# kapsamında DEĞİLDİR: kendi self-hosted Supabase stack'inizi ya da Supabase
+# Cloud'u ayrıca sağlayıp aşağıdaki env değişkenleriyle bağlarsınız — ikisi
+# de desteklenir. Değerler proje kökündeki bir `.env` dosyasından okunur
+# (`docker-compose --env-file .env up`) ya da shell ortamından enjekte edilir.
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY}
+      NEXT_PUBLIC_ROOT_DOMAIN: ${NEXT_PUBLIC_ROOT_DOMAIN}
+      INTERNAL_API_SECRET: ${INTERNAL_API_SECRET}
+      IYZICO_API_KEY: ${IYZICO_API_KEY:-}
+      IYZICO_SECRET_KEY: ${IYZICO_SECRET_KEY:-}
+      IYZICO_BASE_URL: ${IYZICO_BASE_URL:-}
+      IYZICO_WEBHOOK_SECRET: ${IYZICO_WEBHOOK_SECRET:-}
+      IYZICO_SUBSCRIPTION_WEBHOOK_SECRET: ${IYZICO_SUBSCRIPTION_WEBHOOK_SECRET:-}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      RESEND_FROM_EMAIL: ${RESEND_FROM_EMAIL:-}
+      NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN:-}
+      # Yalnızca self-hosted lisans doğrulaması için — set edilmezse
+      # kontrol tamamen atlanır (bkz. (dashboard)/layout.tsx).
+      LICENSE_KEY: ${LICENSE_KEY:-}
+    restart: unless-stopped

@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { SUPPORTED_LOCALES, type Locale } from "@/i18n/locales";
 import type { ImageActionResult } from "@/lib/menu/schemas";
+import type { AdminTheme } from "@/lib/data/adminSettings";
 import { MODULE_KEYS, type ModuleKey } from "@/lib/modules/keys";
 import { SUPPORTED_CURRENCIES, type SettingsActionResult } from "@/lib/settings/schemas";
 
@@ -25,6 +26,7 @@ type Actions = {
   toggleLocale: (input: unknown) => Promise<SettingsActionResult>;
   toggleModule: (input: unknown) => Promise<SettingsActionResult>;
   updateBusinessSettings: (input: unknown) => Promise<SettingsActionResult>;
+  updateTheme: (input: unknown) => Promise<SettingsActionResult>;
 };
 
 const STEPS = ["logo", "language", "currency", "tables", "menu", "modules", "theme"] as const;
@@ -33,17 +35,33 @@ type Step = (typeof STEPS)[number];
 export function OnboardingWizard({
   isOwner,
   branchId,
+  themes,
+  themeKey,
   actions,
 }: {
   isOwner: boolean;
   branchId: string;
+  themes: AdminTheme[];
+  themeKey: string;
   actions: Actions;
 }) {
   const t = useTranslations("admin.onboarding");
   const router = useRouter();
   const [screen, setScreen] = useState<"entry" | "wizard">("entry");
   const [stepIndex, setStepIndex] = useState(0);
+  const [selectedTheme, setSelectedTheme] = useState(themeKey);
   const step: Step = STEPS[stepIndex];
+
+  async function handleThemeChange(value: string | null) {
+    if (!value || value === selectedTheme) return;
+    const result = await actions.updateTheme({ themeKey: value });
+    if (result.ok) {
+      setSelectedTheme(value);
+      // data-theme root layout'ta SSR header'ından okunuyor (bkz. proxy.ts) —
+      // canlı önizleme için tam bir sunucu round-trip'i gerekir.
+      router.refresh();
+    }
+  }
 
   async function handleExploreWithDemo() {
     await actions.completeOnboarding();
@@ -122,8 +140,18 @@ export function OnboardingWizard({
             <CardTitle>{t("theme.title")}</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-1 text-sm">
-            <p className="font-medium">warm-luxury</p>
-            <p className="text-xs text-muted-foreground">{t("theme.comingSoon")}</p>
+            <Select value={selectedTheme} onValueChange={handleThemeChange}>
+              <SelectTrigger className="w-full" aria-label={t("theme.title")}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {themes.map((theme) => (
+                  <SelectItem key={theme.key} value={theme.key}>
+                    {theme.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </CardContent>
         </Card>
       )}

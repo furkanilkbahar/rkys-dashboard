@@ -146,6 +146,14 @@
     "topbar": {
       "logout": "Çıkış yap"
     },
+    "license": {
+      "title": "Lisans geçersiz",
+      "reasons": {
+        "invalid_format": "Lisans anahtarı okunamadı. Lütfen LICENSE_KEY ortam değişkenini kontrol edin.",
+        "invalid_signature": "Lisans anahtarı doğrulanamadı.",
+        "expired": "Lisansınızın süresi dolmuş."
+      }
+    },
     "dashboard": {
       "welcome": "Hoş geldin, {role}",
       "tenantLabel": "İşletme",
@@ -378,9 +386,7 @@
         "save": "Kaydet"
       },
       "theme": {
-        "title": "Tema",
-        "current": "Geçerli tema",
-        "comingSoon": "Diğer temalar Faz 6'da eklenecek."
+        "title": "Tema"
       },
       "modules": {
         "title": "Modüller",
@@ -541,8 +547,7 @@
         "title": "Modül Seçimi"
       },
       "theme": {
-        "title": "Tema Önizleme",
-        "comingSoon": "Diğer temalar Faz 6'da eklenecek."
+        "title": "Tema Önizleme"
       }
     },
     "ratings": {

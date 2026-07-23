@@ -146,6 +146,14 @@
     "topbar": {
       "logout": "Sign out"
     },
+    "license": {
+      "title": "Invalid license",
+      "reasons": {
+        "invalid_format": "The license key could not be read. Please check the LICENSE_KEY environment variable.",
+        "invalid_signature": "The license key could not be verified.",
+        "expired": "Your license has expired."
+      }
+    },
     "dashboard": {
       "welcome": "Welcome, {role}",
       "tenantLabel": "Business",
@@ -378,9 +386,7 @@
         "save": "Save"
       },
       "theme": {
-        "title": "Theme",
-        "current": "Current theme",
-        "comingSoon": "More themes will be added in Phase 6."
+        "title": "Theme"
       },
       "modules": {
         "title": "Modules",
@@ -541,8 +547,7 @@
         "title": "Module Selection"
       },
       "theme": {
-        "title": "Theme Preview",
-        "comingSoon": "More themes will be added in Phase 6."
+        "title": "Theme Preview"
       }
     },
     "ratings": {

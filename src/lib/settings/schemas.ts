@@ -17,6 +17,11 @@ export const orderSettingsFormSchema = z.object({
 });
 export type OrderSettingsFormInput = z.infer<typeof orderSettingsFormSchema>;
 
+export const themeFormSchema = z.object({
+  themeKey: z.string().min(1, "required"),
+});
+export type ThemeFormInput = z.infer<typeof themeFormSchema>;
+
 export const businessSettingsFormSchema = z.object({
   currency: z.enum(SUPPORTED_CURRENCIES),
   timezone: z.enum(SUPPORTED_TIMEZONES),

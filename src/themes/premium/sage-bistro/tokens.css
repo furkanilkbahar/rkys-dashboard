@@ -1,0 +1,23 @@
+/* sage-bistro (v1): adaçayı yeşili + krem + toprak tonları. Değişken
+   isimleri warm-luxury ile birebir aynı set — paralel bir tema sistemi
+   kurulmaz (bkz. ARCHITECTURE.md #6). */
+html[data-theme="sage-bistro"] {
+  --background: oklch(0.97 0.012 140);
+  --foreground: oklch(0.3 0.03 145);
+  --card: oklch(0.99 0.006 140);
+  --card-foreground: oklch(0.3 0.03 145);
+  --popover: oklch(0.99 0.006 140);
+  --popover-foreground: oklch(0.3 0.03 145);
+  --primary: oklch(0.55 0.09 150);
+  --primary-foreground: oklch(0.97 0.012 140);
+  --secondary: oklch(0.3 0.03 145);
+  --secondary-foreground: oklch(0.97 0.012 140);
+  --muted: oklch(0.93 0.015 140);
+  --muted-foreground: oklch(0.48 0.02 140);
+  --accent: oklch(0.88 0.04 130);
+  --accent-foreground: oklch(0.3 0.03 145);
+  --border: oklch(0.87 0.015 140);
+  --input: oklch(0.87 0.015 140);
+  --ring: oklch(0.55 0.09 150);
+  --radius: 0.75rem;
+}

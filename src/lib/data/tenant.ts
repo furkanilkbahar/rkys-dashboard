@@ -6,6 +6,7 @@ export type CurrentTenant = {
   id: string;
   slug: string;
   currency: string;
+  themeKey: string;
 };
 
 /**
@@ -18,10 +19,11 @@ export async function getCurrentTenant(): Promise<CurrentTenant | null> {
   const id = headerStore.get("x-rkys-tenant-id");
   const slug = headerStore.get("x-rkys-tenant-slug");
   const currency = headerStore.get("x-rkys-tenant-currency");
+  const themeKey = headerStore.get("x-rkys-tenant-theme");
 
-  if (!id || !slug || !currency) {
+  if (!id || !slug || !currency || !themeKey) {
     return null;
   }
 
-  return { id, slug, currency };
+  return { id, slug, currency, themeKey };
 }

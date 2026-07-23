@@ -9,6 +9,10 @@ const nextConfig: NextConfig = {
   // üzerine gelip pointer event'leri yakalıyor (Playwright click'lerini
   // engelliyordu) — salt kozmetik, kapatılması güvenli.
   devIndicators: false,
+  // Self-hosted Docker imajı (bkz. Dockerfile) minimal bir çalışma zamanı
+  // bundle'ı gerektirir — node_modules'ün tamamını taşımak yerine yalnızca
+  // kullanılan bağımlılıklar .next/standalone'a kopyalanır.
+  output: "standalone",
 };
 
 export default withSentryConfig(withNextIntl(nextConfig), {

@@ -42,3 +42,20 @@ export function verifyLicense(licenseKey: string): LicenseVerificationResult {
 
   return { valid: true, payload };
 }
+
+/**
+ * Self-hosted dağıtımlarda (dashboard) layout'unun kullandığı kapı: yalnızca
+ * LICENSE_KEY set edilmişse (self-hosted imajı) devreye girer — SaaS/cloud
+ * tenant'ları bu env var'ı hiç set etmediği için her zaman null döner.
+ * Saf fonksiyon olarak ayrıldı: Next.js layout'undan bağımsız test edilebilir.
+ */
+export function resolveLicenseGateRedirect(licenseKey: string | undefined): string | null {
+  if (!licenseKey) {
+    return null;
+  }
+  const result = verifyLicense(licenseKey);
+  if (result.valid) {
+    return null;
+  }
+  return `/admin/license-invalid?reason=${result.reason}`;
+}

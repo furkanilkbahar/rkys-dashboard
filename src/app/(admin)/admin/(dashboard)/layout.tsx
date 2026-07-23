@@ -7,9 +7,19 @@ import { getAdminModules } from "@/lib/data/adminSettings";
 import { getCurrentTenant } from "@/lib/data/tenant";
 import { isOnboardingCompleted } from "@/lib/data/onboarding";
 import { isSubscriptionActive } from "@/lib/data/subscription";
+import { resolveLicenseGateRedirect } from "@/lib/licensing/verify";
 
 export default async function AdminDashboardLayout({ children }: { children: React.ReactNode }) {
   const actor = await requireAdminActor();
+
+  // Yalnızca self-hosted dağıtımlarda ayarlanır (bkz. Dockerfile/docker-compose.yml) —
+  // SaaS/cloud tenant'ları bu ortam değişkeni hiç set edilmediği için buradan
+  // hiç geçmez. Süper Admin'in DB'deki licenses.license_type='self_hosted'
+  // kaydı ile bu env var arasında bağ yok; bu tamamen çevrimdışı bir kapı.
+  const licenseRedirect = resolveLicenseGateRedirect(process.env.LICENSE_KEY);
+  if (licenseRedirect) {
+    redirect(licenseRedirect);
+  }
 
   if (!(await isOnboardingCompleted(actor.tenantId))) {
     redirect("/admin/onboarding");

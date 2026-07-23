@@ -9,6 +9,7 @@ import {
   getAdminReasonCodes,
   getAdminTenantSettings,
   getAdminTipPresets,
+  getPublicThemes,
 } from "@/lib/data/adminSettings";
 import { getAdminBranchesInfo } from "@/lib/data/branch";
 import { getReportSchedules } from "@/lib/data/reportSchedules";
@@ -31,6 +32,7 @@ import {
   updateOrderSettings,
   updateRatingSettings,
   updateReasonCode,
+  updateTheme,
   updateTipPreset,
 } from "./actions";
 import { SettingsManager } from "./settings-manager";
@@ -38,7 +40,7 @@ import { SettingsManager } from "./settings-manager";
 export default async function AdminSettingsPage() {
   const actor = await requireAdminActor();
 
-  const [settings, callTypes, reasonCodes, locales, tipPresets, ratingSettings, modules, branchesInfo, reportSchedules] =
+  const [settings, callTypes, reasonCodes, locales, tipPresets, ratingSettings, modules, branchesInfo, reportSchedules, themes] =
     await Promise.all([
       getAdminTenantSettings(actor.tenantId),
       getAdminCallTypes(actor.tenantId),
@@ -49,6 +51,7 @@ export default async function AdminSettingsPage() {
       getAdminModules(actor.tenantId),
       getAdminBranchesInfo(actor.tenantId),
       getReportSchedules(actor.tenantId),
+      getPublicThemes(),
     ]);
 
   if (!settings || !ratingSettings) {
@@ -67,9 +70,11 @@ export default async function AdminSettingsPage() {
       modules={modules}
       branchesInfo={branchesInfo}
       reportSchedules={reportSchedules}
+      themes={themes}
       actions={{
         updateOrderSettings,
         updateBusinessSettings,
+        updateTheme,
         createCallType,
         updateCallType,
         createReasonCode,

@@ -22,6 +22,7 @@ import type {
   AdminRatingSettings,
   AdminReasonCode,
   AdminTenantSettings,
+  AdminTheme,
   AdminTipPreset,
 } from "@/lib/data/adminSettings";
 import type { AdminBranch, AdminBranchesInfo } from "@/lib/data/branch";
@@ -45,6 +46,7 @@ import {
 type Actions = {
   updateOrderSettings: (input: unknown) => Promise<SettingsActionResult>;
   updateBusinessSettings: (input: unknown) => Promise<SettingsActionResult>;
+  updateTheme: (input: unknown) => Promise<SettingsActionResult>;
   createCallType: (input: unknown) => Promise<SettingsActionResult>;
   updateCallType: (callTypeId: string, input: unknown) => Promise<SettingsActionResult>;
   createReasonCode: (input: unknown) => Promise<SettingsActionResult>;
@@ -658,19 +660,42 @@ function RatingSettingsCard({
   );
 }
 
-function ThemeCard({ themeKey }: { themeKey: string }) {
+function ThemeCard({ themeKey, themes, updateTheme }: { themeKey: string; themes: AdminTheme[]; updateTheme: Actions["updateTheme"] }) {
   const t = useTranslations("admin.settings.theme");
+  const tErrors = useTranslations("admin.settings.errors");
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleChange(value: string | null) {
+    if (!value || value === themeKey) return;
+    setError(null);
+    const result = await updateTheme({ themeKey: value });
+    if (!result.ok) {
+      setError(tErrors(result.error));
+      return;
+    }
+    router.refresh();
+  }
 
   return (
     <Card>
       <CardHeader>
         <CardTitle className="text-base">{t("title")}</CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col gap-1 text-sm">
-        <p>
-          {t("current")}: <span className="font-medium">{themeKey}</span>
-        </p>
-        <p className="text-xs text-muted-foreground">{t("comingSoon")}</p>
+      <CardContent className="flex flex-col gap-2 text-sm">
+        <Select value={themeKey} onValueChange={handleChange}>
+          <SelectTrigger className="w-full" aria-label={t("title")}>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {themes.map((theme) => (
+              <SelectItem key={theme.key} value={theme.key}>
+                {theme.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {error && <p className="text-xs text-destructive">{error}</p>}
       </CardContent>
     </Card>
   );
@@ -716,6 +741,7 @@ export function SettingsManager({
   modules,
   branchesInfo,
   reportSchedules,
+  themes,
   actions,
 }: {
   isOwner: boolean;
@@ -728,6 +754,7 @@ export function SettingsManager({
   modules: AdminModule[];
   branchesInfo: AdminBranchesInfo;
   reportSchedules: ReportSchedule[];
+  themes: AdminTheme[];
   actions: Actions;
 }) {
   const t = useTranslations("admin.settings");
@@ -743,7 +770,7 @@ export function SettingsManager({
       <LanguagesCard locales={locales} toggleLocale={actions.toggleLocale} setDefaultLocale={actions.setDefaultLocale} />
       <TipPresetsCard presets={tipPresets} createTipPreset={actions.createTipPreset} updateTipPreset={actions.updateTipPreset} />
       <RatingSettingsCard ratingSettings={ratingSettings} updateRatingSettings={actions.updateRatingSettings} />
-      <ThemeCard themeKey={settings.themeKey} />
+      <ThemeCard themeKey={settings.themeKey} themes={themes} updateTheme={actions.updateTheme} />
       <ModulesCard modules={modules} toggleModule={actions.toggleModule} />
       <ReportSchedulesCard
         schedules={reportSchedules}
