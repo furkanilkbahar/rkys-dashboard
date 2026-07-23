@@ -145,6 +145,7 @@
       "loyalty": "Sadakat",
       "giftCards": "Hediye Kartları",
       "ingredients": "Malzemeler",
+      "suppliers": "Tedarikçiler",
       "reports": "Raporlar",
       "support": "Destek",
       "settings": "Ayarlar",
@@ -752,6 +753,16 @@
       "stock": "Mevcut Stok",
       "add": "+ Malzeme Ekle",
       "save": "Kaydet",
+      "purchase": {
+        "toggle": "Alım Gir",
+        "quantity": "Miktar",
+        "unitCost": "Birim Maliyet (₺)",
+        "supplier": "Tedarikçi",
+        "supplierNone": "—",
+        "save": "Kaydet",
+        "cancel": "Vazgeç",
+        "savedHint": "Alım kaydedildi."
+      },
       "recipe": {
         "pageTitle": "Reçete",
         "productLevel": "Ürün (varyantsız)",
@@ -765,6 +776,20 @@
         "save": "Reçeteyi Kaydet",
         "savedHint": "Kaydedildi."
       },
+      "errors": {
+        "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
+        "forbidden": "Bu işlem için yetkiniz yok.",
+        "not_enabled": "Stok modülü aktif değil.",
+        "unknown": "Kaydedilemedi, tekrar deneyin."
+      }
+    },
+    "suppliers": {
+      "pageTitle": "Tedarikçiler",
+      "title": "Tedarikçiler",
+      "empty": "Henüz tedarikçi yok.",
+      "name": "Ad",
+      "contactInfo": "İletişim",
+      "add": "+ Tedarikçi Ekle",
       "errors": {
         "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
         "forbidden": "Bu işlem için yetkiniz yok.",

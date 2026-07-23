@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { getCurrentActor } from "@/lib/auth/session";
-import { ingredientFormSchema, recipeFormSchema, type InventoryActionResult } from "@/lib/inventory/schemas";
+import { ingredientFormSchema, purchaseFormSchema, recipeFormSchema, unitCostMinor, type InventoryActionResult } from "@/lib/inventory/schemas";
 import { isEnabled } from "@/lib/modules/isEnabled";
 import { createClient } from "@/lib/supabase/server";
 
@@ -42,6 +42,30 @@ export async function updateIngredient(ingredientId: string, input: unknown): Pr
     .eq("id", ingredientId)
     .eq("tenant_id", actor.tenantId);
   if (error) return { ok: false, error: "unknown" };
+
+  revalidatePath("/admin/ingredients");
+  return { ok: true };
+}
+
+export async function recordPurchase(input: unknown): Promise<InventoryActionResult> {
+  const actor = await getCurrentActor();
+  if (!actor) return { ok: false, error: "forbidden" };
+
+  const parsed = purchaseFormSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: "invalid_input" };
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("record_purchase", {
+    p_ingredient_id: parsed.data.ingredientId,
+    ...(parsed.data.supplierId ? { p_supplier_id: parsed.data.supplierId } : {}),
+    p_quantity: parsed.data.quantity,
+    p_unit_cost_minor: unitCostMinor(parsed.data),
+  });
+  if (error) {
+    if (error.message.includes("inventory module not enabled")) return { ok: false, error: "not_enabled" };
+    if (error.message.includes("staff only")) return { ok: false, error: "forbidden" };
+    return { ok: false, error: "unknown" };
+  }
 
   revalidatePath("/admin/ingredients");
   return { ok: true };

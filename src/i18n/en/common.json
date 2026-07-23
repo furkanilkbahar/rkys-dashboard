@@ -145,6 +145,7 @@
       "loyalty": "Loyalty",
       "giftCards": "Gift Cards",
       "ingredients": "Ingredients",
+      "suppliers": "Suppliers",
       "reports": "Reports",
       "support": "Support",
       "settings": "Settings",
@@ -752,6 +753,16 @@
       "stock": "Current Stock",
       "add": "+ Add Ingredient",
       "save": "Save",
+      "purchase": {
+        "toggle": "Record Purchase",
+        "quantity": "Quantity",
+        "unitCost": "Unit Cost ($)",
+        "supplier": "Supplier",
+        "supplierNone": "—",
+        "save": "Save",
+        "cancel": "Cancel",
+        "savedHint": "Purchase recorded."
+      },
       "recipe": {
         "pageTitle": "Recipe",
         "productLevel": "Product (no variant)",
@@ -765,6 +776,20 @@
         "save": "Save Recipe",
         "savedHint": "Saved."
       },
+      "errors": {
+        "invalid_input": "Please check the information you entered.",
+        "forbidden": "You don't have permission for this action.",
+        "not_enabled": "The inventory module is not active.",
+        "unknown": "Could not save, please try again."
+      }
+    },
+    "suppliers": {
+      "pageTitle": "Suppliers",
+      "title": "Suppliers",
+      "empty": "No suppliers yet.",
+      "name": "Name",
+      "contactInfo": "Contact",
+      "add": "+ Add Supplier",
       "errors": {
         "invalid_input": "Please check the information you entered.",
         "forbidden": "You don't have permission for this action.",
