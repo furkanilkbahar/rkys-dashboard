@@ -53,6 +53,10 @@ Bir faz şunlar olmadan kapanmaz:
 | S31 | Sadakat motoru: admin puan modunu (kazanım/harcama oranı) ayarlar, misafir bakiyesini kendi siparişine indirim olarak kullanır, indirim comps'a yazılır | 7 |
 | S32 | Hediye kartı: admin kart oluşturur (kod+ilk bakiye), kasa hediye kartıyla ödeme alır, bakiye düşer ve hesap kapanır | 7 |
 | S33 | Sadakat/kampanya performans raporu: dönem içindeki kazanım/harcama, aktif müşteri ve kampanya kullanım sayıları/indirim toplamı doğru hesaplanır | 7 |
+| S34 | Reçete düşümü: admin malzeme tanımlar, ürünü reçeteden düşecek şekilde ayarlar ve reçeteyi kaydeder; kasadan sipariş verildiğinde ilgili malzemenin stoğu otomatik düşer | 8 |
+| S35 | Tedarik: admin tedarikçi ekler, malzemeye miktar+birim maliyet+tedarikçi ile alım girer; stok artar, hareketli ortalama maliyet doğru güncellenir | 8 |
+| S36 | Fire/sayım: admin fire kaydeder (stok düşer) ve fiziksel sayım girer (stok sayılan değere eşitlenir); kritik seviyenin altındaki malzemeler sayfa üstünde özetlenir | 8 |
+| S37 | Menü mühendisliği matrisi: dönem içi satışlar popülerlik×marj ortalamasına göre Yıldız/Beygir/Bilmece/Zayıf kategorilerine doğru ayrılır, reçeteden otomatik hesaplanan maliyet rapora yansır | 8 |
 
 ## 4. RLS İzolasyon Testleri (entegrasyon, zorunlu şablon)
 Her yeni tablo için otomatik üretilen test çifti:
