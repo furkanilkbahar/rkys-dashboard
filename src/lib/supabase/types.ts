@@ -572,6 +572,51 @@ export type Database = {
           },
         ]
       }
+      dashboard_widgets: {
+        Row: {
+          created_at: string
+          is_visible: boolean
+          position: number
+          tenant_id: string
+          updated_at: string
+          user_id: string
+          widget_key: string
+        }
+        Insert: {
+          created_at?: string
+          is_visible?: boolean
+          position?: number
+          tenant_id: string
+          updated_at?: string
+          user_id: string
+          widget_key: string
+        }
+        Update: {
+          created_at?: string
+          is_visible?: boolean
+          position?: number
+          tenant_id?: string
+          updated_at?: string
+          user_id?: string
+          widget_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dashboard_widgets_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dashboard_widgets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       day_closures: {
         Row: {
           branch_id: string
