@@ -67,9 +67,9 @@
 - [x] Sadakat/kampanya performans raporları — S33 (Adım 3)
 
 ## Faz 8 — Stok Derinliği & Maliyet
-- [ ] Malzeme + **reçete motoru** (satışta otomatik düşüm, ürün başına mod seçimi) + fire/sayım hareketleri
-- [ ] Basit alım girişi + hareketli ortalama maliyet + kritik stok uyarıları + `suppliers`
-- [ ] **Menü mühendisliği matrisi** (otomatik maliyetle) + aksiyon önerileri
+- [x] Malzeme + **reçete motoru** (satışta otomatik düşüm, ürün başına mod seçimi) + fire/sayım hareketleri — S34 (Adım 0), S36 (Adım 2)
+- [x] Basit alım girişi + hareketli ortalama maliyet + kritik stok uyarıları + `suppliers` — S35 (Adım 1)
+- [x] **Menü mühendisliği matrisi** (otomatik maliyetle) + aksiyon önerileri — S37 (Adım 3)
 
 ## Faz 9 — Kanallar: Gel-Al & Paket
 - [ ] `pickup` kanalı (hazır bildirimi + teslim kodu)
