@@ -1,15 +1,18 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { approveOrder, acknowledgeCall } from "@/app/(waiter)/waiter/actions";
+import { approveOrder, acknowledgeCall, type MoveTableResult } from "@/app/(waiter)/waiter/actions";
 import { assignCourier, type CourierActionResult } from "@/app/(waiter)/waiter/courier-actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import type { AdminTable } from "@/lib/data/adminTables";
 import type { CourierOption, DeliveryOrderView } from "@/lib/data/courier";
 import type { AdminReservation } from "@/lib/data/reservations";
+import type { OccupiedTable } from "@/lib/data/tableSessions";
 import type { WaiterCallView } from "@/lib/data/waiterCalls";
 import type { StaffOrderView } from "@/lib/data/staffOrders";
 import type { ReservationActionResult } from "@/lib/reservations/schemas";
@@ -28,6 +31,9 @@ export function WaiterPanel({
   currency = "TRY",
   upcomingReservations = [],
   seatReservation,
+  occupiedTables = [],
+  freeTables = [],
+  moveTableSession,
 }: {
   tenantId: string;
   branchId: string;
@@ -38,11 +44,15 @@ export function WaiterPanel({
   currency?: string;
   upcomingReservations?: AdminReservation[];
   seatReservation?: (reservationId: string) => Promise<ReservationActionResult>;
+  occupiedTables?: OccupiedTable[];
+  freeTables?: AdminTable[];
+  moveTableSession?: (tableSessionId: string, toTableId: string) => Promise<MoveTableResult>;
 }) {
   const t = useTranslations("waiter");
   const [calls, setCalls] = useState(initialCalls);
   const [pendingOrders, setPendingOrders] = useState(initialPendingOrders);
   const [reservations, setReservations] = useState(upcomingReservations);
+  const router = useRouter();
   const [channelState, setChannelState] = useState<ChannelState>("connecting");
   const { unlocked, unlock } = useSoundUnlock();
 
@@ -209,6 +219,24 @@ export function WaiterPanel({
         </section>
       )}
 
+      {occupiedTables.length > 0 && moveTableSession && (
+        <section className="flex flex-col gap-3">
+          <h2 className="text-sm font-semibold text-muted-foreground">{t("tableMove")}</h2>
+          {occupiedTables.map((table) => (
+            <div key={table.tableSessionId} className="flex items-center justify-between gap-2 rounded-md border border-border p-2 text-sm">
+              <span className="font-medium">{table.tableLabel}</span>
+              <TableMovePicker
+                tableSessionId={table.tableSessionId}
+                freeTables={freeTables}
+                moveTableSession={moveTableSession}
+                label={t("tableMoveTo")}
+                onMoved={() => router.refresh()}
+              />
+            </div>
+          ))}
+        </section>
+      )}
+
       {couriers.length > 0 && (
         <section className="flex flex-col gap-3">
           <h2 className="text-sm font-semibold text-muted-foreground">{t("courierAssignment")}</h2>
@@ -225,6 +253,55 @@ export function WaiterPanel({
         </section>
       )}
     </main>
+  );
+}
+
+function TableMovePicker({
+  tableSessionId,
+  freeTables,
+  moveTableSession,
+  label,
+  onMoved,
+}: {
+  tableSessionId: string;
+  freeTables: AdminTable[];
+  moveTableSession: (tableSessionId: string, toTableId: string) => Promise<MoveTableResult>;
+  label: string;
+  onMoved: () => void;
+}) {
+  const t = useTranslations("waiter");
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleChange(value: string | null) {
+    if (!value) return;
+    setPending(true);
+    setError(null);
+    const result = await moveTableSession(tableSessionId, value);
+    setPending(false);
+    if (!result.ok) {
+      setError(t(`tableMoveErrors.${result.error}`));
+      return;
+    }
+    onMoved();
+  }
+
+  return (
+    <div className="flex flex-col items-end gap-1">
+      <Select value="" onValueChange={handleChange} disabled={pending}>
+        <SelectTrigger aria-label={label} className="w-40">
+          <SelectValue placeholder={label} />
+        </SelectTrigger>
+        <SelectContent>
+          {freeTables.map((table) => (
+            <SelectItem key={table.id} value={table.id}>
+              {table.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      {error && <p className="text-xs text-destructive">{error}</p>}
+    </div>
   );
 }
 

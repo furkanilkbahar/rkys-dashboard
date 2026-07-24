@@ -1028,7 +1028,15 @@
     "assign": "Kurye Ata",
     "upcomingReservations": "Yaklaşan Rezervasyonlar",
     "reservationPartySize": "{count} kişi",
-    "seatReservation": "Oturttu"
+    "seatReservation": "Oturttu",
+    "tableMove": "Masa Taşı",
+    "tableMoveTo": "Masaya taşı",
+    "tableMoveErrors": {
+      "forbidden": "Bu işlem için yetkiniz yok.",
+      "occupied": "Seçilen masa zaten dolu.",
+      "invalid_destination": "Geçersiz hedef masa.",
+      "unknown": "Taşınamadı, tekrar deneyin."
+    }
   },
   "kitchen": {
     "title": "Mutfak Ekranı (KDS)",

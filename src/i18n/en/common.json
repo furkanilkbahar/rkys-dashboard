@@ -1028,7 +1028,15 @@
     "assign": "Assign Courier",
     "upcomingReservations": "Upcoming Reservations",
     "reservationPartySize": "{count} people",
-    "seatReservation": "Seated"
+    "seatReservation": "Seated",
+    "tableMove": "Move Table",
+    "tableMoveTo": "Move to table",
+    "tableMoveErrors": {
+      "forbidden": "You don't have permission for this action.",
+      "occupied": "The selected table is already occupied.",
+      "invalid_destination": "Invalid destination table.",
+      "unknown": "Could not move, please try again."
+    }
   },
   "kitchen": {
     "title": "Kitchen Display",

@@ -67,6 +67,7 @@ Bir faz şunlar olmadan kapanmaz:
 | S45 | Rezervasyon + bekleme listesi: misafir oturumsuz rezervasyon talebi gönderir ('pending'); admin masa atayıp onaylar ('confirmed'), oturtur ('seated'); admin bekleme listesine walk-in ekler, çağırır ('called'), oturtur; RLS başka tenant'ın rezervasyon/bekleme listesini gizler | 11 |
 | S46 | Kiosk modu: admin kiosk cihazı ekler (pairing code üretilir); tablet `/kiosk/[pairingCode]/baslat` ile aynı /paket sayfasına bağlanır (kod yeniden kullanımı), oturuma kiosk_device_id işlenir; "Sıradaki Müşteri" mevcut oturumu kapatıp yeni bir oturum açar; geçersiz/pasif cihaz kodu reddedilir | 11 |
 | S47 | Vardiya planlama + puantaj: admin `/admin/staff`'tan yetkili cihaz oluşturur (ham secret bir kerelik gösterilir) ve personele PIN atar; cihaz `/vardiya/kurulum`'da secret'ı doğrulayıp eşlenir; personel PIN pad ile giriş/çıkış yapar (ilk çağrı 'in', ikinci 'out'); yanlış PIN/geçersiz veya iptal edilmiş cihaz reddedilir; admin haftalık çizelgeye vardiya ekler, çalışma saati raporu ve CSV export görüntülenir | 11 |
+| S48 | Garson paneli — masa taşıma (RULES #27, Faz 2 açığı kapatıldı): `session.move` izni olan personel garson panelinde dolu bir masayı boş bir masaya taşır, oturum ve `session_events` audit kaydı doğru güncellenir; izinsiz personelde/misafirde bölüm hiç görünmez (mevcut `move_table_session` RPC testleri zaten izin reddini kapsıyor) | genel gözden geçirme |
 
 ## 4. RLS İzolasyon Testleri (entegrasyon, zorunlu şablon)
 Her yeni tablo için otomatik üretilen test çifti:
