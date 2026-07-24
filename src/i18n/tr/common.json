@@ -147,6 +147,7 @@
       "ingredients": "Malzemeler",
       "suppliers": "Tedarikçiler",
       "deliveryZones": "Teslimat Bölgeleri",
+      "apiKeys": "API Anahtarları",
       "reports": "Raporlar",
       "support": "Destek",
       "settings": "Ayarlar",
@@ -836,6 +837,23 @@
         "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
         "forbidden": "Bu işlem için yetkiniz yok.",
         "not_enabled": "Paket servis modülü aktif değil.",
+        "unknown": "Kaydedilemedi, tekrar deneyin."
+      }
+    },
+    "apiKeys": {
+      "pageTitle": "API Anahtarları",
+      "title": "API Anahtarları",
+      "empty": "Henüz API anahtarı yok.",
+      "name": "Anahtar Adı",
+      "add": "+ Anahtar Oluştur",
+      "active": "Aktif",
+      "revoked": "İptal Edildi",
+      "revoke": "İptal Et",
+      "newKeyWarning": "Bu anahtarı şimdi kopyalayın — bir daha gösterilmeyecek.",
+      "errors": {
+        "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
+        "forbidden": "Bu işlem için yetkiniz yok.",
+        "not_enabled": "API erişimi modülü aktif değil.",
         "unknown": "Kaydedilemedi, tekrar deneyin."
       }
     }

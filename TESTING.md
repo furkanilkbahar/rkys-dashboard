@@ -60,6 +60,7 @@ Bir faz şunlar olmadan kapanmaz:
 | S38 | Gel-Al (pickup): misafir bağlantıdan (fiziksel masasız) sipariş verir, teslim kodu görür; mutfak siparişi hazır işaretleyince misafir bildirim alır — aynı sipariş/KDS motoru kanal farkıyla çalışır | 9 |
 | S39 | Paket servis (delivery): misafir teslimat bölgesi seçer, adres girer; bölge ücreti toplama eklenir, minimum sepet altındaki siparişler reddedilir | 9 |
 | S40 | Kurye modülü: personel (garson paneli) bir delivery siparişine kurye atar; kurye kendi panelinde teslimatı Atandı→Yolda→Teslim Edildi olarak ilerletir | 9 |
+| S41 | Tenant API: admin API anahtarı oluşturur, gerçek anahtarla `/api/v1/orders` yalnızca kendi tenant'ının siparişlerini döner; anahtarsız istek 401, iptal edilen anahtar da 401 döner | 10 |
 
 ## 4. RLS İzolasyon Testleri (entegrasyon, zorunlu şablon)
 Her yeni tablo için otomatik üretilen test çifti:

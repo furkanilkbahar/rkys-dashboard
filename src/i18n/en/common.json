@@ -147,6 +147,7 @@
       "ingredients": "Ingredients",
       "suppliers": "Suppliers",
       "deliveryZones": "Delivery Zones",
+      "apiKeys": "API Keys",
       "reports": "Reports",
       "support": "Support",
       "settings": "Settings",
@@ -836,6 +837,23 @@
         "invalid_input": "Please check the information you entered.",
         "forbidden": "You don't have permission for this action.",
         "not_enabled": "The delivery module is not active.",
+        "unknown": "Could not save, please try again."
+      }
+    },
+    "apiKeys": {
+      "pageTitle": "API Keys",
+      "title": "API Keys",
+      "empty": "No API keys yet.",
+      "name": "Key Name",
+      "add": "+ Create Key",
+      "active": "Active",
+      "revoked": "Revoked",
+      "revoke": "Revoke",
+      "newKeyWarning": "Copy this key now — it won't be shown again.",
+      "errors": {
+        "invalid_input": "Please check the information you entered.",
+        "forbidden": "You don't have permission for this action.",
+        "not_enabled": "The API access module is not active.",
         "unknown": "Could not save, please try again."
       }
     }
