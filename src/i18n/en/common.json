@@ -141,6 +141,7 @@
       "staff": "Staff",
       "reservations": "Reservations",
       "kiosk": "Kiosk",
+      "scheduling": "Scheduling & Timeclock",
       "ratings": "Ratings",
       "campaigns": "Campaigns",
       "loyalty": "Loyalty",
@@ -983,6 +984,28 @@
         "not_enabled": "The kiosk module is not active.",
         "unknown": "Could not save, please try again."
       }
+    },
+    "scheduling": {
+      "pageTitle": "Scheduling & Timeclock",
+      "scheduleTitle": "Weekly Schedule",
+      "scheduleEmpty": "No shifts scheduled for this period.",
+      "staff": "Staff",
+      "staffPlaceholder": "Select staff",
+      "date": "Date",
+      "startTime": "Start",
+      "endTime": "End",
+      "add": "+ Add",
+      "delete": "Delete",
+      "hoursTitle": "Hours Worked Report (Last 14 Days)",
+      "hoursEmpty": "No closed shifts in this period.",
+      "hoursFormat": "{hours}h {minutes}m",
+      "exportCsv": "Download CSV",
+      "errors": {
+        "invalid_input": "Please check the information you entered.",
+        "forbidden": "You don't have permission for this action.",
+        "not_enabled": "The staff scheduling module is not active.",
+        "unknown": "Could not save, please try again."
+      }
     }
   },
   "waiter": {
@@ -1037,6 +1060,33 @@
     "advanceTo": {
       "en_route": "Head Out",
       "delivered": "Delivered"
+    }
+  },
+  "timeclock": {
+    "title": "Time Clock",
+    "deviceNotAuthorized": "This device is not authorized.",
+    "goToSetup": "Go to device setup",
+    "pinPlaceholder": "Enter PIN",
+    "clear": "Clear",
+    "submit": "Confirm",
+    "clockedIn": "Welcome, {badge}! Clocked in.",
+    "clockedOut": "See you, {badge}! Clocked out.",
+    "forgetDevice": "Forget this device",
+    "errors": {
+      "invalid_device": "Device is not authorized.",
+      "invalid_pin": "Incorrect PIN.",
+      "not_enabled": "The staff scheduling module is not active.",
+      "invalid_input": "Invalid input."
+    },
+    "setup": {
+      "title": "Device Setup",
+      "description": "Enter the device key your manager gave you.",
+      "deviceSecret": "Device Key",
+      "submit": "Save",
+      "errors": {
+        "invalid_input": "Please check the information you entered.",
+        "invalid_secret": "Invalid device key."
+      }
     }
   },
   "menu": {

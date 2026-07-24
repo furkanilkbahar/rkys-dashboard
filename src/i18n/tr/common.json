@@ -141,6 +141,7 @@
       "staff": "Personel",
       "reservations": "Rezervasyon",
       "kiosk": "Kiosk",
+      "scheduling": "Vardiya & Puantaj",
       "ratings": "Değerlendirmeler",
       "campaigns": "Kampanyalar",
       "loyalty": "Sadakat",
@@ -983,6 +984,28 @@
         "not_enabled": "Kiosk modülü aktif değil.",
         "unknown": "Kaydedilemedi, tekrar deneyin."
       }
+    },
+    "scheduling": {
+      "pageTitle": "Vardiya & Puantaj",
+      "scheduleTitle": "Haftalık Çizelge",
+      "scheduleEmpty": "Bu dönemde çizelgeye eklenmiş vardiya yok.",
+      "staff": "Personel",
+      "staffPlaceholder": "Personel seçin",
+      "date": "Tarih",
+      "startTime": "Başlangıç",
+      "endTime": "Bitiş",
+      "add": "+ Ekle",
+      "delete": "Sil",
+      "hoursTitle": "Çalışma Saati Raporu (Son 14 Gün)",
+      "hoursEmpty": "Bu dönemde kapanmış vardiya kaydı yok.",
+      "hoursFormat": "{hours} sa {minutes} dk",
+      "exportCsv": "CSV İndir",
+      "errors": {
+        "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
+        "forbidden": "Bu işlem için yetkiniz yok.",
+        "not_enabled": "Vardiya modülü aktif değil.",
+        "unknown": "Kaydedilemedi, tekrar deneyin."
+      }
     }
   },
   "waiter": {
@@ -1037,6 +1060,33 @@
     "advanceTo": {
       "en_route": "Yola Çık",
       "delivered": "Teslim Edildi"
+    }
+  },
+  "timeclock": {
+    "title": "Vardiya Girişi",
+    "deviceNotAuthorized": "Bu cihaz yetkili değil.",
+    "goToSetup": "Cihaz kurulumuna git",
+    "pinPlaceholder": "PIN girin",
+    "clear": "Temizle",
+    "submit": "Onayla",
+    "clockedIn": "Hoş geldin, {badge}! Giriş yapıldı.",
+    "clockedOut": "Görüşürüz, {badge}! Çıkış yapıldı.",
+    "forgetDevice": "Bu cihazı unut",
+    "errors": {
+      "invalid_device": "Cihaz yetkili değil.",
+      "invalid_pin": "PIN hatalı.",
+      "not_enabled": "Vardiya modülü aktif değil.",
+      "invalid_input": "Geçersiz giriş."
+    },
+    "setup": {
+      "title": "Cihaz Kurulumu",
+      "description": "Yöneticinizin size verdiği cihaz anahtarını girin.",
+      "deviceSecret": "Cihaz Anahtarı",
+      "submit": "Kaydet",
+      "errors": {
+        "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
+        "invalid_secret": "Cihaz anahtarı geçersiz."
+      }
     }
   },
   "menu": {

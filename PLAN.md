@@ -84,7 +84,7 @@
 ## Faz 11 — Ek Modüller
 - [x] **Rezervasyon + bekleme listesi** (masa haritası entegre)
 - [x] **Kiosk modu** (menünün dokunmatik modu)
-- [ ] **Vardiya planlama + puantaj** (çizelge, PIN giriş-çıkış, saat raporu, maaş exportu)
+- [x] **Vardiya planlama + puantaj** (çizelge, PIN giriş-çıkış, saat raporu, maaş exportu)
 
 ## Faz 12 — Gelecek Havuzu
 Mobil uygulama + push · Donanım paketi (termal/mutfak yazıcısı, çekmece, barkod, ÖKC) · Canlı kurye takibi · Segmentli kampanya + İYS iletişim modülü · Kademe sadakat · Tam PO/tedarik · Özel rol oluşturma · Çoklu kur · Yardım Merkezi · SLA'lı kurumsal paket  *(Wi-Fi portalı kapsam dışı — D69)*
