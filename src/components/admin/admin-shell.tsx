@@ -54,7 +54,7 @@ export function AdminShell({
                 </Button>
               }
             />
-            <SheetContent side="left" className="p-0">
+            <SheetContent side="left" className="p-0" closeLabel={t("nav.menuClose")}>
               <SheetHeader className="px-4 py-4 text-left">
                 <SheetTitle>RKYS Dashboard</SheetTitle>
               </SheetHeader>

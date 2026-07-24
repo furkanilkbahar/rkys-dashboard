@@ -156,7 +156,8 @@
       "reports": "Raporlar",
       "support": "Destek",
       "settings": "Ayarlar",
-      "menuOpen": "Menüyü aç"
+      "menuOpen": "Menüyü aç",
+      "menuClose": "Menüyü kapat"
     },
     "topbar": {
       "logout": "Çıkış yap"
@@ -1090,6 +1091,7 @@
     }
   },
   "menu": {
+    "languageSwitcherLabel": "Dil seçimi",
     "invalidQr": {
       "title": "Bu QR kodu geçersiz veya artık aktif değil.",
       "description": "Lütfen masanızdaki QR kodu tekrar okutun veya personelden yardım isteyin."

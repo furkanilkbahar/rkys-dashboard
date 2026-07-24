@@ -1,6 +1,6 @@
 "use client";
 
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useTransition } from "react";
 
 import { LOCALE_COOKIE, SUPPORTED_LOCALES, type Locale } from "@/i18n/locales";
@@ -14,6 +14,7 @@ function setLocaleCookie(nextLocale: Locale) {
 
 export function LanguageSwitcher({ enabledLocales = SUPPORTED_LOCALES }: { enabledLocales?: readonly Locale[] }) {
   const locale = useLocale();
+  const t = useTranslations("menu");
   const [isPending, startTransition] = useTransition();
 
   function handleChange(nextLocale: Locale) {
@@ -29,7 +30,7 @@ export function LanguageSwitcher({ enabledLocales = SUPPORTED_LOCALES }: { enabl
   }
 
   return (
-    <div className="flex gap-1" role="group" aria-label="language">
+    <div className="flex gap-1" role="group" aria-label={t("languageSwitcherLabel")}>
       {enabledLocales.map((code) => (
         <button
           key={code}

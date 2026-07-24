@@ -156,7 +156,8 @@
       "reports": "Reports",
       "support": "Support",
       "settings": "Settings",
-      "menuOpen": "Open menu"
+      "menuOpen": "Open menu",
+      "menuClose": "Close menu"
     },
     "topbar": {
       "logout": "Sign out"
@@ -1090,6 +1091,7 @@
     }
   },
   "menu": {
+    "languageSwitcherLabel": "Language selection",
     "invalidQr": {
       "title": "This QR code is invalid or no longer active.",
       "description": "Please rescan the QR code on your table or ask a staff member for help."
