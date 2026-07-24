@@ -4291,6 +4291,101 @@ export type Database = {
           },
         ]
       }
+      webhook_deliveries: {
+        Row: {
+          attempt_count: number
+          created_at: string
+          delivered_at: string | null
+          event_type: string
+          id: string
+          next_retry_at: string
+          payload: Json
+          pg_net_request_id: number | null
+          status: string
+          tenant_id: string
+          webhook_id: string
+        }
+        Insert: {
+          attempt_count?: number
+          created_at?: string
+          delivered_at?: string | null
+          event_type: string
+          id?: string
+          next_retry_at?: string
+          payload: Json
+          pg_net_request_id?: number | null
+          status?: string
+          tenant_id: string
+          webhook_id: string
+        }
+        Update: {
+          attempt_count?: number
+          created_at?: string
+          delivered_at?: string | null
+          event_type?: string
+          id?: string
+          next_retry_at?: string
+          payload?: Json
+          pg_net_request_id?: number | null
+          status?: string
+          tenant_id?: string
+          webhook_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "webhook_deliveries_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "webhook_deliveries_webhook_id_fkey"
+            columns: ["webhook_id"]
+            isOneToOne: false
+            referencedRelation: "webhooks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      webhooks: {
+        Row: {
+          created_at: string
+          event_types: string[]
+          id: string
+          is_active: boolean
+          secret: string
+          tenant_id: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          event_types: string[]
+          id?: string
+          is_active?: boolean
+          secret: string
+          tenant_id: string
+          url: string
+        }
+        Update: {
+          created_at?: string
+          event_types?: string[]
+          id?: string
+          is_active?: boolean
+          secret?: string
+          tenant_id?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "webhooks_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       effective_menu_items: {
@@ -4422,6 +4517,11 @@ export type Database = {
       }
       detect_revenue_anomalies: { Args: never; Returns: undefined }
       disable_tenant_locale: { Args: { p_locale: string }; Returns: undefined }
+      dispatch_webhook_deliveries: { Args: never; Returns: undefined }
+      enqueue_webhook_event: {
+        Args: { p_event_type: string; p_payload: Json; p_tenant_id: string }
+        Returns: undefined
+      }
       get_active_anomaly_alerts: {
         Args: { p_branch_id: string }
         Returns: {
@@ -4624,6 +4724,7 @@ export type Database = {
         Args: { p_product_id: string }
         Returns: undefined
       }
+      reconcile_webhook_deliveries: { Args: never; Returns: undefined }
       record_cash_movement: {
         Args: {
           p_amount_minor: number
