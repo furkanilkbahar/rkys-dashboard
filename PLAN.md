@@ -72,9 +72,9 @@
 - [x] **Menü mühendisliği matrisi** (otomatik maliyetle) + aksiyon önerileri — S37 (Adım 3)
 
 ## Faz 9 — Kanallar: Gel-Al & Paket
-- [ ] `pickup` kanalı (hazır bildirimi + teslim kodu)
-- [ ] `delivery`: adres/bölge/ücret/min sepet + **zamanlanmış sipariş**
-- [ ] **Kurye modülü** (atama, yolda→teslim, gün sonu özeti)
+- [x] `pickup` kanalı (hazır bildirimi + teslim kodu) — S38 (Adım 0)
+- [x] `delivery`: adres/bölge/ücret/min sepet + **zamanlanmış sipariş** — S39 (Adım 1)
+- [x] **Kurye modülü** (atama, yolda→teslim, gün sonu özeti) — S40 (Adım 2)
 
 ## Faz 10 — API & Entegrasyonlar
 - [ ] **Tenant API:** API key yönetimi + imzalı **webhooks** (retry'lı) + read-only API
