@@ -2361,6 +2361,55 @@ export type Database = {
           },
         ]
       }
+      product_external_mappings: {
+        Row: {
+          created_at: string
+          external_sku: string
+          id: string
+          product_id: string
+          provider: string
+          tenant_id: string
+        }
+        Insert: {
+          created_at?: string
+          external_sku: string
+          id?: string
+          product_id: string
+          provider: string
+          tenant_id: string
+        }
+        Update: {
+          created_at?: string
+          external_sku?: string
+          id?: string
+          product_id?: string
+          provider?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_external_mappings_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "product_external_mappings_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_external_mappings_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_extras: {
         Row: {
           created_at: string
@@ -3727,6 +3776,8 @@ export type Database = {
           closed_at: string | null
           created_at: string
           customer_id: string | null
+          external_order_id: string | null
+          external_provider: string | null
           id: string
           last_activity_at: string
           opened_at: string
@@ -3742,6 +3793,8 @@ export type Database = {
           closed_at?: string | null
           created_at?: string
           customer_id?: string | null
+          external_order_id?: string | null
+          external_provider?: string | null
           id?: string
           last_activity_at?: string
           opened_at?: string
@@ -3757,6 +3810,8 @@ export type Database = {
           closed_at?: string | null
           created_at?: string
           customer_id?: string | null
+          external_order_id?: string | null
+          external_provider?: string | null
           id?: string
           last_activity_at?: string
           opened_at?: string
@@ -4654,6 +4709,18 @@ export type Database = {
           product_name: string
           quantity: number
           revenue_minor: number
+        }[]
+      }
+      ingest_marketplace_order: {
+        Args: {
+          p_external_order_id: string
+          p_items: Json
+          p_provider: string
+          p_tenant_id: string
+        }
+        Returns: {
+          is_duplicate: boolean
+          order_id: string
         }[]
       }
       is_business_date_closed: {
