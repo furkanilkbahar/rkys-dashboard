@@ -9,6 +9,7 @@ export type StaffOrderView = {
   tableLabel: string | null;
   pickupCode: string | null;
   isDelivery: boolean;
+  marketplaceProvider: string | null;
   createdAt: string;
   items: { name: string; variantName: string | null; quantity: number }[];
 };
@@ -32,7 +33,7 @@ export async function getOrdersByStatus(
 
   let query = supabase
     .from("orders")
-    .select(`id, status, created_at, table_sessions(channel, pickup_code, tables(label)), ${itemsSelect}`)
+    .select(`id, status, created_at, table_sessions(channel, pickup_code, external_provider, tables(label)), ${itemsSelect}`)
     .eq("tenant_id", tenantId)
     .eq("branch_id", branchId)
     .in("status", statuses)
@@ -50,6 +51,7 @@ export async function getOrdersByStatus(
     tableLabel: order.table_sessions?.tables?.label ?? null,
     pickupCode: order.table_sessions?.channel === "pickup" ? (order.table_sessions?.pickup_code ?? null) : null,
     isDelivery: order.table_sessions?.channel === "delivery",
+    marketplaceProvider: order.table_sessions?.channel === "marketplace" ? (order.table_sessions?.external_provider ?? null) : null,
     createdAt: order.created_at,
     items: order.order_items.map((item) => ({
       name: item.product_name_snapshot,

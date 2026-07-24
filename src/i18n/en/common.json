@@ -149,6 +149,7 @@
       "deliveryZones": "Delivery Zones",
       "apiKeys": "API Keys",
       "webhooks": "Webhooks",
+      "marketplace": "Marketplace",
       "reports": "Reports",
       "support": "Support",
       "settings": "Settings",
@@ -882,6 +883,23 @@
         "not_enabled": "The API access module is not active.",
         "unknown": "Could not save, please try again."
       }
+    },
+    "marketplace": {
+      "pageTitle": "Marketplace",
+      "title": "Product Mappings",
+      "empty": "No mappings yet.",
+      "provider": "Provider",
+      "externalSku": "Marketplace Code (SKU)",
+      "product": "Product",
+      "productPlaceholder": "Select a product",
+      "add": "+ Add Mapping",
+      "remove": "Remove",
+      "errors": {
+        "invalid_input": "Please check the information you entered.",
+        "forbidden": "You don't have permission for this action.",
+        "not_enabled": "The marketplace module is not active.",
+        "unknown": "Could not save, please try again."
+      }
     }
   },
   "waiter": {
@@ -897,6 +915,7 @@
     "noPendingOrders": "No orders awaiting approval.",
     "pickupLabel": "Pickup #{code}",
     "deliveryLabel": "Delivery",
+    "marketplaceLabel": "Marketplace ({provider})",
     "courierAssignment": "Courier Assignment",
     "noDeliveryOrders": "No delivery orders to assign.",
     "assign": "Assign Courier"
@@ -909,6 +928,7 @@
     "noOrders": "No orders pending.",
     "pickupLabel": "Pickup #{code}",
     "deliveryLabel": "Delivery",
+    "marketplaceLabel": "Marketplace ({provider})",
     "status": {
       "approved": "Approved",
       "preparing": "Preparing",

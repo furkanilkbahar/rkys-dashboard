@@ -133,7 +133,13 @@ export function WaiterPanel({
             <CardHeader>
               <CardTitle className="text-sm">
                 {order.tableLabel ??
-                  (order.pickupCode ? t("pickupLabel", { code: order.pickupCode }) : order.isDelivery ? t("deliveryLabel") : "?")}
+                  (order.pickupCode
+                    ? t("pickupLabel", { code: order.pickupCode })
+                    : order.isDelivery
+                      ? t("deliveryLabel")
+                      : order.marketplaceProvider
+                        ? t("marketplaceLabel", { provider: order.marketplaceProvider })
+                        : "?")}
               </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col gap-2">

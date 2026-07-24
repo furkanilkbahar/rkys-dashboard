@@ -149,6 +149,7 @@
       "deliveryZones": "Teslimat Bölgeleri",
       "apiKeys": "API Anahtarları",
       "webhooks": "Webhook'lar",
+      "marketplace": "Pazar Yeri",
       "reports": "Raporlar",
       "support": "Destek",
       "settings": "Ayarlar",
@@ -882,6 +883,23 @@
         "not_enabled": "API erişimi modülü aktif değil.",
         "unknown": "Kaydedilemedi, tekrar deneyin."
       }
+    },
+    "marketplace": {
+      "pageTitle": "Pazar Yeri",
+      "title": "Ürün Eşlemeleri",
+      "empty": "Henüz eşleme yok.",
+      "provider": "Sağlayıcı",
+      "externalSku": "Pazar Yeri Kodu (SKU)",
+      "product": "Ürün",
+      "productPlaceholder": "Ürün seçin",
+      "add": "+ Eşleme Ekle",
+      "remove": "Kaldır",
+      "errors": {
+        "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
+        "forbidden": "Bu işlem için yetkiniz yok.",
+        "not_enabled": "Pazar yeri modülü aktif değil.",
+        "unknown": "Kaydedilemedi, tekrar deneyin."
+      }
     }
   },
   "waiter": {
@@ -897,6 +915,7 @@
     "noPendingOrders": "Onay bekleyen sipariş yok.",
     "pickupLabel": "Gel-Al #{code}",
     "deliveryLabel": "Paket Servis",
+    "marketplaceLabel": "Pazar Yeri ({provider})",
     "courierAssignment": "Kurye Ataması",
     "noDeliveryOrders": "Atanacak paket servis siparişi yok.",
     "assign": "Kurye Ata"
@@ -909,6 +928,7 @@
     "noOrders": "Bekleyen sipariş yok.",
     "pickupLabel": "Gel-Al #{code}",
     "deliveryLabel": "Paket Servis",
+    "marketplaceLabel": "Pazar Yeri ({provider})",
     "status": {
       "approved": "Onaylandı",
       "preparing": "Hazırlanıyor",
