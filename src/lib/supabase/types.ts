@@ -1576,6 +1576,61 @@ export type Database = {
           },
         ]
       }
+      kiosk_devices: {
+        Row: {
+          branch_id: string
+          created_at: string
+          device_name: string
+          id: string
+          is_active: boolean
+          last_active_at: string | null
+          pairing_code: string
+          tenant_id: string
+        }
+        Insert: {
+          branch_id: string
+          created_at?: string
+          device_name: string
+          id?: string
+          is_active?: boolean
+          last_active_at?: string | null
+          pairing_code: string
+          tenant_id: string
+        }
+        Update: {
+          branch_id?: string
+          created_at?: string
+          device_name?: string
+          id?: string
+          is_active?: boolean
+          last_active_at?: string | null
+          pairing_code?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kiosk_devices_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kiosk_devices_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "kiosk_devices_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       licenses: {
         Row: {
           created_at: string
@@ -3917,6 +3972,7 @@ export type Database = {
           external_order_id: string | null
           external_provider: string | null
           id: string
+          kiosk_device_id: string | null
           last_activity_at: string
           opened_at: string
           pickup_code: string | null
@@ -3934,6 +3990,7 @@ export type Database = {
           external_order_id?: string | null
           external_provider?: string | null
           id?: string
+          kiosk_device_id?: string | null
           last_activity_at?: string
           opened_at?: string
           pickup_code?: string | null
@@ -3951,6 +4008,7 @@ export type Database = {
           external_order_id?: string | null
           external_provider?: string | null
           id?: string
+          kiosk_device_id?: string | null
           last_activity_at?: string
           opened_at?: string
           pickup_code?: string | null
@@ -3978,6 +4036,13 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "table_sessions_kiosk_device_id_fkey"
+            columns: ["kiosk_device_id"]
+            isOneToOne: false
+            referencedRelation: "kiosk_devices"
             referencedColumns: ["id"]
           },
           {
@@ -4966,6 +5031,13 @@ export type Database = {
         Returns: undefined
       }
       open_delivery_session: { Args: { p_tenant_id: string }; Returns: string }
+      open_kiosk_session: {
+        Args: { p_pairing_code: string; p_tenant_id: string }
+        Returns: {
+          pickup_code: string
+          table_session_id: string
+        }[]
+      }
       open_or_get_active_table_session: {
         Args: { p_table_id: string }
         Returns: string
