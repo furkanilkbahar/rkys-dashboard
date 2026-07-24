@@ -3240,6 +3240,96 @@ export type Database = {
           },
         ]
       }
+      reservations: {
+        Row: {
+          branch_id: string
+          cancelled_at: string | null
+          confirmed_at: string | null
+          created_at: string
+          created_by: string | null
+          customer_name: string
+          customer_phone: string
+          id: string
+          note: string | null
+          party_size: number
+          reserved_at: string
+          seated_at: string | null
+          status: string
+          table_id: string | null
+          tenant_id: string
+        }
+        Insert: {
+          branch_id: string
+          cancelled_at?: string | null
+          confirmed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_name: string
+          customer_phone: string
+          id?: string
+          note?: string | null
+          party_size: number
+          reserved_at: string
+          seated_at?: string | null
+          status?: string
+          table_id?: string | null
+          tenant_id: string
+        }
+        Update: {
+          branch_id?: string
+          cancelled_at?: string | null
+          confirmed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_name?: string
+          customer_phone?: string
+          id?: string
+          note?: string | null
+          party_size?: number
+          reserved_at?: string
+          seated_at?: string | null
+          status?: string
+          table_id?: string | null
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reservations_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reservations_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "reservations_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reservations_table_id_fkey"
+            columns: ["table_id"]
+            isOneToOne: false
+            referencedRelation: "tables"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reservations_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       role_permissions: {
         Row: {
           allowed: boolean
@@ -4387,6 +4477,67 @@ export type Database = {
           },
           {
             foreignKeyName: "waiter_calls_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      waitlist_entries: {
+        Row: {
+          branch_id: string
+          called_at: string | null
+          created_at: string
+          customer_name: string
+          customer_phone: string | null
+          id: string
+          party_size: number
+          seated_at: string | null
+          status: string
+          tenant_id: string
+        }
+        Insert: {
+          branch_id: string
+          called_at?: string | null
+          created_at?: string
+          customer_name: string
+          customer_phone?: string | null
+          id?: string
+          party_size: number
+          seated_at?: string | null
+          status?: string
+          tenant_id: string
+        }
+        Update: {
+          branch_id?: string
+          called_at?: string | null
+          created_at?: string
+          customer_name?: string
+          customer_phone?: string | null
+          id?: string
+          party_size?: number
+          seated_at?: string | null
+          status?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "waitlist_entries_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "waitlist_entries_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "waitlist_entries_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "tenants"
