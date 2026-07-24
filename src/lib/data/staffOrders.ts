@@ -8,6 +8,7 @@ export type StaffOrderView = {
   status: OrderStatus;
   tableLabel: string | null;
   pickupCode: string | null;
+  isDelivery: boolean;
   createdAt: string;
   items: { name: string; variantName: string | null; quantity: number }[];
 };
@@ -48,6 +49,7 @@ export async function getOrdersByStatus(
     status: order.status as OrderStatus,
     tableLabel: order.table_sessions?.tables?.label ?? null,
     pickupCode: order.table_sessions?.channel === "pickup" ? (order.table_sessions?.pickup_code ?? null) : null,
+    isDelivery: order.table_sessions?.channel === "delivery",
     createdAt: order.created_at,
     items: order.order_items.map((item) => ({
       name: item.product_name_snapshot,

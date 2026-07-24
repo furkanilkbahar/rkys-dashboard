@@ -58,6 +58,7 @@ Bir faz şunlar olmadan kapanmaz:
 | S36 | Fire/sayım: admin fire kaydeder (stok düşer) ve fiziksel sayım girer (stok sayılan değere eşitlenir); kritik seviyenin altındaki malzemeler sayfa üstünde özetlenir | 8 |
 | S37 | Menü mühendisliği matrisi: dönem içi satışlar popülerlik×marj ortalamasına göre Yıldız/Beygir/Bilmece/Zayıf kategorilerine doğru ayrılır, reçeteden otomatik hesaplanan maliyet rapora yansır | 8 |
 | S38 | Gel-Al (pickup): misafir bağlantıdan (fiziksel masasız) sipariş verir, teslim kodu görür; mutfak siparişi hazır işaretleyince misafir bildirim alır — aynı sipariş/KDS motoru kanal farkıyla çalışır | 9 |
+| S39 | Paket servis (delivery): misafir teslimat bölgesi seçer, adres girer; bölge ücreti toplama eklenir, minimum sepet altındaki siparişler reddedilir | 9 |
 
 ## 4. RLS İzolasyon Testleri (entegrasyon, zorunlu şablon)
 Her yeni tablo için otomatik üretilen test çifti:

@@ -146,6 +146,7 @@
       "giftCards": "Gift Cards",
       "ingredients": "Ingredients",
       "suppliers": "Suppliers",
+      "deliveryZones": "Delivery Zones",
       "reports": "Reports",
       "support": "Support",
       "settings": "Settings",
@@ -819,6 +820,24 @@
         "not_enabled": "The inventory module is not active.",
         "unknown": "Could not save, please try again."
       }
+    },
+    "deliveryZones": {
+      "pageTitle": "Delivery Zones",
+      "title": "Delivery Zones",
+      "empty": "No delivery zones yet.",
+      "name": "Zone Name",
+      "fee": "Fee ($)",
+      "minBasket": "Min. Basket ($)",
+      "feeLabel": "Fee",
+      "minBasketLabel": "Min. Basket",
+      "active": "Active",
+      "add": "+ Add Zone",
+      "errors": {
+        "invalid_input": "Please check the information you entered.",
+        "forbidden": "You don't have permission for this action.",
+        "not_enabled": "The delivery module is not active.",
+        "unknown": "Could not save, please try again."
+      }
     }
   },
   "waiter": {
@@ -832,7 +851,8 @@
     "acknowledge": "Acknowledge",
     "pendingApproval": "Orders Awaiting Approval",
     "noPendingOrders": "No orders awaiting approval.",
-    "pickupLabel": "Pickup #{code}"
+    "pickupLabel": "Pickup #{code}",
+    "deliveryLabel": "Delivery"
   },
   "kitchen": {
     "title": "Kitchen Display",
@@ -841,6 +861,7 @@
     "disconnected": "Disconnected",
     "noOrders": "No orders pending.",
     "pickupLabel": "Pickup #{code}",
+    "deliveryLabel": "Delivery",
     "status": {
       "approved": "Approved",
       "preparing": "Preparing",
@@ -861,6 +882,10 @@
       "title": "Pickup ordering is currently unavailable.",
       "description": "Please try again later or contact the venue."
     },
+    "invalidDelivery": {
+      "title": "Delivery ordering is currently unavailable.",
+      "description": "Please try again later or contact the venue."
+    },
     "tableSelect": {
       "title": "Choose your table",
       "missingToken": "Invalid link.",
@@ -874,6 +899,10 @@
       "noSession": "Please reopen the link to place a pickup order.",
       "connected": "Your pickup order session has started.",
       "codeLabel": "Pickup code: {code}"
+    },
+    "delivery": {
+      "noSession": "Please reopen the link to place a delivery order.",
+      "connected": "Your delivery order session has started."
     },
     "product": {
       "soldOut": "Sold out",
@@ -890,7 +919,16 @@
       "no_session": "Your session was not found, please rescan the QR code.",
       "stock_unavailable": "An item in your cart is no longer in stock.",
       "rate_limited": "You're sending orders too fast, please wait.",
-      "unknown": "Order could not be submitted, please try again."
+      "invalid_delivery_zone": "The selected delivery zone is invalid.",
+      "min_basket_not_met": "You haven't reached the minimum basket for this zone.",
+      "unknown": "Order could not be submitted, please try again.",
+      "delivery": {
+        "zone": "Delivery Zone",
+        "zonePlaceholder": "Select a zone",
+        "minBasketHint": "Minimum basket for this zone: {amount}",
+        "address": "Delivery Address",
+        "scheduledFor": "Delivery Time (optional)"
+      }
     },
     "waiterCall": {
       "callWaiter": "Call Waiter",

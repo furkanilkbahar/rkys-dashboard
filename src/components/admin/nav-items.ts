@@ -1,4 +1,20 @@
-import { BarChart3, Boxes, CalendarClock, Gift, Heart, LayoutDashboard, LifeBuoy, Settings, Star, Table2, Tag, Truck, Users, UtensilsCrossed } from "lucide-react";
+import {
+  BarChart3,
+  Boxes,
+  CalendarClock,
+  Gift,
+  Heart,
+  LayoutDashboard,
+  LifeBuoy,
+  MapPin,
+  Settings,
+  Star,
+  Table2,
+  Tag,
+  Truck,
+  Users,
+  UtensilsCrossed,
+} from "lucide-react";
 
 import type { ModuleKey } from "@/lib/modules/keys";
 
@@ -20,6 +36,7 @@ export const ADMIN_NAV_ITEMS = [
   { href: "/admin/gift-cards", labelKey: "giftCards", icon: Gift, exact: false, moduleKey: "gift_cards" satisfies ModuleKey },
   { href: "/admin/ingredients", labelKey: "ingredients", icon: Boxes, exact: false, moduleKey: "inventory" satisfies ModuleKey },
   { href: "/admin/suppliers", labelKey: "suppliers", icon: Truck, exact: false, moduleKey: "inventory" satisfies ModuleKey },
+  { href: "/admin/delivery-zones", labelKey: "deliveryZones", icon: MapPin, exact: false, moduleKey: "delivery" satisfies ModuleKey },
   { href: "/admin/reports", labelKey: "reports", icon: BarChart3, exact: false, moduleKey: null },
   { href: "/admin/support", labelKey: "support", icon: LifeBuoy, exact: false, moduleKey: null },
   { href: "/admin/settings", labelKey: "settings", icon: Settings, exact: false, moduleKey: null },

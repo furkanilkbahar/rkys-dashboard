@@ -95,3 +95,42 @@ export async function bootstrapPickupSession(tenantId: string): Promise<string |
   await supabase.auth.refreshSession();
   return tableSessionId;
 }
+
+/**
+ * Paket servis (delivery) bootstrap — bootstrapPickupSession ile birebir
+ * aynı, yalnızca open_delivery_session (0062) çağrılır. Bölge/adres/
+ * zamanlanmış teslimat bilgisi burada değil, checkout'ta (submit_order)
+ * toplanır (Varsayım, bkz. 0062 migration yorumu).
+ */
+export async function bootstrapDeliverySession(tenantId: string): Promise<string | null> {
+  const service = createServiceRoleClient();
+
+  const { data: tableSessionId, error: sessionError } = await service.rpc("open_delivery_session", { p_tenant_id: tenantId });
+  if (sessionError || !tableSessionId) {
+    return null;
+  }
+
+  const { data: session } = await service.from("table_sessions").select("branch_id").eq("id", tableSessionId).single();
+  if (!session) {
+    return null;
+  }
+
+  const supabase = await createClient();
+  const { data: authData, error: authError } = await supabase.auth.signInAnonymously();
+  if (authError || !authData.user) {
+    return null;
+  }
+
+  const { error: linkError } = await service.rpc("link_guest_device", {
+    p_guest_user_id: authData.user.id,
+    p_table_session_id: tableSessionId,
+    p_tenant_id: tenantId,
+    p_branch_id: session.branch_id,
+  });
+  if (linkError) {
+    return null;
+  }
+
+  await supabase.auth.refreshSession();
+  return tableSessionId;
+}

@@ -19,6 +19,9 @@ export async function submitOrder(input: SubmitOrderInput): Promise<SubmitOrderR
   const { data, error } = await supabase.rpc("submit_order", {
     p_idempotency_key: parsed.data.idempotencyKey,
     p_items: parsed.data.items,
+    ...(parsed.data.deliveryZoneId ? { p_delivery_zone_id: parsed.data.deliveryZoneId } : {}),
+    ...(parsed.data.deliveryAddress ? { p_delivery_address: parsed.data.deliveryAddress } : {}),
+    ...(parsed.data.scheduledFor ? { p_scheduled_for: parsed.data.scheduledFor } : {}),
   });
 
   if (error || !data || data.length === 0) {
@@ -28,6 +31,12 @@ export async function submitOrder(input: SubmitOrderInput): Promise<SubmitOrderR
     }
     if (message === "RATE_LIMITED") {
       return { ok: false, error: "rate_limited" };
+    }
+    if (message === "invalid delivery zone") {
+      return { ok: false, error: "invalid_delivery_zone" };
+    }
+    if (message.startsWith("MIN_BASKET_NOT_MET")) {
+      return { ok: false, error: "min_basket_not_met" };
     }
     return { ok: false, error: "unknown" };
   }

@@ -146,6 +146,7 @@
       "giftCards": "Hediye Kartları",
       "ingredients": "Malzemeler",
       "suppliers": "Tedarikçiler",
+      "deliveryZones": "Teslimat Bölgeleri",
       "reports": "Raporlar",
       "support": "Destek",
       "settings": "Ayarlar",
@@ -819,6 +820,24 @@
         "not_enabled": "Stok modülü aktif değil.",
         "unknown": "Kaydedilemedi, tekrar deneyin."
       }
+    },
+    "deliveryZones": {
+      "pageTitle": "Teslimat Bölgeleri",
+      "title": "Teslimat Bölgeleri",
+      "empty": "Henüz teslimat bölgesi yok.",
+      "name": "Bölge Adı",
+      "fee": "Ücret (₺)",
+      "minBasket": "Min. Sepet (₺)",
+      "feeLabel": "Ücret",
+      "minBasketLabel": "Min. Sepet",
+      "active": "Aktif",
+      "add": "+ Bölge Ekle",
+      "errors": {
+        "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
+        "forbidden": "Bu işlem için yetkiniz yok.",
+        "not_enabled": "Paket servis modülü aktif değil.",
+        "unknown": "Kaydedilemedi, tekrar deneyin."
+      }
     }
   },
   "waiter": {
@@ -832,7 +851,8 @@
     "acknowledge": "Karşılandı",
     "pendingApproval": "Onay Bekleyen Siparişler",
     "noPendingOrders": "Onay bekleyen sipariş yok.",
-    "pickupLabel": "Gel-Al #{code}"
+    "pickupLabel": "Gel-Al #{code}",
+    "deliveryLabel": "Paket Servis"
   },
   "kitchen": {
     "title": "Mutfak Ekranı (KDS)",
@@ -841,6 +861,7 @@
     "disconnected": "Bağlantı koptu",
     "noOrders": "Bekleyen sipariş yok.",
     "pickupLabel": "Gel-Al #{code}",
+    "deliveryLabel": "Paket Servis",
     "status": {
       "approved": "Onaylandı",
       "preparing": "Hazırlanıyor",
@@ -861,6 +882,10 @@
       "title": "Gel-Al siparişi şu anda kullanılamıyor.",
       "description": "Lütfen daha sonra tekrar deneyin veya işletmeyle iletişime geçin."
     },
+    "invalidDelivery": {
+      "title": "Paket servis şu anda kullanılamıyor.",
+      "description": "Lütfen daha sonra tekrar deneyin veya işletmeyle iletişime geçin."
+    },
     "tableSelect": {
       "title": "Masanızı seçin",
       "missingToken": "Geçersiz bağlantı.",
@@ -874,6 +899,10 @@
       "noSession": "Gel-Al siparişi vermek için lütfen bağlantıyı tekrar açın.",
       "connected": "Gel-Al siparişiniz oluşturuldu.",
       "codeLabel": "Teslim Kodunuz: {code}"
+    },
+    "delivery": {
+      "noSession": "Paket servis siparişi vermek için lütfen bağlantıyı tekrar açın.",
+      "connected": "Paket servis siparişiniz oluşturuldu."
     },
     "product": {
       "soldOut": "Tükendi",
@@ -890,7 +919,16 @@
       "no_session": "Oturumunuz bulunamadı, lütfen QR kodu tekrar okutun.",
       "stock_unavailable": "Sepetinizdeki bir ürün artık stokta yok.",
       "rate_limited": "Çok hızlı sipariş gönderdiniz, biraz bekleyin.",
-      "unknown": "Sipariş gönderilemedi, tekrar deneyin."
+      "invalid_delivery_zone": "Seçilen teslimat bölgesi geçersiz.",
+      "min_basket_not_met": "Bu bölge için minimum sepet tutarına ulaşmadınız.",
+      "unknown": "Sipariş gönderilemedi, tekrar deneyin.",
+      "delivery": {
+        "zone": "Teslimat Bölgesi",
+        "zonePlaceholder": "Bölge seçin",
+        "minBasketHint": "Bu bölge için minimum sepet: {amount}",
+        "address": "Teslimat Adresi",
+        "scheduledFor": "Teslim Zamanı (opsiyonel)"
+      }
     },
     "waiterCall": {
       "callWaiter": "Garson Çağır",

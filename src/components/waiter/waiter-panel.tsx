@@ -122,7 +122,8 @@ export function WaiterPanel({
           <Card key={order.id}>
             <CardHeader>
               <CardTitle className="text-sm">
-                {order.tableLabel ?? (order.pickupCode ? t("pickupLabel", { code: order.pickupCode }) : "?")}
+                {order.tableLabel ??
+                  (order.pickupCode ? t("pickupLabel", { code: order.pickupCode }) : order.isDelivery ? t("deliveryLabel") : "?")}
               </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col gap-2">
