@@ -708,6 +708,61 @@ export type Database = {
           },
         ]
       }
+      customer_addresses: {
+        Row: {
+          address_text: string
+          created_at: string
+          customer_id: string
+          id: string
+          is_default: boolean
+          label: string | null
+          tenant_id: string
+          zone_id: string | null
+        }
+        Insert: {
+          address_text: string
+          created_at?: string
+          customer_id: string
+          id?: string
+          is_default?: boolean
+          label?: string | null
+          tenant_id: string
+          zone_id?: string | null
+        }
+        Update: {
+          address_text?: string
+          created_at?: string
+          customer_id?: string
+          id?: string
+          is_default?: boolean
+          label?: string | null
+          tenant_id?: string
+          zone_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_addresses_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_addresses_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_addresses_zone_id_fkey"
+            columns: ["zone_id"]
+            isOneToOne: false
+            referencedRelation: "delivery_zones"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customer_segments: {
         Row: {
           created_at: string
@@ -957,6 +1012,61 @@ export type Database = {
           },
           {
             foreignKeyName: "day_closures_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      delivery_zones: {
+        Row: {
+          branch_id: string
+          created_at: string
+          fee_minor: number
+          id: string
+          is_active: boolean
+          min_basket_minor: number
+          name: string
+          tenant_id: string
+        }
+        Insert: {
+          branch_id: string
+          created_at?: string
+          fee_minor?: number
+          id?: string
+          is_active?: boolean
+          min_basket_minor?: number
+          name: string
+          tenant_id: string
+        }
+        Update: {
+          branch_id?: string
+          created_at?: string
+          fee_minor?: number
+          id?: string
+          is_active?: boolean
+          min_basket_minor?: number
+          name?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "delivery_zones_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "delivery_zones_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "delivery_zones_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "tenants"
@@ -1720,9 +1830,13 @@ export type Database = {
           cancel_requested_reason: string | null
           channel: string
           created_at: string
+          delivery_address_snapshot: string | null
+          delivery_fee_minor: number
+          delivery_zone_id: string | null
           id: string
           idempotency_key: string
           placed_by_device_id: string | null
+          scheduled_for: string | null
           status: string
           subtotal_minor: number
           table_session_id: string
@@ -1736,9 +1850,13 @@ export type Database = {
           cancel_requested_reason?: string | null
           channel?: string
           created_at?: string
+          delivery_address_snapshot?: string | null
+          delivery_fee_minor?: number
+          delivery_zone_id?: string | null
           id?: string
           idempotency_key: string
           placed_by_device_id?: string | null
+          scheduled_for?: string | null
           status?: string
           subtotal_minor?: number
           table_session_id: string
@@ -1752,9 +1870,13 @@ export type Database = {
           cancel_requested_reason?: string | null
           channel?: string
           created_at?: string
+          delivery_address_snapshot?: string | null
+          delivery_fee_minor?: number
+          delivery_zone_id?: string | null
           id?: string
           idempotency_key?: string
           placed_by_device_id?: string | null
+          scheduled_for?: string | null
           status?: string
           subtotal_minor?: number
           table_session_id?: string
@@ -1781,6 +1903,13 @@ export type Database = {
             columns: ["cancel_reason_code_id"]
             isOneToOne: false
             referencedRelation: "reason_codes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_delivery_zone_id_fkey"
+            columns: ["delivery_zone_id"]
+            isOneToOne: false
+            referencedRelation: "delivery_zones"
             referencedColumns: ["id"]
           },
           {
@@ -4328,6 +4457,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      open_delivery_session: { Args: { p_tenant_id: string }; Returns: string }
       open_or_get_active_table_session: {
         Args: { p_table_id: string }
         Returns: string
@@ -4469,7 +4599,13 @@ export type Database = {
         Returns: undefined
       }
       submit_order: {
-        Args: { p_idempotency_key: string; p_items: Json }
+        Args: {
+          p_delivery_address?: string
+          p_delivery_zone_id?: string
+          p_idempotency_key: string
+          p_items: Json
+          p_scheduled_for?: string
+        }
         Returns: {
           order_id: string
           order_status: string
