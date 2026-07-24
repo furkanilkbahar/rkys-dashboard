@@ -121,7 +121,9 @@ export function WaiterPanel({
         {pendingOrders.map((order) => (
           <Card key={order.id}>
             <CardHeader>
-              <CardTitle className="text-sm">{order.tableLabel}</CardTitle>
+              <CardTitle className="text-sm">
+                {order.tableLabel ?? (order.pickupCode ? t("pickupLabel", { code: order.pickupCode }) : "?")}
+              </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col gap-2">
               <ul className="text-sm text-muted-foreground">

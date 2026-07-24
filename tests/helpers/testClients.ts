@@ -100,6 +100,47 @@ export async function bootstrapGuestForTable(tableId: string) {
 }
 
 /**
+ * bootstrapGuestForTable'ın Gel-Al (pickup) karşılığı — src/lib/guest/
+ * bootstrap.ts'teki bootstrapPickupSession'ın Vitest tarafı.
+ */
+export async function bootstrapGuestForPickup(tenantId: string) {
+  const service = serviceRoleClient();
+  const { data, error: sessionError } = await service.rpc("open_pickup_session", { p_tenant_id: tenantId });
+  if (sessionError || !data || data.length === 0) {
+    throw new Error(`open_pickup_session failed: ${sessionError?.message}`);
+  }
+  const { table_session_id: tableSessionId, pickup_code: pickupCode } = data[0];
+
+  const { data: session, error: sessionLookupError } = await service
+    .from("table_sessions")
+    .select("branch_id")
+    .eq("id", tableSessionId)
+    .single();
+  if (sessionLookupError || !session) {
+    throw new Error(`table_sessions lookup failed: ${sessionLookupError?.message}`);
+  }
+
+  const guest = anonClient();
+  const { data: authData, error: authError } = await guest.auth.signInAnonymously();
+  if (authError || !authData.user) {
+    throw new Error(`signInAnonymously failed: ${authError?.message}`);
+  }
+
+  const { error: linkError } = await service.rpc("link_guest_device", {
+    p_guest_user_id: authData.user.id,
+    p_table_session_id: tableSessionId,
+    p_tenant_id: tenantId,
+    p_branch_id: session.branch_id,
+  });
+  if (linkError) {
+    throw new Error(`link_guest_device failed: ${linkError.message}`);
+  }
+
+  await guest.auth.refreshSession();
+  return { client: guest, tableSessionId: tableSessionId as string, pickupCode: pickupCode as string };
+}
+
+/**
  * Onboarding testleri (Faz 2 Adım 7) için tek kullanımlık, atılabilir bir
  * tenant + owner hesabı kurar — onboarding_completed_at = null. Sipariş/
  * oturum geçmişi kalıcı olduğu için (RULES #18) bu tenant'lar paylaşılan

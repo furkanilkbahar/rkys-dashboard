@@ -107,7 +107,7 @@ export function KdsPanel({
             <Card key={order.id}>
               <CardHeader>
                 <CardTitle className="flex items-center justify-between text-sm">
-                  <span>{order.tableLabel}</span>
+                  <span>{order.tableLabel ?? (order.pickupCode ? t("pickupLabel", { code: order.pickupCode }) : "?")}</span>
                   <span className="text-xs text-muted-foreground">{t(`status.${order.status}`)}</span>
                 </CardTitle>
               </CardHeader>

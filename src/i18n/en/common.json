@@ -831,7 +831,8 @@
     "untypedCall": "Calling",
     "acknowledge": "Acknowledge",
     "pendingApproval": "Orders Awaiting Approval",
-    "noPendingOrders": "No orders awaiting approval."
+    "noPendingOrders": "No orders awaiting approval.",
+    "pickupLabel": "Pickup #{code}"
   },
   "kitchen": {
     "title": "Kitchen Display",
@@ -839,6 +840,7 @@
     "connected": "Connected",
     "disconnected": "Disconnected",
     "noOrders": "No orders pending.",
+    "pickupLabel": "Pickup #{code}",
     "status": {
       "approved": "Approved",
       "preparing": "Preparing",
@@ -855,6 +857,10 @@
       "title": "This QR code is invalid or no longer active.",
       "description": "Please rescan the QR code on your table or ask a staff member for help."
     },
+    "invalidPickup": {
+      "title": "Pickup ordering is currently unavailable.",
+      "description": "Please try again later or contact the venue."
+    },
     "tableSelect": {
       "title": "Choose your table",
       "missingToken": "Invalid link.",
@@ -863,6 +869,11 @@
     "session": {
       "noSession": "Scan the QR code on your table to view the menu.",
       "connected": "You're connected to your table."
+    },
+    "pickup": {
+      "noSession": "Please reopen the link to place a pickup order.",
+      "connected": "Your pickup order session has started.",
+      "codeLabel": "Pickup code: {code}"
     },
     "product": {
       "soldOut": "Sold out",

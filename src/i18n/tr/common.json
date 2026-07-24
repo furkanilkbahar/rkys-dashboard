@@ -831,7 +831,8 @@
     "untypedCall": "Çağırıyor",
     "acknowledge": "Karşılandı",
     "pendingApproval": "Onay Bekleyen Siparişler",
-    "noPendingOrders": "Onay bekleyen sipariş yok."
+    "noPendingOrders": "Onay bekleyen sipariş yok.",
+    "pickupLabel": "Gel-Al #{code}"
   },
   "kitchen": {
     "title": "Mutfak Ekranı (KDS)",
@@ -839,6 +840,7 @@
     "connected": "Bağlı",
     "disconnected": "Bağlantı koptu",
     "noOrders": "Bekleyen sipariş yok.",
+    "pickupLabel": "Gel-Al #{code}",
     "status": {
       "approved": "Onaylandı",
       "preparing": "Hazırlanıyor",
@@ -855,6 +857,10 @@
       "title": "Bu QR kodu geçersiz veya artık aktif değil.",
       "description": "Lütfen masanızdaki QR kodu tekrar okutun veya personelden yardım isteyin."
     },
+    "invalidPickup": {
+      "title": "Gel-Al siparişi şu anda kullanılamıyor.",
+      "description": "Lütfen daha sonra tekrar deneyin veya işletmeyle iletişime geçin."
+    },
     "tableSelect": {
       "title": "Masanızı seçin",
       "missingToken": "Geçersiz bağlantı.",
@@ -863,6 +869,11 @@
     "session": {
       "noSession": "Menüyü görüntülemek için masanızdaki QR kodu okutun.",
       "connected": "Masanıza bağlandınız."
+    },
+    "pickup": {
+      "noSession": "Gel-Al siparişi vermek için lütfen bağlantıyı tekrar açın.",
+      "connected": "Gel-Al siparişiniz oluşturuldu.",
+      "codeLabel": "Teslim Kodunuz: {code}"
     },
     "product": {
       "soldOut": "Tükendi",

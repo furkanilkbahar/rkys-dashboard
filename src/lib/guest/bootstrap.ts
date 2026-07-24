@@ -54,3 +54,44 @@ export async function bootstrapGuestSessionForTable(tableId: string): Promise<bo
   await supabase.auth.refreshSession();
   return true;
 }
+
+/**
+ * Gel-Al (pickup) bootstrap: fiziksel masası olmadığı için QR/tableId yok —
+ * yalnızca tenant context'i (middleware'in enjekte ettiği header, bkz.
+ * getCurrentTenant) yeterli. open_pickup_session (0061) her çağrıda YENİ bir
+ * oturum açar (dine_in'in "masa başına tek aktif oturum" kısıtı burada
+ * anlamsız). Geri kalanı bootstrapGuestSessionForTable ile birebir aynı.
+ */
+export async function bootstrapPickupSession(tenantId: string): Promise<string | null> {
+  const service = createServiceRoleClient();
+
+  const { data, error: sessionError } = await service.rpc("open_pickup_session", { p_tenant_id: tenantId });
+  if (sessionError || !data || data.length === 0) {
+    return null;
+  }
+  const tableSessionId = data[0].table_session_id;
+
+  const { data: session } = await service.from("table_sessions").select("branch_id").eq("id", tableSessionId).single();
+  if (!session) {
+    return null;
+  }
+
+  const supabase = await createClient();
+  const { data: authData, error: authError } = await supabase.auth.signInAnonymously();
+  if (authError || !authData.user) {
+    return null;
+  }
+
+  const { error: linkError } = await service.rpc("link_guest_device", {
+    p_guest_user_id: authData.user.id,
+    p_table_session_id: tableSessionId,
+    p_tenant_id: tenantId,
+    p_branch_id: session.branch_id,
+  });
+  if (linkError) {
+    return null;
+  }
+
+  await supabase.auth.refreshSession();
+  return tableSessionId;
+}
