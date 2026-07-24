@@ -708,6 +708,81 @@ export type Database = {
           },
         ]
       }
+      courier_assignments: {
+        Row: {
+          assigned_at: string
+          branch_id: string
+          courier_id: string
+          created_at: string
+          delivered_at: string | null
+          en_route_at: string | null
+          id: string
+          order_id: string
+          status: string
+          tenant_id: string
+        }
+        Insert: {
+          assigned_at?: string
+          branch_id: string
+          courier_id: string
+          created_at?: string
+          delivered_at?: string | null
+          en_route_at?: string | null
+          id?: string
+          order_id: string
+          status?: string
+          tenant_id: string
+        }
+        Update: {
+          assigned_at?: string
+          branch_id?: string
+          courier_id?: string
+          created_at?: string
+          delivered_at?: string | null
+          en_route_at?: string | null
+          id?: string
+          order_id?: string
+          status?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "courier_assignments_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "courier_assignments_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "courier_assignments_courier_id_fkey"
+            columns: ["courier_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "courier_assignments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: true
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "courier_assignments_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customer_addresses: {
         Row: {
           address_text: string
@@ -4208,6 +4283,10 @@ export type Database = {
         Args: { p_provider: string; p_provider_ref: string }
         Returns: undefined
       }
+      advance_courier_assignment: {
+        Args: { p_assignment_id: string; p_to_status: string }
+        Returns: undefined
+      }
       advance_order_status: {
         Args: { p_order_id: string; p_to_status: string }
         Returns: undefined
@@ -4221,6 +4300,10 @@ export type Database = {
         Returns: undefined
       }
       approve_order: { Args: { p_order_id: string }; Returns: undefined }
+      assign_courier: {
+        Args: { p_courier_id: string; p_order_id: string }
+        Returns: string
+      }
       assign_tenant_plan: {
         Args: { p_plan_id: string; p_tenant_id: string }
         Returns: undefined
@@ -4312,6 +4395,13 @@ export type Database = {
           campaign_name: string
           redemption_count: number
           total_discount_minor: number
+        }[]
+      }
+      get_courier_daily_summary: {
+        Args: { p_business_date: string; p_courier_id: string }
+        Returns: {
+          delivered_count: number
+          total_amount_minor: number
         }[]
       }
       get_goal_progress: {
