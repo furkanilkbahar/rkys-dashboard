@@ -852,7 +852,10 @@
     "pendingApproval": "Orders Awaiting Approval",
     "noPendingOrders": "No orders awaiting approval.",
     "pickupLabel": "Pickup #{code}",
-    "deliveryLabel": "Delivery"
+    "deliveryLabel": "Delivery",
+    "courierAssignment": "Courier Assignment",
+    "noDeliveryOrders": "No delivery orders to assign.",
+    "assign": "Assign Courier"
   },
   "kitchen": {
     "title": "Kitchen Display",
@@ -871,6 +874,19 @@
       "preparing": "Start Preparing",
       "ready": "Ready",
       "served": "Served"
+    }
+  },
+  "courier": {
+    "title": "Courier Panel",
+    "noAssignments": "No assigned deliveries.",
+    "status": {
+      "assigned": "Assigned",
+      "en_route": "En Route",
+      "delivered": "Delivered"
+    },
+    "advanceTo": {
+      "en_route": "Head Out",
+      "delivered": "Delivered"
     }
   },
   "menu": {

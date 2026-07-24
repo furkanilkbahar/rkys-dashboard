@@ -59,6 +59,7 @@ Bir faz şunlar olmadan kapanmaz:
 | S37 | Menü mühendisliği matrisi: dönem içi satışlar popülerlik×marj ortalamasına göre Yıldız/Beygir/Bilmece/Zayıf kategorilerine doğru ayrılır, reçeteden otomatik hesaplanan maliyet rapora yansır | 8 |
 | S38 | Gel-Al (pickup): misafir bağlantıdan (fiziksel masasız) sipariş verir, teslim kodu görür; mutfak siparişi hazır işaretleyince misafir bildirim alır — aynı sipariş/KDS motoru kanal farkıyla çalışır | 9 |
 | S39 | Paket servis (delivery): misafir teslimat bölgesi seçer, adres girer; bölge ücreti toplama eklenir, minimum sepet altındaki siparişler reddedilir | 9 |
+| S40 | Kurye modülü: personel (garson paneli) bir delivery siparişine kurye atar; kurye kendi panelinde teslimatı Atandı→Yolda→Teslim Edildi olarak ilerletir | 9 |
 
 ## 4. RLS İzolasyon Testleri (entegrasyon, zorunlu şablon)
 Her yeni tablo için otomatik üretilen test çifti:

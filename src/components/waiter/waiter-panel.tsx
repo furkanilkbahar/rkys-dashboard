@@ -4,24 +4,34 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 import { approveOrder, acknowledgeCall } from "@/app/(waiter)/waiter/actions";
+import { assignCourier, type CourierActionResult } from "@/app/(waiter)/waiter/courier-actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import type { CourierOption, DeliveryOrderView } from "@/lib/data/courier";
 import type { WaiterCallView } from "@/lib/data/waiterCalls";
 import type { StaffOrderView } from "@/lib/data/staffOrders";
 import { useConnectivity, type ChannelState } from "@/lib/realtime/useConnectivity";
 import { useInsistentAlert, useSoundUnlock } from "@/lib/sound/insistentAlert";
 import { createClient } from "@/lib/supabase/client";
+import { formatPrice } from "@/lib/utils/currency";
 
 export function WaiterPanel({
   tenantId,
   branchId,
   initialCalls,
   initialPendingOrders,
+  deliveryOrders = [],
+  couriers = [],
+  currency = "TRY",
 }: {
   tenantId: string;
   branchId: string;
   initialCalls: WaiterCallView[];
   initialPendingOrders: StaffOrderView[];
+  deliveryOrders?: DeliveryOrderView[];
+  couriers?: CourierOption[];
+  currency?: string;
 }) {
   const t = useTranslations("waiter");
   const [calls, setCalls] = useState(initialCalls);
@@ -142,6 +152,63 @@ export function WaiterPanel({
           </Card>
         ))}
       </section>
+
+      {couriers.length > 0 && (
+        <section className="flex flex-col gap-3">
+          <h2 className="text-sm font-semibold text-muted-foreground">{t("courierAssignment")}</h2>
+          {deliveryOrders.length === 0 && <p className="text-sm text-muted-foreground">{t("noDeliveryOrders")}</p>}
+          {deliveryOrders.map((order) => (
+            <div key={order.id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border p-2 text-sm">
+              <div className="flex flex-col">
+                <span>{order.addressSnapshot ?? "—"}</span>
+                <span className="text-xs text-muted-foreground">{formatPrice(order.subtotalMinor, currency)}</span>
+              </div>
+              <CourierPicker orderId={order.id} couriers={couriers} currentCourierId={order.assignment?.courierId ?? null} label={t("assign")} />
+            </div>
+          ))}
+        </section>
+      )}
     </main>
+  );
+}
+
+function CourierPicker({
+  orderId,
+  couriers,
+  currentCourierId,
+  label,
+}: {
+  orderId: string;
+  couriers: CourierOption[];
+  currentCourierId: string | null;
+  label: string;
+}) {
+  const [courierId, setCourierId] = useState(currentCourierId ?? "");
+  const [pending, setPending] = useState(false);
+
+  async function handleChange(value: string | null) {
+    if (!value) return;
+    setCourierId(value);
+    setPending(true);
+    const result: CourierActionResult = await assignCourier(orderId, value);
+    setPending(false);
+    if (!result.ok) {
+      setCourierId(currentCourierId ?? "");
+    }
+  }
+
+  return (
+    <Select value={courierId} onValueChange={handleChange} disabled={pending}>
+      <SelectTrigger aria-label={label} className="w-40">
+        <SelectValue placeholder={label} />
+      </SelectTrigger>
+      <SelectContent>
+        {couriers.map((courier) => (
+          <SelectItem key={courier.id} value={courier.id}>
+            {courier.badgeNo ?? courier.id.slice(0, 8)}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }

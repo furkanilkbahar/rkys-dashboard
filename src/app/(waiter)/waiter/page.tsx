@@ -4,10 +4,13 @@ import { notFound, redirect } from "next/navigation";
 import { WaiterPanel } from "@/components/waiter/waiter-panel";
 import { getCurrentActor } from "@/lib/auth/session";
 import { assertStaffRole } from "@/lib/auth/staffGuard";
+import { getAdminTenantSettings } from "@/lib/data/adminSettings";
 import { getDefaultBranchId } from "@/lib/data/branch";
+import { getCouriers, getDeliveryOrders } from "@/lib/data/courier";
 import { getOrdersByStatus } from "@/lib/data/staffOrders";
 import { isSubscriptionActive } from "@/lib/data/subscription";
 import { getOpenWaiterCalls } from "@/lib/data/waiterCalls";
+import { isEnabled } from "@/lib/modules/isEnabled";
 
 export default async function WaiterHomePage() {
   const actor = await getCurrentActor();
@@ -26,9 +29,13 @@ export default async function WaiterHomePage() {
   }
 
   const locale = await getLocale();
-  const [calls, pendingOrders] = await Promise.all([
+  const courierModuleEnabled = await isEnabled(actor.tenantId, "courier");
+  const [calls, pendingOrders, settings, deliveryOrders, couriers] = await Promise.all([
     getOpenWaiterCalls(actor.tenantId, branchId, locale),
     getOrdersByStatus(actor.tenantId, branchId, ["pending"]),
+    getAdminTenantSettings(actor.tenantId),
+    courierModuleEnabled ? getDeliveryOrders(actor.tenantId, branchId) : Promise.resolve([]),
+    courierModuleEnabled ? getCouriers(actor.tenantId) : Promise.resolve([]),
   ]);
 
   return (
@@ -37,6 +44,9 @@ export default async function WaiterHomePage() {
       branchId={branchId}
       initialCalls={calls}
       initialPendingOrders={pendingOrders}
+      deliveryOrders={deliveryOrders}
+      couriers={couriers}
+      currency={settings?.currency ?? "TRY"}
     />
   );
 }

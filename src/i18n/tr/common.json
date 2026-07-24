@@ -852,7 +852,10 @@
     "pendingApproval": "Onay Bekleyen Siparişler",
     "noPendingOrders": "Onay bekleyen sipariş yok.",
     "pickupLabel": "Gel-Al #{code}",
-    "deliveryLabel": "Paket Servis"
+    "deliveryLabel": "Paket Servis",
+    "courierAssignment": "Kurye Ataması",
+    "noDeliveryOrders": "Atanacak paket servis siparişi yok.",
+    "assign": "Kurye Ata"
   },
   "kitchen": {
     "title": "Mutfak Ekranı (KDS)",
@@ -871,6 +874,19 @@
       "preparing": "Hazırlamaya Başla",
       "ready": "Hazır",
       "served": "Servis Edildi"
+    }
+  },
+  "courier": {
+    "title": "Kurye Paneli",
+    "noAssignments": "Atanmış teslimat yok.",
+    "status": {
+      "assigned": "Atandı",
+      "en_route": "Yolda",
+      "delivered": "Teslim Edildi"
+    },
+    "advanceTo": {
+      "en_route": "Yola Çık",
+      "delivered": "Teslim Edildi"
     }
   },
   "menu": {
