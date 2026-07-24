@@ -3690,6 +3690,68 @@ export type Database = {
           },
         ]
       }
+      staff_shifts: {
+        Row: {
+          branch_id: string
+          created_at: string
+          end_time: string
+          id: string
+          profile_id: string
+          shift_date: string
+          start_time: string
+          tenant_id: string
+        }
+        Insert: {
+          branch_id: string
+          created_at?: string
+          end_time: string
+          id?: string
+          profile_id: string
+          shift_date: string
+          start_time: string
+          tenant_id: string
+        }
+        Update: {
+          branch_id?: string
+          created_at?: string
+          end_time?: string
+          id?: string
+          profile_id?: string
+          shift_date?: string
+          start_time?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staff_shifts_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "staff_shifts_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "staff_shifts_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "staff_shifts_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       stock_movements: {
         Row: {
           branch_id: string | null
@@ -4429,6 +4491,75 @@ export type Database = {
           },
         ]
       }
+      timeclock_entries: {
+        Row: {
+          branch_id: string
+          clock_in_at: string
+          clock_out_at: string | null
+          created_at: string
+          device_id: string | null
+          id: string
+          profile_id: string
+          tenant_id: string
+        }
+        Insert: {
+          branch_id: string
+          clock_in_at?: string
+          clock_out_at?: string | null
+          created_at?: string
+          device_id?: string | null
+          id?: string
+          profile_id: string
+          tenant_id: string
+        }
+        Update: {
+          branch_id?: string
+          clock_in_at?: string
+          clock_out_at?: string | null
+          created_at?: string
+          device_id?: string | null
+          id?: string
+          profile_id?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "timeclock_entries_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timeclock_entries_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "timeclock_entries_device_id_fkey"
+            columns: ["device_id"]
+            isOneToOne: false
+            referencedRelation: "staff_devices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timeclock_entries_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timeclock_entries_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tip_presets: {
         Row: {
           created_at: string
@@ -4781,6 +4912,18 @@ export type Database = {
       cancel_order: { Args: { p_order_id: string }; Returns: undefined }
       cancel_subscription: { Args: never; Returns: undefined }
       clear_demo_data: { Args: never; Returns: undefined }
+      clock_in_or_out: {
+        Args: {
+          p_device_id: string
+          p_device_secret: string
+          p_pin: string
+          p_tenant_id: string
+        }
+        Returns: {
+          action: string
+          badge_no: string
+        }[]
+      }
       close_business_day: { Args: { p_branch_id: string }; Returns: string }
       close_shift: {
         Args: { p_counted_cash_minor: number; p_shift_id: string }
@@ -5233,6 +5376,10 @@ export type Database = {
           p_phone: string
           p_table_session_id: string
         }
+        Returns: string
+      }
+      verify_staff_device: {
+        Args: { p_secret: string; p_tenant_id: string }
         Returns: string
       }
     }
