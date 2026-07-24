@@ -148,6 +148,7 @@
       "suppliers": "Tedarikçiler",
       "deliveryZones": "Teslimat Bölgeleri",
       "apiKeys": "API Anahtarları",
+      "webhooks": "Webhook'lar",
       "reports": "Raporlar",
       "support": "Destek",
       "settings": "Ayarlar",
@@ -850,6 +851,31 @@
       "revoked": "İptal Edildi",
       "revoke": "İptal Et",
       "newKeyWarning": "Bu anahtarı şimdi kopyalayın — bir daha gösterilmeyecek.",
+      "errors": {
+        "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
+        "forbidden": "Bu işlem için yetkiniz yok.",
+        "not_enabled": "API erişimi modülü aktif değil.",
+        "unknown": "Kaydedilemedi, tekrar deneyin."
+      }
+    },
+    "webhooks": {
+      "pageTitle": "Webhook'lar",
+      "title": "Webhook'lar",
+      "empty": "Henüz webhook yok.",
+      "url": "Hedef URL",
+      "eventTypes": "Olay Tipleri",
+      "eventType": {
+        "orderCreated": "Sipariş oluşturuldu",
+        "orderStatusChanged": "Sipariş durumu değişti"
+      },
+      "add": "+ Webhook Ekle",
+      "deliveries": "Son Teslimatlar",
+      "deliveryStatus": {
+        "pending": "Bekliyor",
+        "sent": "Gönderildi",
+        "delivered": "Teslim Edildi",
+        "failed": "Başarısız"
+      },
       "errors": {
         "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
         "forbidden": "Bu işlem için yetkiniz yok.",

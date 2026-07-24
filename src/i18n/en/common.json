@@ -148,6 +148,7 @@
       "suppliers": "Suppliers",
       "deliveryZones": "Delivery Zones",
       "apiKeys": "API Keys",
+      "webhooks": "Webhooks",
       "reports": "Reports",
       "support": "Support",
       "settings": "Settings",
@@ -850,6 +851,31 @@
       "revoked": "Revoked",
       "revoke": "Revoke",
       "newKeyWarning": "Copy this key now — it won't be shown again.",
+      "errors": {
+        "invalid_input": "Please check the information you entered.",
+        "forbidden": "You don't have permission for this action.",
+        "not_enabled": "The API access module is not active.",
+        "unknown": "Could not save, please try again."
+      }
+    },
+    "webhooks": {
+      "pageTitle": "Webhooks",
+      "title": "Webhooks",
+      "empty": "No webhooks yet.",
+      "url": "Target URL",
+      "eventTypes": "Event Types",
+      "eventType": {
+        "orderCreated": "Order created",
+        "orderStatusChanged": "Order status changed"
+      },
+      "add": "+ Add Webhook",
+      "deliveries": "Recent Deliveries",
+      "deliveryStatus": {
+        "pending": "Pending",
+        "sent": "Sent",
+        "delivered": "Delivered",
+        "failed": "Failed"
+      },
       "errors": {
         "invalid_input": "Please check the information you entered.",
         "forbidden": "You don't have permission for this action.",

@@ -15,6 +15,7 @@ import {
   Truck,
   Users,
   UtensilsCrossed,
+  Webhook,
 } from "lucide-react";
 
 import type { ModuleKey } from "@/lib/modules/keys";
@@ -39,6 +40,7 @@ export const ADMIN_NAV_ITEMS = [
   { href: "/admin/suppliers", labelKey: "suppliers", icon: Truck, exact: false, moduleKey: "inventory" satisfies ModuleKey },
   { href: "/admin/delivery-zones", labelKey: "deliveryZones", icon: MapPin, exact: false, moduleKey: "delivery" satisfies ModuleKey },
   { href: "/admin/api-keys", labelKey: "apiKeys", icon: KeyRound, exact: false, moduleKey: "api_access" satisfies ModuleKey },
+  { href: "/admin/webhooks", labelKey: "webhooks", icon: Webhook, exact: false, moduleKey: "api_access" satisfies ModuleKey },
   { href: "/admin/reports", labelKey: "reports", icon: BarChart3, exact: false, moduleKey: null },
   { href: "/admin/support", labelKey: "support", icon: LifeBuoy, exact: false, moduleKey: null },
   { href: "/admin/settings", labelKey: "settings", icon: Settings, exact: false, moduleKey: null },
