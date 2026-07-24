@@ -64,6 +64,7 @@ Bir faz şunlar olmadan kapanmaz:
 | S42 | Webhook'lar: admin webhook kaydeder (URL + olay tipi seçimi), imza sırrı (`whsec_...`) ekranda görünür; sipariş oluşunca/durum değişince ilgili olay otomatik kuyruğa girer, HMAC imzalı gerçek HTTP POST ile teslim edilir (2xx→delivered, 5xx→üstel geri çekilmeyle retry); admin webhook'u pasif hale getirebilir | 10 |
 | S43 | Pazar yeri: admin ürün↔SKU eşlemesi kurar; aracı platform tenant API anahtarıyla gerçek HTTP POST ile sipariş gönderir, sipariş `channel='marketplace'`/`status='approved'` olarak doğrudan KDS'e düşer, stok düşer; aynı external_order_id tekrar gönderilirse yeni sipariş açmaz (idempotent), eşlenmemiş SKU reddedilir | 10 |
 | S44 | Muhasebe: admin tamamlanmış ('served') bir siparişi mock muhasebe sağlayıcısına gönderir, senkronizasyon geçmişinde görünür ve gönderilecekler listesinden düşer; RLS başka tenant'ın senkronizasyon kaydını gizler ve sahte kayıt eklemeyi engeller; ÖKC adaptör kapısı yalnızca arayüz olarak dokümante edilir (implementasyon yok) | 10 |
+| S45 | Rezervasyon + bekleme listesi: misafir oturumsuz rezervasyon talebi gönderir ('pending'); admin masa atayıp onaylar ('confirmed'), oturtur ('seated'); admin bekleme listesine walk-in ekler, çağırır ('called'), oturtur; RLS başka tenant'ın rezervasyon/bekleme listesini gizler | 11 |
 
 ## 4. RLS İzolasyon Testleri (entegrasyon, zorunlu şablon)
 Her yeni tablo için otomatik üretilen test çifti:

@@ -922,6 +922,52 @@
         "already_synced": "Bu sipariş zaten gönderildi.",
         "unknown": "Gönderilemedi, tekrar deneyin."
       }
+    },
+    "reservations": {
+      "pageTitle": "Rezervasyonlar",
+      "title": "Rezervasyonlar",
+      "empty": "Henüz rezervasyon yok.",
+      "customerName": "Ad Soyad",
+      "customerPhone": "Telefon",
+      "partySize": "Kişi Sayısı",
+      "partySizeLabel": "{count} kişi",
+      "reservedAt": "Tarih/Saat",
+      "note": "Not",
+      "add": "+ Ekle",
+      "table": "Masa",
+      "tablePlaceholder": "Masa seçin",
+      "confirm": "Onayla",
+      "seat": "Oturttu",
+      "noShow": "Gelmedi",
+      "cancel": "İptal Et",
+      "status": {
+        "pending": "Bekliyor",
+        "confirmed": "Onaylandı",
+        "seated": "Oturdu",
+        "cancelled": "İptal Edildi",
+        "no_show": "Gelmedi"
+      },
+      "waitlist": {
+        "title": "Bekleme Listesi",
+        "empty": "Bekleme listesi boş.",
+        "add": "+ Ekle",
+        "call": "Çağır",
+        "seat": "Oturttu",
+        "cancel": "İptal Et",
+        "partySizeLabel": "{count} kişi",
+        "status": {
+          "waiting": "Bekliyor",
+          "called": "Çağrıldı",
+          "seated": "Oturdu",
+          "cancelled": "İptal Edildi"
+        }
+      },
+      "errors": {
+        "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
+        "forbidden": "Bu işlem için yetkiniz yok.",
+        "not_enabled": "Rezervasyon modülü aktif değil.",
+        "unknown": "Kaydedilemedi, tekrar deneyin."
+      }
     }
   },
   "waiter": {
@@ -940,7 +986,10 @@
     "marketplaceLabel": "Pazar Yeri ({provider})",
     "courierAssignment": "Kurye Ataması",
     "noDeliveryOrders": "Atanacak paket servis siparişi yok.",
-    "assign": "Kurye Ata"
+    "assign": "Kurye Ata",
+    "upcomingReservations": "Yaklaşan Rezervasyonlar",
+    "reservationPartySize": "{count} kişi",
+    "seatReservation": "Oturttu"
   },
   "kitchen": {
     "title": "Mutfak Ekranı (KDS)",
@@ -1005,6 +1054,23 @@
     "delivery": {
       "noSession": "Paket servis siparişi vermek için lütfen bağlantıyı tekrar açın.",
       "connected": "Paket servis siparişiniz oluşturuldu."
+    },
+    "reservation": {
+      "pageTitle": "Rezervasyon Talebi",
+      "notAvailable": "Rezervasyon şu anda mevcut değil.",
+      "customerName": "Ad Soyad",
+      "customerPhone": "Telefon",
+      "partySize": "Kişi Sayısı",
+      "reservedAt": "Tarih/Saat",
+      "note": "Not (opsiyonel)",
+      "submit": "Rezervasyon Talebi Gönder",
+      "submitted": "Rezervasyon talebiniz alındı. Onay için sizinle iletişime geçeceğiz.",
+      "errors": {
+        "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
+        "forbidden": "Bu işlem için yetkiniz yok.",
+        "not_enabled": "Rezervasyon şu anda mevcut değil.",
+        "unknown": "Gönderilemedi, tekrar deneyin."
+      }
     },
     "product": {
       "soldOut": "Tükendi",

@@ -1,21 +1,55 @@
 import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
 
-import { ComingSoon } from "@/components/admin/coming-soon";
 import { requireAdminActor } from "@/lib/auth/adminGuard";
-import { getAdminModules } from "@/lib/data/adminSettings";
+import { getAdminTables } from "@/lib/data/adminTables";
+import { getDefaultBranchId } from "@/lib/data/branch";
+import { getAdminReservations, getAdminWaitlist } from "@/lib/data/reservations";
+import { assertModuleEnabled } from "@/lib/modules/isEnabled";
+
+import {
+  addToWaitlist,
+  callFromWaitlist,
+  cancelReservation,
+  cancelWaitlistEntry,
+  confirmReservation,
+  createReservation,
+  markReservationNoShow,
+  seatFromWaitlist,
+  seatReservation,
+} from "./actions";
+import { ReservationsManager } from "./reservations-manager";
 
 export default async function AdminReservationsPage() {
   const actor = await requireAdminActor();
-  const modules = await getAdminModules(actor.tenantId);
-  const isEnabled = modules.some((m) => m.moduleKey === "reservations" && m.isEnabled);
-
-  // RULES #34: modül kapalıysa route server tarafında da erişilemez olmalı —
-  // yalnızca nav'da gizlemek yetmez.
-  if (!isEnabled) {
+  await assertModuleEnabled(actor.tenantId, "reservations");
+  const branchId = await getDefaultBranchId(actor.tenantId);
+  if (!branchId) {
     notFound();
   }
 
-  const t = await getTranslations("admin.nav");
-  return <ComingSoon section={t("reservations")} adim="Faz 8" />;
+  const [reservations, waitlist, tables] = await Promise.all([
+    getAdminReservations(actor.tenantId, branchId),
+    getAdminWaitlist(actor.tenantId, branchId),
+    getAdminTables(actor.tenantId, branchId),
+  ]);
+
+  return (
+    <ReservationsManager
+      branchId={branchId}
+      reservations={reservations}
+      waitlist={waitlist}
+      tables={tables}
+      actions={{
+        createReservation,
+        confirmReservation,
+        seatReservation,
+        cancelReservation,
+        markReservationNoShow,
+        addToWaitlist,
+        callFromWaitlist,
+        seatFromWaitlist,
+        cancelWaitlistEntry,
+      }}
+    />
+  );
 }

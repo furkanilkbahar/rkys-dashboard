@@ -82,7 +82,7 @@
 - [x] Muhasebe **API adaptörü** (örn. Paraşüt); ÖKC adaptör kapısı dokümantasyonu
 
 ## Faz 11 — Ek Modüller
-- [ ] **Rezervasyon + bekleme listesi** (masa haritası entegre)
+- [x] **Rezervasyon + bekleme listesi** (masa haritası entegre)
 - [ ] **Kiosk modu** (menünün dokunmatik modu)
 - [ ] **Vardiya planlama + puantaj** (çizelge, PIN giriş-çıkış, saat raporu, maaş exportu)
 

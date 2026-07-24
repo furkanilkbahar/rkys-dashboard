@@ -9,8 +9,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { CourierOption, DeliveryOrderView } from "@/lib/data/courier";
+import type { AdminReservation } from "@/lib/data/reservations";
 import type { WaiterCallView } from "@/lib/data/waiterCalls";
 import type { StaffOrderView } from "@/lib/data/staffOrders";
+import type { ReservationActionResult } from "@/lib/reservations/schemas";
 import { useConnectivity, type ChannelState } from "@/lib/realtime/useConnectivity";
 import { useInsistentAlert, useSoundUnlock } from "@/lib/sound/insistentAlert";
 import { createClient } from "@/lib/supabase/client";
@@ -24,6 +26,8 @@ export function WaiterPanel({
   deliveryOrders = [],
   couriers = [],
   currency = "TRY",
+  upcomingReservations = [],
+  seatReservation,
 }: {
   tenantId: string;
   branchId: string;
@@ -32,10 +36,13 @@ export function WaiterPanel({
   deliveryOrders?: DeliveryOrderView[];
   couriers?: CourierOption[];
   currency?: string;
+  upcomingReservations?: AdminReservation[];
+  seatReservation?: (reservationId: string) => Promise<ReservationActionResult>;
 }) {
   const t = useTranslations("waiter");
   const [calls, setCalls] = useState(initialCalls);
   const [pendingOrders, setPendingOrders] = useState(initialPendingOrders);
+  const [reservations, setReservations] = useState(upcomingReservations);
   const [channelState, setChannelState] = useState<ChannelState>("connecting");
   const { unlocked, unlock } = useSoundUnlock();
 
@@ -85,6 +92,14 @@ export function WaiterPanel({
     const result = await approveOrder({ id });
     if (result.ok) {
       setPendingOrders((prev) => prev.filter((o) => o.id !== id));
+    }
+  }
+
+  async function handleSeatReservation(id: string) {
+    if (!seatReservation) return;
+    const result = await seatReservation(id);
+    if (result.ok) {
+      setReservations((prev) => prev.filter((r) => r.id !== id));
     }
   }
 
@@ -158,6 +173,27 @@ export function WaiterPanel({
           </Card>
         ))}
       </section>
+
+      {reservations.length > 0 && (
+        <section className="flex flex-col gap-3">
+          <h2 className="text-sm font-semibold text-muted-foreground">{t("upcomingReservations")}</h2>
+          {reservations.map((reservation) => (
+            <div key={reservation.id} className="flex items-center justify-between gap-2 rounded-md border border-border p-2 text-sm">
+              <span>
+                <span className="font-medium">{reservation.customerName}</span> · {t("reservationPartySize", { count: reservation.partySize })}
+                {reservation.tableLabel && <> · {reservation.tableLabel}</>}
+                {" · "}
+                {new Date(reservation.reservedAt).toLocaleString("tr-TR")}
+              </span>
+              {reservation.status === "confirmed" && (
+                <Button type="button" size="sm" onClick={() => handleSeatReservation(reservation.id)}>
+                  {t("seatReservation")}
+                </Button>
+              )}
+            </div>
+          ))}
+        </section>
+      )}
 
       {couriers.length > 0 && (
         <section className="flex flex-col gap-3">

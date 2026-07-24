@@ -922,6 +922,52 @@
         "already_synced": "This order was already sent.",
         "unknown": "Could not send, please try again."
       }
+    },
+    "reservations": {
+      "pageTitle": "Reservations",
+      "title": "Reservations",
+      "empty": "No reservations yet.",
+      "customerName": "Full Name",
+      "customerPhone": "Phone",
+      "partySize": "Party Size",
+      "partySizeLabel": "{count} people",
+      "reservedAt": "Date/Time",
+      "note": "Note",
+      "add": "+ Add",
+      "table": "Table",
+      "tablePlaceholder": "Select a table",
+      "confirm": "Confirm",
+      "seat": "Seated",
+      "noShow": "No-show",
+      "cancel": "Cancel",
+      "status": {
+        "pending": "Pending",
+        "confirmed": "Confirmed",
+        "seated": "Seated",
+        "cancelled": "Cancelled",
+        "no_show": "No-show"
+      },
+      "waitlist": {
+        "title": "Waitlist",
+        "empty": "Waitlist is empty.",
+        "add": "+ Add",
+        "call": "Call",
+        "seat": "Seated",
+        "cancel": "Cancel",
+        "partySizeLabel": "{count} people",
+        "status": {
+          "waiting": "Waiting",
+          "called": "Called",
+          "seated": "Seated",
+          "cancelled": "Cancelled"
+        }
+      },
+      "errors": {
+        "invalid_input": "Please check the information you entered.",
+        "forbidden": "You don't have permission for this action.",
+        "not_enabled": "The reservations module is not active.",
+        "unknown": "Could not save, please try again."
+      }
     }
   },
   "waiter": {
@@ -940,7 +986,10 @@
     "marketplaceLabel": "Marketplace ({provider})",
     "courierAssignment": "Courier Assignment",
     "noDeliveryOrders": "No delivery orders to assign.",
-    "assign": "Assign Courier"
+    "assign": "Assign Courier",
+    "upcomingReservations": "Upcoming Reservations",
+    "reservationPartySize": "{count} people",
+    "seatReservation": "Seated"
   },
   "kitchen": {
     "title": "Kitchen Display",
@@ -1005,6 +1054,23 @@
     "delivery": {
       "noSession": "Please reopen the link to place a delivery order.",
       "connected": "Your delivery order session has started."
+    },
+    "reservation": {
+      "pageTitle": "Reservation Request",
+      "notAvailable": "Reservations are not available right now.",
+      "customerName": "Full Name",
+      "customerPhone": "Phone",
+      "partySize": "Party Size",
+      "reservedAt": "Date/Time",
+      "note": "Note (optional)",
+      "submit": "Send Reservation Request",
+      "submitted": "Your reservation request was received. We'll contact you to confirm.",
+      "errors": {
+        "invalid_input": "Please check the information you entered.",
+        "forbidden": "You don't have permission for this action.",
+        "not_enabled": "Reservations are not available right now.",
+        "unknown": "Could not send, please try again."
+      }
     },
     "product": {
       "soldOut": "Sold out",
