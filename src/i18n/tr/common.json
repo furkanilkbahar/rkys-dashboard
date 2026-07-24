@@ -458,7 +458,12 @@
         "sending": "Gönderiliyor...",
         "sent": "Gönderildi",
         "lastSent": "Son gönderim: {date}",
-        "neverSent": "Henüz gönderilmedi"
+        "neverSent": "Henüz gönderilmedi",
+        "digest": {
+          "noClosedDay": "Bugün için kapanmış gün yok",
+          "noClosedDayWeek": "Bu hafta için kapanmış gün yok",
+          "emailBody": "{branch} şubesi için rapor özetiniz ektedir."
+        }
       },
       "dangerZone": {
         "title": "Tehlikeli Bölge",

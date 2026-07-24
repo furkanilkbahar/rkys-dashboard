@@ -57,7 +57,7 @@ async function buildAndSendDigest(schedule: ReportScheduleRow): Promise<void> {
   const orderCount = rows.reduce((sum, r) => sum + r.order_count, 0);
   const periodLabel =
     rows.length === 0
-      ? t(schedule.frequency === "daily" ? "reportSchedules.digest.noClosedDay" : "reportSchedules.digest.noClosedDayWeek")
+      ? t(schedule.frequency === "daily" ? "settings.reportSchedules.digest.noClosedDay" : "settings.reportSchedules.digest.noClosedDayWeek")
       : rows.length === 1
         ? rows[0].business_date
         : `${rows[rows.length - 1].business_date} — ${rows[0].business_date}`;
@@ -79,7 +79,7 @@ async function buildAndSendDigest(schedule: ReportScheduleRow): Promise<void> {
     tenantId: schedule.tenant_id,
     to: schedule.recipient_email,
     subject: `${tenant.name} — ${periodLabel}`,
-    text: t("reportSchedules.digest.emailBody", { branch: branch.name }),
+    text: t("settings.reportSchedules.digest.emailBody", { branch: branch.name }),
     attachment: { filename: "rapor.pdf", content: pdfBuffer, contentType: "application/pdf" },
   });
 

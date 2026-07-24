@@ -458,7 +458,12 @@
         "sending": "Sending...",
         "sent": "Sent",
         "lastSent": "Last sent: {date}",
-        "neverSent": "Never sent"
+        "neverSent": "Never sent",
+        "digest": {
+          "noClosedDay": "No closed day for today",
+          "noClosedDayWeek": "No closed day for this week",
+          "emailBody": "Your report digest for {branch} is attached."
+        }
       },
       "dangerZone": {
         "title": "Danger Zone",
