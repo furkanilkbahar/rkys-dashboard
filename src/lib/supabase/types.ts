@@ -3467,6 +3467,7 @@ export type Database = {
       table_sessions: {
         Row: {
           branch_id: string
+          channel: string
           close_reason: string | null
           closed_at: string | null
           created_at: string
@@ -3474,12 +3475,14 @@ export type Database = {
           id: string
           last_activity_at: string
           opened_at: string
+          pickup_code: string | null
           status: string
-          table_id: string
+          table_id: string | null
           tenant_id: string
         }
         Insert: {
           branch_id: string
+          channel?: string
           close_reason?: string | null
           closed_at?: string | null
           created_at?: string
@@ -3487,12 +3490,14 @@ export type Database = {
           id?: string
           last_activity_at?: string
           opened_at?: string
+          pickup_code?: string | null
           status?: string
-          table_id: string
+          table_id?: string | null
           tenant_id: string
         }
         Update: {
           branch_id?: string
+          channel?: string
           close_reason?: string | null
           closed_at?: string | null
           created_at?: string
@@ -3500,8 +3505,9 @@ export type Database = {
           id?: string
           last_activity_at?: string
           opened_at?: string
+          pickup_code?: string | null
           status?: string
-          table_id?: string
+          table_id?: string | null
           tenant_id?: string
         }
         Relationships: [
@@ -4325,6 +4331,13 @@ export type Database = {
       open_or_get_active_table_session: {
         Args: { p_table_id: string }
         Returns: string
+      }
+      open_pickup_session: {
+        Args: { p_tenant_id: string }
+        Returns: {
+          pickup_code: string
+          table_session_id: string
+        }[]
       }
       open_shift: {
         Args: { p_branch_id: string; p_opening_balance_minor: number }
