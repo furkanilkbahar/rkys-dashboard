@@ -34,6 +34,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      accounting_sync_log: {
+        Row: {
+          error_message: string | null
+          external_ref: string | null
+          id: string
+          order_id: string
+          provider: string
+          status: string
+          synced_at: string
+          tenant_id: string
+        }
+        Insert: {
+          error_message?: string | null
+          external_ref?: string | null
+          id?: string
+          order_id: string
+          provider: string
+          status: string
+          synced_at?: string
+          tenant_id: string
+        }
+        Update: {
+          error_message?: string | null
+          external_ref?: string | null
+          id?: string
+          order_id?: string
+          provider?: string
+          status?: string
+          synced_at?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accounting_sync_log_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "accounting_sync_log_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       announcements: {
         Row: {
           body: string
