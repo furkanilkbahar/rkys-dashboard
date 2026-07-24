@@ -57,7 +57,8 @@ test("S33: sadakat/kampanya performans raporu doğru sayıları gösterir", asyn
     // tenantUrl yalnızca pathname'i ayarlar — içine gömülen "?" query
     // string'e değil, URL-encode edilmiş bir path segmentine dönüşür (gerçek
     // olmayan bir route'a düşüp 404 verir). Query, path'ten ayrı eklenir.
-    const today = new Date().toISOString().slice(0, 10);
+    // UTC yerine tenant saat dilimi (Europe/Istanbul) — bkz. TESTING.md §7.
+    const today = new Date().toLocaleDateString("en-CA", { timeZone: "Europe/Istanbul" });
     const reportsUrl = new URL(tenantUrl(baseURL!, subdomain, "/admin/reports"));
     reportsUrl.searchParams.set("periodStart", today);
     reportsUrl.searchParams.set("periodEnd", today);

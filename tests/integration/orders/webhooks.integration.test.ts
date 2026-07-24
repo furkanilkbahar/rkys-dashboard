@@ -134,6 +134,29 @@ describe("Webhook kaydı: olay yakalama (Faz 10 Adım 1, S42)", () => {
   });
 });
 
+// pg_net gerçek bir dış HTTP isteği attığı için yanıt süresi ağ koşullarına
+// göre değişir — sabit bir bekleme yerine, yanıt gelene kadar (veya deneme
+// hakkı bitene kadar) reconcile_webhook_deliveries'i tekrar tekrar çağırıp
+// polling yaparız (bkz. TESTING.md §7 — sabit 2sn bekleme geçmişte httpbin
+// gecikme varyansına karşı kırılgan çıktı).
+async function pollUntilSettled(
+  service: ReturnType<typeof serviceRoleClient>,
+  tenantId: string,
+  isSettled: (status: string) => boolean,
+  maxAttempts = 8,
+) {
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await service.rpc("reconcile_webhook_deliveries");
+    const { data } = await service.from("webhook_deliveries").select("*").eq("tenant_id", tenantId).single();
+    if (data && isSettled(data.status)) {
+      return data;
+    }
+  }
+  const { data } = await service.from("webhook_deliveries").select("*").eq("tenant_id", tenantId).single();
+  return data;
+}
+
 describe("Webhook teslimatı: imzalama + retry (Faz 10 Adım 1, S42)", () => {
   it("dispatch_webhook_deliveries HMAC imzalı gerçek bir HTTP POST atar, 2xx cevap 'delivered' olur", async () => {
     const { tenantId } = await setupTenant("webhook-dispatch-success");
@@ -146,12 +169,10 @@ describe("Webhook teslimatı: imzalama + retry (Faz 10 Adım 1, S42)", () => {
     expect(afterDispatch?.status).toBe("sent");
     expect(afterDispatch?.pg_net_request_id).not.toBeNull();
 
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    await service.rpc("reconcile_webhook_deliveries");
-    const { data: afterReconcile } = await service.from("webhook_deliveries").select("status, delivered_at").eq("tenant_id", tenantId).single();
+    const afterReconcile = await pollUntilSettled(service, tenantId, (status) => status === "delivered");
     expect(afterReconcile?.status).toBe("delivered");
     expect(afterReconcile?.delivered_at).not.toBeNull();
-  }, 15_000);
+  }, 30_000);
 
   it("başarısız (5xx) teslimat üstel geri çekilmeyle 'pending'e döner, denemeleri artırır", async () => {
     const { tenantId } = await setupTenant("webhook-dispatch-retry");
@@ -160,12 +181,10 @@ describe("Webhook teslimatı: imzalama + retry (Faz 10 Adım 1, S42)", () => {
     await service.rpc("enqueue_webhook_event", { p_tenant_id: tenantId, p_event_type: "order.created", p_payload: { order_id: "x" } });
 
     await service.rpc("dispatch_webhook_deliveries");
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    await service.rpc("reconcile_webhook_deliveries");
+    const data = await pollUntilSettled(service, tenantId, (status) => status === "pending");
 
-    const { data } = await service.from("webhook_deliveries").select("status, attempt_count, next_retry_at").eq("tenant_id", tenantId).single();
     expect(data?.status).toBe("pending");
     expect(data?.attempt_count).toBe(1);
     expect(new Date(data!.next_retry_at).getTime()).toBeGreaterThan(Date.now());
-  }, 15_000);
+  }, 30_000);
 });

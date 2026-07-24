@@ -20,7 +20,10 @@ async function setupTenant(prefix: string) {
   return { ...tenant, owner };
 }
 
-const TODAY = new Date().toISOString().slice(0, 10);
+// UTC yerine tenant saat dilimi (Europe/Istanbul) kullanılır — RPC "bugün"ü
+// tenant-local tarihe göre gruplar, UTC 21:00-24:00 penceresinde bu ikisi
+// farklı takvim günlerine denk gelebilir (bkz. TESTING.md §7 geçmişi).
+const TODAY = new Date().toLocaleDateString("en-CA", { timeZone: "Europe/Istanbul" });
 
 describe("get_loyalty_performance_report (Faz 7 Adım 3, S33)", () => {
   it("dönem içindeki kazanım/harcama toplamlarını ve aktif müşteri sayısını doğru hesaplar", async () => {

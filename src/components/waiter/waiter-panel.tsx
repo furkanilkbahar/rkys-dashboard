@@ -54,8 +54,17 @@ export function WaiterPanel({
     // Kanal adı her effect koşumunda benzersiz olmalı: React Strict Mode
     // (dev) mount'u iki kez tetikler; aynı topic adı paylaşılırsa ilk
     // koşumun cleanup'ı ikinci koşumun kanalını da kapatabiliyor.
-    const channel = supabase
-      .channel(`waiter-${branchId}-${crypto.randomUUID()}`)
+    //
+    // İKİ AYRI kanal kullanılır (waiter_calls + orders), TEK kanalda iki
+    // postgres_changes filtresi birleştirilmez — Supabase Realtime'ın
+    // realtime.subscription_check_filters tetikleyicisi aynı phx_join'de
+    // birden fazla tablo filtresi geldiğinde ikinci filtre için "invalid
+    // column for filter tenant_id" istisnası fırlatıp o kanalı tamamen
+    // bozabiliyor (gözlem: kds-panel.tsx zaten tablo başına tek kanal
+    // kullanıyor ve bu sorunu hiç yaşamıyor — aynı desen burada da izlenir).
+    const uniqueId = crypto.randomUUID();
+    const callsChannel = supabase
+      .channel(`waiter-calls-${branchId}-${uniqueId}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "waiter_calls", filter: `tenant_id=eq.${tenantId}` },
@@ -65,6 +74,12 @@ export function WaiterPanel({
           window.location.reload();
         },
       )
+      .subscribe((status) => {
+        setChannelState(status === "SUBSCRIBED" ? "connected" : status === "CLOSED" ? "disconnected" : "connecting");
+      });
+
+    const ordersChannel = supabase
+      .channel(`waiter-orders-${branchId}-${uniqueId}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "orders", filter: `tenant_id=eq.${tenantId}` },
@@ -72,12 +87,11 @@ export function WaiterPanel({
           window.location.reload();
         },
       )
-      .subscribe((status) => {
-        setChannelState(status === "SUBSCRIBED" ? "connected" : status === "CLOSED" ? "disconnected" : "connecting");
-      });
+      .subscribe();
 
     return () => {
-      void supabase.removeChannel(channel);
+      void supabase.removeChannel(callsChannel);
+      void supabase.removeChannel(ordersChannel);
     };
   }, [tenantId, branchId]);
 
