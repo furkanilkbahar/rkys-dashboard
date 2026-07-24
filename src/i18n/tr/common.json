@@ -140,6 +140,7 @@
       "tables": "Masalar",
       "staff": "Personel",
       "reservations": "Rezervasyon",
+      "kiosk": "Kiosk",
       "ratings": "Değerlendirmeler",
       "campaigns": "Kampanyalar",
       "loyalty": "Sadakat",
@@ -968,6 +969,20 @@
         "not_enabled": "Rezervasyon modülü aktif değil.",
         "unknown": "Kaydedilemedi, tekrar deneyin."
       }
+    },
+    "kiosk": {
+      "pageTitle": "Kiosk Cihazları",
+      "title": "Kiosk Cihazları",
+      "empty": "Henüz kiosk cihazı yok.",
+      "deviceName": "Cihaz Adı",
+      "pairingUrlHint": "Tablette açın: {path}",
+      "add": "+ Ekle",
+      "errors": {
+        "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
+        "forbidden": "Bu işlem için yetkiniz yok.",
+        "not_enabled": "Kiosk modülü aktif değil.",
+        "unknown": "Kaydedilemedi, tekrar deneyin."
+      }
     }
   },
   "waiter": {
@@ -1036,6 +1051,13 @@
     "invalidDelivery": {
       "title": "Paket servis şu anda kullanılamıyor.",
       "description": "Lütfen daha sonra tekrar deneyin veya işletmeyle iletişime geçin."
+    },
+    "invalidKiosk": {
+      "title": "Bu kiosk cihazı geçersiz veya artık aktif değil.",
+      "description": "Lütfen personelden yardım isteyin."
+    },
+    "kiosk": {
+      "nextCustomer": "Sıradaki Müşteri"
     },
     "tableSelect": {
       "title": "Masanızı seçin",

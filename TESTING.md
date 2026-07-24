@@ -65,6 +65,7 @@ Bir faz şunlar olmadan kapanmaz:
 | S43 | Pazar yeri: admin ürün↔SKU eşlemesi kurar; aracı platform tenant API anahtarıyla gerçek HTTP POST ile sipariş gönderir, sipariş `channel='marketplace'`/`status='approved'` olarak doğrudan KDS'e düşer, stok düşer; aynı external_order_id tekrar gönderilirse yeni sipariş açmaz (idempotent), eşlenmemiş SKU reddedilir | 10 |
 | S44 | Muhasebe: admin tamamlanmış ('served') bir siparişi mock muhasebe sağlayıcısına gönderir, senkronizasyon geçmişinde görünür ve gönderilecekler listesinden düşer; RLS başka tenant'ın senkronizasyon kaydını gizler ve sahte kayıt eklemeyi engeller; ÖKC adaptör kapısı yalnızca arayüz olarak dokümante edilir (implementasyon yok) | 10 |
 | S45 | Rezervasyon + bekleme listesi: misafir oturumsuz rezervasyon talebi gönderir ('pending'); admin masa atayıp onaylar ('confirmed'), oturtur ('seated'); admin bekleme listesine walk-in ekler, çağırır ('called'), oturtur; RLS başka tenant'ın rezervasyon/bekleme listesini gizler | 11 |
+| S46 | Kiosk modu: admin kiosk cihazı ekler (pairing code üretilir); tablet `/kiosk/[pairingCode]/baslat` ile aynı /paket sayfasına bağlanır (kod yeniden kullanımı), oturuma kiosk_device_id işlenir; "Sıradaki Müşteri" mevcut oturumu kapatıp yeni bir oturum açar; geçersiz/pasif cihaz kodu reddedilir | 11 |
 
 ## 4. RLS İzolasyon Testleri (entegrasyon, zorunlu şablon)
 Her yeni tablo için otomatik üretilen test çifti:

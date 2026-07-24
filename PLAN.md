@@ -83,7 +83,7 @@
 
 ## Faz 11 — Ek Modüller
 - [x] **Rezervasyon + bekleme listesi** (masa haritası entegre)
-- [ ] **Kiosk modu** (menünün dokunmatik modu)
+- [x] **Kiosk modu** (menünün dokunmatik modu)
 - [ ] **Vardiya planlama + puantaj** (çizelge, PIN giriş-çıkış, saat raporu, maaş exportu)
 
 ## Faz 12 — Gelecek Havuzu

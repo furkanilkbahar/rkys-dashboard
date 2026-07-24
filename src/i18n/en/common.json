@@ -140,6 +140,7 @@
       "tables": "Tables",
       "staff": "Staff",
       "reservations": "Reservations",
+      "kiosk": "Kiosk",
       "ratings": "Ratings",
       "campaigns": "Campaigns",
       "loyalty": "Loyalty",
@@ -968,6 +969,20 @@
         "not_enabled": "The reservations module is not active.",
         "unknown": "Could not save, please try again."
       }
+    },
+    "kiosk": {
+      "pageTitle": "Kiosk Devices",
+      "title": "Kiosk Devices",
+      "empty": "No kiosk devices yet.",
+      "deviceName": "Device Name",
+      "pairingUrlHint": "Open on the tablet: {path}",
+      "add": "+ Add",
+      "errors": {
+        "invalid_input": "Please check the information you entered.",
+        "forbidden": "You don't have permission for this action.",
+        "not_enabled": "The kiosk module is not active.",
+        "unknown": "Could not save, please try again."
+      }
     }
   },
   "waiter": {
@@ -1036,6 +1051,13 @@
     "invalidDelivery": {
       "title": "Delivery ordering is currently unavailable.",
       "description": "Please try again later or contact the venue."
+    },
+    "invalidKiosk": {
+      "title": "This kiosk device is invalid or no longer active.",
+      "description": "Please ask staff for help."
+    },
+    "kiosk": {
+      "nextCustomer": "Next Customer"
     },
     "tableSelect": {
       "title": "Choose your table",
