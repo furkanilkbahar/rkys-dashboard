@@ -150,6 +150,7 @@
       "apiKeys": "API Keys",
       "webhooks": "Webhooks",
       "marketplace": "Marketplace",
+      "accounting": "Accounting",
       "reports": "Reports",
       "support": "Support",
       "settings": "Settings",
@@ -899,6 +900,22 @@
         "forbidden": "You don't have permission for this action.",
         "not_enabled": "The marketplace module is not active.",
         "unknown": "Could not save, please try again."
+      }
+    },
+    "accounting": {
+      "pageTitle": "Accounting",
+      "syncableTitle": "Orders to Send",
+      "syncableEmpty": "No orders to send.",
+      "send": "Send to Accounting",
+      "logTitle": "Sync History",
+      "logEmpty": "No syncs yet.",
+      "statusSuccess": "Success — {ref}",
+      "statusFailed": "Failed — {message}",
+      "errors": {
+        "forbidden": "You don't have permission for this action.",
+        "not_enabled": "The accounting integration module is not active.",
+        "already_synced": "This order was already sent.",
+        "unknown": "Could not send, please try again."
       }
     }
   },

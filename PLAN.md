@@ -79,7 +79,7 @@
 ## Faz 10 — API & Entegrasyonlar
 - [x] **Tenant API:** API key yönetimi + imzalı **webhooks** (retry'lı) + read-only API
 - [x] Yazma API'si → **pazar yeri adaptörü** (karma strateji D70: aracıyla çıkış → doğrudana kademeli geçiş; Yemeksepeti resmî Plugin başvurusu paralel yürür) → siparişler kanal etiketiyle KDS'e
-- [ ] Muhasebe **API adaptörü** (örn. Paraşüt); ÖKC adaptör kapısı dokümantasyonu
+- [x] Muhasebe **API adaptörü** (örn. Paraşüt); ÖKC adaptör kapısı dokümantasyonu
 
 ## Faz 11 — Ek Modüller
 - [ ] **Rezervasyon + bekleme listesi** (masa haritası entegre)

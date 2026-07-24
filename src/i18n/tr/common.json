@@ -150,6 +150,7 @@
       "apiKeys": "API Anahtarları",
       "webhooks": "Webhook'lar",
       "marketplace": "Pazar Yeri",
+      "accounting": "Muhasebe",
       "reports": "Raporlar",
       "support": "Destek",
       "settings": "Ayarlar",
@@ -899,6 +900,22 @@
         "forbidden": "Bu işlem için yetkiniz yok.",
         "not_enabled": "Pazar yeri modülü aktif değil.",
         "unknown": "Kaydedilemedi, tekrar deneyin."
+      }
+    },
+    "accounting": {
+      "pageTitle": "Muhasebe",
+      "syncableTitle": "Gönderilecek Siparişler",
+      "syncableEmpty": "Gönderilecek sipariş yok.",
+      "send": "Muhasebeye Gönder",
+      "logTitle": "Senkronizasyon Geçmişi",
+      "logEmpty": "Henüz senkronizasyon yok.",
+      "statusSuccess": "Başarılı — {ref}",
+      "statusFailed": "Başarısız — {message}",
+      "errors": {
+        "forbidden": "Bu işlem için yetkiniz yok.",
+        "not_enabled": "Muhasebe entegrasyonu modülü aktif değil.",
+        "already_synced": "Bu sipariş zaten gönderildi.",
+        "unknown": "Gönderilemedi, tekrar deneyin."
       }
     }
   },

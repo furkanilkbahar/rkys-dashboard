@@ -53,13 +53,15 @@
 
 **Kasa:** `cash_shifts` (branch, açılış bakiye, kapanış sayım, beklenen, fark, açan/kapatan), `cash_movements` (kasaya giren/çıkan), `day_closures` (gün sonu raporu snapshot'ı — muhasebe exportlarının kaynağı).
 
-**Kanallar & Kurye:** `delivery_zones` (bölge, ücret, min sepet), `customer_addresses`, `scheduled_orders`, `courier_assignments`, `marketplace_accounts` (adaptör konfigleri).
+**Kanallar & Kurye:** `delivery_zones` (bölge, ücret, min sepet), `customer_addresses`, `scheduled_orders`, `courier_assignments`, `product_external_mappings` (pazar yeri SKU↔ürün eşlemesi).
+
+> Mimari revizyon (Faz 10 Adım 2): planlanan ayrı `marketplace_accounts` tablosu kurulmadı — aracı platformun kimliği tenant'ın kendi `api_keys` anahtarıyla çözülür (tenant anahtarını platforma verir), `authenticateApiRequest` (lib/api/auth.ts) tüm Tenant API + inbound webhook uçlarının tek kimlik doğrulama noktası olarak genişletildi. Gerekçe: ayrı bir "entegrasyon hesabı" kavramı icat etmek yerine zaten var olan tek mekanizmanın yeniden kullanılması (RULES/CLAUDE.md'nin gereksiz soyutlamadan kaçınma ilkesiyle tutarlı).
 
 **CRM & Pazarlama:** `customers` (telefon, OTP doğrulama, KVKK onayları), `otp_codes`, `loyalty_programs` (mode: `stamp|points` + kurallar), `loyalty_balances`, `loyalty_transactions`, `campaigns`, `coupons` + `coupon_redemptions`, `customer_segments` (şema; kullanım CRM sonrası), `gift_cards` + `gift_card_transactions` (bakiye=borç muhasebesi).
 
 **Modüller:** `reservations` (+ `waitlist`), `kiosk_devices`, `staff_shifts` (planlama), `timeclock_entries` (PIN giriş-çıkış).
 
-**Analitik & Sistem:** `report_schedules` (zamanlanmış e-posta/PDF), `goals` (ciro hedefleri), `anomaly_alerts`, `api_keys`, `webhooks` + `webhook_deliveries` (imzalı, retry'lı), `audit_logs`, `support_tickets` + `ticket_messages` (tenant→Süper Admin destek), `ratings` + `rating_settings`, `waiter_calls` + `call_types`, `notification_settings`.
+**Analitik & Sistem:** `report_schedules` (zamanlanmış e-posta/PDF), `goals` (ciro hedefleri), `anomaly_alerts`, `api_keys`, `webhooks` + `webhook_deliveries` (imzalı, retry'lı), `accounting_sync_log` (muhasebe senkronizasyon denemeleri), `audit_logs`, `support_tickets` + `ticket_messages` (tenant→Süper Admin destek), `ratings` + `rating_settings`, `waiter_calls` + `call_types`, `notification_settings`.
 
 > İlkeler: para = integer kuruş; fiyat **ve maliyet** siparişe kopyalanır; UTC + tenant timezone/currency; sipariş/ödeme geçmişi silinmez; **veri geçmişi sınırsız** (rapor sorguları için özet tablolar/materialized view'lar: `daily_sales_summary` vb.).
 
@@ -70,6 +72,9 @@
 - **Reçete düşümü:** `track_mode=recipe` ürün satıldığında Edge Fn `recipe_items` üzerinden `stock_movements` (satış düşümü) yazar; kritik seviye altında uyarı.
 - **OTP sadakat:** menüden "katıl" → SMS OTP → `customers` doğrulanır → oturum harcamaları müşteriye bağlanır → damga/puan `loyalty_transactions`.
 - **Webhook:** olay → `webhook_deliveries` kuyruğu → HMAC imzalı POST → başarısızsa üstel geri çekilmeli retry.
+- **Pazar yeri ingestion:** aracı platform → `POST /api/integrations/marketplace/[provider]/orders` (tenant API anahtarıyla kimlikli) → SKU eşlemesi → `ingest_marketplace_order` → doğrudan `approved` durumuyla KDS'e (kanal tek motoru).
+- **Muhasebe senkronizasyonu:** admin bir `served` siparişi manuel tetikler → `AccountingProvider.syncOrderInvoice` (D61, şu an yalnızca mock) → `accounting_sync_log`'a başarı/hata satırı.
+- **ÖKC (fiskal cihaz) adaptör kapısı (D61, dokümantasyon):** `lib/integrations/fiscal/provider.ts` yalnızca arayüzü tanımlar, implementasyon YOK — gerçek donanım/GİB sertifikasyonu gerektirdiği için bu proje kapsamında test edilemez. Gelecekte somut bir ÖKC modeli seçildiğinde `record_payment` akışına (0049) `PaymentProvider` deseniyle aynı şekilde bağlanır.
 - **Zamanlanmış rapor:** `report_schedules` → Edge cron → PDF/e-posta (Resend).
 - **Anomali:** gecelik job `daily_sales_summary` kıyası → eşik aşımı → `anomaly_alerts` + panel/e-posta bildirimi.
 
