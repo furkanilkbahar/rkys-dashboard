@@ -412,6 +412,7 @@
       },
       "modules": {
         "title": "Modules",
+        "pendingRemoval": "This module may be removed from your plan, under review.",
         "keys": {
           "pos_cash": "Cash Register",
           "inventory": "Inventory",
@@ -1320,6 +1321,11 @@
         "plan": "Plan",
         "paid_addon": "Paid Add-on",
         "granted": "Manually Granted"
+      },
+      "pendingRemovals": {
+        "title": "Pending Module Changes",
+        "keep": "Keep",
+        "remove": "Remove"
       },
       "suspend": "Suspend",
       "reactivate": "Reactivate",

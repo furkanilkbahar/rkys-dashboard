@@ -412,6 +412,7 @@
       },
       "modules": {
         "title": "Modüller",
+        "pendingRemoval": "Bu modül planınızdan kaldırılabilir, inceleniyor.",
         "keys": {
           "pos_cash": "Kasa",
           "inventory": "Stok Yönetimi",
@@ -1320,6 +1321,11 @@
         "plan": "Plan",
         "paid_addon": "Ücretli Ek Modül",
         "granted": "Elle Verildi"
+      },
+      "pendingRemovals": {
+        "title": "Bekleyen Modül Değişiklikleri",
+        "keep": "Koru",
+        "remove": "Kaldır"
       },
       "suspend": "Askıya al",
       "reactivate": "Tekrar aktifleştir",

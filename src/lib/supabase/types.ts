@@ -3912,6 +3912,7 @@ export type Database = {
           created_at: string
           current_period_end: string | null
           id: string
+          pending_plan_id: string | null
           provider: string | null
           provider_ref: string | null
           status: string
@@ -3923,6 +3924,7 @@ export type Database = {
           created_at?: string
           current_period_end?: string | null
           id?: string
+          pending_plan_id?: string | null
           provider?: string | null
           provider_ref?: string | null
           status?: string
@@ -3934,6 +3936,7 @@ export type Database = {
           created_at?: string
           current_period_end?: string | null
           id?: string
+          pending_plan_id?: string | null
           provider?: string | null
           provider_ref?: string | null
           status?: string
@@ -3942,6 +3945,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "subscriptions_pending_plan_id_fkey"
+            columns: ["pending_plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "subscriptions_tenant_id_fkey"
             columns: ["tenant_id"]
@@ -5400,6 +5410,10 @@ export type Database = {
         Args: { p_new_pin: string; p_profile_id: string }
         Returns: undefined
       }
+      resolve_pending_module_removal: {
+        Args: { p_keep: boolean; p_module_key: string; p_tenant_id: string }
+        Returns: undefined
+      }
       resolve_tenant_by_domain: {
         Args: { p_domain: string }
         Returns: {
@@ -5428,7 +5442,7 @@ export type Database = {
         Returns: undefined
       }
       set_subscription_checkout_ref: {
-        Args: { p_provider: string; p_provider_ref: string }
+        Args: { p_plan_id?: string; p_provider: string; p_provider_ref: string }
         Returns: undefined
       }
       set_tenant_module: {

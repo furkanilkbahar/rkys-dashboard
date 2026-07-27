@@ -28,6 +28,7 @@ export async function startSubscriptionCheckout(planId: string): Promise<Billing
   const { error } = await supabase.rpc("set_subscription_checkout_ref", {
     p_provider: provider.name,
     p_provider_ref: checkout.providerRef,
+    p_plan_id: planId,
   });
   if (error) return { ok: false, error: "unknown" };
 

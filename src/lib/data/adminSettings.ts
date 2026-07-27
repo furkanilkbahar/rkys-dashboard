@@ -51,6 +51,7 @@ export type AdminLocale = {
 export type AdminModule = {
   moduleKey: ModuleKey;
   isEnabled: boolean;
+  pendingRemovalSince: string | null;
 };
 
 export async function getAdminTenantSettings(tenantId: string): Promise<AdminTenantSettings | null> {
@@ -191,9 +192,16 @@ export async function getAdminLocales(tenantId: string): Promise<AdminLocale[]> 
 
 export async function getAdminModules(tenantId: string): Promise<AdminModule[]> {
   const supabase = await createClient();
-  const { data } = await supabase.from("tenant_modules").select("module_key, is_enabled").eq("tenant_id", tenantId);
+  const { data } = await supabase
+    .from("tenant_modules")
+    .select("module_key, is_enabled, pending_removal_since")
+    .eq("tenant_id", tenantId);
 
-  return (data ?? []).map((m) => ({ moduleKey: m.module_key as ModuleKey, isEnabled: m.is_enabled }));
+  return (data ?? []).map((m) => ({
+    moduleKey: m.module_key as ModuleKey,
+    isEnabled: m.is_enabled,
+    pendingRemovalSince: m.pending_removal_since,
+  }));
 }
 
 export type AdminTheme = { key: string; name: string };

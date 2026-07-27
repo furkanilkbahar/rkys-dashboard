@@ -70,3 +70,23 @@ export async function setTenantModule(
   revalidatePath(`/platform/tenants/${tenantId}`);
   return { ok: true };
 }
+
+export async function resolvePendingModuleRemoval(
+  tenantId: string,
+  moduleKey: string,
+  keep: boolean,
+): Promise<PlatformActionResult> {
+  const admin = await getCurrentPlatformAdmin();
+  if (!admin) return { ok: false, error: "forbidden" };
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("resolve_pending_module_removal", {
+    p_tenant_id: tenantId,
+    p_module_key: moduleKey,
+    p_keep: keep,
+  });
+  if (error) return { ok: false, error: "unknown" };
+
+  revalidatePath(`/platform/tenants/${tenantId}`);
+  return { ok: true };
+}

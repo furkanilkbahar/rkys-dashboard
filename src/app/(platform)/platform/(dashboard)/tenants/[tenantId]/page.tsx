@@ -3,11 +3,12 @@ import { getTranslations } from "next-intl/server";
 
 import { Badge } from "@/components/ui/badge";
 import { SuspendToggleButton } from "@/components/platform/suspend-toggle-button";
+import { PendingModuleRemovals } from "@/components/platform/pending-module-removals";
 import { PlanSelect } from "@/components/platform/plan-select";
 import { TenantModulesManager } from "@/components/platform/tenant-modules-manager";
 import { getPlatformPlans, getPlatformTenantDetail } from "@/lib/data/platformTenants";
 
-import { assignTenantPlan, reactivateTenant, setTenantModule, suspendTenant } from "../actions";
+import { assignTenantPlan, reactivateTenant, resolvePendingModuleRemoval, setTenantModule, suspendTenant } from "../actions";
 
 export default async function PlatformTenantDetailPage({ params }: { params: Promise<{ tenantId: string }> }) {
   const { tenantId } = await params;
@@ -73,6 +74,12 @@ export default async function PlatformTenantDetailPage({ params }: { params: Pro
           </div>
         ))}
       </div>
+
+      <PendingModuleRemovals
+        tenantId={tenant.id}
+        modules={tenant.modules}
+        resolvePendingModuleRemoval={resolvePendingModuleRemoval}
+      />
 
       <div className="flex flex-col gap-2">
         <h2 className="text-base font-semibold">{t("tenantDetail.modulesTitle")}</h2>

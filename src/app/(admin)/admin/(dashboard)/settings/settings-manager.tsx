@@ -717,11 +717,15 @@ function ModulesCard({ modules, toggleModule }: { modules: AdminModule[]; toggle
       </CardHeader>
       <CardContent className="flex flex-col gap-2">
         {MODULE_KEYS.map((key) => {
-          const isEnabled = modules.find((m) => m.moduleKey === key)?.isEnabled ?? false;
+          const moduleState = modules.find((m) => m.moduleKey === key);
+          const isEnabled = moduleState?.isEnabled ?? false;
           return (
-            <div key={key} className="flex items-center justify-between gap-2 rounded-md border border-border p-2 text-sm">
-              <span>{t(`keys.${key}`)}</span>
-              <Switch checked={isEnabled} onCheckedChange={(checked) => handleToggle(key, checked)} />
+            <div key={key} className="flex flex-col gap-1 rounded-md border border-border p-2 text-sm">
+              <div className="flex items-center justify-between gap-2">
+                <span>{t(`keys.${key}`)}</span>
+                <Switch checked={isEnabled} onCheckedChange={(checked) => handleToggle(key, checked)} />
+              </div>
+              {moduleState?.pendingRemovalSince && <p className="text-xs text-destructive">{t("pendingRemoval")}</p>}
             </div>
           );
         })}
