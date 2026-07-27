@@ -1084,6 +1084,12 @@
     "advanceTo": {
       "en_route": "Yola Çık",
       "delivered": "Teslim Edildi"
+    },
+    "locationSharing": {
+      "start": "Konum Paylaşımını Başlat",
+      "stop": "Konum Paylaşımını Durdur",
+      "unsupported": "Tarayıcınız konum paylaşımını desteklemiyor.",
+      "denied": "Konum izni verilmedi."
     }
   },
   "timeclock": {

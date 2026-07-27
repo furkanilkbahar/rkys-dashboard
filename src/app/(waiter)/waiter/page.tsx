@@ -8,7 +8,7 @@ import { assertStaffRole } from "@/lib/auth/staffGuard";
 import { getAdminTenantSettings } from "@/lib/data/adminSettings";
 import { getAdminTables } from "@/lib/data/adminTables";
 import { getDefaultBranchId } from "@/lib/data/branch";
-import { getCouriers, getDeliveryOrders } from "@/lib/data/courier";
+import { getCouriers, getCourierLocations, getDeliveryOrders } from "@/lib/data/courier";
 import { getUpcomingReservations } from "@/lib/data/reservations";
 import { getOrdersByStatus } from "@/lib/data/staffOrders";
 import { isSubscriptionActive } from "@/lib/data/subscription";
@@ -39,12 +39,13 @@ export default async function WaiterHomePage() {
   const courierModuleEnabled = await isEnabled(actor.tenantId, "courier");
   const reservationsModuleEnabled = await isEnabled(actor.tenantId, "reservations");
   const canMoveTable = await can(actor, "session.move");
-  const [calls, pendingOrders, settings, deliveryOrders, couriers, upcomingReservations, occupiedTables, allTables] = await Promise.all([
+  const [calls, pendingOrders, settings, deliveryOrders, couriers, courierLocations, upcomingReservations, occupiedTables, allTables] = await Promise.all([
     getOpenWaiterCalls(actor.tenantId, branchId, locale),
     getOrdersByStatus(actor.tenantId, branchId, ["pending"]),
     getAdminTenantSettings(actor.tenantId),
     courierModuleEnabled ? getDeliveryOrders(actor.tenantId, branchId) : Promise.resolve([]),
     courierModuleEnabled ? getCouriers(actor.tenantId) : Promise.resolve([]),
+    courierModuleEnabled ? getCourierLocations(actor.tenantId) : Promise.resolve([]),
     reservationsModuleEnabled ? getUpcomingReservations(actor.tenantId, branchId) : Promise.resolve([]),
     canMoveTable ? getOccupiedTables(actor.tenantId, branchId) : Promise.resolve([]),
     canMoveTable ? getAdminTables(actor.tenantId, branchId) : Promise.resolve([]),
@@ -60,6 +61,7 @@ export default async function WaiterHomePage() {
       initialPendingOrders={pendingOrders}
       deliveryOrders={deliveryOrders}
       couriers={couriers}
+      initialCourierLocations={courierLocations}
       currency={settings?.currency ?? "TRY"}
       upcomingReservations={upcomingReservations}
       seatReservation={seatReservation}

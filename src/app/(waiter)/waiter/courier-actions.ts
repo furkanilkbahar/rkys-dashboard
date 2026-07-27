@@ -32,3 +32,14 @@ export async function advanceCourierAssignment(assignmentId: string, toStatus: "
   revalidatePath("/courier");
   return { ok: true };
 }
+
+export async function updateCourierLocation(latitude: number, longitude: number): Promise<CourierActionResult> {
+  const actor = await getCurrentActor();
+  if (!actor) return { ok: false, error: "forbidden" };
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("update_courier_location", { p_latitude: latitude, p_longitude: longitude });
+  if (error) return { ok: false, error: "unknown" };
+
+  return { ok: true };
+}

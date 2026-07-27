@@ -50,6 +50,16 @@ export type CourierAssignmentView = {
   subtotalMinor: number;
 };
 
+export type CourierLocationView = { courierId: string; latitude: number; longitude: number; updatedAt: string };
+
+/** Tenant içindeki tüm kuryelerin son bildirilen konumu (harita gösterimi için). */
+export async function getCourierLocations(tenantId: string): Promise<CourierLocationView[]> {
+  const supabase = await createClient();
+  const { data } = await supabase.from("courier_locations").select("courier_id, latitude, longitude, updated_at").eq("tenant_id", tenantId);
+
+  return (data ?? []).map((l) => ({ courierId: l.courier_id, latitude: l.latitude, longitude: l.longitude, updatedAt: l.updated_at }));
+}
+
 /** Bir kuryenin kendi (henüz teslim etmediği) atamaları. */
 export async function getCourierAssignments(tenantId: string, courierId: string): Promise<CourierAssignmentView[]> {
   const supabase = await createClient();

@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -10,7 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { AdminTable } from "@/lib/data/adminTables";
-import type { CourierOption, DeliveryOrderView } from "@/lib/data/courier";
+import type { CourierLocationView, CourierOption, DeliveryOrderView } from "@/lib/data/courier";
+import type { CourierMapPoint } from "@/components/courier/courier-map";
 import type { AdminReservation } from "@/lib/data/reservations";
 import type { OccupiedTable } from "@/lib/data/tableSessions";
 import type { WaiterCallView } from "@/lib/data/waiterCalls";
@@ -21,6 +23,10 @@ import { useInsistentAlert, useSoundUnlock } from "@/lib/sound/insistentAlert";
 import { createClient } from "@/lib/supabase/client";
 import { formatPrice } from "@/lib/utils/currency";
 
+// SSR sırasında leaflet window/document'e erişip patlıyor — yalnızca
+// istemcide yüklenir.
+const CourierMap = dynamic(() => import("@/components/courier/courier-map").then((m) => m.CourierMap), { ssr: false });
+
 export function WaiterPanel({
   tenantId,
   branchId,
@@ -28,6 +34,7 @@ export function WaiterPanel({
   initialPendingOrders,
   deliveryOrders = [],
   couriers = [],
+  initialCourierLocations = [],
   currency = "TRY",
   upcomingReservations = [],
   seatReservation,
@@ -41,6 +48,7 @@ export function WaiterPanel({
   initialPendingOrders: StaffOrderView[];
   deliveryOrders?: DeliveryOrderView[];
   couriers?: CourierOption[];
+  initialCourierLocations?: CourierLocationView[];
   currency?: string;
   upcomingReservations?: AdminReservation[];
   seatReservation?: (reservationId: string) => Promise<ReservationActionResult>;
@@ -52,6 +60,7 @@ export function WaiterPanel({
   const [calls, setCalls] = useState(initialCalls);
   const [pendingOrders, setPendingOrders] = useState(initialPendingOrders);
   const [reservations, setReservations] = useState(upcomingReservations);
+  const [courierLocations, setCourierLocations] = useState(initialCourierLocations);
   const router = useRouter();
   const [channelState, setChannelState] = useState<ChannelState>("connecting");
   const { unlocked, unlock } = useSoundUnlock();
@@ -99,9 +108,28 @@ export function WaiterPanel({
       )
       .subscribe();
 
+    // Kurye konumu sık güncellenir — bu kanal tam sayfa yenilemek yerine
+    // yalnızca ilgili satırı state'te günceller (harita akıcı kalır).
+    const courierLocationsChannel = supabase
+      .channel(`waiter-courier-locations-${branchId}-${uniqueId}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "courier_locations", filter: `tenant_id=eq.${tenantId}` },
+        (payload) => {
+          const row = payload.new as { courier_id: string; latitude: number; longitude: number; updated_at: string } | null;
+          if (!row) return;
+          setCourierLocations((prev) => [
+            ...prev.filter((l) => l.courierId !== row.courier_id),
+            { courierId: row.courier_id, latitude: row.latitude, longitude: row.longitude, updatedAt: row.updated_at },
+          ]);
+        },
+      )
+      .subscribe();
+
     return () => {
       void supabase.removeChannel(callsChannel);
       void supabase.removeChannel(ordersChannel);
+      void supabase.removeChannel(courierLocationsChannel);
     };
   }, [tenantId, branchId]);
 
@@ -240,6 +268,14 @@ export function WaiterPanel({
       {couriers.length > 0 && (
         <section className="flex flex-col gap-3">
           <h2 className="text-sm font-semibold text-muted-foreground">{t("courierAssignment")}</h2>
+          {courierLocations.length > 0 && (
+            <CourierMap
+              points={courierLocations.map((loc): CourierMapPoint => {
+                const courier = couriers.find((c) => c.id === loc.courierId);
+                return { courierId: loc.courierId, latitude: loc.latitude, longitude: loc.longitude, label: courier?.badgeNo ?? loc.courierId.slice(0, 8) };
+              })}
+            />
+          )}
           {deliveryOrders.length === 0 && <p className="text-sm text-muted-foreground">{t("noDeliveryOrders")}</p>}
           {deliveryOrders.map((order) => (
             <div key={order.id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border p-2 text-sm">

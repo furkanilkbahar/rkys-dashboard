@@ -1084,6 +1084,12 @@
     "advanceTo": {
       "en_route": "Head Out",
       "delivered": "Delivered"
+    },
+    "locationSharing": {
+      "start": "Start Sharing Location",
+      "stop": "Stop Sharing Location",
+      "unsupported": "Your browser doesn't support location sharing.",
+      "denied": "Location permission was denied."
     }
   },
   "timeclock": {
