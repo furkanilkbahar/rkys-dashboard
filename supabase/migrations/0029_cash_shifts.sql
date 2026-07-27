@@ -14,7 +14,7 @@ language plpgsql
 as $$
 begin
   insert into public.tables (tenant_id, branch_id, label, is_counter, qr_token_hash)
-  values (new.tenant_id, new.id, 'Tezgâh', true, encode(gen_random_bytes(32), 'hex'));
+  values (new.tenant_id, new.id, 'Tezgâh', true, encode(extensions.gen_random_bytes(32), 'hex'));
   return new;
 end;
 $$;
@@ -25,7 +25,7 @@ create trigger trg_branches_create_counter_table
 
 -- Backfill: mevcut şubeler (acme/beta/gamma) için de tezgâh masası oluşur.
 insert into public.tables (tenant_id, branch_id, label, is_counter, qr_token_hash)
-select b.tenant_id, b.id, 'Tezgâh', true, encode(gen_random_bytes(32), 'hex')
+select b.tenant_id, b.id, 'Tezgâh', true, encode(extensions.gen_random_bytes(32), 'hex')
 from public.branches b
 where not exists (
   select 1 from public.tables t where t.branch_id = b.id and t.is_counter

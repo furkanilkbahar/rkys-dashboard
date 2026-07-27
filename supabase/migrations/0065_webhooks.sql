@@ -15,6 +15,8 @@
 -- Olay üretimi: orders tablosuna trigger (RPC'lere tek tek dokunmadan tüm
 -- sipariş mutasyonları otomatik yakalanır).
 
+create extension if not exists pg_net;
+
 create table public.webhooks (
   id uuid primary key default gen_random_uuid(),
   tenant_id uuid not null references public.tenants(id) on delete cascade,
