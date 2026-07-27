@@ -97,9 +97,10 @@ Rakip analizi (adisyo/Menulux/Orion POS/robotPOS/Protel, 2026-07) sonrası D82 k
 - [x] SSS (FAQ) sayfası + iletişim/demo talep formu
 - [x] Blog iskeleti (boş state) + sosyal kanıt bölümü iskeleti
 
-## Faz 14 — Geliştirici Portalı & Donanım İçeriği
-- [ ] Public API/webhook dokümantasyon sayfası (kimlik gerektirmez)
-- [ ] Donanım uyumluluk/tavsiye içerik sayfası
+## Faz 14 — Geliştirici Portalı & Donanım İçeriği ✅
+Kapanış paketi yeşil (2026-07-28): unit 29/29, entegrasyon 421/421, E2E 2/2.
+- [x] Public API/webhook dokümantasyon sayfası (kimlik gerektirmez) — `/gelistirici`
+- [x] Donanım uyumluluk/tavsiye içerik sayfası — `/donanim` (bugün çalışanlar + yol haritası, uydurma marka/entegrasyon iddiası yok)
 
 ## Faz 15 — Ücretli Ek Modül Ekonomisi
 `tenant_modules.source='paid_addon'` (Faz 4 revizyonu) üzerine gerçek à la carte faturalandırma.

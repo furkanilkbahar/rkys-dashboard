@@ -1571,7 +1571,79 @@
       "cerez": "Çerez Politikası",
       "sozlesme": "Kullanım Sözleşmesi",
       "veriSilme": "Veri Silme",
-      "blog": "Blog"
+      "blog": "Blog",
+      "developers": "Geliştiriciler",
+      "hardware": "Donanım"
+    }
+  },
+  "developerDocs": {
+    "title": "Geliştirici Dokümantasyonu",
+    "subtitle": "Tenant API'nizi ve webhook entegrasyonunuzu kurmak için ihtiyacınız olan her şey.",
+    "auth": {
+      "title": "Kimlik Doğrulama",
+      "body": "Panelinizden (Ayarlar → API Anahtarları) oluşturduğunuz anahtarı Authorization başlığında Bearer token olarak gönderin."
+    },
+    "orders": {
+      "title": "Siparişler (read-only)",
+      "body": "Son siparişlerinizi kanal, durum ve kalem detaylarıyla birlikte döner.",
+      "limitNote": "limit parametresi 1-200 arası, varsayılan 50."
+    },
+    "webhooks": {
+      "title": "Webhook'lar",
+      "body": "Panelinizden bir webhook kaydettiğinizde, aşağıdaki olay tiplerinden seçtikleriniz gerçekleştiğinde URL'inize imzalı bir POST isteği gönderilir:",
+      "deliveryBody": "Her istek, olay tipini ve HMAC-SHA256 imzasını header'da taşır:",
+      "verifyBody": "İmzayı doğrulamak için webhook secret'ınızla payload'ı aynı şekilde imzalayıp header'daki değerle karşılaştırın:"
+    },
+    "management": {
+      "title": "Anahtar & Webhook Yönetimi",
+      "body": "API anahtarı oluşturma/iptal etme ve webhook kaydı panelinizin Ayarlar bölümünden yapılır — buradan ayrıca imza sırrınızı görüntüleyebilir ve webhook'u pasif hale getirebilirsiniz."
+    }
+  },
+  "hardware": {
+    "title": "Donanım Uyumluluğu",
+    "subtitle": "RKYS Dashboard tamamen tarayıcı üzerinden çalışan bir web uygulamasıdır — özel bir donanım satın almanıza gerek yoktur.",
+    "today": {
+      "title": "Bugün hangi cihazlarla çalışır",
+      "items": {
+        "guestMenu": {
+          "title": "Misafir QR menüsü",
+          "body": "Kamerası olan herhangi bir akıllı telefon — uygulama indirmeye gerek yok, tarayıcıda açılır."
+        },
+        "kitchenDisplay": {
+          "title": "Mutfak ekranı",
+          "body": "Modern bir tarayıcısı (Chrome/Safari) olan herhangi bir tablet veya monitör."
+        },
+        "kiosk": {
+          "title": "Self-servis kiosk",
+          "body": "10 inç ve üzeri dokunmatik tablet önerilir; tarayıcının tam ekran/kiosk modunda çalışır."
+        },
+        "staffPanel": {
+          "title": "Garson & kasa paneli",
+          "body": "Tablet, dizüstü veya masaüstü — herhangi bir modern tarayıcı yeterlidir."
+        }
+      }
+    },
+    "roadmap": {
+      "title": "Yol haritamızda",
+      "subtitle": "Aşağıdakiler henüz doğrudan entegre değil — mevcut donanımınızı genel amaçlı kullanmaya devam edebilirsiniz, doğrudan entegrasyon ileride eklenecektir.",
+      "items": {
+        "thermalPrinter": {
+          "title": "Termal fiş/mutfak yazıcısı (ESC/POS)",
+          "body": "Doğrudan yazıcı entegrasyonu planlanıyor; şu an için mevcut yazıcı altyapınızı genel amaçlı kullanabilirsiniz."
+        },
+        "cashDrawer": {
+          "title": "Para çekmecesi",
+          "body": "Otomatik tetikleme entegrasyonu yol haritamızda."
+        },
+        "barcodeScanner": {
+          "title": "Barkod okuyucu",
+          "body": "Stok/ürün girişinde doğrudan barkod okuyucu entegrasyonu planlanıyor."
+        },
+        "fiscalRegister": {
+          "title": "Mali yazarkasa (ÖKC)",
+          "body": "GİB onaylı mali yazarkasa entegrasyonu için adaptör mimarisi üzerinde çalışıyoruz."
+        }
+      }
     }
   },
   "blog": {

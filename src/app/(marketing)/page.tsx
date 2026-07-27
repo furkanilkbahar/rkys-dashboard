@@ -136,6 +136,12 @@ export default async function MarketingHomePage() {
         <Link href="/blog" className="hover:text-foreground">
           {t("footer.blog")}
         </Link>
+        <Link href="/gelistirici" className="hover:text-foreground">
+          {t("footer.developers")}
+        </Link>
+        <Link href="/donanim" className="hover:text-foreground">
+          {t("footer.hardware")}
+        </Link>
         <Link href="/iletisim" className="hover:text-foreground">
           {t("nav.contact")}
         </Link>

@@ -1571,7 +1571,79 @@
       "cerez": "Cookie Policy",
       "sozlesme": "Terms of Use",
       "veriSilme": "Data Deletion",
-      "blog": "Blog"
+      "blog": "Blog",
+      "developers": "Developers",
+      "hardware": "Hardware"
+    }
+  },
+  "developerDocs": {
+    "title": "Developer Documentation",
+    "subtitle": "Everything you need to set up your tenant API and webhook integration.",
+    "auth": {
+      "title": "Authentication",
+      "body": "Send the key you created in your dashboard (Settings → API Keys) as a Bearer token in the Authorization header."
+    },
+    "orders": {
+      "title": "Orders (read-only)",
+      "body": "Returns your recent orders with channel, status, and line-item detail.",
+      "limitNote": "The limit parameter accepts 1-200, defaulting to 50."
+    },
+    "webhooks": {
+      "title": "Webhooks",
+      "body": "When you register a webhook from your dashboard, a signed POST request is sent to your URL whenever one of these event types occurs:",
+      "deliveryBody": "Every request carries the event type and an HMAC-SHA256 signature in its headers:",
+      "verifyBody": "To verify the signature, sign the same payload with your webhook secret and compare it to the header value:"
+    },
+    "management": {
+      "title": "Key & Webhook Management",
+      "body": "Create/revoke API keys and register webhooks from your dashboard's Settings section — you can also view your signing secret and deactivate a webhook there."
+    }
+  },
+  "hardware": {
+    "title": "Hardware Compatibility",
+    "subtitle": "RKYS Dashboard runs entirely in the browser — you don't need to buy any special hardware.",
+    "today": {
+      "title": "What works today",
+      "items": {
+        "guestMenu": {
+          "title": "Guest QR menu",
+          "body": "Any smartphone with a camera — no app to install, it opens right in the browser."
+        },
+        "kitchenDisplay": {
+          "title": "Kitchen display",
+          "body": "Any tablet or monitor with a modern browser (Chrome/Safari)."
+        },
+        "kiosk": {
+          "title": "Self-service kiosk",
+          "body": "A 10\" or larger touchscreen tablet is recommended; runs in the browser's fullscreen/kiosk mode."
+        },
+        "staffPanel": {
+          "title": "Waiter & register panel",
+          "body": "Tablet, laptop, or desktop — any modern browser works."
+        }
+      }
+    },
+    "roadmap": {
+      "title": "On our roadmap",
+      "subtitle": "The following aren't directly integrated yet — keep using your existing hardware for general purposes in the meantime; direct integration is planned.",
+      "items": {
+        "thermalPrinter": {
+          "title": "Thermal receipt/kitchen printer (ESC/POS)",
+          "body": "Direct printer integration is planned; for now you can keep using your existing printer setup generally."
+        },
+        "cashDrawer": {
+          "title": "Cash drawer",
+          "body": "Automatic trigger integration is on our roadmap."
+        },
+        "barcodeScanner": {
+          "title": "Barcode scanner",
+          "body": "Direct barcode scanner integration for stock/product entry is planned."
+        },
+        "fiscalRegister": {
+          "title": "Fiscal cash register",
+          "body": "We're building the adapter architecture for a certified fiscal register integration."
+        }
+      }
     }
   },
   "blog": {
