@@ -5040,6 +5040,17 @@ export type Database = {
         }
         Returns: string
       }
+      create_plan: {
+        Args: {
+          p_extra_branch_price_minor: number
+          p_included_branch_count: number
+          p_key: string
+          p_name: string
+          p_price_minor: number
+          p_table_limit: number
+        }
+        Returns: string
+      }
       create_staff_device: {
         Args: { p_branch_id: string; p_label: string }
         Returns: string
@@ -5410,6 +5421,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      set_plan_module: {
+        Args: { p_included: boolean; p_module_key: string; p_plan_id: string }
+        Returns: undefined
+      }
       set_subscription_checkout_ref: {
         Args: { p_provider: string; p_provider_ref: string }
         Returns: undefined
@@ -5447,6 +5462,17 @@ export type Database = {
       }
       suspend_tenant: { Args: { p_tenant_id: string }; Returns: undefined }
       trigger_scheduled_reports_digest: { Args: never; Returns: undefined }
+      update_plan: {
+        Args: {
+          p_extra_branch_price_minor: number
+          p_included_branch_count: number
+          p_name: string
+          p_plan_id: string
+          p_price_minor: number
+          p_table_limit: number
+        }
+        Returns: undefined
+      }
       update_staff_member: {
         Args: {
           p_badge_no: string

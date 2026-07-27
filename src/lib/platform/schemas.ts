@@ -32,3 +32,22 @@ export const incidentUpdateFormSchema = z.object({
   status: z.enum(["investigating", "identified", "monitoring", "resolved"]),
 });
 export type IncidentUpdateFormInput = z.infer<typeof incidentUpdateFormSchema>;
+
+// key: RPC/veri katmanında sabit bir tanımlayıcı olarak kullanılır (i18n'siz,
+// yalnızca platform admin görür) — starter/pro/unlimited ile aynı biçim.
+export const planFormSchema = z.object({
+  key: z
+    .string()
+    .min(1, "required")
+    .max(40)
+    .regex(/^[a-z][a-z0-9_]*$/, "invalid"),
+  name: z.string().min(1, "required"),
+  priceMinor: z.coerce.number().int().min(0),
+  tableLimit: z.union([z.literal(""), z.coerce.number().int().min(1)]),
+  includedBranchCount: z.coerce.number().int().min(1),
+  extraBranchPriceMinor: z.coerce.number().int().min(0),
+});
+export type PlanFormInput = z.infer<typeof planFormSchema>;
+
+export const planUpdateFormSchema = planFormSchema.omit({ key: true });
+export type PlanUpdateFormInput = z.infer<typeof planUpdateFormSchema>;

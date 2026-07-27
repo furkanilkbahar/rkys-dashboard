@@ -1286,6 +1286,7 @@
     "title": "RKYS Süper Admin",
     "nav": {
       "tenants": "Tenantlar",
+      "plans": "Planlar",
       "announcements": "Duyurular",
       "settings": "Ayarlar",
       "licenses": "Lisanslar",
@@ -1327,6 +1328,23 @@
       "trialEndsAt": "Deneme sonu: {date}",
       "currentPeriodEnd": "Yenileme: {date}",
       "noSubscription": "Abonelik kaydı yok."
+    },
+    "plans": {
+      "title": "Planlar",
+      "keyLabel": "Anahtar",
+      "nameLabel": "Ad",
+      "priceLabel": "Fiyat (aylık)",
+      "tableLimitLabel": "Masa limiti",
+      "unlimitedPlaceholder": "Sınırsız",
+      "unlimited": "Sınırsız",
+      "includedBranchCountLabel": "Dahil şube sayısı",
+      "extraBranchPriceLabel": "Ek şube ücreti",
+      "modulesTitle": "Dahil Modüller",
+      "edit": "Düzenle",
+      "save": "Kaydet",
+      "cancel": "Vazgeç",
+      "createTitle": "Yeni Plan",
+      "create": "Plan oluştur"
     },
     "announcements": {
       "title": "Duyurular",

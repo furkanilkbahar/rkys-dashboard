@@ -1286,6 +1286,7 @@
     "title": "RKYS Super Admin",
     "nav": {
       "tenants": "Tenants",
+      "plans": "Plans",
       "announcements": "Announcements",
       "settings": "Settings",
       "licenses": "Licenses",
@@ -1327,6 +1328,23 @@
       "trialEndsAt": "Trial ends: {date}",
       "currentPeriodEnd": "Renews: {date}",
       "noSubscription": "No subscription record."
+    },
+    "plans": {
+      "title": "Plans",
+      "keyLabel": "Key",
+      "nameLabel": "Name",
+      "priceLabel": "Price (monthly)",
+      "tableLimitLabel": "Table limit",
+      "unlimitedPlaceholder": "Unlimited",
+      "unlimited": "Unlimited",
+      "includedBranchCountLabel": "Included branch count",
+      "extraBranchPriceLabel": "Extra branch fee",
+      "modulesTitle": "Included Modules",
+      "edit": "Edit",
+      "save": "Save",
+      "cancel": "Cancel",
+      "createTitle": "New Plan",
+      "create": "Create plan"
     },
     "announcements": {
       "title": "Announcements",
