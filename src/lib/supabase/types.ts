@@ -915,6 +915,45 @@ export type Database = {
           },
         ]
       }
+      courier_locations: {
+        Row: {
+          courier_id: string
+          latitude: number
+          longitude: number
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          courier_id: string
+          latitude: number
+          longitude: number
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          courier_id?: string
+          latitude?: number
+          longitude?: number
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "courier_locations_courier_id_fkey"
+            columns: ["courier_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "courier_locations_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customer_addresses: {
         Row: {
           address_text: string
@@ -5633,6 +5672,10 @@ export type Database = {
       }
       suspend_tenant: { Args: { p_tenant_id: string }; Returns: undefined }
       trigger_scheduled_reports_digest: { Args: never; Returns: undefined }
+      update_courier_location: {
+        Args: { p_latitude: number; p_longitude: number }
+        Returns: undefined
+      }
       update_plan: {
         Args: {
           p_extra_branch_price_minor: number
