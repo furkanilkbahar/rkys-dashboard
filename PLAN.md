@@ -102,11 +102,11 @@ Kapanış paketi yeşil (2026-07-28): unit 29/29, entegrasyon 421/421, E2E 2/2.
 - [x] Public API/webhook dokümantasyon sayfası (kimlik gerektirmez) — `/gelistirici`
 - [x] Donanım uyumluluk/tavsiye içerik sayfası — `/donanim` (bugün çalışanlar + yol haritası, uydurma marka/entegrasyon iddiası yok)
 
-## Faz 15 — Ücretli Ek Modül Ekonomisi
-`tenant_modules.source='paid_addon'` (Faz 4 revizyonu) üzerine gerçek à la carte faturalandırma.
-- [ ] `plan_modules.addon_price_minor` + mock-first satın alma checkout'u
-- [ ] Tenant tarafı "Satın Al" seçeneği (mevcut "Talep Et" akışının yanına)
-- [ ] Platform tarafı modül fiyat yönetimi
+## Faz 15 — Ücretli Ek Modül Ekonomisi ✅
+`tenant_modules.source='paid_addon'` (Faz 4 revizyonu) üzerine gerçek à la carte faturalandırma. Kapanış paketi yeşil (2026-07-28): unit 29/29, entegrasyon ×2 427/427, E2E 2/2.
+- [x] `module_addon_prices` tablosu (ayrı tablo, plan_modules'a eklenmedi — Varsayım, plan_modules'un semantiği "plana dahil" olduğundan fiyat için ayrı tablo daha temiz) + mock-first satın alma checkout'u
+- [x] Tenant tarafı "Satın Al" seçeneği (mevcut "Talep Et" akışının yanına)
+- [x] Platform tarafı modül fiyat yönetimi (`/platform/plans`)
 
 ## Faz 16 — Personel Motivasyonu & Kurye Canlı Takip
 - [ ] Personel hedef/rozet sistemi (satış hedefi + ilerleme raporu)
