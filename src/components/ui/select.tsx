@@ -6,7 +6,48 @@ import { Select as SelectPrimitive } from "@base-ui/react/select"
 import { cn } from "@/lib/utils/cn"
 import { ChevronDownIcon, CheckIcon, ChevronUpIcon } from "lucide-react"
 
-const Select = SelectPrimitive.Root
+// base-ui'nin Select.Value'su, Select.Root'a bir `items` (value->label) haritası
+// verilmedikçe seçili değeri OLDUĞU GİBİ (ör. plan id'si gibi bir UUID) basar,
+// SelectItem'ın render ettiği okunabilir etiketi DEĞİL (Radix'in aksine, o
+// otomatik yapıyordu). Her çağıran yerde elle `items` geçmek yerine, burada
+// tek noktadan children ağacını (SelectContent/SelectGroup içindeki
+// SelectItem'lar) tarayıp items'ı otomatik türetiyoruz — böylece mevcut
+// <Select><SelectContent>{list.map(...)}</SelectContent></Select> kullanım
+// şekli hiç değişmeden düzelir.
+function collectSelectItems(children: React.ReactNode): Array<{ value: unknown; label: React.ReactNode }> {
+  const items: Array<{ value: unknown; label: React.ReactNode }> = []
+
+  React.Children.forEach(children, (child) => {
+    if (!React.isValidElement(child)) return
+
+    if (child.type === SelectItem) {
+      const itemProps = child.props as SelectPrimitive.Item.Props
+      items.push({ value: itemProps.value, label: itemProps.children })
+      return
+    }
+
+    if (child.type === SelectContent || child.type === SelectGroup || child.type === React.Fragment) {
+      const nestedChildren = (child.props as { children?: React.ReactNode }).children
+      items.push(...collectSelectItems(nestedChildren))
+    }
+  })
+
+  return items
+}
+
+function Select<Value, Multiple extends boolean | undefined = false>({
+  children,
+  items,
+  ...props
+}: SelectPrimitive.Root.Props<Value, Multiple>) {
+  const resolvedItems = React.useMemo(() => items ?? collectSelectItems(children), [items, children])
+
+  return (
+    <SelectPrimitive.Root items={resolvedItems} {...props}>
+      {children}
+    </SelectPrimitive.Root>
+  )
+}
 
 function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props) {
   return (
