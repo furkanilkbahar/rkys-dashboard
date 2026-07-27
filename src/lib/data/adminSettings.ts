@@ -205,9 +205,14 @@ export async function getAdminModules(tenantId: string): Promise<AdminModule[]> 
 
   const { data: planModules } = tenant?.plan_id
     ? await supabase.from("plan_modules").select("module_key").eq("plan_id", tenant.plan_id)
-    : { data: [] as { module_key: string }[] | null };
+    : { data: null };
 
-  const planModuleKeys = new Set((planModules ?? []).map((p) => p.module_key));
+  // plan_id atanmamış tenant için (enforce_table_limit, 0038, ile aynı
+  // gerekçe: "limit yok" demek) hiçbir modül kısıtlanmaz — tamamı dahilmiş
+  // gibi gösterilir, kilitli/"Talep Et" hiçbiri için tetiklenmez.
+  const planModuleKeys = tenant?.plan_id
+    ? new Set((planModules ?? []).map((p) => p.module_key))
+    : new Set<string>(MODULE_KEYS);
   const pendingRequestKeys = new Set((pendingRequests ?? []).map((r) => r.module_key));
 
   return MODULE_KEYS.map((moduleKey) => {

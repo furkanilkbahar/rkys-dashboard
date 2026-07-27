@@ -335,7 +335,10 @@ export async function toggleModule(input: unknown): Promise<SettingsActionResult
   // planına dahil olmayan bir modülü kendi kendine ilk kez açması engellenir
   // — bu modüller UI'da kilitli/"Talep Et" olarak gösterilir (request_module).
   // Zaten bir satırı olan (plan/paid_addon/granted, hangi kaynaktan gelmiş
-  // olursa olsun) modülü aç/kapa yapmak serbest kalır.
+  // olursa olsun) modülü aç/kapa yapmak serbest kalır. plan_id atanmamış
+  // tenant için (enforce_table_limit, 0038, ile aynı gerekçe: "limit yok"
+  // demek) hiç kısıtlama uygulanmaz — onboarding sihirbazı dahil her tenant
+  // plan atanana kadar serbestçe modül açabilir.
   if (parsed.data.isEnabled) {
     const { data: existingRow } = await supabase
       .from("tenant_modules")
@@ -347,17 +350,18 @@ export async function toggleModule(input: unknown): Promise<SettingsActionResult
     if (!existingRow) {
       const { data: tenant } = await supabase.from("tenants").select("plan_id").eq("id", actor.tenantId).single();
       const planId = tenant?.plan_id ?? null;
-      const { data: planModule } = planId
-        ? await supabase
-            .from("plan_modules")
-            .select("module_key")
-            .eq("plan_id", planId)
-            .eq("module_key", parsed.data.moduleKey)
-            .maybeSingle()
-        : { data: null };
 
-      if (!planModule) {
-        return { ok: false, error: "plan_required" };
+      if (planId) {
+        const { data: planModule } = await supabase
+          .from("plan_modules")
+          .select("module_key")
+          .eq("plan_id", planId)
+          .eq("module_key", parsed.data.moduleKey)
+          .maybeSingle();
+
+        if (!planModule) {
+          return { ok: false, error: "plan_required" };
+        }
       }
     }
   }
