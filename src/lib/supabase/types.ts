@@ -1860,6 +1860,41 @@ export type Database = {
           },
         ]
       }
+      module_requests: {
+        Row: {
+          id: string
+          module_key: string
+          requested_at: string
+          resolved_at: string | null
+          status: string
+          tenant_id: string
+        }
+        Insert: {
+          id?: string
+          module_key: string
+          requested_at?: string
+          resolved_at?: string | null
+          status?: string
+          tenant_id: string
+        }
+        Update: {
+          id?: string
+          module_key?: string
+          requested_at?: string
+          resolved_at?: string | null
+          status?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "module_requests_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       order_item_extras: {
         Row: {
           branch_id: string
@@ -2355,6 +2390,29 @@ export type Database = {
           },
         ]
       }
+      plan_modules: {
+        Row: {
+          module_key: string
+          plan_id: string
+        }
+        Insert: {
+          module_key: string
+          plan_id: string
+        }
+        Update: {
+          module_key?: string
+          plan_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_modules_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       plans: {
         Row: {
           created_at: string
@@ -2363,6 +2421,7 @@ export type Database = {
           included_branch_count: number
           key: string
           name: string
+          price_minor: number
           table_limit: number | null
         }
         Insert: {
@@ -2372,6 +2431,7 @@ export type Database = {
           included_branch_count?: number
           key: string
           name: string
+          price_minor?: number
           table_limit?: number | null
         }
         Update: {
@@ -2381,6 +2441,7 @@ export type Database = {
           included_branch_count?: number
           key?: string
           name?: string
+          price_minor?: number
           table_limit?: number | null
         }
         Relationships: []
@@ -2405,16 +2466,19 @@ export type Database = {
       }
       platform_settings: {
         Row: {
+          auto_approve_registrations: boolean
           enforce_2fa: boolean
           id: boolean
           updated_at: string
         }
         Insert: {
+          auto_approve_registrations?: boolean
           enforce_2fa?: boolean
           id?: boolean
           updated_at?: string
         }
         Update: {
+          auto_approve_registrations?: boolean
           enforce_2fa?: boolean
           id?: boolean
           updated_at?: string
@@ -4315,6 +4379,8 @@ export type Database = {
           id: string
           is_enabled: boolean
           module_key: string
+          pending_removal_since: string | null
+          source: string
           tenant_id: string
           updated_at: string
         }
@@ -4322,6 +4388,8 @@ export type Database = {
           id?: string
           is_enabled?: boolean
           module_key: string
+          pending_removal_since?: string | null
+          source?: string
           tenant_id: string
           updated_at?: string
         }
@@ -4329,6 +4397,8 @@ export type Database = {
           id?: string
           is_enabled?: boolean
           module_key?: string
+          pending_removal_since?: string | null
+          source?: string
           tenant_id?: string
           updated_at?: string
         }
@@ -4897,6 +4967,10 @@ export type Database = {
         Args: { p_code: string; p_order_id: string }
         Returns: number
       }
+      apply_plan_change: {
+        Args: { p_new_plan_id: string; p_tenant_id: string }
+        Returns: undefined
+      }
       approve_cancellation_request: {
         Args: { p_order_id: string; p_reason_code_id?: string }
         Returns: undefined
@@ -5324,6 +5398,10 @@ export type Database = {
         }[]
       }
       revoke_staff_device: { Args: { p_device_id: string }; Returns: undefined }
+      seed_tenant_modules_from_plan: {
+        Args: { p_tenant_id: string }
+        Returns: undefined
+      }
       set_monthly_goal: {
         Args: {
           p_branch_id: string
