@@ -10,6 +10,7 @@ import { MODULE_KEYS } from "@/lib/modules/keys";
 const FEATURE_KEYS = ["qrMenu", "kitchenDisplay", "cashier", "reports", "modular"] as const;
 const VALUE_KEYS = ["guest", "staff", "owner"] as const;
 const INTEGRATION_NAMES = ["Yemeksepeti", "Getir", "Trendyol", "iyzico", "Logo", "Mikro", "Paraşüt"] as const;
+const TRUST_KEYS = ["isolation", "moduleDiscipline", "trial", "selfHosted"] as const;
 
 function formatPriceMinor(priceMinor: number) {
   return new Intl.NumberFormat("tr-TR", { style: "currency", currency: "TRY", maximumFractionDigits: 0 }).format(
@@ -116,7 +117,28 @@ export default async function MarketingHomePage() {
         </Card>
       </section>
 
+      <section className="mx-auto flex w-full max-w-4xl flex-col items-center gap-6">
+        <h2 className="text-2xl font-semibold">{t("trust.title")}</h2>
+        <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2">
+          {TRUST_KEYS.map((key) => (
+            <div key={key} className="flex flex-col gap-1 rounded-lg border border-border p-4">
+              <span className="text-sm font-semibold">{t(`trust.items.${key}.title`)}</span>
+              <span className="text-sm text-muted-foreground">{t(`trust.items.${key}.body`)}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <footer className="mx-auto flex max-w-4xl flex-wrap justify-center gap-4 text-xs text-muted-foreground">
+        <Link href="/sss" className="hover:text-foreground">
+          {t("nav.faq")}
+        </Link>
+        <Link href="/blog" className="hover:text-foreground">
+          {t("footer.blog")}
+        </Link>
+        <Link href="/iletisim" className="hover:text-foreground">
+          {t("nav.contact")}
+        </Link>
         <Link href="/legal/kvkk" className="hover:text-foreground">
           {t("footer.kvkk")}
         </Link>

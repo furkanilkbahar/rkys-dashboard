@@ -1545,12 +1545,38 @@
       "enterpriseBody": "Lifetime lisans veya kendi sunucunuzda (self-hosted) çalıştırmak mı istiyorsunuz?",
       "enterpriseCta": "Bize Ulaşın"
     },
+    "trust": {
+      "title": "Neden RKYS Dashboard",
+      "items": {
+        "isolation": {
+          "title": "Tam veri izolasyonu",
+          "body": "Her işletmenin verisi veritabanı seviyesinde (satır bazlı güvenlik) ayrılır — her yeni özellik bu izolasyonu doğrulayan otomatik testlerle geliştirilir."
+        },
+        "moduleDiscipline": {
+          "title": "Kapalı modül hiçbir yerde görünmez",
+          "body": "İhtiyacınız olmayan modül menüde, raporda, hiçbir ekranda iz bırakmaz — yalnızca açtığınız kadarını görürsünüz."
+        },
+        "trial": {
+          "title": "14 gün kartsız deneme",
+          "body": "Kredi kartı istemeden tüm modülleri deneyin, istediğiniz an vazgeçin."
+        },
+        "selfHosted": {
+          "title": "İsterseniz kendi sunucunuzda",
+          "body": "Bulutta hızlı başlayın ya da verinizi kendi altyapınızda tutmak için self-hosted seçeneğine geçin."
+        }
+      }
+    },
     "footer": {
       "kvkk": "KVKK",
       "cerez": "Çerez Politikası",
       "sozlesme": "Kullanım Sözleşmesi",
-      "veriSilme": "Veri Silme"
+      "veriSilme": "Veri Silme",
+      "blog": "Blog"
     }
+  },
+  "blog": {
+    "title": "Blog",
+    "comingSoon": "Yakında burada olacağız — restoran ve kafe işletmeciliği üzerine yazılar hazırlıyoruz."
   },
   "registration": {
     "title": "İşletmenizi Kaydedin",

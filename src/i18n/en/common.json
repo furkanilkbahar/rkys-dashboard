@@ -1545,12 +1545,38 @@
       "enterpriseBody": "Looking for a lifetime license or to run it on your own server (self-hosted)?",
       "enterpriseCta": "Contact Us"
     },
+    "trust": {
+      "title": "Why RKYS Dashboard",
+      "items": {
+        "isolation": {
+          "title": "Full data isolation",
+          "body": "Every business's data is separated at the database level (row-level security) — every new feature ships with automated tests that verify this isolation."
+        },
+        "moduleDiscipline": {
+          "title": "A disabled module leaves no trace",
+          "body": "Anything you haven't turned on stays out of the menu, reports, and every screen — you only ever see what you've enabled."
+        },
+        "trial": {
+          "title": "14-day trial, no card required",
+          "body": "Try every module without entering a card, and cancel anytime."
+        },
+        "selfHosted": {
+          "title": "Run it on your own servers if you prefer",
+          "body": "Start fast in the cloud, or switch to self-hosted to keep your data on your own infrastructure."
+        }
+      }
+    },
     "footer": {
       "kvkk": "Privacy Notice",
       "cerez": "Cookie Policy",
       "sozlesme": "Terms of Use",
-      "veriSilme": "Data Deletion"
+      "veriSilme": "Data Deletion",
+      "blog": "Blog"
     }
+  },
+  "blog": {
+    "title": "Blog",
+    "comingSoon": "We'll be here soon — writing about running a great cafe or restaurant."
   },
   "registration": {
     "title": "Register Your Business",
