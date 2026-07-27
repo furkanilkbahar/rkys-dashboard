@@ -1,8 +1,11 @@
-# Ortamlar — Tanım (D67, D72)
+# Ortamlar — Tanım (D67, D72, D83)
 
-> Bu doküman sadece **tanım/plan** düzeyindedir. Hiçbir deploy adımı içermez —
-> D72 gereği proje lokalde uçtan uca tamamlanmadan hiçbir ortam canlıya
-> alınmaz. Bkz. OPERATIONS.md §1.
+> D72 gereği proje lokalde uçtan uca tamamlanmadan **gerçek** kullanıcıya
+> açılan bir canlı ortam olmaz — ama D83 ile Vercel + Supabase Cloud
+> bağlantısı (wiring) kullanıcı tarafından bilerek erken açıldı (2026-07-28).
+> Aşağıdaki "Production" bölümü artık TANIM değil, kurulu durumu yansıtıyor;
+> bu, projenin gerçek kullanıcılara açıldığı/pazarlandığı anlamına gelmez.
+> Bkz. OPERATIONS.md §1.
 
 ## Akış
 
@@ -36,13 +39,24 @@ Lokal (bu makine) → GitHub (CI) → Staging → Production
 - Test tenant'ları burada yaşar; gerçek müşteri verisi olmaz.
 - **Açılışı kullanıcı onayına tabidir** (RULES #45).
 
-## Production (TANIM — henüz kurulmadı)
+## Production (KURULU — D83, 2026-07-28)
 
-- Hedef: **Vercel + Supabase Cloud**.
-- PR başına preview deployment (Vercel), ayrı Supabase projesi (Prod).
-- Günlük otomatik DB yedeği + PITR; aylık restore tatbikatı (OPERATIONS.md §4).
-- **Açılışı kullanıcı onayına tabidir ve proje lokalde uçtan uca bitmeden
-  gerçekleşmez (D72, RULES #45).**
+- Vercel projesi: `rkys` (`rkys.vercel.app`), GitHub reposuna bağlı —
+  `main`'e her push otomatik Production deploy, her PR otomatik preview
+  deploy tetikler.
+- Supabase Cloud projesi: `rkys` (ref `ifwzdjiwvpkbzeofaxyj`, region
+  ap-southeast-2). Tüm migration'lar (`0001`–`0083`) uygulandı.
+- Vercel env (Production + Preview ortak): `NEXT_PUBLIC_SUPABASE_URL`,
+  `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`,
+  `NEXT_PUBLIC_ROOT_DOMAIN=rkys.vercel.app`, `INTERNAL_API_SECRET` (yeni
+  üretildi). `LICENSE_SIGNING_PRIVATE_KEY` ayrıca kullanıcı tarafından
+  eklenir (mevcut `verify.ts` embedded public key'iyle eşleşmesi gerektiği
+  için yeni üretilmedi).
+- Günlük otomatik DB yedeği + PITR; aylık restore tatbikatı (OPERATIONS.md §4)
+  — henüz kurulmadı, ayrı bir adım.
+- Bu, projenin gerçek/ödeyen kullanıcılara **açıldığı** anlamına gelmez —
+  yalnızca altyapı bağlantısı kuruldu (D83). Gerçek lansman hâlâ RULES #45
+  kapsamında ayrı onaya tabidir.
 
 ## Self-Hosted (gelecek — Faz 6)
 
