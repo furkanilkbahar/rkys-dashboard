@@ -35,6 +35,7 @@ export const registerSchema = z.object({
     .refine((value) => !RESERVED_SLUGS.includes(value), "slug_reserved"),
   email: z.email(),
   password: z.string().min(6),
+  planId: z.uuid("required"),
 });
 
 export type RegisterInput = z.infer<typeof registerSchema>;

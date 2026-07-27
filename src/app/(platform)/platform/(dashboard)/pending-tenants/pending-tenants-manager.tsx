@@ -38,7 +38,10 @@ function PendingTenantRow({
   }
 
   return (
-    <div className="flex flex-col gap-2 rounded-md border border-border p-4 sm:flex-row sm:items-center sm:justify-between">
+    <div
+      data-testid={`pending-tenant-${tenant.slug}`}
+      className="flex flex-col gap-2 rounded-md border border-border p-4 sm:flex-row sm:items-center sm:justify-between"
+    >
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-2">
           <span className="font-medium">{tenant.name}</span>

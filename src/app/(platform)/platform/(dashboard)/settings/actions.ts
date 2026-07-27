@@ -20,3 +20,18 @@ export async function setEnforce2fa(enabled: boolean): Promise<PlatformActionRes
   revalidatePath("/platform/settings");
   return { ok: true };
 }
+
+export async function setAutoApproveRegistrations(enabled: boolean): Promise<PlatformActionResult> {
+  const admin = await getCurrentPlatformAdmin();
+  if (!admin) return { ok: false, error: "forbidden" };
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("platform_settings")
+    .update({ auto_approve_registrations: enabled, updated_at: new Date().toISOString() })
+    .eq("id", true);
+  if (error) return { ok: false, error: "unknown" };
+
+  revalidatePath("/platform/settings");
+  return { ok: true };
+}

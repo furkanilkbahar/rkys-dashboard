@@ -9,7 +9,7 @@ function serviceClient() {
   );
 }
 
-test("S20: kayıt — pazarlama sitesinden self-servis kayıt → giriş sayfasına düşer → giriş yapınca onboarding açılır", async ({
+test("S20: kayıt — pazarlama sitesinden self-servis kayıt → kök domainde ödeme → kaydınız alındı sayfası (D80: kapalı kapı, onay bekliyor)", async ({
   page,
   baseURL,
 }) => {
@@ -25,16 +25,14 @@ test("S20: kayıt — pazarlama sitesinden self-servis kayıt → giriş sayfas�
     await page.getByLabel("Şifre").fill("password123");
     await page.getByRole("button", { name: "Kayıt Ol" }).click();
 
-    // Kayıt, tenant'ın KENDİ subdomain'indeki giriş sayfasına yönlendirir
-    // (subdomain'ler arası oturum devri yok — kullanıcı az önce girdiği
-    // şifreyle giriş yapar).
-    await page.waitForURL(new RegExp(`${slug}\\.localhost:3000/admin/login`), { timeout: 15_000 });
-    await page.getByLabel("E-posta").fill(email);
-    await page.getByLabel("Şifre").fill("password123");
-    await page.getByRole("button", { name: "Giriş yap" }).click();
+    // Ödeme kök domainde ayrı bir rotada (/kayit/odeme) — tenant henüz
+    // pending_approval olduğundan kendi alt-domaini proxy tarafından
+    // tamamen kapalı, bu yüzden ödeme adımı alt-domaine düşemez.
+    await page.waitForURL(/\/kayit\/odeme\//, { timeout: 15_000 });
+    await page.getByRole("button", { name: "Ödemeyi Onayla" }).click();
 
-    await page.waitForURL(new RegExp(`${slug}\\.localhost:3000/admin/onboarding`), { timeout: 15_000 });
-    await expect(page.getByText("İşletmenizi kuralım")).toBeVisible();
+    await page.waitForURL(/\/kayit\/tamamlandi/, { timeout: 15_000 });
+    await expect(page.getByText("Kaydınız Alındı")).toBeVisible();
   } finally {
     const service = serviceClient();
     const { data: tenant } = await service.from("tenants").select("id").eq("slug", slug).maybeSingle();

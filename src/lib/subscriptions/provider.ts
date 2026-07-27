@@ -6,6 +6,15 @@ export type CreateSubscriptionCheckoutParams = {
   tenantId: string;
   planId: string;
   returnUrl: string;
+  /**
+   * Yalnızca mock sağlayıcı kullanır — sahte checkout sayfasının hangi
+   * yol altında sunulacağını belirtir. Billing akışı (tenant alt-domaini,
+   * session var) varsayılanı kullanır; kayıt akışı (kök domain, henüz
+   * session yok, tenant'ın alt-domaini onaydan önce proxy tarafından
+   * tamamen kapalı) kendi kök-domain yolunu geçer. iyzico adaptörü kendi
+   * barındırdığı checkout URL'ini döndürdüğü için bu alanı yok sayar.
+   */
+  checkoutBasePath?: string;
 };
 
 export type CheckoutSession = {

@@ -5,17 +5,31 @@ import { useState } from "react";
 
 import { Switch } from "@/components/ui/switch";
 
-import { setEnforce2fa } from "./actions";
+import { setAutoApproveRegistrations, setEnforce2fa } from "./actions";
 
-export function SettingsManager({ enforce2fa }: { enforce2fa: boolean }) {
+export function SettingsManager({
+  enforce2fa,
+  autoApproveRegistrations,
+}: {
+  enforce2fa: boolean;
+  autoApproveRegistrations: boolean;
+}) {
   const t = useTranslations("platform.settings");
-  const [checked, setChecked] = useState(enforce2fa);
+  const [enforce2faChecked, setEnforce2faChecked] = useState(enforce2fa);
+  const [autoApproveChecked, setAutoApproveChecked] = useState(autoApproveRegistrations);
   const [isPending, setIsPending] = useState(false);
 
-  async function handleChange(value: boolean) {
-    setChecked(value);
+  async function handleEnforce2faChange(value: boolean) {
+    setEnforce2faChecked(value);
     setIsPending(true);
     await setEnforce2fa(value);
+    setIsPending(false);
+  }
+
+  async function handleAutoApproveChange(value: boolean) {
+    setAutoApproveChecked(value);
+    setIsPending(true);
+    await setAutoApproveRegistrations(value);
     setIsPending(false);
   }
 
@@ -27,7 +41,14 @@ export function SettingsManager({ enforce2fa }: { enforce2fa: boolean }) {
           <span className="text-sm font-medium">{t("enforce2faLabel")}</span>
           <span className="text-sm text-muted-foreground">{t("enforce2faDescription")}</span>
         </div>
-        <Switch checked={checked} disabled={isPending} onCheckedChange={handleChange} />
+        <Switch checked={enforce2faChecked} disabled={isPending} onCheckedChange={handleEnforce2faChange} />
+      </div>
+      <div className="flex items-center justify-between rounded-md border border-border p-4">
+        <div className="flex flex-col gap-1">
+          <span className="text-sm font-medium">{t("autoApproveRegistrationsLabel")}</span>
+          <span className="text-sm text-muted-foreground">{t("autoApproveRegistrationsDescription")}</span>
+        </div>
+        <Switch checked={autoApproveChecked} disabled={isPending} onCheckedChange={handleAutoApproveChange} />
       </div>
     </div>
   );

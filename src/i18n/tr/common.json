@@ -1378,7 +1378,9 @@
     "settings": {
       "title": "Ayarlar",
       "enforce2faLabel": "2FA zorunluluğu",
-      "enforce2faDescription": "Açılırsa tüm personel için iki faktörlü doğrulama zorunlu olur."
+      "enforce2faDescription": "Açılırsa tüm personel için iki faktörlü doğrulama zorunlu olur.",
+      "autoApproveRegistrationsLabel": "Kayıtları otomatik onayla",
+      "autoApproveRegistrationsDescription": "Açılırsa ödeme onaylandığında tenant elle onay beklemeden aktifleşir; kapalıysa platform admin her kaydı Bekleyen Onaylar'dan elle onaylar."
     },
     "licenses": {
       "title": "Lisanslar",
@@ -1482,6 +1484,7 @@
     "slugPreview": "Panel adresiniz: {domain}",
     "email": "E-posta",
     "password": "Şifre",
+    "plan": "Plan Seçin",
     "submit": "Kayıt Ol",
     "errors": {
       "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
@@ -1490,6 +1493,10 @@
       "slug_taken": "Bu alt alan adı zaten kullanılıyor.",
       "email_taken": "Bu e-posta adresiyle zaten bir hesap var.",
       "unknown": "Bir hata oluştu, tekrar deneyin."
+    },
+    "complete": {
+      "title": "Kaydınız Alındı",
+      "body": "Ödemeniz alındı. Hesabınız platform ekibimiz tarafından onaylandıktan sonra panelinize giriş yapabileceksiniz. Onay durumunu e-posta adresinizden takip edebilirsiniz."
     }
   },
   "legal": {

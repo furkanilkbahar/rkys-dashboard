@@ -6,8 +6,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
-import { confirmMockSubscriptionPayment } from "./actions";
+import { confirmMockSubscriptionPayment } from "@/lib/subscriptions/mockCheckoutAction";
 
 export function MockSubscriptionCheckout({
   providerRef,

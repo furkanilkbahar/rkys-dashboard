@@ -1,7 +1,7 @@
 import { MockSubscriptionCheckout } from "@/components/subscriptions/mock-subscription-checkout";
 import { getPlans } from "@/lib/data/plans";
 
-export default async function MockSubscriptionCheckoutPage({
+export default async function RegistrationMockCheckoutPage({
   params,
   searchParams,
 }: {
@@ -14,11 +14,5 @@ export default async function MockSubscriptionCheckoutPage({
   const plans = await getPlans();
   const plan = plans.find((p) => p.id === planId);
 
-  return (
-    <MockSubscriptionCheckout
-      providerRef={providerRef}
-      planName={plan?.name ?? ""}
-      returnUrl={returnUrl ?? "/admin/billing"}
-    />
-  );
+  return <MockSubscriptionCheckout providerRef={providerRef} planName={plan?.name ?? ""} returnUrl={returnUrl ?? "/kayit/tamamlandi"} />;
 }

@@ -1378,7 +1378,9 @@
     "settings": {
       "title": "Settings",
       "enforce2faLabel": "Enforce 2FA",
-      "enforce2faDescription": "When enabled, two-factor authentication becomes mandatory for all staff."
+      "enforce2faDescription": "When enabled, two-factor authentication becomes mandatory for all staff.",
+      "autoApproveRegistrationsLabel": "Auto-approve registrations",
+      "autoApproveRegistrationsDescription": "When enabled, a tenant activates automatically once payment is confirmed, without manual approval; when disabled, a platform admin must approve each registration from Pending Approvals."
     },
     "licenses": {
       "title": "Licenses",
@@ -1482,6 +1484,7 @@
     "slugPreview": "Your dashboard address: {domain}",
     "email": "Email",
     "password": "Password",
+    "plan": "Choose a Plan",
     "submit": "Sign Up",
     "errors": {
       "invalid_input": "Please check the information you entered.",
@@ -1490,6 +1493,10 @@
       "slug_taken": "This subdomain is already taken.",
       "email_taken": "An account with this email already exists.",
       "unknown": "Something went wrong, please try again."
+    },
+    "complete": {
+      "title": "Registration Received",
+      "body": "Your payment has been received. You'll be able to log in to your dashboard once our platform team approves your account. You can track the approval status via your email address."
     }
   },
   "legal": {

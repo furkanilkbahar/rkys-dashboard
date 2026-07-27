@@ -17,7 +17,8 @@ export const mockSubscriptionProvider: SubscriptionProvider = {
 
   async createSubscriptionCheckout(params: CreateSubscriptionCheckoutParams): Promise<CheckoutSession> {
     const providerRef = randomUUID();
-    const checkoutUrl = `/admin/billing/mock/${providerRef}?plan=${params.planId}&return=${encodeURIComponent(params.returnUrl)}`;
+    const basePath = params.checkoutBasePath ?? "/admin/billing/mock";
+    const checkoutUrl = `${basePath}/${providerRef}?plan=${params.planId}&return=${encodeURIComponent(params.returnUrl)}`;
     return { checkoutUrl, providerRef };
   },
 

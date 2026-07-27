@@ -4,11 +4,19 @@ import { createClient } from "@/lib/supabase/server";
 
 export type PlatformSettings = {
   enforce2fa: boolean;
+  autoApproveRegistrations: boolean;
 };
 
 export async function getPlatformSettings(): Promise<PlatformSettings> {
   const supabase = await createClient();
-  const { data } = await supabase.from("platform_settings").select("enforce_2fa").eq("id", true).single();
+  const { data } = await supabase
+    .from("platform_settings")
+    .select("enforce_2fa, auto_approve_registrations")
+    .eq("id", true)
+    .single();
 
-  return { enforce2fa: data?.enforce_2fa ?? false };
+  return {
+    enforce2fa: data?.enforce_2fa ?? false,
+    autoApproveRegistrations: data?.auto_approve_registrations ?? false,
+  };
 }
