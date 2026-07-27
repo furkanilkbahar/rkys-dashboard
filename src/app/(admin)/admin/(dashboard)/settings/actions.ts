@@ -2,10 +2,12 @@
 
 import { randomUUID } from "crypto";
 
+import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 
 import { getCurrentActor } from "@/lib/auth/session";
 import { runOneReportSchedule } from "@/lib/reports/scheduledDigest";
+import { getDefaultSubscriptionProvider } from "@/lib/subscriptions";
 import {
   branchFormSchema,
   businessSettingsFormSchema,
@@ -389,6 +391,47 @@ export async function requestModule(moduleKey: string): Promise<SettingsActionRe
 
   revalidatePath("/admin/settings");
   return { ok: true };
+}
+
+export type PurchaseModuleAddonResult =
+  | { ok: true; checkoutUrl: string }
+  | { ok: false; error: "forbidden" | "not_purchasable" | "unknown" };
+
+// Faz 15 (S62-S63): plan dışı bir modülü à la carte satın alma — startSubscriptionCheckout
+// (src/app/(admin)/admin/billing/actions.ts) deseninin klonu, ödeme onaylanınca
+// (activate_subscription, 0081) modül otomatik source='paid_addon' ile açılır.
+export async function purchaseModuleAddon(moduleKey: string): Promise<PurchaseModuleAddonResult> {
+  const actor = await getCurrentActor();
+  if (!actor || actor.role !== "owner") return { ok: false, error: "forbidden" };
+
+  const supabase = await createClient();
+  const { data: priceRow } = await supabase
+    .from("module_addon_prices")
+    .select("price_minor")
+    .eq("module_key", moduleKey)
+    .maybeSingle();
+  if (!priceRow || priceRow.price_minor <= 0) return { ok: false, error: "not_purchasable" };
+
+  const headerStore = await headers();
+  const origin = `${headerStore.get("x-forwarded-proto") ?? "http"}://${headerStore.get("host")}`;
+  const provider = getDefaultSubscriptionProvider();
+
+  const checkout = await provider.createSubscriptionCheckout({
+    tenantId: actor.tenantId,
+    planId: moduleKey,
+    returnUrl: `${origin}/admin/settings`,
+    checkoutBasePath: "/admin/billing/mock-addon",
+  });
+
+  const { error } = await supabase.rpc("set_subscription_checkout_ref", {
+    p_provider: provider.name,
+    p_provider_ref: checkout.providerRef,
+    p_plan_id: null as unknown as string,
+    p_addon_module_key: moduleKey,
+  });
+  if (error) return { ok: false, error: "unknown" };
+
+  return { ok: true, checkoutUrl: checkout.checkoutUrl };
 }
 
 // D34: gerçek silme geri dönüşü olmayan bir işlem olduğundan owner yalnızca

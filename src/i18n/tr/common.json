@@ -415,6 +415,7 @@
         "pendingRemoval": "Bu modül planınızdan kaldırılabilir, inceleniyor.",
         "request": "Talep Et",
         "requested": "Talep Edildi",
+        "purchase": "Satın Al ({price}/ay)",
         "keys": {
           "pos_cash": "Kasa",
           "inventory": "Stok Yönetimi",

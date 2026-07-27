@@ -1893,6 +1893,24 @@ export type Database = {
           },
         ]
       }
+      module_addon_prices: {
+        Row: {
+          module_key: string
+          price_minor: number
+          updated_at: string
+        }
+        Insert: {
+          module_key: string
+          price_minor?: number
+          updated_at?: string
+        }
+        Update: {
+          module_key?: string
+          price_minor?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       module_requests: {
         Row: {
           id: string
@@ -3945,6 +3963,7 @@ export type Database = {
           created_at: string
           current_period_end: string | null
           id: string
+          pending_addon_module_key: string | null
           pending_plan_id: string | null
           provider: string | null
           provider_ref: string | null
@@ -3957,6 +3976,7 @@ export type Database = {
           created_at?: string
           current_period_end?: string | null
           id?: string
+          pending_addon_module_key?: string | null
           pending_plan_id?: string | null
           provider?: string | null
           provider_ref?: string | null
@@ -3969,6 +3989,7 @@ export type Database = {
           created_at?: string
           current_period_end?: string | null
           id?: string
+          pending_addon_module_key?: string | null
           pending_plan_id?: string | null
           provider?: string | null
           provider_ref?: string | null
@@ -5471,6 +5492,10 @@ export type Database = {
         Args: { p_tenant_id: string }
         Returns: undefined
       }
+      set_module_addon_price: {
+        Args: { p_module_key: string; p_price_minor: number }
+        Returns: undefined
+      }
       set_monthly_goal: {
         Args: {
           p_branch_id: string
@@ -5484,7 +5509,12 @@ export type Database = {
         Returns: undefined
       }
       set_subscription_checkout_ref: {
-        Args: { p_plan_id?: string; p_provider: string; p_provider_ref: string }
+        Args: {
+          p_addon_module_key?: string
+          p_plan_id?: string
+          p_provider: string
+          p_provider_ref: string
+        }
         Returns: undefined
       }
       set_tenant_module: {

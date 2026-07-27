@@ -28,6 +28,8 @@ import type {
 import type { AdminBranch, AdminBranchesInfo } from "@/lib/data/branch";
 import type { ReportSchedule } from "@/lib/data/reportSchedules";
 import { MODULE_KEYS, type ModuleKey } from "@/lib/modules/keys";
+
+import type { PurchaseModuleAddonResult } from "./actions";
 import {
   SUPPORTED_CURRENCIES,
   SUPPORTED_TIMEZONES,
@@ -58,6 +60,7 @@ type Actions = {
   updateRatingSettings: (input: unknown) => Promise<SettingsActionResult>;
   toggleModule: (input: unknown) => Promise<SettingsActionResult>;
   requestModule: (moduleKey: string) => Promise<SettingsActionResult>;
+  purchaseModuleAddon: (moduleKey: string) => Promise<PurchaseModuleAddonResult>;
   createBranch: (input: unknown) => Promise<BranchActionResult>;
   requestAccountDeletion: () => Promise<SettingsActionResult>;
   createReportSchedule: (input: unknown) => Promise<SettingsActionResult>;
@@ -702,14 +705,20 @@ function ThemeCard({ themeKey, themes, updateTheme }: { themeKey: string; themes
   );
 }
 
+function formatAddonPriceMinor(priceMinor: number) {
+  return new Intl.NumberFormat("tr-TR", { style: "currency", currency: "TRY", maximumFractionDigits: 0 }).format(priceMinor / 100);
+}
+
 function ModulesCard({
   modules,
   toggleModule,
   requestModule,
+  purchaseModuleAddon,
 }: {
   modules: AdminModule[];
   toggleModule: Actions["toggleModule"];
   requestModule: Actions["requestModule"];
+  purchaseModuleAddon: Actions["purchaseModuleAddon"];
 }) {
   const t = useTranslations("admin.settings.modules");
   const router = useRouter();
@@ -727,6 +736,15 @@ function ModulesCard({
     router.refresh();
   }
 
+  async function handlePurchase(moduleKey: ModuleKey) {
+    setPendingKey(moduleKey);
+    const result = await purchaseModuleAddon(moduleKey);
+    setPendingKey(null);
+    if (result.ok) {
+      window.location.assign(result.checkoutUrl);
+    }
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -736,19 +754,27 @@ function ModulesCard({
         {MODULE_KEYS.map((key) => {
           const moduleState = modules.find((m) => m.moduleKey === key);
           const isLocked = moduleState?.source === null && !moduleState?.isIncludedInPlan;
+          const addonPriceMinor = moduleState?.addonPriceMinor ?? null;
           return (
             <div key={key} className="flex flex-col gap-1 rounded-md border border-border p-2 text-sm">
               <div className="flex items-center justify-between gap-2">
                 <span className={isLocked ? "text-muted-foreground" : undefined}>{t(`keys.${key}`)}</span>
                 {isLocked ? (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    disabled={pendingKey === key || moduleState?.hasPendingRequest}
-                    onClick={() => handleRequest(key)}
-                  >
-                    {moduleState?.hasPendingRequest ? t("requested") : t("request")}
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    {addonPriceMinor !== null && addonPriceMinor > 0 && (
+                      <Button size="sm" disabled={pendingKey === key} onClick={() => handlePurchase(key)}>
+                        {t("purchase", { price: formatAddonPriceMinor(addonPriceMinor) })}
+                      </Button>
+                    )}
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={pendingKey === key || moduleState?.hasPendingRequest}
+                      onClick={() => handleRequest(key)}
+                    >
+                      {moduleState?.hasPendingRequest ? t("requested") : t("request")}
+                    </Button>
+                  </div>
                 ) : (
                   <Switch
                     checked={moduleState?.isEnabled ?? false}
@@ -806,7 +832,12 @@ export function SettingsManager({
       <TipPresetsCard presets={tipPresets} createTipPreset={actions.createTipPreset} updateTipPreset={actions.updateTipPreset} />
       <RatingSettingsCard ratingSettings={ratingSettings} updateRatingSettings={actions.updateRatingSettings} />
       <ThemeCard themeKey={settings.themeKey} themes={themes} updateTheme={actions.updateTheme} />
-      <ModulesCard modules={modules} toggleModule={actions.toggleModule} requestModule={actions.requestModule} />
+      <ModulesCard
+        modules={modules}
+        toggleModule={actions.toggleModule}
+        requestModule={actions.requestModule}
+        purchaseModuleAddon={actions.purchaseModuleAddon}
+      />
       <ReportSchedulesCard
         schedules={reportSchedules}
         branches={branchesInfo.branches}

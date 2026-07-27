@@ -415,6 +415,7 @@
         "pendingRemoval": "This module may be removed from your plan, under review.",
         "request": "Request",
         "requested": "Requested",
+        "purchase": "Buy ({price}/mo)",
         "keys": {
           "pos_cash": "Cash Register",
           "inventory": "Inventory",

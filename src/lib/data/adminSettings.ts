@@ -57,6 +57,9 @@ export type AdminModule = {
   // null = tenant_modules'ta hiç satırı yok (hiç sahip olunmadı) — bu ve
   // isIncludedInPlan=false birlikteyse UI kilitli/"Talep Et" gösterir.
   source: "plan" | "paid_addon" | "granted" | null;
+  // Faz 15 (S62): >0 ise plan dışıyken de "Satın Al" ile à la carte satın
+  // alınabilir; 0/null ise yalnızca ücretsiz "Talep Et" akışına açık.
+  addonPriceMinor: number | null;
 };
 
 export async function getAdminTenantSettings(tenantId: string): Promise<AdminTenantSettings | null> {
@@ -197,11 +200,14 @@ export async function getAdminLocales(tenantId: string): Promise<AdminLocale[]> 
 
 export async function getAdminModules(tenantId: string): Promise<AdminModule[]> {
   const supabase = await createClient();
-  const [{ data: modules }, { data: tenant }, { data: pendingRequests }] = await Promise.all([
+  const [{ data: modules }, { data: tenant }, { data: pendingRequests }, { data: addonPrices }] = await Promise.all([
     supabase.from("tenant_modules").select("module_key, is_enabled, pending_removal_since, source").eq("tenant_id", tenantId),
     supabase.from("tenants").select("plan_id").eq("id", tenantId).single(),
     supabase.from("module_requests").select("module_key").eq("tenant_id", tenantId).eq("status", "pending"),
+    supabase.from("module_addon_prices").select("module_key, price_minor"),
   ]);
+
+  const addonPriceByModule = new Map((addonPrices ?? []).map((p) => [p.module_key, p.price_minor]));
 
   const { data: planModules } = tenant?.plan_id
     ? await supabase.from("plan_modules").select("module_key").eq("plan_id", tenant.plan_id)
@@ -224,6 +230,7 @@ export async function getAdminModules(tenantId: string): Promise<AdminModule[]> 
       isIncludedInPlan: planModuleKeys.has(moduleKey),
       hasPendingRequest: pendingRequestKeys.has(moduleKey),
       source: (row?.source as "plan" | "paid_addon" | "granted" | undefined) ?? null,
+      addonPriceMinor: addonPriceByModule.get(moduleKey) ?? null,
     };
   });
 }
