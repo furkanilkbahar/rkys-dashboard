@@ -5,8 +5,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getMarketingPlans } from "@/lib/data/plans";
+import { MODULE_KEYS } from "@/lib/modules/keys";
 
 const FEATURE_KEYS = ["qrMenu", "kitchenDisplay", "cashier", "reports", "modular"] as const;
+const VALUE_KEYS = ["guest", "staff", "owner"] as const;
+const INTEGRATION_NAMES = ["Yemeksepeti", "Getir", "Trendyol", "iyzico", "Logo", "Mikro", "Paraşüt"] as const;
 
 function formatPriceMinor(priceMinor: number) {
   return new Intl.NumberFormat("tr-TR", { style: "currency", currency: "TRY", maximumFractionDigits: 0 }).format(
@@ -30,6 +33,15 @@ export default async function MarketingHomePage() {
         <p className="text-xs text-muted-foreground">{t("hero.trialNote")}</p>
       </section>
 
+      <section className="mx-auto grid w-full max-w-4xl grid-cols-1 gap-6 sm:grid-cols-3">
+        {VALUE_KEYS.map((key) => (
+          <div key={key} className="flex flex-col gap-1 text-center sm:text-left">
+            <h3 className="text-base font-semibold">{t(`value.${key}.title`)}</h3>
+            <p className="text-sm text-muted-foreground">{t(`value.${key}.body`)}</p>
+          </div>
+        ))}
+      </section>
+
       <section className="mx-auto grid w-full max-w-4xl grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {FEATURE_KEYS.map((key) => (
           <Card key={key}>
@@ -41,6 +53,30 @@ export default async function MarketingHomePage() {
             </CardContent>
           </Card>
         ))}
+      </section>
+
+      <section className="mx-auto flex w-full max-w-5xl flex-col items-center gap-6">
+        <h2 className="text-2xl font-semibold">{t("moduleShowcase.title")}</h2>
+        <p className="max-w-2xl text-center text-sm text-muted-foreground">{t("moduleShowcase.subtitle")}</p>
+        <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {MODULE_KEYS.map((key) => (
+            <div key={key} className="flex flex-col gap-1 rounded-lg border border-border p-3">
+              <span className="text-sm font-medium">{tModules(key)}</span>
+              <span className="text-xs text-muted-foreground">{t(`moduleShowcase.descriptions.${key}`)}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto flex w-full max-w-4xl flex-col items-center gap-4">
+        <p className="text-sm text-muted-foreground">{t("integrations.title")}</p>
+        <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+          {INTEGRATION_NAMES.map((name) => (
+            <span key={name} className="text-sm font-medium text-muted-foreground">
+              {name}
+            </span>
+          ))}
+        </div>
       </section>
 
       <section className="mx-auto flex w-full max-w-5xl flex-col items-center gap-6">

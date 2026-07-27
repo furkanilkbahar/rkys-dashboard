@@ -1460,6 +1460,44 @@
       "cta": "Try It Free",
       "trialNote": "14-day free trial, no card required — cancel anytime."
     },
+    "value": {
+      "guest": {
+        "title": "Guests order without waiting",
+        "body": "They scan the code at the table, order in minutes, and track their bill without flagging down a server."
+      },
+      "staff": {
+        "title": "Staff track everything from one screen",
+        "body": "Orders land in the kitchen instantly, waiter calls collect in one panel, and guests get notified the moment food is ready."
+      },
+      "owner": {
+        "title": "See the numbers, don't guess them",
+        "body": "Watch revenue, best-sellers, and profit margin in real time; close the day and pull the report in one tap."
+      }
+    },
+    "moduleShowcase": {
+      "title": "Turn on the modules you need",
+      "subtitle": "The core QR menu is always on; each of the 15 modules below activates on its own once it's in your plan or you request it.",
+      "descriptions": {
+        "pos_cash": "Shift open/close, end-of-day and register reports in one screen.",
+        "inventory": "Track stock and cost in real time.",
+        "recipes": "Recipe-based automatic stock deduction.",
+        "crm_loyalty": "Reward loyalty with stamps or points.",
+        "campaigns": "Rule-based campaigns and coupon codes.",
+        "gift_cards": "Sell and redeem prepaid gift card balances.",
+        "pickup": "Ready notification and pickup code for takeaway orders.",
+        "delivery": "Zone-based delivery fees and scheduled orders.",
+        "courier": "Assign couriers and track delivery status.",
+        "marketplace": "Yemeksepeti, Getir, and Trendyol orders in one panel.",
+        "reservations": "Online reservations and a waitlist.",
+        "kiosk": "Self-service touchscreen ordering mode.",
+        "staff_scheduling": "Weekly schedules and PIN clock-in/out.",
+        "accounting_export": "Export compatible with your accounting software.",
+        "api_access": "API and webhooks for your own integrations."
+      }
+    },
+    "integrations": {
+      "title": "Works with the tools you already use"
+    },
     "features": {
       "qrMenu": {
         "title": "QR Menu",

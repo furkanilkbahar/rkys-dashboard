@@ -1460,6 +1460,44 @@
       "cta": "Ücretsiz Deneyin",
       "trialNote": "14 gün kartsız deneme — istediğiniz zaman iptal edin."
     },
+    "value": {
+      "guest": {
+        "title": "Misafir bekletmeden sipariş versin",
+        "body": "Masadaki kodu okutur, dakikalar içinde siparişini verir; garson çağırmadan hesabını takip eder."
+      },
+      "staff": {
+        "title": "Personel koşturmasın, ekrandan takip etsin",
+        "body": "Sipariş anında mutfağa düşer, garson çağrıları tek panelde toplanır, hazır olan misafire bildirilir."
+      },
+      "owner": {
+        "title": "Siz de rakamı görün, tahmin etmeyin",
+        "body": "Ciro, en çok satan ürün ve kâr marjını anlık izleyin; günü tek tıkla kapatıp raporu alın."
+      }
+    },
+    "moduleShowcase": {
+      "title": "İhtiyacınız olan modülü açın",
+      "subtitle": "Çekirdek QR menü her zaman açık; aşağıdaki 15 modülün her biri planınıza dahilse veya talep ettiğinizde ayrı ayrı devreye girer.",
+      "descriptions": {
+        "pos_cash": "Vardiya, gün sonu ve kasa raporları tek ekranda.",
+        "inventory": "Stok ve maliyeti gerçek zamanlı takip edin.",
+        "recipes": "Reçete bazlı otomatik stok düşümü.",
+        "crm_loyalty": "Müşteri sadakatini damga veya puanla ödüllendirin.",
+        "campaigns": "Kural bazlı kampanya ve kupon oluşturun.",
+        "gift_cards": "Ön ödemeli hediye kartı satın ve harcayın.",
+        "pickup": "Gel-al siparişlerde hazır bildirimi ve teslim kodu.",
+        "delivery": "Bölge bazlı teslimat ücreti ve zamanlanmış sipariş.",
+        "courier": "Kurye atama ve teslimat durumu takibi.",
+        "marketplace": "Yemeksepeti, Getir ve Trendyol siparişleri tek panelde.",
+        "reservations": "Online rezervasyon ve bekleme listesi.",
+        "kiosk": "Self-servis dokunmatik sipariş modu.",
+        "staff_scheduling": "Haftalık çizelge ve PIN ile giriş-çıkış.",
+        "accounting_export": "Muhasebe programınıza uyumlu export.",
+        "api_access": "Kendi entegrasyonlarınız için API ve webhook."
+      }
+    },
+    "integrations": {
+      "title": "Zaten kullandığınız araçlarla çalışır"
+    },
     "features": {
       "qrMenu": {
         "title": "QR Menü",
