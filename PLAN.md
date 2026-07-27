@@ -90,12 +90,12 @@
 ## Faz 12 — Gelecek Havuzu
 Mobil uygulama + push · Donanım paketi (termal/mutfak yazıcısı, çekmece, barkod, ÖKC) · Canlı kurye takibi · Segmentli kampanya + İYS iletişim modülü · Kademe sadakat · Tam PO/tedarik · Özel rol oluşturma · Çoklu kur · Yardım Merkezi · SLA'lı kurumsal paket  *(Wi-Fi portalı kapsam dışı — D69)*
 
-## Faz 13 — Pazarlama Sitesi Yeniden Yapılanması
-Rakip analizi (adisyo/Menulux/Orion POS/robotPOS/Protel, 2026-07) sonrası D82 kararıyla açıldı.
-- [ ] Gerçek fiyatlandırma: ana sayfa `plans`/`plan_modules`'tan gerçek ₺ fiyat + plan başına modül listesi gösterir (D68'in "taslak fiyat" notu kapandı)
-- [ ] Değer önerisi + 15 modülün tamamını gösteren modül vitrini + entegrasyon (Yemeksepeti/Getir/Trendyol, Logo/Mikro/Paraşüt) şeridi
-- [ ] SSS (FAQ) sayfası + iletişim/demo talep formu
-- [ ] Blog iskeleti (boş state) + sosyal kanıt bölümü iskeleti
+## Faz 13 — Pazarlama Sitesi Yeniden Yapılanması ✅
+Rakip analizi (adisyo/Menulux/Orion POS/robotPOS/Protel, 2026-07) sonrası D82 kararıyla açıldı. Kapanış paketi yeşil (2026-07-28): unit 29/29, entegrasyon ×2 421/421, E2E 7/7.
+- [x] Gerçek fiyatlandırma: ana sayfa `plans`/`plan_modules`'tan gerçek ₺ fiyat + plan başına modül listesi gösterir (D68'in "taslak fiyat" notu kapandı)
+- [x] Değer önerisi + 15 modülün tamamını gösteren modül vitrini + entegrasyon (Yemeksepeti/Getir/Trendyol, Logo/Mikro/Paraşüt) şeridi
+- [x] SSS (FAQ) sayfası + iletişim/demo talep formu
+- [x] Blog iskeleti (boş state) + sosyal kanıt bölümü iskeleti
 
 ## Faz 14 — Geliştirici Portalı & Donanım İçeriği
 - [ ] Public API/webhook dokümantasyon sayfası (kimlik gerektirmez)

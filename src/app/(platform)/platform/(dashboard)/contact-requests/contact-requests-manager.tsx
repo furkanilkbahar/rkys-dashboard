@@ -29,7 +29,7 @@ function ContactRequestRow({
   }
 
   return (
-    <div className="flex flex-col gap-2 rounded-md border border-border p-4">
+    <div data-testid={`contact-request-${request.id}`} className="flex flex-col gap-2 rounded-md border border-border p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <span className="font-medium">{request.name}</span>
