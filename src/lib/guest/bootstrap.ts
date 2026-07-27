@@ -56,14 +56,52 @@ export async function bootstrapGuestSessionForTable(tableId: string): Promise<bo
 }
 
 /**
+ * Misafirin cookie'sindeki mevcut oturum, verilen kanal/tenant için hâlâ
+ * geçerliyse onu döndürür — /paket, /kiosk/[code], /teslimat bootstrap
+ * uçlarına doğrudan (sayfa yenileme, geri tuşu, yer imi) her gelişte YENİ
+ * bir table_session + YENİ bir anonim auth kullanıcısı açılmasını önler
+ * (bootstrapGuestSessionForTable'daki "zaten bağlıysa dokunma" deseninin
+ * pickup/kiosk/delivery karşılığı — dine_in'in aksine burada tekil bir
+ * table_id anahtarı olmadığı için channel/kiosk_device_id ile eşleşir).
+ */
+async function findReusableGuestSession(
+  service: ReturnType<typeof createServiceRoleClient>,
+  tenantId: string,
+  channel: "pickup" | "delivery",
+  kioskDeviceId: string | null,
+): Promise<string | null> {
+  const existing = await getCurrentGuestSession();
+  if (!existing || existing.tenantId !== tenantId) {
+    return null;
+  }
+
+  let query = service
+    .from("table_sessions")
+    .select("id")
+    .eq("id", existing.tableSessionId)
+    .eq("channel", channel)
+    .eq("status", "active");
+  query = kioskDeviceId ? query.eq("kiosk_device_id", kioskDeviceId) : query.is("kiosk_device_id", null);
+
+  const { data } = await query.maybeSingle();
+  return data?.id ?? null;
+}
+
+/**
  * Gel-Al (pickup) bootstrap: fiziksel masası olmadığı için QR/tableId yok —
  * yalnızca tenant context'i (middleware'in enjekte ettiği header, bkz.
  * getCurrentTenant) yeterli. open_pickup_session (0061) her çağrıda YENİ bir
  * oturum açar (dine_in'in "masa başına tek aktif oturum" kısıtı burada
- * anlamsız). Geri kalanı bootstrapGuestSessionForTable ile birebir aynı.
+ * anlamsız) — bu yüzden reuse kontrolü burada yapılır. Geri kalanı
+ * bootstrapGuestSessionForTable ile birebir aynı.
  */
 export async function bootstrapPickupSession(tenantId: string): Promise<string | null> {
   const service = createServiceRoleClient();
+
+  const reusable = await findReusableGuestSession(service, tenantId, "pickup", null);
+  if (reusable) {
+    return reusable;
+  }
 
   const { data, error: sessionError } = await service.rpc("open_pickup_session", { p_tenant_id: tenantId });
   if (sessionError || !data || data.length === 0) {
@@ -107,6 +145,21 @@ export async function bootstrapPickupSession(tenantId: string): Promise<string |
 export async function bootstrapKioskSession(tenantId: string, pairingCode: string): Promise<string | null> {
   const service = createServiceRoleClient();
 
+  const { data: device } = await service
+    .from("kiosk_devices")
+    .select("id")
+    .eq("tenant_id", tenantId)
+    .eq("pairing_code", pairingCode)
+    .eq("is_active", true)
+    .maybeSingle();
+
+  if (device) {
+    const reusable = await findReusableGuestSession(service, tenantId, "pickup", device.id);
+    if (reusable) {
+      return reusable;
+    }
+  }
+
   const { data, error: sessionError } = await service.rpc("open_kiosk_session", { p_tenant_id: tenantId, p_pairing_code: pairingCode });
   if (sessionError || !data || data.length === 0) {
     return null;
@@ -146,6 +199,11 @@ export async function bootstrapKioskSession(tenantId: string, pairingCode: strin
  */
 export async function bootstrapDeliverySession(tenantId: string): Promise<string | null> {
   const service = createServiceRoleClient();
+
+  const reusable = await findReusableGuestSession(service, tenantId, "delivery", null);
+  if (reusable) {
+    return reusable;
+  }
 
   const { data: tableSessionId, error: sessionError } = await service.rpc("open_delivery_session", { p_tenant_id: tenantId });
   if (sessionError || !tableSessionId) {

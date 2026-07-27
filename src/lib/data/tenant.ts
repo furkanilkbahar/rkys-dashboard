@@ -2,6 +2,8 @@ import "server-only";
 
 import { headers } from "next/headers";
 
+import { createServiceRoleClient } from "@/lib/supabase/server";
+
 export type CurrentTenant = {
   id: string;
   slug: string;
@@ -26,4 +28,15 @@ export async function getCurrentTenant(): Promise<CurrentTenant | null> {
   }
 
   return { id, slug, currency, themeKey };
+}
+
+/**
+ * Misafir tarafı (oturumsuz, rezervasyon talebi formu gibi) tenant saat
+ * dilimini okumak için — getCurrentTenant()'ın header'ları timezone
+ * taşımıyor, misafirin hiç Supabase oturumu yok (RLS bypass gerekir).
+ */
+export async function getTenantTimezone(tenantId: string): Promise<string> {
+  const service = createServiceRoleClient();
+  const { data } = await service.from("tenants").select("timezone").eq("id", tenantId).single();
+  return data?.timezone ?? "UTC";
 }

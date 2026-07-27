@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 
 import { getCurrentActor } from "@/lib/auth/session";
 import { deliveryZoneFormSchema, feeMinor, minBasketMinor, type DeliveryZoneActionResult } from "@/lib/delivery/schemas";
@@ -36,6 +37,8 @@ export async function createDeliveryZone(input: unknown): Promise<DeliveryZoneAc
 export async function toggleDeliveryZone(zoneId: string, isActive: boolean): Promise<DeliveryZoneActionResult> {
   const actor = await getCurrentActor();
   if (!actor) return { ok: false, error: "forbidden" };
+  if (!(await isEnabled(actor.tenantId, "delivery"))) return { ok: false, error: "not_enabled" };
+  if (!z.uuid().safeParse(zoneId).success) return { ok: false, error: "unknown" };
 
   const supabase = await createClient();
   const { error } = await supabase.from("delivery_zones").update({ is_active: isActive }).eq("id", zoneId).eq("tenant_id", actor.tenantId);

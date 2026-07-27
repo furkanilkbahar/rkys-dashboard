@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 
-import { getCurrentTenant } from "@/lib/data/tenant";
+import { getCurrentTenant, getTenantTimezone } from "@/lib/data/tenant";
 import { isEnabled } from "@/lib/modules/isEnabled";
 
 import { createPublicReservation } from "./actions";
@@ -18,10 +18,12 @@ export default async function ReservationRequestPage() {
     );
   }
 
+  const timezone = await getTenantTimezone(tenant.id);
+
   return (
     <main className="mx-auto flex min-h-screen max-w-md flex-col gap-6 p-4 sm:p-8">
       <h1 className="text-xl font-semibold">{t("pageTitle")}</h1>
-      <ReservationRequestForm tenantId={tenant.id} createPublicReservation={createPublicReservation} />
+      <ReservationRequestForm tenantId={tenant.id} timezone={timezone} createPublicReservation={createPublicReservation} />
     </main>
   );
 }

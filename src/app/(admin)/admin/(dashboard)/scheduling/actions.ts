@@ -1,16 +1,25 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 
+import { assertCan } from "@/lib/auth/can";
 import { getCurrentActor } from "@/lib/auth/session";
 import { getDefaultBranchId } from "@/lib/data/branch";
 import { isEnabled } from "@/lib/modules/isEnabled";
 import { shiftFormSchema, type SchedulingActionResult } from "@/lib/scheduling/schemas";
 import { createClient } from "@/lib/supabase/server";
 
+const idSchema = z.uuid();
+
 export async function createShift(input: unknown): Promise<SchedulingActionResult> {
   const actor = await getCurrentActor();
   if (!actor) return { ok: false, error: "forbidden" };
+  try {
+    await assertCan(actor, "staff.manage");
+  } catch {
+    return { ok: false, error: "forbidden" };
+  }
   if (!(await isEnabled(actor.tenantId, "staff_scheduling"))) return { ok: false, error: "not_enabled" };
 
   const parsed = shiftFormSchema.safeParse(input);
@@ -37,6 +46,12 @@ export async function createShift(input: unknown): Promise<SchedulingActionResul
 export async function deleteShift(shiftId: string): Promise<SchedulingActionResult> {
   const actor = await getCurrentActor();
   if (!actor) return { ok: false, error: "forbidden" };
+  try {
+    await assertCan(actor, "staff.manage");
+  } catch {
+    return { ok: false, error: "forbidden" };
+  }
+  if (!idSchema.safeParse(shiftId).success) return { ok: false, error: "unknown" };
 
   const supabase = await createClient();
   const { error } = await supabase.from("staff_shifts").delete().eq("id", shiftId).eq("tenant_id", actor.tenantId);

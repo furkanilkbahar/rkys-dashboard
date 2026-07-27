@@ -21,4 +21,4 @@ export const waitlistFormSchema = z.object({
 });
 export type WaitlistFormInput = z.infer<typeof waitlistFormSchema>;
 
-export type ReservationActionResult = { ok: true } | { ok: false; error: "invalid_input" | "forbidden" | "not_enabled" | "unknown" };
+export type ReservationActionResult = { ok: true } | { ok: false; error: "invalid_input" | "forbidden" | "not_enabled" | "overlap" | "unknown" };

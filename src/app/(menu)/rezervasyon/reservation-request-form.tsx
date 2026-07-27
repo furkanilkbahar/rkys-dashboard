@@ -8,12 +8,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import type { ReservationActionResult } from "@/lib/reservations/schemas";
+import { zonedWallTimeToUtcIso } from "@/lib/utils/timezone";
 
 export function ReservationRequestForm({
   tenantId,
+  timezone,
   createPublicReservation,
 }: {
   tenantId: string;
+  timezone: string;
   createPublicReservation: (tenantId: string, input: unknown) => Promise<ReservationActionResult>;
 }) {
   const t = useTranslations("menu.reservation");
@@ -33,7 +36,11 @@ export function ReservationRequestForm({
       customerName,
       customerPhone,
       partySize: Number(partySize),
-      reservedAt: reservedAt ? new Date(reservedAt).toISOString() : "",
+      // datetime-local değeri saat dilimi taşımaz — "restoranda saat X" gibi
+      // bir yerel duvar saati anlamına gelir, tarayıcının kendi saat
+      // dilimiyle değil TENANT saat dilimiyle UTC'ye çevrilmeli (aksi halde
+      // yurt dışından erişimde yanlış ana rezervasyon düşer).
+      reservedAt: reservedAt ? zonedWallTimeToUtcIso(reservedAt, timezone) : "",
       note: note || undefined,
     });
     if (!result.ok) {

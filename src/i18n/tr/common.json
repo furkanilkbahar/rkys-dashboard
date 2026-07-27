@@ -969,6 +969,7 @@
         "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
         "forbidden": "Bu işlem için yetkiniz yok.",
         "not_enabled": "Rezervasyon modülü aktif değil.",
+        "overlap": "Bu masa seçilen saate yakın bir zamanda zaten rezerve edilmiş.",
         "unknown": "Kaydedilemedi, tekrar deneyin."
       }
     },

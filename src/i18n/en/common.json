@@ -969,6 +969,7 @@
         "invalid_input": "Please check the information you entered.",
         "forbidden": "You don't have permission for this action.",
         "not_enabled": "The reservations module is not active.",
+        "overlap": "This table already has a reservation near the selected time.",
         "unknown": "Could not save, please try again."
       }
     },

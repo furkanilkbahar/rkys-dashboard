@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 
 import { generateApiKey, hashApiKey } from "@/lib/api/keys";
 import { apiKeyFormSchema, type ApiKeyActionResult, type RevokeApiKeyResult } from "@/lib/api/schemas";
@@ -11,6 +12,7 @@ import { createClient } from "@/lib/supabase/server";
 export async function createApiKey(input: unknown): Promise<ApiKeyActionResult> {
   const actor = await getCurrentActor();
   if (!actor) return { ok: false, error: "forbidden" };
+  if (actor.role !== "owner") return { ok: false, error: "forbidden" };
   if (!(await isEnabled(actor.tenantId, "api_access"))) return { ok: false, error: "not_enabled" };
 
   const parsed = apiKeyFormSchema.safeParse(input);
@@ -34,6 +36,8 @@ export async function createApiKey(input: unknown): Promise<ApiKeyActionResult> 
 export async function revokeApiKey(keyId: string): Promise<RevokeApiKeyResult> {
   const actor = await getCurrentActor();
   if (!actor) return { ok: false, error: "forbidden" };
+  if (actor.role !== "owner") return { ok: false, error: "forbidden" };
+  if (!z.uuid().safeParse(keyId).success) return { ok: false, error: "unknown" };
 
   const supabase = await createClient();
   const { error } = await supabase.from("api_keys").update({ is_active: false }).eq("id", keyId).eq("tenant_id", actor.tenantId);

@@ -44,7 +44,7 @@ export default async function DeliveryPage() {
     isEnabled(guest.tenantId, "campaigns"),
     isEnabled(guest.tenantId, "crm_loyalty"),
     getSessionCustomerId(guest.tableSessionId),
-    getActiveDeliveryZones(guest.tenantId),
+    getActiveDeliveryZones(guest.tenantId, guest.branchId),
   ]);
   const loyaltyBalance = sessionCustomerId ? await getSessionLoyaltyBalance(sessionCustomerId) : 0;
 
