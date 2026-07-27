@@ -90,6 +90,35 @@
 ## Faz 12 — Gelecek Havuzu
 Mobil uygulama + push · Donanım paketi (termal/mutfak yazıcısı, çekmece, barkod, ÖKC) · Canlı kurye takibi · Segmentli kampanya + İYS iletişim modülü · Kademe sadakat · Tam PO/tedarik · Özel rol oluşturma · Çoklu kur · Yardım Merkezi · SLA'lı kurumsal paket  *(Wi-Fi portalı kapsam dışı — D69)*
 
+## Faz 13 — Pazarlama Sitesi Yeniden Yapılanması
+Rakip analizi (adisyo/Menulux/Orion POS/robotPOS/Protel, 2026-07) sonrası D82 kararıyla açıldı.
+- [ ] Gerçek fiyatlandırma: ana sayfa `plans`/`plan_modules`'tan gerçek ₺ fiyat + plan başına modül listesi gösterir (D68'in "taslak fiyat" notu kapandı)
+- [ ] Değer önerisi + 15 modülün tamamını gösteren modül vitrini + entegrasyon (Yemeksepeti/Getir/Trendyol, Logo/Mikro/Paraşüt) şeridi
+- [ ] SSS (FAQ) sayfası + iletişim/demo talep formu
+- [ ] Blog iskeleti (boş state) + sosyal kanıt bölümü iskeleti
+
+## Faz 14 — Geliştirici Portalı & Donanım İçeriği
+- [ ] Public API/webhook dokümantasyon sayfası (kimlik gerektirmez)
+- [ ] Donanım uyumluluk/tavsiye içerik sayfası
+
+## Faz 15 — Ücretli Ek Modül Ekonomisi
+`tenant_modules.source='paid_addon'` (Faz 4 revizyonu) üzerine gerçek à la carte faturalandırma.
+- [ ] `plan_modules.addon_price_minor` + mock-first satın alma checkout'u
+- [ ] Tenant tarafı "Satın Al" seçeneği (mevcut "Talep Et" akışının yanına)
+- [ ] Platform tarafı modül fiyat yönetimi
+
+## Faz 16 — Personel Motivasyonu & Kurye Canlı Takip
+- [ ] Personel hedef/rozet sistemi (satış hedefi + ilerleme raporu)
+- [ ] Kurye canlı konum takibi (Leaflet + OpenStreetMap, ücretsiz/anahtarsız)
+
+## Faz 17 — ÖKC/Mali Yazarkasa Adaptör Kapısı
+Gerçek GİB sertifikasyonu bu kapsamda alınamaz — iyzico/e-posta ile aynı mock-first adaptör deseni (arayüz + mock + dokümantasyon).
+- [ ] `lib/fiscal/provider.ts` arayüzü + mock adaptör + admin ayarı
+
+## Faz 18 — Bayilik/Reseller Kanalı
+- [ ] İş modeli netleştirme (komisyon %, ödeme periyodu, onboarding) — kod öncesi kullanıcıyla netleşir
+- [ ] Netleşen modele göre şema + platform admin bayi yönetimi + referans kodu akışı
+
 ---
 
 ## Çalışma Prensipleri

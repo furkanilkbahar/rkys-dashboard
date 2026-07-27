@@ -1484,8 +1484,10 @@
     },
     "pricing": {
       "title": "Plans",
-      "draftNotice": "Final pricing will be announced at launch — the limits below are a draft.",
+      "subtitle": "Every plan shows which modules it includes — upgrade as you grow, or request any module separately.",
+      "perMonth": "/mo",
       "tableCount": "{count} tables",
+      "unlimitedTables": "Unlimited tables",
       "branchCount": "{count} branches included",
       "enterpriseBody": "Looking for a lifetime license or to run it on your own server (self-hosted)?",
       "enterpriseCta": "Contact Us"

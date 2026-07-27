@@ -1,21 +1,23 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getPlans } from "@/lib/data/plans";
-
-const PLAN_DETAILS: Record<string, { tables: string; branches: string }> = {
-  starter: { tables: "10", branches: "1" },
-  pro: { tables: "25", branches: "2" },
-  unlimited: { tables: "∞", branches: "3" },
-};
+import { getMarketingPlans } from "@/lib/data/plans";
 
 const FEATURE_KEYS = ["qrMenu", "kitchenDisplay", "cashier", "reports", "modular"] as const;
 
+function formatPriceMinor(priceMinor: number) {
+  return new Intl.NumberFormat("tr-TR", { style: "currency", currency: "TRY", maximumFractionDigits: 0 }).format(
+    priceMinor / 100,
+  );
+}
+
 export default async function MarketingHomePage() {
   const t = await getTranslations("marketing");
-  const plans = await getPlans();
+  const tModules = await getTranslations("admin.settings.modules.keys");
+  const plans = await getMarketingPlans();
 
   return (
     <main className="flex flex-col gap-16 px-6 py-16">
@@ -41,18 +43,29 @@ export default async function MarketingHomePage() {
         ))}
       </section>
 
-      <section className="mx-auto flex w-full max-w-4xl flex-col items-center gap-6">
+      <section className="mx-auto flex w-full max-w-5xl flex-col items-center gap-6">
         <h2 className="text-2xl font-semibold">{t("pricing.title")}</h2>
-        <p className="text-sm text-muted-foreground">{t("pricing.draftNotice")}</p>
+        <p className="text-sm text-muted-foreground">{t("pricing.subtitle")}</p>
         <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-3">
           {plans.map((plan) => (
             <Card key={plan.id}>
-              <CardHeader>
+              <CardHeader className="flex flex-col gap-1">
                 <CardTitle>{plan.name}</CardTitle>
+                <p className="text-2xl font-semibold">
+                  {formatPriceMinor(plan.priceMinor)}
+                  <span className="text-sm font-normal text-muted-foreground">{t("pricing.perMonth")}</span>
+                </p>
               </CardHeader>
-              <CardContent className="flex flex-col gap-2 text-sm text-muted-foreground">
-                <p>{t("pricing.tableCount", { count: PLAN_DETAILS[plan.key]?.tables ?? "—" })}</p>
-                <p>{t("pricing.branchCount", { count: PLAN_DETAILS[plan.key]?.branches ?? "—" })}</p>
+              <CardContent className="flex flex-col gap-3 text-sm text-muted-foreground">
+                <p>{plan.tableLimit === null ? t("pricing.unlimitedTables") : t("pricing.tableCount", { count: plan.tableLimit })}</p>
+                <p>{t("pricing.branchCount", { count: plan.includedBranchCount })}</p>
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {plan.moduleKeys.map((key) => (
+                    <Badge key={key} variant="secondary" className="font-normal">
+                      {tModules(key)}
+                    </Badge>
+                  ))}
+                </div>
               </CardContent>
             </Card>
           ))}

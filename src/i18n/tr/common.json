@@ -1484,8 +1484,10 @@
     },
     "pricing": {
       "title": "Planlar",
-      "draftNotice": "Kesin fiyatlar lansmanda açıklanacaktır — aşağıdaki limitler taslaktır.",
+      "subtitle": "Her plan hangi modülleri içerdiğini gösterir — büyüdükçe plan değiştirir, istediğiniz modülü ayrıca talep edebilirsiniz.",
+      "perMonth": "/ay",
       "tableCount": "{count} masa",
+      "unlimitedTables": "Sınırsız masa",
       "branchCount": "{count} şube dahil",
       "enterpriseBody": "Lifetime lisans veya kendi sunucunuzda (self-hosted) çalıştırmak mı istiyorsunuz?",
       "enterpriseCta": "Bize Ulaşın"
