@@ -26,6 +26,9 @@ export default async function PlatformDashboardLayout({ children }: { children: 
             <Link href="/platform/module-requests" className="hover:text-foreground">
               {t("nav.moduleRequests")}
             </Link>
+            <Link href="/platform/contact-requests" className="hover:text-foreground">
+              {t("nav.contactRequests")}
+            </Link>
             <Link href="/platform/announcements" className="hover:text-foreground">
               {t("nav.announcements")}
             </Link>

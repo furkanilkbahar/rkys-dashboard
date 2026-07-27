@@ -14,6 +14,12 @@ export default async function MarketingLayout({ children }: { children: React.Re
           <Badge variant="secondary">warm-luxury</Badge>
         </Link>
         <nav className="flex items-center gap-4 text-sm text-muted-foreground">
+          <Link href="/sss" className="hover:text-foreground">
+            {t("nav.faq")}
+          </Link>
+          <Link href="/iletisim" className="hover:text-foreground">
+            {t("nav.contact")}
+          </Link>
           <Link href="/kayit" className="hover:text-foreground">
             {t("nav.register")}
           </Link>

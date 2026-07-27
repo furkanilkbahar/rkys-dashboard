@@ -659,6 +659,39 @@ export type Database = {
           },
         ]
       }
+      contact_requests: {
+        Row: {
+          business_name: string | null
+          created_at: string
+          email: string
+          id: string
+          message: string
+          name: string
+          phone: string | null
+          status: string
+        }
+        Insert: {
+          business_name?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          message: string
+          name: string
+          phone?: string | null
+          status?: string
+        }
+        Update: {
+          business_name?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+          phone?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
       content_translations: {
         Row: {
           created_at: string
@@ -5411,6 +5444,10 @@ export type Database = {
         Args: { p_new_pin: string; p_profile_id: string }
         Returns: undefined
       }
+      resolve_contact_request: {
+        Args: { p_request_id: string; p_status: string }
+        Returns: undefined
+      }
       resolve_module_request: {
         Args: { p_approve: boolean; p_request_id: string }
         Returns: undefined
@@ -5456,6 +5493,16 @@ export type Database = {
           p_module_key: string
           p_source: string
           p_tenant_id: string
+        }
+        Returns: undefined
+      }
+      submit_contact_request: {
+        Args: {
+          p_business_name: string
+          p_email: string
+          p_message: string
+          p_name: string
+          p_phone: string
         }
         Returns: undefined
       }

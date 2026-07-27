@@ -1292,6 +1292,7 @@
       "pendingTenants": "Bekleyen Onaylar",
       "plans": "Planlar",
       "moduleRequests": "Modül Talepleri",
+      "contactRequests": "İletişim Talepleri",
       "announcements": "Duyurular",
       "settings": "Ayarlar",
       "licenses": "Lisanslar",
@@ -1366,6 +1367,18 @@
       "empty": "Bekleyen modül talebi yok.",
       "approve": "Onayla",
       "reject": "Reddet"
+    },
+    "contactRequests": {
+      "title": "İletişim Talepleri",
+      "queueTitle": "Gelen Talepler",
+      "empty": "Henüz iletişim talebi yok.",
+      "status": {
+        "new": "Yeni",
+        "contacted": "İletişime Geçildi",
+        "closed": "Kapatıldı"
+      },
+      "markContacted": "İletişime Geçildi",
+      "close": "Kapat"
     },
     "plans": {
       "title": "Planlar",
@@ -1452,6 +1465,8 @@
   },
   "marketing": {
     "nav": {
+      "faq": "SSS",
+      "contact": "İletişim",
       "register": "Kayıt Ol"
     },
     "hero": {
@@ -1557,6 +1572,92 @@
     "complete": {
       "title": "Kaydınız Alındı",
       "body": "Ödemeniz alındı. Hesabınız platform ekibimiz tarafından onaylandıktan sonra panelinize giriş yapabileceksiniz. Onay durumunu e-posta adresinizden takip edebilirsiniz."
+    }
+  },
+  "contact": {
+    "title": "Bize Ulaşın",
+    "subtitle": "Demo talep edin veya sorularınızı iletin, size geri dönelim.",
+    "name": "Ad Soyad",
+    "businessName": "İşletme Adı (opsiyonel)",
+    "email": "E-posta",
+    "phone": "Telefon (opsiyonel)",
+    "message": "Mesajınız",
+    "submit": "Gönder",
+    "success": "Talebiniz alındı, en kısa sürede size dönüş yapacağız.",
+    "directEmailLabel": "Ya da doğrudan yazın:",
+    "errors": {
+      "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
+      "unknown": "Bir hata oluştu, tekrar deneyin."
+    }
+  },
+  "faq": {
+    "title": "Sıkça Sorulan Sorular",
+    "subtitle": "Aradığınızı bulamazsanız bize ulaşın, memnuniyetle yanıtlayalım.",
+    "categories": {
+      "registration": {
+        "title": "Kayıt & Onay",
+        "items": [
+          {
+            "q": "Kayıt olduktan sonra hemen kullanabilir miyim?",
+            "a": "Ödemeniz onaylandıktan sonra hesabınız platform ekibimiz tarafından incelenir ve onaylanır (bazı dönemlerde bu adım otomatik da işleyebilir). Onaylanınca panelinize giriş açılır."
+          },
+          {
+            "q": "Ödeme yapmadan deneyebilir miyim?",
+            "a": "Evet, 14 gün kartsız deneme sunuyoruz — kayıt formunda seçtiğiniz plan üzerinden deneme süreniz başlar."
+          },
+          {
+            "q": "Kaydım reddedilirse ne olur?",
+            "a": "Ücretsiz reddedilirse hesabınız pasif kalır, herhangi bir ücret tahsil edilmez; sorularınız için bize ulaşabilirsiniz."
+          }
+        ]
+      },
+      "plans": {
+        "title": "Planlar & Modüller",
+        "items": [
+          {
+            "q": "Plan değiştirirsem verilerim veya açık modüllerim silinir mi?",
+            "a": "Hayır. Plan düşürseniz bile mevcut modülleriniz hemen kapanmaz — platform ekibimiz inceleyip karar verene kadar açık kalır."
+          },
+          {
+            "q": "Planımda olmayan bir modülü kullanabilir miyim?",
+            "a": "Evet, panelinizden ilgili modülü \"Talep Et\" ile bize iletebilirsiniz; onaylandığında anında açılır."
+          },
+          {
+            "q": "Gösterilen fiyatlara vergiler dahil mi?",
+            "a": "Gösterilen fiyatlara yasal vergiler ayrıca eklenir."
+          }
+        ]
+      },
+      "hosting": {
+        "title": "Self-hosted vs. Bulut (SaaS)",
+        "items": [
+          {
+            "q": "Self-hosted seçeneği ne anlama geliyor?",
+            "a": "Uygulamayı bizim sunucularımız yerine kendi sunucunuzda (Docker ile) çalıştırırsınız; lisans anahtarınızla doğrulama yapılır."
+          },
+          {
+            "q": "Self-hosted mi yoksa bulut mu seçmeliyim?",
+            "a": "Hızlı başlamak ve otomatik güncelleme istiyorsanız bulut (SaaS); verinizi kendi altyapınızda tutmak istiyorsanız self-hosted uygundur — kararsızsanız bize ulaşın, birlikte değerlendirelim."
+          }
+        ]
+      },
+      "security": {
+        "title": "Güvenlik & KVKK",
+        "items": [
+          {
+            "q": "Verilerim başka işletmelerin verileriyle karışır mı?",
+            "a": "Hayır. Her işletme veritabanı seviyesinde (satır bazlı güvenlik) tamamen izole edilir — bu izolasyon otomatik testlerle her yeni özellikte doğrulanır."
+          },
+          {
+            "q": "KVKK'ya uyumlu musunuz?",
+            "a": "Evet, KVKK aydınlatma metni, çerez politikası ve veri silme talebi akışımız yayında — detaylar için sayfa altındaki yasal bağlantılara bakabilirsiniz."
+          },
+          {
+            "q": "İki faktörlü doğrulama (2FA) zorunlu mu?",
+            "a": "Varsayılan olarak opsiyoneldir; platform genelinde zorunlu kılınması gerektiğinde bu ayrıca duyurulur."
+          }
+        ]
+      }
     }
   },
   "legal": {

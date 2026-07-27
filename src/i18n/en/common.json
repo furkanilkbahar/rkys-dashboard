@@ -1292,6 +1292,7 @@
       "pendingTenants": "Pending Approvals",
       "plans": "Plans",
       "moduleRequests": "Module Requests",
+      "contactRequests": "Contact Requests",
       "announcements": "Announcements",
       "settings": "Settings",
       "licenses": "Licenses",
@@ -1366,6 +1367,18 @@
       "empty": "No pending module requests.",
       "approve": "Approve",
       "reject": "Reject"
+    },
+    "contactRequests": {
+      "title": "Contact Requests",
+      "queueTitle": "Incoming Requests",
+      "empty": "No contact requests yet.",
+      "status": {
+        "new": "New",
+        "contacted": "Contacted",
+        "closed": "Closed"
+      },
+      "markContacted": "Mark Contacted",
+      "close": "Close"
     },
     "plans": {
       "title": "Plans",
@@ -1452,6 +1465,8 @@
   },
   "marketing": {
     "nav": {
+      "faq": "FAQ",
+      "contact": "Contact",
       "register": "Sign Up"
     },
     "hero": {
@@ -1557,6 +1572,92 @@
     "complete": {
       "title": "Registration Received",
       "body": "Your payment has been received. You'll be able to log in to your dashboard once our platform team approves your account. You can track the approval status via your email address."
+    }
+  },
+  "contact": {
+    "title": "Get in Touch",
+    "subtitle": "Request a demo or ask a question — we'll get back to you.",
+    "name": "Full Name",
+    "businessName": "Business Name (optional)",
+    "email": "Email",
+    "phone": "Phone (optional)",
+    "message": "Your Message",
+    "submit": "Send",
+    "success": "Your request was received — we'll get back to you shortly.",
+    "directEmailLabel": "Or write to us directly:",
+    "errors": {
+      "invalid_input": "Please check the information you entered.",
+      "unknown": "Something went wrong, please try again."
+    }
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Can't find what you're looking for? Reach out and we'll be happy to help.",
+    "categories": {
+      "registration": {
+        "title": "Registration & Approval",
+        "items": [
+          {
+            "q": "Can I start using it right after signing up?",
+            "a": "Once your payment is confirmed, our platform team reviews and approves your account (in some periods this step may be automatic). Your dashboard opens once approved."
+          },
+          {
+            "q": "Can I try it without paying?",
+            "a": "Yes, we offer a 14-day trial with no card required — your trial starts on the plan you select during sign-up."
+          },
+          {
+            "q": "What happens if my registration is rejected?",
+            "a": "Your account stays inactive and you are never charged. Reach out to us if you have questions."
+          }
+        ]
+      },
+      "plans": {
+        "title": "Plans & Modules",
+        "items": [
+          {
+            "q": "If I change plans, do I lose data or enabled modules?",
+            "a": "No. Even on a downgrade, your existing modules don't shut off immediately — they stay on until our team reviews and decides."
+          },
+          {
+            "q": "Can I use a module that isn't in my plan?",
+            "a": "Yes — request it from your dashboard with one click; once approved, it's activated instantly."
+          },
+          {
+            "q": "Do the displayed prices include tax?",
+            "a": "Applicable taxes are added on top of the displayed prices."
+          }
+        ]
+      },
+      "hosting": {
+        "title": "Self-hosted vs. Cloud (SaaS)",
+        "items": [
+          {
+            "q": "What does self-hosted mean?",
+            "a": "You run the application on your own servers (via Docker) instead of ours, verified with your license key."
+          },
+          {
+            "q": "Should I choose self-hosted or cloud?",
+            "a": "If you want to get started fast with automatic updates, choose cloud (SaaS); if you need to keep your data on your own infrastructure, self-hosted fits better — reach out and we'll help you decide."
+          }
+        ]
+      },
+      "security": {
+        "title": "Security & Compliance",
+        "items": [
+          {
+            "q": "Could my data mix with another business's data?",
+            "a": "No. Every business is fully isolated at the database level (row-level security) — this isolation is verified with automated tests for every new feature."
+          },
+          {
+            "q": "Are you compliant with data protection regulations?",
+            "a": "Yes — our privacy notice, cookie policy, and data deletion flow are live; see the legal links at the bottom of the page for details."
+          },
+          {
+            "q": "Is two-factor authentication (2FA) required?",
+            "a": "It's optional by default; if it becomes mandatory platform-wide, that will be announced separately."
+          }
+        ]
+      }
     }
   },
   "legal": {
