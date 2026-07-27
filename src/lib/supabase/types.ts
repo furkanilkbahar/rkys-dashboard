@@ -3641,9 +3641,11 @@ export type Database = {
           created_at: string
           device_label: string
           device_secret_hash: string
+          failed_pin_attempts: number
           id: string
           is_active: boolean
           last_seen_at: string | null
+          locked_until: string | null
           tenant_id: string
         }
         Insert: {
@@ -3651,9 +3653,11 @@ export type Database = {
           created_at?: string
           device_label: string
           device_secret_hash: string
+          failed_pin_attempts?: number
           id?: string
           is_active?: boolean
           last_seen_at?: string | null
+          locked_until?: string | null
           tenant_id: string
         }
         Update: {
@@ -3661,9 +3665,11 @@ export type Database = {
           created_at?: string
           device_label?: string
           device_secret_hash?: string
+          failed_pin_attempts?: number
           id?: string
           is_active?: boolean
           last_seen_at?: string | null
+          locked_until?: string | null
           tenant_id?: string
         }
         Relationships: [
@@ -4925,6 +4931,10 @@ export type Database = {
         }[]
       }
       close_business_day: { Args: { p_branch_id: string }; Returns: string }
+      close_kiosk_device_sessions: {
+        Args: { p_device_id: string }
+        Returns: undefined
+      }
       close_shift: {
         Args: { p_counted_cash_minor: number; p_shift_id: string }
         Returns: undefined
@@ -5294,6 +5304,10 @@ export type Database = {
       request_order_cancellation: {
         Args: { p_order_id: string; p_reason: string }
         Returns: undefined
+      }
+      reservation_overlap_range: {
+        Args: { p_reserved_at: string }
+        Returns: unknown
       }
       reset_staff_pin: {
         Args: { p_new_pin: string; p_profile_id: string }
