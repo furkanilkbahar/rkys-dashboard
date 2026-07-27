@@ -413,6 +413,8 @@
       "modules": {
         "title": "Modules",
         "pendingRemoval": "This module may be removed from your plan, under review.",
+        "request": "Request",
+        "requested": "Requested",
         "keys": {
           "pos_cash": "Cash Register",
           "inventory": "Inventory",
@@ -1289,6 +1291,7 @@
       "tenants": "Tenants",
       "pendingTenants": "Pending Approvals",
       "plans": "Plans",
+      "moduleRequests": "Module Requests",
       "announcements": "Announcements",
       "settings": "Settings",
       "licenses": "Licenses",
@@ -1354,6 +1357,13 @@
         "past_due": "Past Due",
         "canceled": "Canceled"
       },
+      "approve": "Approve",
+      "reject": "Reject"
+    },
+    "moduleRequests": {
+      "title": "Module Requests",
+      "queueTitle": "Request Queue",
+      "empty": "No pending module requests.",
       "approve": "Approve",
       "reject": "Reject"
     },

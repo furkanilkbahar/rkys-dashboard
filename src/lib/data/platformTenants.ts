@@ -61,6 +61,15 @@ export type PendingTenant = {
   subscriptionStatus: "trialing" | "active" | "past_due" | "canceled" | null;
 };
 
+export type PendingModuleRequest = {
+  id: string;
+  tenantId: string;
+  tenantName: string;
+  tenantSlug: string;
+  moduleKey: ModuleKey;
+  requestedAt: string;
+};
+
 // Süper Admin salt-okunur görünümleri: gate zaten Next.js layer'ında
 // requirePlatformAdmin() ile yapılıyor, bu yüzden burada her tenant-scoped
 // tabloya ayrı bir is_platform_admin() RLS bypass politikası eklemek yerine
@@ -187,5 +196,34 @@ export async function getPendingTenants(): Promise<PendingTenant[]> {
     planName: t.plan_id ? (planNameById.get(t.plan_id) ?? null) : null,
     subscriptionStatus:
       (subscriptionStatusByTenant.get(t.id) as "trialing" | "active" | "past_due" | "canceled" | undefined) ?? null,
+  }));
+}
+
+// Modül Talepleri kuyruğu (/platform/module-requests, Faz 4 revizyonu
+// Adım 6): tenant'ların "Talep Et" ile gönderdiği, henüz karara bağlanmamış
+// modül talepleri.
+export async function getPendingModuleRequests(): Promise<PendingModuleRequest[]> {
+  const service = createServiceRoleClient();
+  const { data: requests } = await service
+    .from("module_requests")
+    .select("id, tenant_id, module_key, requested_at")
+    .eq("status", "pending")
+    .order("requested_at");
+
+  if (!requests || requests.length === 0) {
+    return [];
+  }
+
+  const tenantIds = [...new Set(requests.map((r) => r.tenant_id))];
+  const { data: tenants } = await service.from("tenants").select("id, name, slug").in("id", tenantIds);
+  const tenantById = new Map((tenants ?? []).map((t) => [t.id, t]));
+
+  return requests.map((r) => ({
+    id: r.id,
+    tenantId: r.tenant_id,
+    tenantName: tenantById.get(r.tenant_id)?.name ?? r.tenant_id,
+    tenantSlug: tenantById.get(r.tenant_id)?.slug ?? "",
+    moduleKey: r.module_key as ModuleKey,
+    requestedAt: r.requested_at,
   }));
 }

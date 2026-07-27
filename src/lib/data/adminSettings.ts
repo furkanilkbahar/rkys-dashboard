@@ -2,7 +2,7 @@ import "server-only";
 
 import { createClient } from "@/lib/supabase/server";
 import type { Locale } from "@/i18n/locales";
-import type { ModuleKey } from "@/lib/modules/keys";
+import { MODULE_KEYS, type ModuleKey } from "@/lib/modules/keys";
 
 export type AdminTenantSettings = {
   currency: string;
@@ -52,6 +52,11 @@ export type AdminModule = {
   moduleKey: ModuleKey;
   isEnabled: boolean;
   pendingRemovalSince: string | null;
+  isIncludedInPlan: boolean;
+  hasPendingRequest: boolean;
+  // null = tenant_modules'ta hiç satırı yok (hiç sahip olunmadı) — bu ve
+  // isIncludedInPlan=false birlikteyse UI kilitli/"Talep Et" gösterir.
+  source: "plan" | "paid_addon" | "granted" | null;
 };
 
 export async function getAdminTenantSettings(tenantId: string): Promise<AdminTenantSettings | null> {
@@ -192,16 +197,30 @@ export async function getAdminLocales(tenantId: string): Promise<AdminLocale[]> 
 
 export async function getAdminModules(tenantId: string): Promise<AdminModule[]> {
   const supabase = await createClient();
-  const { data } = await supabase
-    .from("tenant_modules")
-    .select("module_key, is_enabled, pending_removal_since")
-    .eq("tenant_id", tenantId);
+  const [{ data: modules }, { data: tenant }, { data: pendingRequests }] = await Promise.all([
+    supabase.from("tenant_modules").select("module_key, is_enabled, pending_removal_since, source").eq("tenant_id", tenantId),
+    supabase.from("tenants").select("plan_id").eq("id", tenantId).single(),
+    supabase.from("module_requests").select("module_key").eq("tenant_id", tenantId).eq("status", "pending"),
+  ]);
 
-  return (data ?? []).map((m) => ({
-    moduleKey: m.module_key as ModuleKey,
-    isEnabled: m.is_enabled,
-    pendingRemovalSince: m.pending_removal_since,
-  }));
+  const { data: planModules } = tenant?.plan_id
+    ? await supabase.from("plan_modules").select("module_key").eq("plan_id", tenant.plan_id)
+    : { data: [] as { module_key: string }[] | null };
+
+  const planModuleKeys = new Set((planModules ?? []).map((p) => p.module_key));
+  const pendingRequestKeys = new Set((pendingRequests ?? []).map((r) => r.module_key));
+
+  return MODULE_KEYS.map((moduleKey) => {
+    const row = (modules ?? []).find((m) => m.module_key === moduleKey);
+    return {
+      moduleKey,
+      isEnabled: row?.is_enabled ?? false,
+      pendingRemovalSince: row?.pending_removal_since ?? null,
+      isIncludedInPlan: planModuleKeys.has(moduleKey),
+      hasPendingRequest: pendingRequestKeys.has(moduleKey),
+      source: (row?.source as "plan" | "paid_addon" | "granted" | undefined) ?? null,
+    };
+  });
 }
 
 export type AdminTheme = { key: string; name: string };

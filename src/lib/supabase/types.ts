@@ -5398,6 +5398,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      request_module: { Args: { p_module_key: string }; Returns: undefined }
       request_order_cancellation: {
         Args: { p_order_id: string; p_reason: string }
         Returns: undefined
@@ -5408,6 +5409,10 @@ export type Database = {
       }
       reset_staff_pin: {
         Args: { p_new_pin: string; p_profile_id: string }
+        Returns: undefined
+      }
+      resolve_module_request: {
+        Args: { p_approve: boolean; p_request_id: string }
         Returns: undefined
       }
       resolve_pending_module_removal: {

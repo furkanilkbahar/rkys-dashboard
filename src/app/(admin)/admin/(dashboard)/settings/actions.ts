@@ -330,6 +330,38 @@ export async function toggleModule(input: unknown): Promise<SettingsActionResult
   if (!parsed.success) return { ok: false, error: "invalid_input" };
 
   const supabase = await createClient();
+
+  // Faz 4 revizyonu Adım 6: tenant'ın hiç sahip olmadığı (satırı yok) VE
+  // planına dahil olmayan bir modülü kendi kendine ilk kez açması engellenir
+  // — bu modüller UI'da kilitli/"Talep Et" olarak gösterilir (request_module).
+  // Zaten bir satırı olan (plan/paid_addon/granted, hangi kaynaktan gelmiş
+  // olursa olsun) modülü aç/kapa yapmak serbest kalır.
+  if (parsed.data.isEnabled) {
+    const { data: existingRow } = await supabase
+      .from("tenant_modules")
+      .select("module_key")
+      .eq("tenant_id", actor.tenantId)
+      .eq("module_key", parsed.data.moduleKey)
+      .maybeSingle();
+
+    if (!existingRow) {
+      const { data: tenant } = await supabase.from("tenants").select("plan_id").eq("id", actor.tenantId).single();
+      const planId = tenant?.plan_id ?? null;
+      const { data: planModule } = planId
+        ? await supabase
+            .from("plan_modules")
+            .select("module_key")
+            .eq("plan_id", planId)
+            .eq("module_key", parsed.data.moduleKey)
+            .maybeSingle()
+        : { data: null };
+
+      if (!planModule) {
+        return { ok: false, error: "plan_required" };
+      }
+    }
+  }
+
   const { error } = await supabase
     .from("tenant_modules")
     .upsert(
@@ -340,6 +372,18 @@ export async function toggleModule(input: unknown): Promise<SettingsActionResult
 
   revalidatePath("/admin/settings");
   revalidatePath("/admin", "layout");
+  return { ok: true };
+}
+
+export async function requestModule(moduleKey: string): Promise<SettingsActionResult> {
+  const actor = await requireStaffActor();
+  if (!actor) return { ok: false, error: "forbidden" };
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("request_module", { p_module_key: moduleKey });
+  if (error) return { ok: false, error: "unknown" };
+
+  revalidatePath("/admin/settings");
   return { ok: true };
 }
 

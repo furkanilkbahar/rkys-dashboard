@@ -413,6 +413,8 @@
       "modules": {
         "title": "Modüller",
         "pendingRemoval": "Bu modül planınızdan kaldırılabilir, inceleniyor.",
+        "request": "Talep Et",
+        "requested": "Talep Edildi",
         "keys": {
           "pos_cash": "Kasa",
           "inventory": "Stok Yönetimi",
@@ -1289,6 +1291,7 @@
       "tenants": "Tenantlar",
       "pendingTenants": "Bekleyen Onaylar",
       "plans": "Planlar",
+      "moduleRequests": "Modül Talepleri",
       "announcements": "Duyurular",
       "settings": "Ayarlar",
       "licenses": "Lisanslar",
@@ -1354,6 +1357,13 @@
         "past_due": "Ödeme Gecikti",
         "canceled": "İptal Edildi"
       },
+      "approve": "Onayla",
+      "reject": "Reddet"
+    },
+    "moduleRequests": {
+      "title": "Modül Talepleri",
+      "queueTitle": "Talep Kuyruğu",
+      "empty": "Bekleyen modül talebi yok.",
       "approve": "Onayla",
       "reject": "Reddet"
     },

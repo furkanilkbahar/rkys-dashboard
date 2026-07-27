@@ -57,6 +57,7 @@ type Actions = {
   updateTipPreset: (tipPresetId: string, input: unknown) => Promise<SettingsActionResult>;
   updateRatingSettings: (input: unknown) => Promise<SettingsActionResult>;
   toggleModule: (input: unknown) => Promise<SettingsActionResult>;
+  requestModule: (moduleKey: string) => Promise<SettingsActionResult>;
   createBranch: (input: unknown) => Promise<BranchActionResult>;
   requestAccountDeletion: () => Promise<SettingsActionResult>;
   createReportSchedule: (input: unknown) => Promise<SettingsActionResult>;
@@ -701,12 +702,28 @@ function ThemeCard({ themeKey, themes, updateTheme }: { themeKey: string; themes
   );
 }
 
-function ModulesCard({ modules, toggleModule }: { modules: AdminModule[]; toggleModule: Actions["toggleModule"] }) {
+function ModulesCard({
+  modules,
+  toggleModule,
+  requestModule,
+}: {
+  modules: AdminModule[];
+  toggleModule: Actions["toggleModule"];
+  requestModule: Actions["requestModule"];
+}) {
   const t = useTranslations("admin.settings.modules");
   const router = useRouter();
+  const [pendingKey, setPendingKey] = useState<ModuleKey | null>(null);
 
   async function handleToggle(moduleKey: ModuleKey, isEnabled: boolean) {
     await toggleModule({ moduleKey, isEnabled });
+    router.refresh();
+  }
+
+  async function handleRequest(moduleKey: ModuleKey) {
+    setPendingKey(moduleKey);
+    await requestModule(moduleKey);
+    setPendingKey(null);
     router.refresh();
   }
 
@@ -718,12 +735,26 @@ function ModulesCard({ modules, toggleModule }: { modules: AdminModule[]; toggle
       <CardContent className="flex flex-col gap-2">
         {MODULE_KEYS.map((key) => {
           const moduleState = modules.find((m) => m.moduleKey === key);
-          const isEnabled = moduleState?.isEnabled ?? false;
+          const isLocked = moduleState?.source === null && !moduleState?.isIncludedInPlan;
           return (
             <div key={key} className="flex flex-col gap-1 rounded-md border border-border p-2 text-sm">
               <div className="flex items-center justify-between gap-2">
-                <span>{t(`keys.${key}`)}</span>
-                <Switch checked={isEnabled} onCheckedChange={(checked) => handleToggle(key, checked)} />
+                <span className={isLocked ? "text-muted-foreground" : undefined}>{t(`keys.${key}`)}</span>
+                {isLocked ? (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={pendingKey === key || moduleState?.hasPendingRequest}
+                    onClick={() => handleRequest(key)}
+                  >
+                    {moduleState?.hasPendingRequest ? t("requested") : t("request")}
+                  </Button>
+                ) : (
+                  <Switch
+                    checked={moduleState?.isEnabled ?? false}
+                    onCheckedChange={(checked) => handleToggle(key, checked)}
+                  />
+                )}
               </div>
               {moduleState?.pendingRemovalSince && <p className="text-xs text-destructive">{t("pendingRemoval")}</p>}
             </div>
@@ -775,7 +806,7 @@ export function SettingsManager({
       <TipPresetsCard presets={tipPresets} createTipPreset={actions.createTipPreset} updateTipPreset={actions.updateTipPreset} />
       <RatingSettingsCard ratingSettings={ratingSettings} updateRatingSettings={actions.updateRatingSettings} />
       <ThemeCard themeKey={settings.themeKey} themes={themes} updateTheme={actions.updateTheme} />
-      <ModulesCard modules={modules} toggleModule={actions.toggleModule} />
+      <ModulesCard modules={modules} toggleModule={actions.toggleModule} requestModule={actions.requestModule} />
       <ReportSchedulesCard
         schedules={reportSchedules}
         branches={branchesInfo.branches}

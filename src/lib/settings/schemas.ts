@@ -77,7 +77,7 @@ export type ReportScheduleFormInput = z.infer<typeof reportScheduleFormSchema>;
 
 export type SettingsActionResult =
   | { ok: true }
-  | { ok: false; error: "invalid_input" | "forbidden" | "not_found" | "last_locale" | "unknown" };
+  | { ok: false; error: "invalid_input" | "forbidden" | "not_found" | "last_locale" | "plan_required" | "unknown" };
 
 export const branchFormSchema = z.object({
   name: z.string().min(1, "required"),
