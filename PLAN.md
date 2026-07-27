@@ -41,12 +41,13 @@
 - [x] Temel rapor seti + **manuel maliyet & marj raporu** + CSV export (Excel: UTF-8 BOM'lu CSV ile karşılandı; muhasebe API adaptörü ileri faz kapsamında — D61)
 
 ## Faz 4 — SaaS Katmanı
-- [x] Süper Admin: tenant/şube, kullanım, **modül & plan-modül yönetimi**, duyurular (banner), 2FA zorunluluk anahtarı
+- [x] Süper Admin: tenant/şube, kullanım, duyurular (banner), 2FA zorunluluk anahtarı
 - [x] Planlar: masa limiti + **dahil şube + ek şube ücreti** enforcement; 14g kartsız trial; iyzico abonelik (mock-first)
 - [x] Lisans modülü (lifetime/self-hosted) + doğrulama API (tamamen offline, imzalı dosya)
-- [x] Pazarlama sitesi (TR/EN, modüler anlatım) + kayıt akışı + yasal set (KVKK/çerez/sözleşme/veri silme)
+- [x] Pazarlama sitesi (TR/EN, modüler anlatım) + yasal set (KVKK/çerez/sözleşme/veri silme)
 - [x] **Destek ticket modülü** (tenant talep → Süper Admin kuyruğu)
 - [x] **Status sayfası** + uptime izleme (OPERATIONS) — D72 sınırı: veri modeli + manuel giriş, gerçek 3.parti alerting production'a ertelendi
+- [x] **Faz 4 revizyonu (D80/D81):** Süper Admin artık serbest **plan CRUD** yürütür (ad/fiyat/masa-şube limiti + her planın içerdiği modülleri işaretleyen `plan_modules`) ve tenant başına elle modül aç/kapa yapar (kaynak etiketli: `plan`/`paid_addon`/`granted`). Kayıt akışı **kapalı kapı**: form gönderilince tenant `pending_approval` ile açılır ve alt-domaini (admin login dahil) tamamen kapalı kalır; ödeme kök domainde (`/kayit/odeme`) alınır; onay platform admin'in elle kararına VEYA genel `auto_approve_registrations` ayarına bağlıdır — onaylanınca planın modülleri otomatik açılır. Plan değişikliği (platform admin ataması veya tenant'ın kendi `/admin/billing` ödemesi) artık paylaşılan `apply_plan_change` üzerinden yürür: düşürmede plandan gelen modüller hemen silinmez, platform admin incelemesine (Koru/Kaldır) düşer; `paid_addon` kaynaklı modüllere hiç dokunulmaz. Tenant kendi panelinde plan dışı bir modülü "Talep Et" ile platform admin onayına sunabilir.
 
 ## Faz 5 — Analitik Merkezi
 - [x] Widget dashboard (sürükle-bırak) + şube kıyası (`(analytics)/analytics`, 6 widget, kullanıcı bazlı kalıcı düzen)
