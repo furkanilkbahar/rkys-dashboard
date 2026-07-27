@@ -5431,6 +5431,15 @@ export type Database = {
         Args: { p_provider: string; p_provider_ref: string }
         Returns: undefined
       }
+      set_tenant_module: {
+        Args: {
+          p_is_enabled: boolean
+          p_module_key: string
+          p_source: string
+          p_tenant_id: string
+        }
+        Returns: undefined
+      }
       submit_order: {
         Args: {
           p_delivery_address?: string

@@ -48,3 +48,25 @@ export async function assignTenantPlan(tenantId: string, planId: string | null):
   revalidatePath(`/platform/tenants/${tenantId}`);
   return { ok: true };
 }
+
+export async function setTenantModule(
+  tenantId: string,
+  moduleKey: string,
+  isEnabled: boolean,
+  source: "plan" | "paid_addon" | "granted",
+): Promise<PlatformActionResult> {
+  const admin = await getCurrentPlatformAdmin();
+  if (!admin) return { ok: false, error: "forbidden" };
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("set_tenant_module", {
+    p_tenant_id: tenantId,
+    p_module_key: moduleKey,
+    p_is_enabled: isEnabled,
+    p_source: source,
+  });
+  if (error) return { ok: false, error: "unknown" };
+
+  revalidatePath(`/platform/tenants/${tenantId}`);
+  return { ok: true };
+}

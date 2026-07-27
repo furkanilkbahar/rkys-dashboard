@@ -1315,8 +1315,12 @@
     "tenantDetail": {
       "branchesTitle": "Şubeler",
       "defaultBranch": "Varsayılan",
-      "modulesTitle": "Aktif Modüller",
-      "noModules": "Hiçbir modül aktif değil.",
+      "modulesTitle": "Modüller",
+      "moduleSource": {
+        "plan": "Plan",
+        "paid_addon": "Ücretli Ek Modül",
+        "granted": "Elle Verildi"
+      },
       "suspend": "Askıya al",
       "reactivate": "Tekrar aktifleştir",
       "planTitle": "Plan",

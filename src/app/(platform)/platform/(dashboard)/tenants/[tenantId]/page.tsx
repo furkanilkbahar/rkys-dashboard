@@ -4,9 +4,10 @@ import { getTranslations } from "next-intl/server";
 import { Badge } from "@/components/ui/badge";
 import { SuspendToggleButton } from "@/components/platform/suspend-toggle-button";
 import { PlanSelect } from "@/components/platform/plan-select";
+import { TenantModulesManager } from "@/components/platform/tenant-modules-manager";
 import { getPlatformPlans, getPlatformTenantDetail } from "@/lib/data/platformTenants";
 
-import { assignTenantPlan, reactivateTenant, suspendTenant } from "../actions";
+import { assignTenantPlan, reactivateTenant, setTenantModule, suspendTenant } from "../actions";
 
 export default async function PlatformTenantDetailPage({ params }: { params: Promise<{ tenantId: string }> }) {
   const { tenantId } = await params;
@@ -75,14 +76,7 @@ export default async function PlatformTenantDetailPage({ params }: { params: Pro
 
       <div className="flex flex-col gap-2">
         <h2 className="text-base font-semibold">{t("tenantDetail.modulesTitle")}</h2>
-        <div className="flex flex-wrap gap-2">
-          {tenant.enabledModules.length === 0 && <p className="text-sm text-muted-foreground">{t("tenantDetail.noModules")}</p>}
-          {tenant.enabledModules.map((moduleKey) => (
-            <Badge key={moduleKey} variant="secondary">
-              {moduleKey}
-            </Badge>
-          ))}
-        </div>
+        <TenantModulesManager tenantId={tenant.id} modules={tenant.modules} setTenantModule={setTenantModule} />
       </div>
     </div>
   );

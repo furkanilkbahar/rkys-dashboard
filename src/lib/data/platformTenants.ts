@@ -1,8 +1,18 @@
 import "server-only";
 
+import type { ModuleKey } from "@/lib/modules/keys";
+import { MODULE_KEYS } from "@/lib/modules/keys";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 
 export type PlatformTenantStatus = "active" | "suspended" | "pending_approval" | "rejected";
+export type TenantModuleSource = "plan" | "paid_addon" | "granted";
+
+export type PlatformTenantModule = {
+  moduleKey: ModuleKey;
+  isEnabled: boolean;
+  source: TenantModuleSource;
+  pendingRemovalSince: string | null;
+};
 
 export type PlatformTenant = {
   id: string;
@@ -28,7 +38,7 @@ export type PlatformTenantDetail = {
   status: PlatformTenantStatus;
   planId: string | null;
   branches: { id: string; name: string; isDefault: boolean }[];
-  enabledModules: string[];
+  modules: PlatformTenantModule[];
   subscription: {
     status: "trialing" | "active" | "past_due" | "canceled";
     trialEndsAt: string | null;
@@ -102,7 +112,7 @@ export async function getPlatformTenantDetail(tenantId: string): Promise<Platfor
   const [{ data: tenant }, { data: branches }, { data: modules }, { data: subscription }] = await Promise.all([
     service.from("tenants").select("id, slug, name, status, plan_id").eq("id", tenantId).single(),
     service.from("branches").select("id, name, is_default").eq("tenant_id", tenantId),
-    service.from("tenant_modules").select("module_key").eq("tenant_id", tenantId).eq("is_enabled", true),
+    service.from("tenant_modules").select("module_key, is_enabled, source, pending_removal_since").eq("tenant_id", tenantId),
     service.from("subscriptions").select("status, trial_ends_at, current_period_end").eq("tenant_id", tenantId).maybeSingle(),
   ]);
 
@@ -117,7 +127,15 @@ export async function getPlatformTenantDetail(tenantId: string): Promise<Platfor
     status: tenant.status as PlatformTenantStatus,
     planId: tenant.plan_id,
     branches: (branches ?? []).map((b) => ({ id: b.id, name: b.name, isDefault: b.is_default })),
-    enabledModules: (modules ?? []).map((m) => m.module_key),
+    modules: MODULE_KEYS.map((moduleKey) => {
+      const row = (modules ?? []).find((m) => m.module_key === moduleKey);
+      return {
+        moduleKey,
+        isEnabled: row?.is_enabled ?? false,
+        source: (row?.source as TenantModuleSource) ?? "granted",
+        pendingRemovalSince: row?.pending_removal_since ?? null,
+      };
+    }),
     subscription: subscription
       ? {
           status: subscription.status as "trialing" | "active" | "past_due" | "canceled",

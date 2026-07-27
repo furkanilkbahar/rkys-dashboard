@@ -1315,8 +1315,12 @@
     "tenantDetail": {
       "branchesTitle": "Branches",
       "defaultBranch": "Default",
-      "modulesTitle": "Enabled Modules",
-      "noModules": "No modules enabled.",
+      "modulesTitle": "Modules",
+      "moduleSource": {
+        "plan": "Plan",
+        "paid_addon": "Paid Add-on",
+        "granted": "Manually Granted"
+      },
       "suspend": "Suspend",
       "reactivate": "Reactivate",
       "planTitle": "Plan",
