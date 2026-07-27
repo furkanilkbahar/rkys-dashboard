@@ -65,3 +65,18 @@ export async function setPlanModule(planId: string, moduleKey: string, included:
   revalidatePath("/platform/plans");
   return { ok: true };
 }
+
+export async function setModuleAddonPrice(moduleKey: string, priceMinor: number): Promise<PlatformActionResult> {
+  const admin = await getCurrentPlatformAdmin();
+  if (!admin) return { ok: false, error: "forbidden" };
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("set_module_addon_price", {
+    p_module_key: moduleKey,
+    p_price_minor: priceMinor,
+  });
+  if (error) return { ok: false, error: "unknown" };
+
+  revalidatePath("/platform/plans");
+  return { ok: true };
+}

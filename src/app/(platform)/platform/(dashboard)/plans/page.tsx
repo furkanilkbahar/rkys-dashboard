@@ -1,9 +1,10 @@
-import { listPlatformPlans } from "@/lib/data/platformPlans";
+import { getModuleAddonPrices, listPlatformPlans } from "@/lib/data/platformPlans";
 
+import { setModuleAddonPrice } from "./actions";
 import { PlansManager } from "./plans-manager";
 
 export default async function PlatformPlansPage() {
-  const plans = await listPlatformPlans();
+  const [plans, addonPrices] = await Promise.all([listPlatformPlans(), getModuleAddonPrices()]);
 
-  return <PlansManager plans={plans} />;
+  return <PlansManager plans={plans} addonPrices={addonPrices} setModuleAddonPrice={setModuleAddonPrice} />;
 }

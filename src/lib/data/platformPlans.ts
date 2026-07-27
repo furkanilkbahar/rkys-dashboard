@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { ModuleKey } from "@/lib/modules/keys";
+import { MODULE_KEYS, type ModuleKey } from "@/lib/modules/keys";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 
 export type PlatformPlanDetail = {
@@ -43,5 +43,23 @@ export async function listPlatformPlans(): Promise<PlatformPlanDetail[]> {
     includedBranchCount: p.included_branch_count,
     extraBranchPriceMinor: p.extra_branch_price_minor,
     moduleKeys: moduleKeysByPlan.get(p.id) ?? [],
+  }));
+}
+
+export type ModuleAddonPrice = {
+  moduleKey: ModuleKey;
+  priceMinor: number;
+};
+
+// Faz 15 Adım 2 (S64): 15 modülün à la carte satın alma fiyatı — hiç
+// fiyatlanmamış (satılmıyor) modüller 0 olarak döner.
+export async function getModuleAddonPrices(): Promise<ModuleAddonPrice[]> {
+  const service = createServiceRoleClient();
+  const { data } = await service.from("module_addon_prices").select("module_key, price_minor");
+  const priceByModule = new Map((data ?? []).map((p) => [p.module_key, p.price_minor]));
+
+  return MODULE_KEYS.map((moduleKey) => ({
+    moduleKey,
+    priceMinor: priceByModule.get(moduleKey) ?? 0,
   }));
 }

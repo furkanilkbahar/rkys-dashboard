@@ -1396,7 +1396,9 @@
       "save": "Save",
       "cancel": "Cancel",
       "createTitle": "New Plan",
-      "create": "Create plan"
+      "create": "Create plan",
+      "addonPricingTitle": "Module Pricing (Add-on Purchase)",
+      "addonPricingSubtitle": "Monthly à la carte price for a module not included in a plan. 0 = only available via the free \"Request\" flow, not sold separately."
     },
     "announcements": {
       "title": "Announcements",

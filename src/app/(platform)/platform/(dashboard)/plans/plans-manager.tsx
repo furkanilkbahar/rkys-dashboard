@@ -13,9 +13,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import type { PlatformPlanDetail } from "@/lib/data/platformPlans";
+import type { ModuleAddonPrice, PlatformPlanDetail } from "@/lib/data/platformPlans";
 import { MODULE_KEYS } from "@/lib/modules/keys";
-import { planFormSchema, planUpdateFormSchema } from "@/lib/platform/schemas";
+import { planFormSchema, planUpdateFormSchema, type PlatformActionResult } from "@/lib/platform/schemas";
 
 import { createPlan, setPlanModule, updatePlan } from "./actions";
 
@@ -239,7 +239,91 @@ function CreatePlanForm() {
   );
 }
 
-export function PlansManager({ plans }: { plans: PlatformPlanDetail[] }) {
+function AddonPriceRow({
+  moduleKey,
+  priceMinor,
+  setModuleAddonPrice,
+}: {
+  moduleKey: string;
+  priceMinor: number;
+  setModuleAddonPrice: (moduleKey: string, priceMinor: number) => Promise<PlatformActionResult>;
+}) {
+  const t = useTranslations("platform.plans");
+  const tModules = useTranslations("admin.settings.modules.keys");
+  const router = useRouter();
+  const [value, setValue] = useState(String(priceMinor / 100));
+  const [isSaving, setIsSaving] = useState(false);
+
+  async function handleSave() {
+    const parsedTl = Number(value);
+    if (!Number.isFinite(parsedTl) || parsedTl < 0) return;
+    setIsSaving(true);
+    await setModuleAddonPrice(moduleKey, Math.round(parsedTl * 100));
+    setIsSaving(false);
+    router.refresh();
+  }
+
+  return (
+    <div
+      data-testid={`addon-price-row-${moduleKey}`}
+      className="flex items-center justify-between gap-2 rounded-md border border-border p-2 text-sm"
+    >
+      <span>{tModules(moduleKey)}</span>
+      <div className="flex items-center gap-2">
+        <Input
+          type="number"
+          min="0"
+          step="1"
+          className="w-28"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+        />
+        <Button size="sm" disabled={isSaving} onClick={handleSave}>
+          {t("save")}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function AddonPricingCard({
+  addonPrices,
+  setModuleAddonPrice,
+}: {
+  addonPrices: ModuleAddonPrice[];
+  setModuleAddonPrice: (moduleKey: string, priceMinor: number) => Promise<PlatformActionResult>;
+}) {
+  const t = useTranslations("platform.plans");
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base">{t("addonPricingTitle")}</CardTitle>
+        <p className="text-sm text-muted-foreground">{t("addonPricingSubtitle")}</p>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-2">
+        {addonPrices.map((addon) => (
+          <AddonPriceRow
+            key={addon.moduleKey}
+            moduleKey={addon.moduleKey}
+            priceMinor={addon.priceMinor}
+            setModuleAddonPrice={setModuleAddonPrice}
+          />
+        ))}
+      </CardContent>
+    </Card>
+  );
+}
+
+export function PlansManager({
+  plans,
+  addonPrices,
+  setModuleAddonPrice,
+}: {
+  plans: PlatformPlanDetail[];
+  addonPrices: ModuleAddonPrice[];
+  setModuleAddonPrice: (moduleKey: string, priceMinor: number) => Promise<PlatformActionResult>;
+}) {
   const t = useTranslations("platform.plans");
 
   return (
@@ -253,6 +337,8 @@ export function PlansManager({ plans }: { plans: PlatformPlanDetail[] }) {
       </div>
 
       <CreatePlanForm />
+
+      <AddonPricingCard addonPrices={addonPrices} setModuleAddonPrice={setModuleAddonPrice} />
     </div>
   );
 }

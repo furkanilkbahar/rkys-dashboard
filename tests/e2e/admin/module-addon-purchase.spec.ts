@@ -9,7 +9,7 @@ function serviceClient() {
   );
 }
 
-test("S62/S63: sahibi ücretli ek modülü satın alır, ödeme onaylanınca modül otomatik açılır", async ({ page, baseURL }) => {
+test("S62/S63: sahibi ücretli ek modülü satın alır, ödeme onaylanınca modül otomatik açılır", async ({ page }) => {
   const service = serviceClient();
   const suffix = Date.now().toString(36);
   const slug = `test-e2e-addon-${suffix}`;

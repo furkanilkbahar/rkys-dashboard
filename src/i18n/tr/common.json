@@ -1396,7 +1396,9 @@
       "save": "Kaydet",
       "cancel": "Vazgeç",
       "createTitle": "Yeni Plan",
-      "create": "Plan oluştur"
+      "create": "Plan oluştur",
+      "addonPricingTitle": "Modül Fiyatları (Ek Satın Alma)",
+      "addonPricingSubtitle": "Plana dahil olmayan bir modülün tek başına (à la carte) aylık satış fiyatı. 0 = yalnızca ücretsiz \"Talep Et\" ile açılabilir, ayrıca satılmaz."
     },
     "announcements": {
       "title": "Duyurular",
