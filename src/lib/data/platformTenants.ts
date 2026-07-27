@@ -2,11 +2,13 @@ import "server-only";
 
 import { createServiceRoleClient } from "@/lib/supabase/server";
 
+export type PlatformTenantStatus = "active" | "suspended" | "pending_approval" | "rejected";
+
 export type PlatformTenant = {
   id: string;
   slug: string;
   name: string;
-  status: "active" | "suspended";
+  status: PlatformTenantStatus;
   createdAt: string;
   branchCount: number;
 };
@@ -23,7 +25,7 @@ export type PlatformTenantDetail = {
   id: string;
   slug: string;
   name: string;
-  status: "active" | "suspended";
+  status: PlatformTenantStatus;
   planId: string | null;
   branches: { id: string; name: string; isDefault: boolean }[];
   enabledModules: string[];
@@ -38,6 +40,15 @@ export type PlatformPlan = {
   id: string;
   key: string;
   name: string;
+};
+
+export type PendingTenant = {
+  id: string;
+  slug: string;
+  name: string;
+  createdAt: string;
+  planName: string | null;
+  subscriptionStatus: "trialing" | "active" | "past_due" | "canceled" | null;
 };
 
 // Süper Admin salt-okunur görünümleri: gate zaten Next.js layer'ında
@@ -61,7 +72,7 @@ export async function getPlatformTenants(): Promise<PlatformTenant[]> {
     id: t.id,
     slug: t.slug,
     name: t.name,
-    status: t.status as "active" | "suspended",
+    status: t.status as PlatformTenantStatus,
     createdAt: t.created_at,
     branchCount: branchCountByTenant.get(t.id) ?? 0,
   }));
@@ -103,7 +114,7 @@ export async function getPlatformTenantDetail(tenantId: string): Promise<Platfor
     id: tenant.id,
     slug: tenant.slug,
     name: tenant.name,
-    status: tenant.status as "active" | "suspended",
+    status: tenant.status as PlatformTenantStatus,
     planId: tenant.plan_id,
     branches: (branches ?? []).map((b) => ({ id: b.id, name: b.name, isDefault: b.is_default })),
     enabledModules: (modules ?? []).map((m) => m.module_key),
@@ -122,4 +133,41 @@ export async function getPlatformPlans(): Promise<PlatformPlan[]> {
   const { data } = await service.from("plans").select("id, key, name").order("table_limit", { ascending: true, nullsFirst: false });
 
   return (data ?? []).map((p) => ({ id: p.id, key: p.key, name: p.name }));
+}
+
+// Onay kuyruğu (/platform/pending-tenants, Faz 4 revizyonu Adım 2): kayıt
+// formundan gelmiş, henüz onaylanmamış tenant'lar — plan adı ve ödeme
+// durumu platform adminin karar vermesi için gösteriliyor.
+export async function getPendingTenants(): Promise<PendingTenant[]> {
+  const service = createServiceRoleClient();
+  const { data: tenants } = await service
+    .from("tenants")
+    .select("id, slug, name, created_at, plan_id")
+    .eq("status", "pending_approval")
+    .order("created_at");
+
+  if (!tenants || tenants.length === 0) {
+    return [];
+  }
+
+  const tenantIds = tenants.map((t) => t.id);
+  const planIds = [...new Set(tenants.map((t) => t.plan_id).filter((id): id is string => id !== null))];
+
+  const [{ data: plans }, { data: subscriptions }] = await Promise.all([
+    planIds.length > 0 ? service.from("plans").select("id, name").in("id", planIds) : Promise.resolve({ data: [] }),
+    service.from("subscriptions").select("tenant_id, status").in("tenant_id", tenantIds),
+  ]);
+
+  const planNameById = new Map((plans ?? []).map((p) => [p.id, p.name]));
+  const subscriptionStatusByTenant = new Map((subscriptions ?? []).map((s) => [s.tenant_id, s.status]));
+
+  return tenants.map((t) => ({
+    id: t.id,
+    slug: t.slug,
+    name: t.name,
+    createdAt: t.created_at,
+    planName: t.plan_id ? (planNameById.get(t.plan_id) ?? null) : null,
+    subscriptionStatus:
+      (subscriptionStatusByTenant.get(t.id) as "trialing" | "active" | "past_due" | "canceled" | undefined) ?? null,
+  }));
 }

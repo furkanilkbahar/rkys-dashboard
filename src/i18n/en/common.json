@@ -1286,6 +1286,7 @@
     "title": "RKYS Super Admin",
     "nav": {
       "tenants": "Tenants",
+      "pendingTenants": "Pending Approvals",
       "plans": "Plans",
       "announcements": "Announcements",
       "settings": "Settings",
@@ -1298,7 +1299,9 @@
     },
     "status": {
       "active": "Active",
-      "suspended": "Suspended"
+      "suspended": "Suspended",
+      "pending_approval": "Pending Approval",
+      "rejected": "Rejected"
     },
     "dashboard": {
       "title": "Dashboard",
@@ -1328,6 +1331,21 @@
       "trialEndsAt": "Trial ends: {date}",
       "currentPeriodEnd": "Renews: {date}",
       "noSubscription": "No subscription record."
+    },
+    "pendingTenants": {
+      "title": "Pending Approvals",
+      "queueTitle": "Approval Queue",
+      "empty": "No pending registrations.",
+      "noPlan": "No plan selected",
+      "noSubscription": "No payment record",
+      "subscriptionStatus": {
+        "trialing": "Trial",
+        "active": "Payment Received",
+        "past_due": "Past Due",
+        "canceled": "Canceled"
+      },
+      "approve": "Approve",
+      "reject": "Reject"
     },
     "plans": {
       "title": "Plans",

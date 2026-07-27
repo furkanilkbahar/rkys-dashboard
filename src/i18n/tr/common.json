@@ -1286,6 +1286,7 @@
     "title": "RKYS Süper Admin",
     "nav": {
       "tenants": "Tenantlar",
+      "pendingTenants": "Bekleyen Onaylar",
       "plans": "Planlar",
       "announcements": "Duyurular",
       "settings": "Ayarlar",
@@ -1298,7 +1299,9 @@
     },
     "status": {
       "active": "Aktif",
-      "suspended": "Askıya Alındı"
+      "suspended": "Askıya Alındı",
+      "pending_approval": "Onay Bekliyor",
+      "rejected": "Reddedildi"
     },
     "dashboard": {
       "title": "Panel",
@@ -1328,6 +1331,21 @@
       "trialEndsAt": "Deneme sonu: {date}",
       "currentPeriodEnd": "Yenileme: {date}",
       "noSubscription": "Abonelik kaydı yok."
+    },
+    "pendingTenants": {
+      "title": "Bekleyen Onaylar",
+      "queueTitle": "Onay Kuyruğu",
+      "empty": "Bekleyen kayıt yok.",
+      "noPlan": "Plan seçilmedi",
+      "noSubscription": "Ödeme kaydı yok",
+      "subscriptionStatus": {
+        "trialing": "Deneme Sürümü",
+        "active": "Ödeme Alındı",
+        "past_due": "Ödeme Gecikti",
+        "canceled": "İptal Edildi"
+      },
+      "approve": "Onayla",
+      "reject": "Reddet"
     },
     "plans": {
       "title": "Planlar",

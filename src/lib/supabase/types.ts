@@ -4976,6 +4976,7 @@ export type Database = {
         Returns: undefined
       }
       approve_order: { Args: { p_order_id: string }; Returns: undefined }
+      approve_tenant: { Args: { p_tenant_id: string }; Returns: undefined }
       assign_courier: {
         Args: { p_courier_id: string; p_order_id: string }
         Returns: string
@@ -5364,6 +5365,7 @@ export type Database = {
         Args: { p_order_id: string }
         Returns: undefined
       }
+      reject_tenant: { Args: { p_tenant_id: string }; Returns: undefined }
       reorder_menu_categories: { Args: { p_ids: string[] }; Returns: undefined }
       reorder_product_extras: {
         Args: { p_ids: string[]; p_product_id: string }
