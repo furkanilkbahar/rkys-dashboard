@@ -275,4 +275,35 @@ describe("apply_coupon_to_order: limit/süre/tekrar-kullanım/modül (Faz 6 Adı
     const { error } = await guestA.client.rpc("apply_coupon_to_order", { p_order_id: orderInB, p_code: "CROSSTENANT" });
     expect(error).not.toBeNull();
   });
+
+  it("misafir tarafında geçersiz kupon kodu denemesi kaba kuvveti yavaşlatmak için geciktirilir (0072)", async () => {
+    const { counterTableId, productAId } = await setupTenant("campaign-coupon-throttle");
+    const guest = await bootstrapGuestForTable(counterTableId);
+
+    const { data: orderData, error: orderError } = await guest.client.rpc("submit_order", {
+      p_idempotency_key: crypto.randomUUID(),
+      p_items: [{ productId: productAId, variantId: null, quantity: 1, extraIds: [] }],
+    });
+    expect(orderError).toBeNull();
+    const orderId = orderData![0].order_id as string;
+
+    const startedAt = Date.now();
+    const { error } = await guest.client.rpc("apply_coupon_to_order", { p_order_id: orderId, p_code: "GUESSME" });
+    const elapsedMs = Date.now() - startedAt;
+
+    expect(error?.message).toContain("invalid coupon code");
+    expect(elapsedMs).toBeGreaterThanOrEqual(900);
+  });
+
+  it("personel (staff) geçersiz kupon kodu denemesinde geciktirilmez (kaba kuvvet riski yok)", async () => {
+    const { counterTableId, productAId, owner } = await setupTenant("campaign-coupon-staff-no-throttle");
+    const { orderId } = await placeStaffOrder(owner, counterTableId, [{ productId: productAId, quantity: 1 }]);
+
+    const startedAt = Date.now();
+    const { error } = await owner.rpc("apply_coupon_to_order", { p_order_id: orderId, p_code: "GUESSME" });
+    const elapsedMs = Date.now() - startedAt;
+
+    expect(error?.message).toContain("invalid coupon code");
+    expect(elapsedMs).toBeLessThan(900);
+  });
 });
