@@ -1006,6 +1006,16 @@
       "hoursEmpty": "No closed shifts in this period.",
       "hoursFormat": "{hours}h {minutes}m",
       "exportCsv": "Download CSV",
+      "performance": {
+        "title": "Staff Goals",
+        "subtitle": "Target metric: waiter call response performance (last 14 days) — since orders aren't attributed per staff member, this is the most concrete signal we can measure.",
+        "empty": "No staff yet.",
+        "callsResolved": "{count} calls resolved",
+        "avgResponse": "avg. {seconds}s response",
+        "targetPlaceholder": "Target",
+        "setTarget": "Set Target",
+        "goalReached": "Goal Reached"
+      },
       "errors": {
         "invalid_input": "Please check the information you entered.",
         "forbidden": "You don't have permission for this action.",

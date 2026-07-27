@@ -4,11 +4,11 @@ import { requireAdminActor } from "@/lib/auth/adminGuard";
 import { getAdminStaff } from "@/lib/data/adminStaff";
 import { getAdminTenantSettings } from "@/lib/data/adminSettings";
 import { getDefaultBranchId } from "@/lib/data/branch";
-import { getHoursWorked, getStaffShifts } from "@/lib/data/scheduling";
+import { getHoursWorked, getStaffPerformance, getStaffShifts } from "@/lib/data/scheduling";
 import { assertModuleEnabled } from "@/lib/modules/isEnabled";
 import { addDaysToIsoDate, todayIsoInTimezone, zonedWallTimeToUtcIso } from "@/lib/utils/timezone";
 
-import { createShift, deleteShift } from "./actions";
+import { createShift, deleteShift, setStaffPerformanceGoal } from "./actions";
 import { SchedulingManager } from "./scheduling-manager";
 
 export default async function AdminSchedulingPage() {
@@ -31,10 +31,11 @@ export default async function AdminSchedulingPage() {
   const reportFrom = zonedWallTimeToUtcIso(`${addDaysToIsoDate(todayIso, -13)}T00:00`, timezone);
   const reportTo = zonedWallTimeToUtcIso(`${addDaysToIsoDate(todayIso, 1)}T00:00`, timezone);
 
-  const [staff, shifts, hoursWorked] = await Promise.all([
+  const [staff, shifts, hoursWorked, staffPerformance] = await Promise.all([
     getAdminStaff(actor.tenantId),
     getStaffShifts(actor.tenantId, branchId, weekFrom, weekTo),
     getHoursWorked(actor.tenantId, branchId, reportFrom, reportTo),
+    getStaffPerformance(actor.tenantId, branchId, reportFrom, reportTo),
   ]);
 
   return (
@@ -42,8 +43,10 @@ export default async function AdminSchedulingPage() {
       staff={staff}
       shifts={shifts}
       hoursWorked={hoursWorked}
+      staffPerformance={staffPerformance}
       createShift={createShift}
       deleteShift={deleteShift}
+      setStaffPerformanceGoal={setStaffPerformanceGoal}
     />
   );
 }

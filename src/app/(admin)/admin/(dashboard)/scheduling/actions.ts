@@ -43,6 +43,33 @@ export async function createShift(input: unknown): Promise<SchedulingActionResul
   return { ok: true };
 }
 
+export async function setStaffPerformanceGoal(profileId: string, targetCallsResolved: number): Promise<SchedulingActionResult> {
+  const actor = await getCurrentActor();
+  if (!actor) return { ok: false, error: "forbidden" };
+  try {
+    await assertCan(actor, "staff.manage");
+  } catch {
+    return { ok: false, error: "forbidden" };
+  }
+  if (!idSchema.safeParse(profileId).success || !Number.isInteger(targetCallsResolved) || targetCallsResolved <= 0) {
+    return { ok: false, error: "invalid_input" };
+  }
+
+  const branchId = await getDefaultBranchId(actor.tenantId);
+  if (!branchId) return { ok: false, error: "unknown" };
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("set_staff_performance_goal", {
+    p_branch_id: branchId,
+    p_profile_id: profileId,
+    p_target_calls_resolved: targetCallsResolved,
+  });
+  if (error) return { ok: false, error: "unknown" };
+
+  revalidatePath("/admin/scheduling");
+  return { ok: true };
+}
+
 export async function deleteShift(shiftId: string): Promise<SchedulingActionResult> {
   const actor = await getCurrentActor();
   if (!actor) return { ok: false, error: "forbidden" };

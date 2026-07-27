@@ -3811,6 +3811,62 @@ export type Database = {
           },
         ]
       }
+      staff_performance_goals: {
+        Row: {
+          branch_id: string
+          id: string
+          profile_id: string
+          target_calls_resolved: number
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          branch_id: string
+          id?: string
+          profile_id: string
+          target_calls_resolved: number
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          branch_id?: string
+          id?: string
+          profile_id?: string
+          target_calls_resolved?: number
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staff_performance_goals_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "staff_performance_goals_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "staff_performance_goals_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "staff_performance_goals_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       staff_shifts: {
         Row: {
           branch_id: string
@@ -5507,6 +5563,14 @@ export type Database = {
       set_plan_module: {
         Args: { p_included: boolean; p_module_key: string; p_plan_id: string }
         Returns: undefined
+      }
+      set_staff_performance_goal: {
+        Args: {
+          p_branch_id: string
+          p_profile_id: string
+          p_target_calls_resolved: number
+        }
+        Returns: string
       }
       set_subscription_checkout_ref: {
         Args: {

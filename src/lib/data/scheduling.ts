@@ -54,3 +54,71 @@ export async function getHoursWorked(tenantId: string, branchId: string, from: s
 
   return [...totals.entries()].map(([profileId, v]) => ({ profileId, badgeNo: v.badgeNo, totalMinutes: Math.round(v.totalMinutes) }));
 }
+
+export type StaffPerformanceRow = {
+  profileId: string;
+  badgeNo: string | null;
+  callsResolved: number;
+  avgResponseSeconds: number | null;
+  targetCallsResolved: number | null;
+};
+
+// Faz 16 Adım 0 (S65): siparişler personel bazında atfedilmediği için
+// (guest-driven QR sipariş modeli) hedef metriği garson çağrısı yanıt
+// performansı — waiter_calls.acknowledged_by/acknowledged_at (0020) zaten
+// bunu tutuyor, PRD §10'daki "garson performansı (yanıt süresi)" raporunun
+// ilk somut kullanımı. Hedef dönemsiz (personel başına tek güncel hedef,
+// 0082) — `from`/`to` yalnızca "gerçekleşen" tarafını (kayan rapor penceresi)
+// belirler, hedefin kendisi her zaman güncel/tek değerdir.
+export async function getStaffPerformance(
+  tenantId: string,
+  branchId: string,
+  from: string,
+  to: string,
+): Promise<StaffPerformanceRow[]> {
+  const supabase = await createClient();
+  const [{ data: calls }, { data: goals }] = await Promise.all([
+    supabase
+      .from("waiter_calls")
+      .select("acknowledged_by, created_at, acknowledged_at, profiles(badge_no)")
+      .eq("tenant_id", tenantId)
+      .eq("branch_id", branchId)
+      .eq("status", "acknowledged")
+      .not("acknowledged_by", "is", null)
+      .gte("acknowledged_at", from)
+      .lte("acknowledged_at", to),
+    supabase
+      .from("staff_performance_goals")
+      .select("profile_id, target_calls_resolved")
+      .eq("tenant_id", tenantId)
+      .eq("branch_id", branchId),
+  ]);
+
+  const targetByProfile = new Map((goals ?? []).map((g) => [g.profile_id, g.target_calls_resolved]));
+
+  const statsByProfile = new Map<string, { badgeNo: string | null; count: number; totalResponseSeconds: number }>();
+  for (const call of calls ?? []) {
+    const profileId = call.acknowledged_by!;
+    const responseSeconds = (new Date(call.acknowledged_at!).getTime() - new Date(call.created_at).getTime()) / 1000;
+    const existing = statsByProfile.get(profileId);
+    if (existing) {
+      existing.count += 1;
+      existing.totalResponseSeconds += responseSeconds;
+    } else {
+      statsByProfile.set(profileId, { badgeNo: call.profiles?.badge_no ?? null, count: 1, totalResponseSeconds: responseSeconds });
+    }
+  }
+
+  const profileIds = new Set([...statsByProfile.keys(), ...targetByProfile.keys()]);
+
+  return [...profileIds].map((profileId) => {
+    const stats = statsByProfile.get(profileId);
+    return {
+      profileId,
+      badgeNo: stats?.badgeNo ?? null,
+      callsResolved: stats?.count ?? 0,
+      avgResponseSeconds: stats ? Math.round(stats.totalResponseSeconds / stats.count) : null,
+      targetCallsResolved: targetByProfile.get(profileId) ?? null,
+    };
+  });
+}

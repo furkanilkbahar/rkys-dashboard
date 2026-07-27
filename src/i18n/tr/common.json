@@ -1006,6 +1006,16 @@
       "hoursEmpty": "Bu dönemde kapanmış vardiya kaydı yok.",
       "hoursFormat": "{hours} sa {minutes} dk",
       "exportCsv": "CSV İndir",
+      "performance": {
+        "title": "Personel Hedefleri",
+        "subtitle": "Hedef metriği: garson çağrısı yanıt performansı (son 14 gün) — siparişler personel bazında ayrıştırılmadığı için bu, ölçebildiğimiz en somut gösterge.",
+        "empty": "Henüz personel yok.",
+        "callsResolved": "{count} çağrı karşılandı",
+        "avgResponse": "ort. {seconds} sn yanıt",
+        "targetPlaceholder": "Hedef",
+        "setTarget": "Hedefi Kaydet",
+        "goalReached": "Hedefe Ulaşıldı"
+      },
       "errors": {
         "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
         "forbidden": "Bu işlem için yetkiniz yok.",
