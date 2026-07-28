@@ -1320,6 +1320,81 @@ export type Database = {
           },
         ]
       }
+      fiscal_receipts: {
+        Row: {
+          branch_id: string
+          created_by: string | null
+          id: string
+          issued_at: string
+          payment_id: string
+          provider: string
+          provider_ref: string
+          status: string
+          tenant_id: string
+          voided_at: string | null
+        }
+        Insert: {
+          branch_id: string
+          created_by?: string | null
+          id?: string
+          issued_at?: string
+          payment_id: string
+          provider?: string
+          provider_ref: string
+          status?: string
+          tenant_id: string
+          voided_at?: string | null
+        }
+        Update: {
+          branch_id?: string
+          created_by?: string | null
+          id?: string
+          issued_at?: string
+          payment_id?: string
+          provider?: string
+          provider_ref?: string
+          status?: string
+          tenant_id?: string
+          voided_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fiscal_receipts_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fiscal_receipts_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "effective_menu_items"
+            referencedColumns: ["branch_id"]
+          },
+          {
+            foreignKeyName: "fiscal_receipts_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fiscal_receipts_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: true
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fiscal_receipts_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       generic_qr_codes: {
         Row: {
           branch_id: string
@@ -5270,6 +5345,13 @@ export type Database = {
         Args: { p_business_date: string; p_courier_id: string }
         Returns: {
           delivered_count: number
+          total_amount_minor: number
+        }[]
+      }
+      get_fiscal_daily_summary: {
+        Args: { p_business_date: string }
+        Returns: {
+          receipt_count: number
           total_amount_minor: number
         }[]
       }

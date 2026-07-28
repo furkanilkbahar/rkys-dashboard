@@ -35,7 +35,7 @@ cross join (
   values
     ('pos_cash'), ('inventory'), ('recipes'), ('crm_loyalty'), ('campaigns'), ('gift_cards'),
     ('pickup'), ('delivery'), ('courier'), ('marketplace'), ('reservations'), ('kiosk'),
-    ('staff_scheduling'), ('accounting_export'), ('api_access')
+    ('staff_scheduling'), ('accounting_export'), ('api_access'), ('fiscal_integration')
 ) as m(module_key)
 on conflict (tenant_id, module_key) do nothing;
 

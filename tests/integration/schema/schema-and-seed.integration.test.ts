@@ -35,13 +35,13 @@ describe("Şema ve seed verisi (Supabase Studio manuel kontrolünün otomatik ka
     expect(count).toBe(3);
   });
 
-  it("seed: tenant_modules 15 modül × 3 tenant = 45 satır; acme.pos_cash açık, beta.pos_cash kapalı", async () => {
+  it("seed: tenant_modules 16 modül × 3 tenant = 48 satır; acme.pos_cash açık, beta.pos_cash kapalı", async () => {
     const client = serviceRoleClient();
     const { count, error } = await client
       .from("tenant_modules")
       .select("*", { count: "exact", head: true });
     expect(error).toBeNull();
-    expect(count).toBe(45);
+    expect(count).toBe(48);
 
     const { data: acme } = await client
       .from("tenant_modules")
