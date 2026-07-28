@@ -23,6 +23,9 @@ export default async function MarketingLayout({ children }: { children: React.Re
           <Link href="/kayit" className="hover:text-foreground">
             {t("nav.register")}
           </Link>
+          <Link href="/admin/login" className="hover:text-foreground">
+            {t("nav.login")}
+          </Link>
         </nav>
       </header>
       <div className="flex-1">{children}</div>

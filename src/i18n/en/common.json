@@ -1492,7 +1492,8 @@
     "nav": {
       "faq": "FAQ",
       "contact": "Contact",
-      "register": "Sign Up"
+      "register": "Sign Up",
+      "login": "Log In"
     },
     "hero": {
       "title": "Run your restaurant or cafe from one dashboard",

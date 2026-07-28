@@ -7,7 +7,7 @@
     }
   },
   "tenantNotFound": {
-    "title": "Tenant bulunamadı."
+    "title": "İşletme bulunamadı."
   },
   "cashier": {
     "title": "Kasa",
@@ -1311,7 +1311,7 @@
   "platform": {
     "title": "RKYS Süper Admin",
     "nav": {
-      "tenants": "Tenantlar",
+      "tenants": "İşletmeler",
       "pendingTenants": "Bekleyen Onaylar",
       "plans": "Planlar",
       "moduleRequests": "Modül Talepleri",
@@ -1333,11 +1333,11 @@
     },
     "dashboard": {
       "title": "Panel",
-      "totalTenants": "Toplam Tenant",
-      "activeTenants": "Aktif Tenant",
+      "totalTenants": "Toplam İşletme",
+      "activeTenants": "Aktif İşletme",
       "totalBranches": "Toplam Şube",
       "totalTables": "Toplam Masa",
-      "tenantsTitle": "Tenantlar",
+      "tenantsTitle": "İşletmeler",
       "branchCount": "{count} şube"
     },
     "tenantDetail": {
@@ -1438,11 +1438,11 @@
       "enforce2faLabel": "2FA zorunluluğu",
       "enforce2faDescription": "Açılırsa tüm personel için iki faktörlü doğrulama zorunlu olur.",
       "autoApproveRegistrationsLabel": "Kayıtları otomatik onayla",
-      "autoApproveRegistrationsDescription": "Açılırsa ödeme onaylandığında tenant elle onay beklemeden aktifleşir; kapalıysa platform admin her kaydı Bekleyen Onaylar'dan elle onaylar."
+      "autoApproveRegistrationsDescription": "Açılırsa ödeme onaylandığında işletme elle onay beklemeden aktifleşir; kapalıysa platform admin her kaydı Bekleyen Onaylar'dan elle onaylar."
     },
     "licenses": {
       "title": "Lisanslar",
-      "tenant": "Tenant",
+      "tenant": "İşletme",
       "licenseType": "Lisans Tipi",
       "type": {
         "lifetime": "Lifetime",
@@ -1465,7 +1465,7 @@
         "resolved": "Çözüldü"
       },
       "sender": {
-        "tenant": "Tenant",
+        "tenant": "İşletme",
         "platform": "Siz"
       },
       "replyPlaceholder": "Yanıtınızı yazın...",
@@ -1492,7 +1492,8 @@
     "nav": {
       "faq": "SSS",
       "contact": "İletişim",
-      "register": "Kayıt Ol"
+      "register": "Kayıt Ol",
+      "login": "Giriş Yap"
     },
     "hero": {
       "title": "Restoran ve kafenizi tek panelden yönetin",
@@ -1604,7 +1605,7 @@
   },
   "developerDocs": {
     "title": "Geliştirici Dokümantasyonu",
-    "subtitle": "Tenant API'nizi ve webhook entegrasyonunuzu kurmak için ihtiyacınız olan her şey.",
+    "subtitle": "İşletme API'nizi ve webhook entegrasyonunuzu kurmak için ihtiyacınız olan her şey.",
     "auth": {
       "title": "Kimlik Doğrulama",
       "body": "Panelinizden (Ayarlar → API Anahtarları) oluşturduğunuz anahtarı Authorization başlığında Bearer token olarak gönderin."
@@ -1801,9 +1802,9 @@
     },
     "sozlesme": {
       "title": "Kullanım Sözleşmesi",
-      "p1": "Bu sözleşme, RKYS Dashboard hizmetini kullanan işletmeler (\"tenant\") ile platform arasındaki ilişkiyi düzenler.",
+      "p1": "Bu sözleşme, RKYS Dashboard hizmetini kullanan işletmeler ile platform arasındaki ilişkiyi düzenler.",
       "p2": "Hizmet \"olduğu gibi\" sunulur; 14 günlük deneme süresi sonunda hizmetin devamı için bir plana abone olmanız gerekir.",
-      "p3": "Tenant, kendi müşterilerine ve personeline ait verilerin doğruluğundan ve yasal uyumluluğundan kendisi sorumludur.",
+      "p3": "İşletme, kendi müşterilerine ve personeline ait verilerin doğruluğundan ve yasal uyumluluğundan kendisi sorumludur.",
       "p4": "Platform, kötüye kullanım veya ödeme gecikmesi durumunda hesabı askıya alma hakkını saklı tutar."
     },
     "veriSilme": {
