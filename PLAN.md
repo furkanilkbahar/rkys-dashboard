@@ -112,13 +112,18 @@ Kapanış paketi yeşil (2026-07-28): unit 29/29, entegrasyon 421/421, E2E 2/2.
 - [x] Personel hedef/rozet sistemi (satış hedefi + ilerleme raporu) — S65
 - [x] Kurye canlı konum takibi (Leaflet + OpenStreetMap, ücretsiz/anahtarsız) — S66
 
-## Faz 17 — ÖKC/Mali Yazarkasa Adaptör Kapısı
-Gerçek GİB sertifikasyonu bu kapsamda alınamaz — iyzico/e-posta ile aynı mock-first adaptör deseni (arayüz + mock + dokümantasyon).
+## Faz 17 — ÖKC/Mali Yazarkasa Adaptör Kapısı ✅
+Gerçek GİB sertifikasyonu bu kapsamda alınamaz — iyzico/e-posta ile aynı mock-first adaptör deseni (arayüz + mock + dokümantasyon). Kapanış paketi (2026-07-28): unit 29/29, entegrasyon 437/438 (1 hata — `webhooks.integration.test.ts`, gerçek `httpbin.org`'a pg_net üzerinden bağımlı, bilinen dış-ağ kırılganlığı, bu fazla ilgisiz), migration 0084 prod Supabase Cloud'a uygulandı. E2E tam paketinde 21 başarısız + 24 flaky test görüldü ama hiçbiri fiskal koduna dokunmuyor (onboarding/kasa/mutfak/sadakat/rezervasyon/smoke gibi önceki fazlardan kalma birikmiş test bakım borcu) — bkz. Faz 19.
 - [x] `lib/fiscal/provider.ts` arayüzü + mock adaptör + admin ayarı — S67
 
 ## Faz 18 — Bayilik/Reseller Kanalı
 - [ ] İş modeli netleştirme (komisyon %, ödeme periyodu, onboarding) — kod öncesi kullanıcıyla netleşir
 - [ ] Netleşen modele göre şema + platform admin bayi yönetimi + referans kodu akışı
+
+## Faz 19 — E2E Test Bakımı
+2026-07-28 Faz 17 kapanışında tam E2E paketi koşturulunca ortaya çıktı: 21 test kalıcı başarısız + 24 flaky, fiskal entegrasyonla ilgisiz (örn. `smoke/app-boots.spec.ts` — marketing sayfasına eklenen "Neden RKYS Dashboard" başlığı yüzünden `getByText('RKYS Dashboard')` artık 2 elemente denk geliyor, strict-mode ihlali). Kapsam: 21 başarısız testin her biri tek tek incelenip gerçek regresyon mu yoksa güncel olmayan selector/senaryo mu ayrılacak; flaky olanlar için kök neden (mobile-safari timing, ağ bağımlılığı vb.) araştırılacak.
+- [ ] 21 başarısız E2E testin kök neden analizi + düzeltme
+- [ ] 24 flaky E2E testin kök neden analizi + kararlılaştırma
 
 ---
 
