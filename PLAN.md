@@ -131,7 +131,7 @@ Gerçek GİB sertifikasyonu bu kapsamda alınamaz — iyzico/e-posta ile aynı m
 
 ## Faz 20 — Demo Menü Şablonu Görsel Kalitesi (D85 takibi)
 - [ ] 48 stok fotoğrafını AI üretimi görselleriyle değiştir (GEMINI_API_KEY + `google-genai` paketi kurulunca)
-- [ ] `_templates/*` görsellerini local Supabase Storage'dan prod Supabase Cloud'a senkronize et (şu an yalnızca local'de var)
+- [x] `_templates/*` görsellerini local Supabase Storage'dan prod Supabase Cloud'a senkronize et (2026-07-28) — 48/48 başarıyla senkronize edildi, canlıda erişilebilir
 
 ---
 
