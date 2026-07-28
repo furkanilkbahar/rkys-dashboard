@@ -171,7 +171,7 @@
       }
     },
     "dashboard": {
-      "welcome": "Hoş geldin, {role}",
+      "welcome": "Hoş geldiniz, {tenantName}",
       "tenantLabel": "İşletme",
       "roleLabel": "Rol"
     },

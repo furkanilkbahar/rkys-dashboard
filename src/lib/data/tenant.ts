@@ -7,6 +7,7 @@ import { createServiceRoleClient } from "@/lib/supabase/server";
 export type CurrentTenant = {
   id: string;
   slug: string;
+  name: string;
   currency: string;
   themeKey: string;
 };
@@ -20,14 +21,15 @@ export async function getCurrentTenant(): Promise<CurrentTenant | null> {
   const headerStore = await headers();
   const id = headerStore.get("x-rkys-tenant-id");
   const slug = headerStore.get("x-rkys-tenant-slug");
+  const name = headerStore.get("x-rkys-tenant-name");
   const currency = headerStore.get("x-rkys-tenant-currency");
   const themeKey = headerStore.get("x-rkys-tenant-theme");
 
-  if (!id || !slug || !currency || !themeKey) {
+  if (!id || !slug || !name || !currency || !themeKey) {
     return null;
   }
 
-  return { id, slug, currency, themeKey };
+  return { id, slug, name, currency, themeKey };
 }
 
 /**

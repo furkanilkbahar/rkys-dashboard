@@ -22,19 +22,20 @@ import { LogoutMenuItem } from "./logout-menu-item";
 import { SidebarNav } from "./sidebar-nav";
 
 export function AdminShell({
-  tenantLabel,
+  tenantName,
   role,
   enabledModules,
   announcement,
   children,
 }: {
-  tenantLabel: string;
+  tenantName: string;
   role: string;
   enabledModules: ModuleKey[];
   announcement?: ActiveAnnouncement | null;
   children: ReactNode;
 }) {
   const t = useTranslations("admin");
+  const roleLabel = useTranslations("admin.staff.role")(role);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   return (
@@ -66,13 +67,13 @@ export function AdminShell({
             <DropdownMenuTrigger
               render={
                 <Button variant="ghost" size="sm" className="ml-auto gap-2">
-                  <span className="text-sm font-medium capitalize">{role}</span>
+                  <span className="text-sm font-medium">{tenantName}</span>
                 </Button>
               }
             />
             <DropdownMenuContent align="end">
               <DropdownMenuGroup>
-                <DropdownMenuLabel className="font-normal text-muted-foreground">{tenantLabel}</DropdownMenuLabel>
+                <DropdownMenuLabel className="font-normal text-muted-foreground">{roleLabel}</DropdownMenuLabel>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <LogoutMenuItem />

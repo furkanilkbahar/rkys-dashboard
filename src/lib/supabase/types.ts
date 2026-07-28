@@ -5659,6 +5659,7 @@ export type Database = {
         Returns: {
           tenant_currency: string
           tenant_id: string
+          tenant_name: string
           tenant_slug: string
           tenant_status: string
           tenant_theme_key: string

@@ -42,7 +42,7 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
 
   return (
     <AdminShell
-      tenantLabel={tenant?.slug ?? actor.tenantId}
+      tenantName={tenant?.name ?? tenant?.slug ?? "—"}
       role={actor.role}
       enabledModules={enabledModules}
       announcement={announcement}
