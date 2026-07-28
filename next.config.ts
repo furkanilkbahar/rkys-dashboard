@@ -20,6 +20,13 @@ const nextConfig: NextConfig = {
   // doğrudan node_modules'tan yüklensin — hem standalone hem Vercel build'i
   // için doğru davranış.
   serverExternalPackages: ["sharp"],
+  // sharp platforma özgü native paketi (@img/sharp-linux-x64 vb.) runtime'da
+  // dinamik path ile require ediyor — Turbopack'in dosya izleyicisi bunu
+  // statik analizle bulamıyor, libvips .so serverless bundle'a hiç
+  // kopyalanmıyordu (ERR_DLOPEN_FAILED). Açıkça dahil ediyoruz.
+  outputFileTracingIncludes: {
+    "/**": ["./node_modules/@img/sharp-libvips-linux-x64/**", "./node_modules/@img/sharp-linux-x64/**"],
+  },
 };
 
 export default withSentryConfig(withNextIntl(nextConfig), {
