@@ -15,11 +15,12 @@ import { SUPPORTED_LOCALES, type Locale } from "@/i18n/locales";
 import type { ImageActionResult } from "@/lib/menu/schemas";
 import type { AdminTheme } from "@/lib/data/adminSettings";
 import { MODULE_KEYS, type ModuleKey } from "@/lib/modules/keys";
+import { MENU_TEMPLATE_KEYS, type MenuTemplateKey } from "@/lib/onboarding/menuTemplates";
 import { SUPPORTED_CURRENCIES, type SettingsActionResult } from "@/lib/settings/schemas";
 
 type Actions = {
   clearDemoData: () => Promise<SettingsActionResult>;
-  applyMenuTemplate: () => Promise<SettingsActionResult>;
+  applyMenuTemplate: (templateKey: MenuTemplateKey) => Promise<SettingsActionResult>;
   createOnboardingTables: (branchId: string, count: number) => Promise<SettingsActionResult>;
   uploadTenantLogo: (formData: FormData) => Promise<ImageActionResult>;
   completeOnboarding: () => Promise<SettingsActionResult>;
@@ -47,7 +48,7 @@ export function OnboardingWizard({
 }) {
   const t = useTranslations("admin.onboarding");
   const router = useRouter();
-  const [screen, setScreen] = useState<"entry" | "wizard">("entry");
+  const [screen, setScreen] = useState<"entry" | "templatePicker" | "wizard">("entry");
   const [stepIndex, setStepIndex] = useState(0);
   const [selectedTheme, setSelectedTheme] = useState(themeKey);
   const step: Step = STEPS[stepIndex];
@@ -63,7 +64,8 @@ export function OnboardingWizard({
     }
   }
 
-  async function handleExploreWithDemo() {
+  async function handleSelectDemoTemplate(templateKey: MenuTemplateKey) {
+    await actions.applyMenuTemplate(templateKey);
     await actions.completeOnboarding();
     router.push("/admin");
   }
@@ -88,7 +90,7 @@ export function OnboardingWizard({
           <CardContent className="flex flex-col gap-4">
             <p className="text-sm text-muted-foreground">{t("entry.body")}</p>
             <div className="flex flex-col gap-3 sm:flex-row">
-              <Button type="button" variant="outline" className="flex-1" onClick={handleExploreWithDemo}>
+              <Button type="button" variant="outline" className="flex-1" onClick={() => setScreen("templatePicker")}>
                 {t("entry.exploreDemo")}
               </Button>
               <Button type="button" className="flex-1" onClick={handleStartFresh}>
@@ -97,6 +99,14 @@ export function OnboardingWizard({
             </div>
           </CardContent>
         </Card>
+      </main>
+    );
+  }
+
+  if (screen === "templatePicker") {
+    return (
+      <main className="mx-auto flex min-h-dvh max-w-3xl flex-col justify-center gap-6 p-6">
+        <TemplatePicker t={t} onSelect={handleSelectDemoTemplate} onBack={() => setScreen("entry")} />
       </main>
     );
   }
@@ -130,7 +140,7 @@ export function OnboardingWizard({
 
       {step === "tables" && <TablesStep t={t} branchId={branchId} createOnboardingTables={actions.createOnboardingTables} />}
 
-      {step === "menu" && <MenuTemplateStep t={t} applyMenuTemplate={actions.applyMenuTemplate} />}
+      {step === "menu" && <TemplatePicker t={t} onSelect={actions.applyMenuTemplate} />}
 
       {step === "modules" && <ModulesStep t={t} toggleModule={actions.toggleModule} />}
 
@@ -299,32 +309,55 @@ function TablesStep({
   );
 }
 
-function MenuTemplateStep({
+function TemplatePicker({
   t,
-  applyMenuTemplate,
+  onSelect,
+  onBack,
 }: {
   t: ReturnType<typeof useTranslations>;
-  applyMenuTemplate: Actions["applyMenuTemplate"];
+  onSelect: (templateKey: MenuTemplateKey) => Promise<unknown>;
+  onBack?: () => void;
 }) {
-  const [status, setStatus] = useState<"idle" | "applied">("idle");
+  const [applied, setApplied] = useState<MenuTemplateKey | null>(null);
 
-  async function handleApply() {
-    const result = await applyMenuTemplate();
-    if (result.ok) setStatus("applied");
+  async function handleSelect(templateKey: MenuTemplateKey) {
+    await onSelect(templateKey);
+    setApplied(templateKey);
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t("menu.title")}</CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-2">
+    <div className="flex flex-col gap-4">
+      <div>
+        <h2 className="text-lg font-semibold">{t("menu.title")}</h2>
         <p className="text-sm text-muted-foreground">{t("menu.body")}</p>
-        <Button type="button" size="sm" onClick={handleApply} disabled={status === "applied"} className="w-fit">
-          {status === "applied" ? t("menu.applied") : t("menu.apply")}
+      </div>
+      <div className="grid gap-4 sm:grid-cols-3">
+        {MENU_TEMPLATE_KEYS.map((templateKey) => (
+          <Card key={templateKey}>
+            <CardHeader>
+              <CardTitle className="text-base">{t(`menu.templates.${templateKey}.title`)}</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-3">
+              <p className="text-sm text-muted-foreground">{t(`menu.templates.${templateKey}.body`)}</p>
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => handleSelect(templateKey)}
+                disabled={applied !== null}
+                className="w-fit"
+              >
+                {applied === templateKey ? t("menu.applied") : t("menu.apply")}
+              </Button>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+      {onBack && (
+        <Button type="button" variant="ghost" size="sm" onClick={onBack} className="w-fit">
+          {t("back")}
         </Button>
-      </CardContent>
-    </Card>
+      )}
+    </div>
   );
 }
 

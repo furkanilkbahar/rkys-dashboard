@@ -48,9 +48,9 @@ test("S8: Sıfırdan kur — sihirbazın tüm adımları tamamlanınca dashboard
   await expect(page.getByRole("button", { name: "Masalar oluşturuldu" })).toBeVisible();
   await page.getByRole("button", { name: "İleri" }).click();
 
-  // Şablon menü
+  // Şablon menü — 3 şablon kartından ilkini uygula
   await expect(page.getByText("Şablon Menü")).toBeVisible();
-  await page.getByRole("button", { name: "Standart menüyü ekle" }).click();
+  await page.getByRole("button", { name: "Bu şablonu uygula" }).first().click();
   await expect(page.getByRole("button", { name: "Menü eklendi" })).toBeVisible();
   await page.getByRole("button", { name: "İleri" }).click();
 
@@ -73,12 +73,14 @@ test("S8: Sıfırdan kur — sihirbazın tüm adımları tamamlanınca dashboard
   await serviceRoleClient().from("tenants").delete().eq("id", throwaway.tenantId);
 });
 
-test("S8: Demo veriyle keşfet — tek tıkla onboarding tamamlanır", async ({ page, baseURL }) => {
+test("S8: Demo veriyle keşfet — bir şablon seçilince onboarding tamamlanır", async ({ page, baseURL }) => {
   const throwaway = await createThrowawayTenant("e2e-explore");
 
   await loginToOnboarding(page, baseURL!, throwaway.slug, throwaway.email);
 
   await page.getByRole("button", { name: "Demo veriyle keşfet" }).click();
+  await expect(page.getByText("Şablon Menü")).toBeVisible();
+  await page.getByRole("button", { name: "Bu şablonu uygula" }).first().click();
   await expect(page).toHaveURL(/\/admin$/);
   await expect(page.getByRole("heading", { name: /Hoş geldin/ })).toBeVisible();
 

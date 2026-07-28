@@ -577,9 +577,23 @@
       },
       "menu": {
         "title": "Template Menu",
-        "body": "One starter category and a sample item are added — edit them however you like.",
-        "apply": "Add the standard menu",
-        "applied": "Menu added"
+        "body": "Pick a starter template for your menu — categories, products, and images are added automatically. Edit them however you like.",
+        "apply": "Apply this template",
+        "applied": "Menu added",
+        "templates": {
+          "cafe": {
+            "title": "Luxury Café",
+            "body": "A warm café menu full of specialty coffees, desserts, and breakfast items."
+          },
+          "restaurant": {
+            "title": "Fine-Dining Restaurant",
+            "body": "An elegant restaurant menu with carefully crafted starters, mains, and seafood."
+          },
+          "patisserie": {
+            "title": "Patisserie & Bakery",
+            "body": "A bakery menu full of fresh breads, cookies, cakes, and savory pastries."
+          }
+        }
       },
       "modules": {
         "title": "Module Selection"

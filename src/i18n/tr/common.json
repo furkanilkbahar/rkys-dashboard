@@ -577,9 +577,23 @@
       },
       "menu": {
         "title": "Şablon Menü",
-        "body": "Başlangıç için bir kategori ve örnek bir ürün eklenir — dilediğiniz gibi düzenleyebilirsiniz.",
-        "apply": "Standart menüyü ekle",
-        "applied": "Menü eklendi"
+        "body": "Menünüz için bir başlangıç şablonu seçin — kategoriler, ürünler ve görseller otomatik eklenir. Dilediğiniz gibi düzenleyebilirsiniz.",
+        "apply": "Bu şablonu uygula",
+        "applied": "Menü eklendi",
+        "templates": {
+          "cafe": {
+            "title": "Lüks Kafe",
+            "body": "Özel kahveler, tatlılar ve kahvaltılıklarla dolu sıcak bir kafe menüsü."
+          },
+          "restaurant": {
+            "title": "Fine-Dining Restoran",
+            "body": "Özenle hazırlanmış başlangıçlar, ana yemekler ve deniz ürünleriyle şık bir restoran menüsü."
+          },
+          "patisserie": {
+            "title": "Pastane & Fırın",
+            "body": "Taze ekmekler, kurabiyeler, pastalar ve böreklerle dolu bir pastane menüsü."
+          }
+        }
       },
       "modules": {
         "title": "Modül Seçimi"

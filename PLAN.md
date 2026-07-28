@@ -32,6 +32,7 @@
 - [x] Personel (roller, PIN, cihaz yetkilendirme, **izin bayrakları UI**), garson profili
 - [x] Ayarlar: sipariş modu, timeout, çağrı tipleri, diller, para birimi, bahşiş çipleri, değerlendirme, tema, **Modül aç/kapa ekranı**
 - [x] Onboarding: demo veri (toplu temizleme) / sıfırdan kur (+**modül seçimi adımı**)
+- [x] **Faz 2 revizyonu (D85, 2026-07-28):** tek sabit demo şablonu yerine 3 çoklu demo menü şablonu (kafe/restoran/pastane, 4 kategori × 4 ürün + görsel) — hem giriş ekranındaki "Demo veriyle keşfet" hem sihirbazın "Şablon Menü" adımı `TemplatePicker` ile 3 kart gösteriyor. Görseller şimdilik stok arama ile geldi, AI üretimi altyapısı kurulunca değiştirilecek (bkz. Faz 20).
 
 ## Faz 3 — Kasa + Ödeme + İade/İkram + Temel Raporlar
 - [x] **Kasa modülü:** vardiya aç/kapa, nakit sayım/fark, `cash_movements`, **POS-lite sipariş girişi**, gün sonu (`day_closures`)
@@ -127,6 +128,10 @@ Gerçek GİB sertifikasyonu bu kapsamda alınamaz — iyzico/e-posta ile aynı m
 - [x] `menu/campaigns.spec.ts` (S27) — kampanya seçim kutusunun gösterilen değeri "Test Kampanyası" metnini tekrarlıyordu → `.first()` ile daraltıldı
 - [ ] `staff/waiter-call-realtime.spec.ts` — izole/az yükte de tutarlı başarısız; "Bağlı" durumunu bekleme denemesi kök nedeni çözmedi, gerçek neden hâlâ belirsiz (olası: realtime abonelik/insert arasında kaçırılan olay, ya da paylaşılan `acme` tenant'ında Masa 3 için bozuk/stale veri) — üretim kodu (realtime akışı) değişikliği gerektirebilir, ayrı bir karar/inceleme gerekir
 - [ ] `admin/ingredients-recipe.spec.ts` (S34, yalnızca mobile-safari) — "Süt" malzeme eklendikten sonra listede görünmesi zaman zaman gecikiyor (retry'de geçiyor, webkit'e özgü olabilir) — kök neden netleşmedi
+
+## Faz 20 — Demo Menü Şablonu Görsel Kalitesi (D85 takibi)
+- [ ] 48 stok fotoğrafını AI üretimi görselleriyle değiştir (GEMINI_API_KEY + `google-genai` paketi kurulunca)
+- [ ] `_templates/*` görsellerini local Supabase Storage'dan prod Supabase Cloud'a senkronize et (şu an yalnızca local'de var)
 
 ---
 

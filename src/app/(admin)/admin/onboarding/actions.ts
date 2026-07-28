@@ -7,6 +7,7 @@ import { revalidatePath } from "next/cache";
 import { getCurrentActor } from "@/lib/auth/session";
 import { optimizeMenuImage } from "@/lib/images/optimize";
 import { ALLOWED_IMAGE_TYPES, MAX_IMAGE_BYTES, type ImageActionResult } from "@/lib/menu/schemas";
+import { MENU_TEMPLATES, menuTemplateImagePath, type MenuTemplateKey } from "@/lib/onboarding/menuTemplates";
 import { generateRawToken, hashToken } from "@/lib/qr/token";
 import type { SettingsActionResult } from "@/lib/settings/schemas";
 import { createClient } from "@/lib/supabase/server";
@@ -27,34 +28,59 @@ export async function clearDemoData(): Promise<SettingsActionResult> {
   return { ok: true };
 }
 
-// Sabit tek şablon (Faz 2 kapsamı — çoklu şablon seçimi sonraki faz):
-// 1 kategori + 1 ürün, menu/actions.ts'in genel CRUD sonuç sözleşmesine
-// (id döndürmeyen MenuActionResult) bağlı kalmadan kendi içinde ekler.
-export async function applyMenuTemplate(): Promise<SettingsActionResult> {
+// Çoklu şablon seçimi (Faz 2 kapsamı genişletildi — demo menü şablonları,
+// bkz. PLAN.md): her şablon birden çok kategori + ürün + görsel içerir,
+// menu/actions.ts'in genel CRUD sonuç sözleşmesine (id döndürmeyen
+// MenuActionResult) bağlı kalmadan kendi içinde ekler.
+export async function applyMenuTemplate(templateKey: MenuTemplateKey): Promise<SettingsActionResult> {
   const actor = await requireStaffActor();
   if (!actor) return { ok: false, error: "forbidden" };
 
+  const template = MENU_TEMPLATES.find((t) => t.key === templateKey);
+  if (!template) return { ok: false, error: "invalid_input" };
+
   const supabase = await createClient();
-  const { data: category, error: categoryError } = await supabase
-    .from("menu_categories")
-    .insert({ tenant_id: actor.tenantId, layout: "grid", is_active: true })
-    .select("id")
-    .single();
-  if (categoryError || !category) return { ok: false, error: "unknown" };
+  const translations: { tenant_id: string; entity_type: string; entity_id: string; locale: string; field: string; value: string }[] = [];
 
-  const { data: product, error: productError } = await supabase
-    .from("products")
-    .insert({ tenant_id: actor.tenantId, category_id: category.id, track_mode: "simple", base_price_minor: 5000 })
-    .select("id")
-    .single();
-  if (productError || !product) return { ok: false, error: "unknown" };
+  for (const [categoryIndex, category] of template.categories.entries()) {
+    const { data: categoryRow, error: categoryError } = await supabase
+      .from("menu_categories")
+      .insert({ tenant_id: actor.tenantId, layout: "grid", is_active: true, display_order: categoryIndex })
+      .select("id")
+      .single();
+    if (categoryError || !categoryRow) return { ok: false, error: "unknown" };
 
-  await supabase.from("content_translations").upsert([
-    { tenant_id: actor.tenantId, entity_type: "menu_category", entity_id: category.id, locale: "tr", field: "name", value: "Genel Menü" },
-    { tenant_id: actor.tenantId, entity_type: "menu_category", entity_id: category.id, locale: "en", field: "name", value: "General Menu" },
-    { tenant_id: actor.tenantId, entity_type: "product", entity_id: product.id, locale: "tr", field: "name", value: "Örnek Ürün" },
-    { tenant_id: actor.tenantId, entity_type: "product", entity_id: product.id, locale: "en", field: "name", value: "Sample Item" },
-  ]);
+    translations.push(
+      { tenant_id: actor.tenantId, entity_type: "menu_category", entity_id: categoryRow.id, locale: "tr", field: "name", value: category.nameTr },
+      { tenant_id: actor.tenantId, entity_type: "menu_category", entity_id: categoryRow.id, locale: "en", field: "name", value: category.nameEn },
+    );
+
+    for (const [productIndex, product] of category.products.entries()) {
+      const productImageUrl = supabase.storage.from("menu-images").getPublicUrl(menuTemplateImagePath(templateKey, product.slug)).data.publicUrl;
+      const { data: productRow, error: productError } = await supabase
+        .from("products")
+        .insert({
+          tenant_id: actor.tenantId,
+          category_id: categoryRow.id,
+          track_mode: "simple",
+          base_price_minor: product.priceMinor,
+          display_order: productIndex,
+          image_url: productImageUrl,
+        })
+        .select("id")
+        .single();
+      if (productError || !productRow) return { ok: false, error: "unknown" };
+
+      translations.push(
+        { tenant_id: actor.tenantId, entity_type: "product", entity_id: productRow.id, locale: "tr", field: "name", value: product.nameTr },
+        { tenant_id: actor.tenantId, entity_type: "product", entity_id: productRow.id, locale: "en", field: "name", value: product.nameEn },
+        { tenant_id: actor.tenantId, entity_type: "product", entity_id: productRow.id, locale: "tr", field: "description", value: product.descriptionTr },
+        { tenant_id: actor.tenantId, entity_type: "product", entity_id: productRow.id, locale: "en", field: "description", value: product.descriptionEn },
+      );
+    }
+  }
+
+  await supabase.from("content_translations").upsert(translations);
 
   revalidatePath("/admin/onboarding");
   return { ok: true };
