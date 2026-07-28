@@ -4,7 +4,7 @@ import { AdminShell } from "@/components/admin/admin-shell";
 import { requireAdminActor } from "@/lib/auth/adminGuard";
 import { getActiveAnnouncement } from "@/lib/data/announcements";
 import { getAdminModules } from "@/lib/data/adminSettings";
-import { getCurrentTenant } from "@/lib/data/tenant";
+import { getAdminTenantName } from "@/lib/data/tenant";
 import { isOnboardingCompleted } from "@/lib/data/onboarding";
 import { isSubscriptionActive } from "@/lib/data/subscription";
 import { resolveLicenseGateRedirect } from "@/lib/licensing/verify";
@@ -33,8 +33,8 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
     redirect("/admin/billing");
   }
 
-  const [tenant, modules, announcement] = await Promise.all([
-    getCurrentTenant(),
+  const [tenantName, modules, announcement] = await Promise.all([
+    getAdminTenantName(actor.tenantId),
     getAdminModules(actor.tenantId),
     getActiveAnnouncement(),
   ]);
@@ -42,7 +42,7 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
 
   return (
     <AdminShell
-      tenantName={tenant?.name ?? tenant?.slug ?? "—"}
+      tenantName={tenantName ?? "—"}
       role={actor.role}
       enabledModules={enabledModules}
       announcement={announcement}

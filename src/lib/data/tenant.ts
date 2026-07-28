@@ -2,7 +2,7 @@ import "server-only";
 
 import { headers } from "next/headers";
 
-import { createServiceRoleClient } from "@/lib/supabase/server";
+import { createClient, createServiceRoleClient } from "@/lib/supabase/server";
 
 export type CurrentTenant = {
   id: string;
@@ -30,6 +30,19 @@ export async function getCurrentTenant(): Promise<CurrentTenant | null> {
   }
 
   return { id, slug, name, currency, themeKey };
+}
+
+/**
+ * Admin panelinde firma adını göstermek için — getCurrentTenant() domain
+ * bazlı (kök/marketing domain'de, ör. henüz custom domain bağlanmamış tenant'ta,
+ * header hiç yok, null döner). Oturum sahibi zaten actor.tenantId'yi biliyor;
+ * bu sorgu RLS (tenants_select_own) ile korunur, hangi domainden erişildiğinden
+ * bağımsız çalışır.
+ */
+export async function getAdminTenantName(tenantId: string): Promise<string | null> {
+  const supabase = await createClient();
+  const { data } = await supabase.from("tenants").select("name").eq("id", tenantId).single();
+  return data?.name ?? null;
 }
 
 /**

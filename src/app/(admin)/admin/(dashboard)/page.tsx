@@ -2,13 +2,12 @@ import { getTranslations } from "next-intl/server";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireAdminActor } from "@/lib/auth/adminGuard";
-import { getCurrentTenant } from "@/lib/data/tenant";
+import { getAdminTenantName } from "@/lib/data/tenant";
 
 export default async function AdminDashboardPage() {
-  await requireAdminActor();
-  const tenant = await getCurrentTenant();
+  const actor = await requireAdminActor();
   const t = await getTranslations("admin.dashboard");
-  const tenantName = tenant?.name ?? tenant?.slug ?? "—";
+  const tenantName = (await getAdminTenantName(actor.tenantId)) ?? "—";
 
   return (
     <div className="flex flex-col gap-4">
