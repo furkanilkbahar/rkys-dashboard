@@ -4,12 +4,22 @@ import { NextResponse, type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 import type { Database } from "@/lib/supabase/types";
 
-const ROOT_DOMAIN = process.env.NEXT_PUBLIC_ROOT_DOMAIN!;
+// Vercel'de tek deployment'a birden fazla *.vercel.app alias'ı bağlanabiliyor
+// (proje/takım adı değişiklikleri, yeniden adlandırmalar birikiyor) — hepsi
+// kök domain (marketing/platform) sayılmalı. ROOT_DOMAINS virgülle ayrılmış
+// liste kabul eder; yoksa geriye dönük tekil NEXT_PUBLIC_ROOT_DOMAIN'e düşer
+// (yerel geliştirme: "localhost:3000").
+const ROOT_DOMAINS = new Set(
+  (process.env.ROOT_DOMAINS ?? process.env.NEXT_PUBLIC_ROOT_DOMAIN ?? "")
+    .split(",")
+    .map((domain) => domain.trim())
+    .filter(Boolean),
+);
 
 export async function proxy(request: NextRequest) {
   const host = request.headers.get("host") ?? "";
 
-  if (host === ROOT_DOMAIN) {
+  if (ROOT_DOMAINS.has(host)) {
     // Kök domain: marketing/platform yüzeyleri, tenant context'i yok.
     return updateSession(request, NextResponse.next());
   }
