@@ -15,6 +15,11 @@ const nextConfig: NextConfig = {
   // paketlemesini yapıyor; standalone yalnızca Dockerfile'ın set ettiği
   // DOCKER_BUILD=true'da açık.
   output: process.env.DOCKER_BUILD === "true" ? "standalone" : undefined,
+  // wasm-vips'in .wasm dosya referansını bundler statik asset sanıp
+  // /_next/static/media/'ya taşıyordu — sunucu (Node) tarafında böyle bir
+  // HTTP path dosya sistemi yolu değil, ENOENT ile çöküyordu. External
+  // işaretlenince paket kendi __dirname'ine göre doğru yolu buluyor.
+  serverExternalPackages: ["wasm-vips"],
 };
 
 export default withSentryConfig(withNextIntl(nextConfig), {
