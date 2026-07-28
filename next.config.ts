@@ -13,6 +13,11 @@ const nextConfig: NextConfig = {
   // bundle'ı gerektirir — node_modules'ün tamamını taşımak yerine yalnızca
   // kullanılan bağımlılıklar .next/standalone'a kopyalanır.
   output: "standalone",
+  // standalone'ın dosya-izleme adımı sharp'ın native libvips .so'sunu
+  // kopyalamıyor (bilinen Next.js+sharp+standalone sorunu, prod'da
+  // ERR_DLOPEN_FAILED ile çöküyordu) — bu paket tracing'den hariç tutulup
+  // runtime'da doğrudan node_modules'tan yükleniyor.
+  serverExternalPackages: ["sharp"],
 };
 
 export default withSentryConfig(withNextIntl(nextConfig), {
