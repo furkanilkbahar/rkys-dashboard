@@ -19,13 +19,16 @@ export async function GET(request: Request, { params }: { params: Promise<{ rawT
   const base = `${new URL(request.url).protocol}//${request.headers.get("host")}`;
 
   const service = createServiceRoleClient();
-  const { data: table } = await service
+  const { data: table, error } = await service
     .from("tables")
     .select("id")
     .eq("qr_token_hash", tokenHash)
     .eq("is_active", true)
     .maybeSingle();
 
+  if (error) {
+    console.error("masa QR lookup failed", error);
+  }
   if (!table) {
     return NextResponse.redirect(new URL("/masa/gecersiz", base));
   }

@@ -17,6 +17,9 @@ export async function bootstrapGuestSessionForTable(tableId: string): Promise<bo
     "open_or_get_active_table_session",
     { p_table_id: tableId },
   );
+  if (sessionError) {
+    console.error("open_or_get_active_table_session failed", sessionError);
+  }
   if (sessionError || !tableSessionId) {
     return false;
   }
@@ -37,6 +40,9 @@ export async function bootstrapGuestSessionForTable(tableId: string): Promise<bo
 
   const supabase = await createClient();
   const { data: authData, error: authError } = await supabase.auth.signInAnonymously();
+  if (authError) {
+    console.error("guest anonymous sign-in failed", authError);
+  }
   if (authError || !authData.user) {
     return false;
   }
@@ -48,6 +54,7 @@ export async function bootstrapGuestSessionForTable(tableId: string): Promise<bo
     p_branch_id: table.branch_id,
   });
   if (linkError) {
+    console.error("link_guest_device failed", linkError);
     return false;
   }
 

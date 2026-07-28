@@ -16,13 +16,16 @@ export async function GET(request: Request, { params }: { params: Promise<{ rawT
   const base = `${new URL(request.url).protocol}//${request.headers.get("host")}`;
 
   const service = createServiceRoleClient();
-  const { data: generic } = await service
+  const { data: generic, error } = await service
     .from("generic_qr_codes")
     .select("id")
     .eq("qr_token_hash", tokenHash)
     .eq("is_active", true)
     .maybeSingle();
 
+  if (error) {
+    console.error("generic QR lookup failed", error);
+  }
   if (!generic) {
     return NextResponse.redirect(new URL("/masa/gecersiz", base));
   }
