@@ -84,7 +84,7 @@ test("S47: admin cihaz+PIN oluşturur, cihaz kurulur, PIN ile giriş-çıkış y
     expect(entry?.clock_out_at).not.toBeNull();
 
     await page.goto(tenantUrl(baseURL!, subdomain, "/admin/scheduling"));
-    await expect(page.getByText("OWN-1")).toBeVisible();
+    await expect(page.getByText("OWN-1").first()).toBeVisible();
 
     const shiftDate = new Date(Date.now() + 2 * 86_400_000).toISOString().slice(0, 10);
     await page.getByRole("combobox", { name: "Personel" }).click();

@@ -82,7 +82,7 @@ test("S27: admin kampanya+kupon oluşturur, misafir sepette kuponu uygular", asy
     await page.getByLabel("Ad", { exact: true }).fill("Test Kampanyası");
     await page.getByLabel("Yüzde (%)").fill("20");
     await page.getByRole("button", { name: "+ Kampanya Ekle" }).click();
-    await expect(page.getByText("Test Kampanyası")).toBeVisible();
+    await expect(page.getByText("Test Kampanyası").first()).toBeVisible();
 
     await page.getByLabel("Kod").fill("SAVE20");
     await page.getByRole("button", { name: "+ Kupon Ekle" }).click();

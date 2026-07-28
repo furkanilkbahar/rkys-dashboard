@@ -121,9 +121,12 @@ Gerçek GİB sertifikasyonu bu kapsamda alınamaz — iyzico/e-posta ile aynı m
 - [ ] Netleşen modele göre şema + platform admin bayi yönetimi + referans kodu akışı
 
 ## Faz 19 — E2E Test Bakımı
-2026-07-28 Faz 17 kapanışında tam E2E paketi koşturulunca ortaya çıktı: 21 test kalıcı başarısız + 24 flaky, fiskal entegrasyonla ilgisiz (örn. `smoke/app-boots.spec.ts` — marketing sayfasına eklenen "Neden RKYS Dashboard" başlığı yüzünden `getByText('RKYS Dashboard')` artık 2 elemente denk geliyor, strict-mode ihlali). Kapsam: 21 başarısız testin her biri tek tek incelenip gerçek regresyon mu yoksa güncel olmayan selector/senaryo mu ayrılacak; flaky olanlar için kök neden (mobile-safari timing, ağ bağımlılığı vb.) araştırılacak.
-- [ ] 21 başarısız E2E testin kök neden analizi + düzeltme
-- [ ] 24 flaky E2E testin kök neden analizi + kararlılaştırma
+2026-07-28 Faz 17 kapanışında tam E2E paketi koşturulunca ortaya çıktı: 21 test kalıcı başarısız + 24 flaky, fiskal entegrasyonla ilgisiz. Triyaj (2026-07-28): azaltılmış worker sayısıyla tekrar koşturulunca bu listenin büyük kısmı (~35/45) tek dev sunucusuna karşı yüksek paralellikten kaynaklanan yük/zamanlama kırılganlığı çıktı — izole/az yükte güvenilir geçiyorlar (bkz. playwright.config.ts'teki mevcut "realtime testleri yüksek paralellikte" notu, kapsamı bu sefer daha genişmiş). Geriye gerçek, tekrarlanabilir 5 sorun kaldı:
+- [x] `smoke/app-boots.spec.ts` — marketing sayfasındaki "Neden RKYS Dashboard" başlığı `getByText('RKYS Dashboard')`'u 2 elemente düşürüyordu (strict-mode) → locator `banner` rolüyle daraltıldı
+- [x] `staff-scheduling.spec.ts` (S47) — personel hedef/rozet satırı (Faz 16) "OWN-1" metnini tekrarlıyordu → `.first()` ile daraltıldı
+- [x] `menu/campaigns.spec.ts` (S27) — kampanya seçim kutusunun gösterilen değeri "Test Kampanyası" metnini tekrarlıyordu → `.first()` ile daraltıldı
+- [ ] `staff/waiter-call-realtime.spec.ts` — izole/az yükte de tutarlı başarısız; "Bağlı" durumunu bekleme denemesi kök nedeni çözmedi, gerçek neden hâlâ belirsiz (olası: realtime abonelik/insert arasında kaçırılan olay, ya da paylaşılan `acme` tenant'ında Masa 3 için bozuk/stale veri) — üretim kodu (realtime akışı) değişikliği gerektirebilir, ayrı bir karar/inceleme gerekir
+- [ ] `admin/ingredients-recipe.spec.ts` (S34, yalnızca mobile-safari) — "Süt" malzeme eklendikten sonra listede görünmesi zaman zaman gecikiyor (retry'de geçiyor, webkit'e özgü olabilir) — kök neden netleşmedi
 
 ---
 
