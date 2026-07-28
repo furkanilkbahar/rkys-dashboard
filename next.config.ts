@@ -12,14 +12,9 @@ const nextConfig: NextConfig = {
   // Self-hosted Docker imajı (bkz. Dockerfile) minimal bir çalışma zamanı
   // bundle'ı gerektirir — node_modules'ün tamamını taşımak yerine yalnızca
   // kullanılan bağımlılıklar .next/standalone'a kopyalanır. Vercel kendi
-  // native-modül paketlemesini yapıyor; ikisi çakışınca sharp'ın libvips
-  // .so'su eksik kalıp prod'da ERR_DLOPEN_FAILED veriyordu — bu yüzden
-  // standalone yalnızca Dockerfile'ın set ettiği DOCKER_BUILD=true'da açık.
+  // paketlemesini yapıyor; standalone yalnızca Dockerfile'ın set ettiği
+  // DOCKER_BUILD=true'da açık.
   output: process.env.DOCKER_BUILD === "true" ? "standalone" : undefined,
-  // sharp'ın native binary'si Next'in bundling/tracing'inden bağımsız,
-  // doğrudan node_modules'tan yüklensin — hem standalone hem Vercel build'i
-  // için doğru davranış.
-  serverExternalPackages: ["sharp"],
 };
 
 export default withSentryConfig(withNextIntl(nextConfig), {
