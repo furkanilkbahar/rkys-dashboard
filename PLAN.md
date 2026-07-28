@@ -109,12 +109,12 @@ Kapanış paketi yeşil (2026-07-28): unit 29/29, entegrasyon 421/421, E2E 2/2.
 - [x] Platform tarafı modül fiyat yönetimi (`/platform/plans`)
 
 ## Faz 16 — Personel Motivasyonu & Kurye Canlı Takip
-- [ ] Personel hedef/rozet sistemi (satış hedefi + ilerleme raporu)
-- [ ] Kurye canlı konum takibi (Leaflet + OpenStreetMap, ücretsiz/anahtarsız)
+- [x] Personel hedef/rozet sistemi (satış hedefi + ilerleme raporu) — S65
+- [x] Kurye canlı konum takibi (Leaflet + OpenStreetMap, ücretsiz/anahtarsız) — S66
 
 ## Faz 17 — ÖKC/Mali Yazarkasa Adaptör Kapısı
 Gerçek GİB sertifikasyonu bu kapsamda alınamaz — iyzico/e-posta ile aynı mock-first adaptör deseni (arayüz + mock + dokümantasyon).
-- [ ] `lib/fiscal/provider.ts` arayüzü + mock adaptör + admin ayarı
+- [x] `lib/fiscal/provider.ts` arayüzü + mock adaptör + admin ayarı — S67
 
 ## Faz 18 — Bayilik/Reseller Kanalı
 - [ ] İş modeli netleştirme (komisyon %, ödeme periyodu, onboarding) — kod öncesi kullanıcıyla netleşir

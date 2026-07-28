@@ -431,8 +431,14 @@
           "kiosk": "Kiosk",
           "staff_scheduling": "Personel Vardiya Planlama",
           "accounting_export": "Muhasebe Aktarımı",
-          "api_access": "API Erişimi"
+          "api_access": "API Erişimi",
+          "fiscal_integration": "ÖKC Entegrasyonu"
         }
+      },
+      "fiscal": {
+        "title": "ÖKC Entegrasyonu",
+        "mockNotice": "Mock modu aktif — gerçek bir ÖKC sağlayıcısı henüz seçilmedi, fişler yalnızca denetim izinde kaydedilir.",
+        "todayReceipts": "Bugün {count} fiş kesildi"
       },
       "errors": {
         "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
@@ -1510,7 +1516,7 @@
     },
     "moduleShowcase": {
       "title": "İhtiyacınız olan modülü açın",
-      "subtitle": "Çekirdek QR menü her zaman açık; aşağıdaki 15 modülün her biri planınıza dahilse veya talep ettiğinizde ayrı ayrı devreye girer.",
+      "subtitle": "Çekirdek QR menü her zaman açık; aşağıdaki 16 modülün her biri planınıza dahilse veya talep ettiğinizde ayrı ayrı devreye girer.",
       "descriptions": {
         "pos_cash": "Vardiya, gün sonu ve kasa raporları tek ekranda.",
         "inventory": "Stok ve maliyeti gerçek zamanlı takip edin.",
@@ -1526,7 +1532,8 @@
         "kiosk": "Self-servis dokunmatik sipariş modu.",
         "staff_scheduling": "Haftalık çizelge ve PIN ile giriş-çıkış.",
         "accounting_export": "Muhasebe programınıza uyumlu export.",
-        "api_access": "Kendi entegrasyonlarınız için API ve webhook."
+        "api_access": "Kendi entegrasyonlarınız için API ve webhook.",
+        "fiscal_integration": "Ödemeler için ÖKC (mali yazarkasa) fişi kesimi."
       }
     },
     "integrations": {

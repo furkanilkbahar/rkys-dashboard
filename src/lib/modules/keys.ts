@@ -17,6 +17,7 @@ export const MODULE_KEYS = [
   "staff_scheduling",
   "accounting_export",
   "api_access",
+  "fiscal_integration",
 ] as const;
 
 export type ModuleKey = (typeof MODULE_KEYS)[number];

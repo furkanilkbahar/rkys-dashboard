@@ -431,8 +431,14 @@
           "kiosk": "Kiosk",
           "staff_scheduling": "Staff Scheduling",
           "accounting_export": "Accounting Export",
-          "api_access": "API Access"
+          "api_access": "API Access",
+          "fiscal_integration": "Fiscal Register Integration"
         }
+      },
+      "fiscal": {
+        "title": "Fiscal Register Integration",
+        "mockNotice": "Mock mode active — no real fiscal register provider has been selected yet; receipts are only recorded in the audit trail.",
+        "todayReceipts": "{count} receipts issued today"
       },
       "errors": {
         "invalid_input": "Please check the information you entered.",
@@ -1510,7 +1516,7 @@
     },
     "moduleShowcase": {
       "title": "Turn on the modules you need",
-      "subtitle": "The core QR menu is always on; each of the 15 modules below activates on its own once it's in your plan or you request it.",
+      "subtitle": "The core QR menu is always on; each of the 16 modules below activates on its own once it's in your plan or you request it.",
       "descriptions": {
         "pos_cash": "Shift open/close, end-of-day and register reports in one screen.",
         "inventory": "Track stock and cost in real time.",
@@ -1526,7 +1532,8 @@
         "kiosk": "Self-service touchscreen ordering mode.",
         "staff_scheduling": "Weekly schedules and PIN clock-in/out.",
         "accounting_export": "Export compatible with your accounting software.",
-        "api_access": "API and webhooks for your own integrations."
+        "api_access": "API and webhooks for your own integrations.",
+        "fiscal_integration": "Fiscal register (ÖKC) receipt issuance for payments."
       }
     },
     "integrations": {

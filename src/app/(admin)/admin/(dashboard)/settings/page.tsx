@@ -12,7 +12,9 @@ import {
   getPublicThemes,
 } from "@/lib/data/adminSettings";
 import { getAdminBranchesInfo } from "@/lib/data/branch";
+import { getFiscalDailySummary } from "@/lib/data/fiscal";
 import { getReportSchedules } from "@/lib/data/reportSchedules";
+import { todayIsoInTimezone } from "@/lib/utils/timezone";
 
 import {
   createBranch,
@@ -60,6 +62,11 @@ export default async function AdminSettingsPage() {
     notFound();
   }
 
+  const fiscalEnabled = modules.some((m) => m.moduleKey === "fiscal_integration" && m.isEnabled);
+  const fiscalSummary = fiscalEnabled
+    ? await getFiscalDailySummary(todayIsoInTimezone(settings.timezone))
+    : null;
+
   return (
     <SettingsManager
       isOwner={actor.role === "owner"}
@@ -70,6 +77,7 @@ export default async function AdminSettingsPage() {
       tipPresets={tipPresets}
       ratingSettings={ratingSettings}
       modules={modules}
+      fiscalSummary={fiscalSummary}
       branchesInfo={branchesInfo}
       reportSchedules={reportSchedules}
       themes={themes}

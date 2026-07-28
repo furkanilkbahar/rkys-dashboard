@@ -26,8 +26,10 @@ import type {
   AdminTipPreset,
 } from "@/lib/data/adminSettings";
 import type { AdminBranch, AdminBranchesInfo } from "@/lib/data/branch";
+import type { FiscalDailySummary } from "@/lib/data/fiscal";
 import type { ReportSchedule } from "@/lib/data/reportSchedules";
 import { MODULE_KEYS, type ModuleKey } from "@/lib/modules/keys";
+import { formatPrice } from "@/lib/utils/currency";
 
 import type { PurchaseModuleAddonResult } from "./actions";
 import {
@@ -791,6 +793,23 @@ function ModulesCard({
   );
 }
 
+function FiscalCard({ summary, currency }: { summary: FiscalDailySummary; currency: string }) {
+  const t = useTranslations("admin.settings.fiscal");
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base">{t("title")}</CardTitle>
+        <p className="text-sm text-muted-foreground">{t("mockNotice")}</p>
+      </CardHeader>
+      <CardContent className="flex items-center justify-between text-sm">
+        <span>{t("todayReceipts", { count: summary.receiptCount })}</span>
+        <span className="font-medium">{formatPrice(summary.totalAmountMinor, currency)}</span>
+      </CardContent>
+    </Card>
+  );
+}
+
 export function SettingsManager({
   isOwner,
   settings,
@@ -800,6 +819,7 @@ export function SettingsManager({
   tipPresets,
   ratingSettings,
   modules,
+  fiscalSummary,
   branchesInfo,
   reportSchedules,
   themes,
@@ -813,6 +833,7 @@ export function SettingsManager({
   tipPresets: AdminTipPreset[];
   ratingSettings: AdminRatingSettings;
   modules: AdminModule[];
+  fiscalSummary: FiscalDailySummary | null;
   branchesInfo: AdminBranchesInfo;
   reportSchedules: ReportSchedule[];
   themes: AdminTheme[];
@@ -838,6 +859,7 @@ export function SettingsManager({
         requestModule={actions.requestModule}
         purchaseModuleAddon={actions.purchaseModuleAddon}
       />
+      {fiscalSummary && <FiscalCard summary={fiscalSummary} currency={settings.currency} />}
       <ReportSchedulesCard
         schedules={reportSchedules}
         branches={branchesInfo.branches}
