@@ -20,6 +20,12 @@ const nextConfig: NextConfig = {
   // HTTP path dosya sistemi yolu değil, ENOENT ile çöküyordu. External
   // işaretlenince paket kendi __dirname'ine göre doğru yolu buluyor.
   serverExternalPackages: ["wasm-vips"],
+  // Ana vips.wasm serverExternalPackages ile doğru yükleniyor ama ek format
+  // eklentileri (vips-jxl.wasm vb.) dosya izleyicinin otomatik listesine
+  // girmiyor, runtime'da ENOENT ile process çöküyordu — açıkça dahil ediyoruz.
+  outputFileTracingIncludes: {
+    "/**": ["./node_modules/wasm-vips/lib/*.wasm"],
+  },
 };
 
 export default withSentryConfig(withNextIntl(nextConfig), {
