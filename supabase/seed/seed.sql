@@ -129,7 +129,11 @@ values
   ('00000000-0000-4000-8000-000000000704', '00000000-0000-4000-8000-000000000002', 'water', true, 0),
   ('00000000-0000-4000-8000-000000000705', '00000000-0000-4000-8000-000000000002', 'check', true, 1),
   ('00000000-0000-4000-8000-000000000706', '00000000-0000-4000-8000-000000000002', 'assistance', true, 2),
-  ('00000000-0000-4000-8000-000000000707', '00000000-0000-4000-8000-000000000003', 'water', true, 0)
+  ('00000000-0000-4000-8000-000000000707', '00000000-0000-4000-8000-000000000003', 'water', true, 0),
+  -- gamma başlangıçta yalnızca 'water' ile seed edilmişti; 'check' (hesap
+  -- iste) ve 'assistance' eksikti — bug-hunt 2026-08-01 ile tamamlandı.
+  ('00000000-0000-4000-8000-000000000708', '00000000-0000-4000-8000-000000000003', 'check', true, 1),
+  ('00000000-0000-4000-8000-000000000709', '00000000-0000-4000-8000-000000000003', 'assistance', true, 2)
 on conflict (id) do nothing;
 
 insert into public.content_translations (tenant_id, entity_type, entity_id, locale, field, value)
@@ -177,7 +181,9 @@ values
   ('00000000-0000-4000-8000-000000000002', 'reason_code', '00000000-0000-4000-8000-000000000806', 'tr', 'name', 'İyi Niyet İkramı'),
   ('00000000-0000-4000-8000-000000000002', 'reason_code', '00000000-0000-4000-8000-000000000806', 'en', 'name', 'Goodwill Comp'),
   ('00000000-0000-4000-8000-000000000002', 'reason_code', '00000000-0000-4000-8000-000000000807', 'tr', 'name', 'Müşteri Şikayeti'),
-  ('00000000-0000-4000-8000-000000000002', 'reason_code', '00000000-0000-4000-8000-000000000807', 'en', 'name', 'Customer Complaint')
+  ('00000000-0000-4000-8000-000000000002', 'reason_code', '00000000-0000-4000-8000-000000000807', 'en', 'name', 'Customer Complaint'),
+  ('00000000-0000-4000-8000-000000000003', 'call_type', '00000000-0000-4000-8000-000000000708', 'tr', 'name', 'Hesap İstiyorum'),
+  ('00000000-0000-4000-8000-000000000003', 'call_type', '00000000-0000-4000-8000-000000000709', 'tr', 'name', 'Yardım İstiyorum')
 on conflict (entity_type, entity_id, locale, field) do nothing;
 
 -- Demo masalar + QR'lar (Faz 1): ham token'lar yalnızca lokalde, testlerin
@@ -320,4 +326,73 @@ on conflict (id) do nothing;
 
 insert into public.platform_admins (id, is_active)
 values ('00000000-0000-4000-8000-0000000000d1', true)
+on conflict (id) do nothing;
+
+-- Demo veri genişletmesi (bug-hunt 2026-08-01): Faz 11+ ile eklenen
+-- modüllerin (rezervasyon, kiosk, personel vardiyası, envanter, sadakat,
+-- teslimat bölgesi) admin panelinde boş görünmemesi için. acme'de ilgili
+-- modüller açılır (varsayılan kapalı kalan yukarıdaki cross-join'in
+-- üstüne); beta "kapalı modül" ve gamma "taze onboarding" örneklerini
+-- göstermeye devam etsin diye onlara dokunulmaz. staff_shifts profiles'a
+-- FK verdiği için bu blok, profiles insert'inden SONRA, dosyanın en
+-- sonunda yer alır.
+update public.tenant_modules set is_enabled = true
+where tenant_id = '00000000-0000-4000-8000-000000000001'
+  and module_key in ('reservations', 'kiosk', 'staff_scheduling', 'inventory', 'recipes', 'crm_loyalty', 'delivery');
+
+insert into public.table_zones (id, tenant_id, branch_id, name, display_order)
+values
+  ('00000000-0000-4000-8000-000000000901', '00000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-000000000011', 'İç Mekan', 0),
+  ('00000000-0000-4000-8000-000000000902', '00000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-000000000011', 'Bahçe', 1)
+on conflict (id) do nothing;
+
+update public.tables set zone_id = '00000000-0000-4000-8000-000000000901' where id = '00000000-0000-4000-8000-000000000501';
+update public.tables set zone_id = '00000000-0000-4000-8000-000000000902' where id = '00000000-0000-4000-8000-000000000502';
+
+insert into public.reservations (id, tenant_id, branch_id, table_id, customer_name, customer_phone, party_size, reserved_at, status)
+values
+  ('00000000-0000-4000-8000-000000000911', '00000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-000000000011', '00000000-0000-4000-8000-000000000501', 'Ahmet Yılmaz', '+905551112233', 4, now() + interval '1 day', 'confirmed'),
+  ('00000000-0000-4000-8000-000000000912', '00000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-000000000011', null, 'Zeynep Kaya', '+905552223344', 2, now() + interval '2 days', 'pending')
+on conflict (id) do nothing;
+
+insert into public.waitlist_entries (id, tenant_id, branch_id, customer_name, customer_phone, party_size, status)
+values
+  ('00000000-0000-4000-8000-000000000921', '00000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-000000000011', 'Mehmet Demir', '+905553334455', 3, 'waiting')
+on conflict (id) do nothing;
+
+insert into public.kiosk_devices (id, tenant_id, branch_id, device_name, pairing_code, is_active)
+values
+  ('00000000-0000-4000-8000-000000000931', '00000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-000000000011', 'Giriş Kiosk', 'DEMO-ACME-K1', true)
+on conflict (tenant_id, pairing_code) do nothing;
+
+insert into public.staff_shifts (id, tenant_id, branch_id, profile_id, shift_date, start_time, end_time)
+values
+  ('00000000-0000-4000-8000-000000000941', '00000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-000000000011', '00000000-0000-4000-8000-0000000000a2', current_date, '09:00', '17:00'),
+  ('00000000-0000-4000-8000-000000000942', '00000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-000000000011', '00000000-0000-4000-8000-0000000000a3', current_date, '12:00', '20:00')
+on conflict (id) do nothing;
+
+insert into public.customers (id, tenant_id, phone, kvkk_consented_at)
+values
+  ('00000000-0000-4000-8000-000000000961', '00000000-0000-4000-8000-000000000001', '+905554445566', now())
+on conflict (id) do nothing;
+
+insert into public.loyalty_programs (tenant_id, mode, config, is_active)
+values
+  ('00000000-0000-4000-8000-000000000001', 'stamp', '{"stampsRequired":10}'::jsonb, true)
+on conflict (tenant_id) do nothing;
+
+insert into public.ingredients (id, tenant_id, name, unit, critical_level, current_stock, avg_cost_minor_per_unit)
+values
+  ('00000000-0000-4000-8000-000000000971', '00000000-0000-4000-8000-000000000001', 'Süt', 'l', 5, 20, 1500),
+  ('00000000-0000-4000-8000-000000000972', '00000000-0000-4000-8000-000000000001', 'Kahve Çekirdeği', 'kg', 2, 8, 25000)
+on conflict (id) do nothing;
+
+insert into public.suppliers (id, tenant_id, name, contact_info)
+values
+  ('00000000-0000-4000-8000-000000000981', '00000000-0000-4000-8000-000000000001', 'Anadolu Gıda Toptan', '+905005006070')
+on conflict (id) do nothing;
+
+insert into public.delivery_zones (id, tenant_id, branch_id, name, fee_minor, min_basket_minor)
+values
+  ('00000000-0000-4000-8000-000000000991', '00000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-000000000011', 'Merkez Bölge', 1500, 10000)
 on conflict (id) do nothing;
