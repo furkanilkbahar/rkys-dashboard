@@ -209,7 +209,9 @@ export function TablesManager({
   genericQrCodes: AdminGenericQr[];
   actions: {
     createZone: (branchId: string, input: unknown) => Promise<TableActionResult>;
+    updateZone: (zoneId: string, input: unknown) => Promise<TableActionResult>;
     createTable: (branchId: string, input: unknown) => Promise<QrRevealResult>;
+    updateTable: (tableId: string, input: unknown) => Promise<TableActionResult>;
     regenerateTableQr: (tableId: string) => Promise<QrRevealResult>;
     createGenericQr: (branchId: string, input: unknown) => Promise<QrRevealResult>;
     regenerateGenericQr: (genericQrId: string) => Promise<QrRevealResult>;
@@ -219,12 +221,29 @@ export function TablesManager({
   const tTable = useTranslations("admin.tables.table");
   const tZones = useTranslations("admin.tables.zones");
   const tGeneric = useTranslations("admin.tables.genericQr");
+  const router = useRouter();
   const [reveal, setReveal] = useState<Reveal | null>(null);
 
   async function handleRegenerateTable(tableId: string, label: string) {
     if (!window.confirm(tTable("regenerateConfirm"))) return;
     const result = await actions.regenerateTableQr(tableId);
     if (result.ok) setReveal({ label, guestPath: result.guestPath });
+  }
+
+  async function handleToggleZone(zone: AdminZone) {
+    if (zone.isActive && !window.confirm(tZones("archiveConfirm"))) return;
+    const result = await actions.updateZone(zone.id, { name: zone.name, isActive: !zone.isActive });
+    if (result.ok) router.refresh();
+  }
+
+  async function handleToggleTable(table: AdminTable) {
+    if (table.isActive && !window.confirm(tTable("archiveConfirm"))) return;
+    const result = await actions.updateTable(table.id, {
+      label: table.label,
+      zoneId: table.zoneId ?? "",
+      isActive: !table.isActive,
+    });
+    if (result.ok) router.refresh();
   }
 
   async function handleRegenerateGeneric(id: string, label: string) {
@@ -244,11 +263,16 @@ export function TablesManager({
         <CardContent className="flex flex-col gap-3">
           {zones.length === 0 && <p className="text-sm text-muted-foreground">{tZones("empty")}</p>}
           {zones.map((zone) => (
-            <div key={zone.id} className="flex items-center gap-2 text-sm">
-              <span>{zone.name}</span>
-              <Badge variant={zone.isActive ? "secondary" : "destructive"}>
-                {zone.isActive ? tTable("active") : "—"}
-              </Badge>
+            <div key={zone.id} className="flex items-center justify-between gap-2 text-sm">
+              <div className="flex items-center gap-2">
+                <span>{zone.name}</span>
+                <Badge variant={zone.isActive ? "secondary" : "destructive"}>
+                  {zone.isActive ? tTable("active") : "—"}
+                </Badge>
+              </div>
+              <Button type="button" size="sm" variant="outline" onClick={() => handleToggleZone(zone)}>
+                {zone.isActive ? tZones("archive") : tZones("activate")}
+              </Button>
             </div>
           ))}
           <ZoneForm branchId={branchId} createZone={actions.createZone} />
@@ -262,7 +286,11 @@ export function TablesManager({
         <CardContent className="flex flex-col gap-3">
           {tables.length === 0 && <p className="text-sm text-muted-foreground">{tTable("empty")}</p>}
           {tables.map((table) => (
-            <div key={table.id} className="flex items-center justify-between gap-2 rounded-md border border-border p-2 text-sm">
+            <div
+              key={table.id}
+              data-testid={`table-row-${table.id}`}
+              className="flex items-center justify-between gap-2 rounded-md border border-border p-2 text-sm"
+            >
               <div className="flex items-center gap-2">
                 <span className="font-medium">{table.label}</span>
                 {table.zoneName && <span className="text-xs text-muted-foreground">({table.zoneName})</span>}
@@ -270,14 +298,19 @@ export function TablesManager({
                   {table.isActive ? tTable("active") : "—"}
                 </Badge>
               </div>
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                onClick={() => handleRegenerateTable(table.id, table.label)}
-              >
-                {tTable("regenerateQr")}
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button type="button" size="sm" variant="outline" onClick={() => handleToggleTable(table)}>
+                  {table.isActive ? tTable("archive") : tTable("activate")}
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => handleRegenerateTable(table.id, table.label)}
+                >
+                  {tTable("regenerateQr")}
+                </Button>
+              </div>
             </div>
           ))}
           <TableForm branchId={branchId} zones={zones} createTable={actions.createTable} onRevealed={setReveal} />

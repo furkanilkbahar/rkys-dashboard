@@ -273,7 +273,10 @@
         "name": "Bölge adı",
         "add": "+ Bölge Ekle",
         "empty": "Henüz bölge yok.",
-        "noZone": "Bölgesiz"
+        "noZone": "Bölgesiz",
+        "archive": "Pasife Al",
+        "activate": "Aktifleştir",
+        "archiveConfirm": "Bu bölge pasife alınsın mı? Silinmez, yalnızca pasif görünür ve yeni masalarda seçilemez."
       },
       "table": {
         "title": "Masalar",
@@ -284,7 +287,10 @@
         "empty": "Henüz masa yok.",
         "showQr": "QR Göster",
         "regenerateQr": "QR'ı Yenile",
-        "regenerateConfirm": "Yeni QR oluşturulursa eski fiziksel QR kod geçersiz olur. Devam edilsin mi?"
+        "regenerateConfirm": "Yeni QR oluşturulursa eski fiziksel QR kod geçersiz olur. Devam edilsin mi?",
+        "archive": "Pasife Al",
+        "activate": "Aktifleştir",
+        "archiveConfirm": "Bu masa pasife alınsın mı? Silinmez, yalnızca pasif görünür ve yeni siparişlerde kullanılamaz."
       },
       "genericQr": {
         "title": "Genel QR Kodları",

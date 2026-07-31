@@ -273,7 +273,10 @@
         "name": "Zone name",
         "add": "+ Add Zone",
         "empty": "No zones yet.",
-        "noZone": "No zone"
+        "noZone": "No zone",
+        "archive": "Archive",
+        "activate": "Activate",
+        "archiveConfirm": "Archive this zone? It won't be deleted, it just becomes inactive and unselectable for new tables."
       },
       "table": {
         "title": "Tables",
@@ -284,7 +287,10 @@
         "empty": "No tables yet.",
         "showQr": "Show QR",
         "regenerateQr": "Regenerate QR",
-        "regenerateConfirm": "Regenerating invalidates the old physical QR code. Continue?"
+        "regenerateConfirm": "Regenerating invalidates the old physical QR code. Continue?",
+        "archive": "Archive",
+        "activate": "Activate",
+        "archiveConfirm": "Archive this table? It won't be deleted, it just becomes inactive and unusable for new orders."
       },
       "genericQr": {
         "title": "Generic QR Codes",
