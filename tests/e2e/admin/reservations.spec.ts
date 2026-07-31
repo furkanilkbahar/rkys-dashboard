@@ -63,7 +63,7 @@ test("S45: misafir rezervasyon talebi gönderir, admin onaylar/masa atar/oturtur
     await page.goto(tenantUrl(baseURL!, subdomain, "/admin/reservations"));
     await expect(page.getByText("Ayşe Yılmaz")).toBeVisible();
 
-    await page.getByRole("combobox", { name: "Masa" }).click();
+    await page.getByRole("combobox", { name: "Masa", exact: true }).click();
     await page.getByRole("option", { name: "Masa 1" }).click();
     await page.getByRole("button", { name: "Onayla" }).click();
     await expect(page.getByText("Onaylandı")).toBeVisible({ timeout: 10_000 });
@@ -94,6 +94,42 @@ test("S45: misafir rezervasyon talebi gönderir, admin onaylar/masa atar/oturtur
     await expect(waitlistCard.getByText("Mehmet Kaya")).toBeHidden({ timeout: 10_000 });
     const { data: waitlistSeated } = await service.from("waitlist_entries").select("status").eq("tenant_id", tenantId).single();
     expect(waitlistSeated?.status).toBe("seated");
+  } finally {
+    await deleteTenant(tenantId);
+  }
+});
+
+test("bug-hunt 2026-08-01: personel masa seçerek doğrudan rezervasyon ekler (datetime-local + tableId regresyonu)", async ({ page, baseURL }) => {
+  const { tenantId, subdomain, email } = await createIsolatedTenant();
+  try {
+    await page.goto(tenantUrl(baseURL!, subdomain, "/admin/login"));
+    await page.getByLabel("E-posta").fill(email);
+    await page.getByLabel("Şifre").fill("password123");
+    await page.getByRole("button", { name: "Giriş yap" }).click();
+    await page.waitForURL(/\/admin$/);
+
+    await page.goto(tenantUrl(baseURL!, subdomain, "/admin/reservations"));
+
+    const reservationsCard = page.locator('[data-slot="card"]').filter({ hasText: "Rezervasyonlar" });
+    await reservationsCard.getByLabel("Ad Soyad").fill("Can Öztürk");
+    await reservationsCard.getByLabel("Telefon").fill("05553334455");
+    await reservationsCard.getByLabel("Kişi Sayısı").fill("3");
+    await reservationsCard.getByLabel("Tarih/Saat").fill("2027-02-20T18:00");
+    await reservationsCard.getByRole("combobox", { name: "Masa (opsiyonel)" }).click();
+    await page.getByRole("option", { name: "Masa 1" }).click();
+    await reservationsCard.getByRole("button", { name: "+ Ekle" }).click();
+
+    await expect(page.getByText("Can Öztürk")).toBeVisible({ timeout: 10_000 });
+
+    const service = serviceClient();
+    const { data: created } = await service
+      .from("reservations")
+      .select("status, table_id, reserved_at")
+      .eq("tenant_id", tenantId)
+      .single();
+    expect(created?.status).toBe("confirmed");
+    expect(created?.table_id).not.toBeNull();
+    expect(created?.reserved_at).toContain("2027-02-20");
   } finally {
     await deleteTenant(tenantId);
   }

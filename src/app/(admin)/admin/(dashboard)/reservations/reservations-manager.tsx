@@ -4,7 +4,7 @@ import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import type { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -146,7 +146,7 @@ export function ReservationsManager({
 
   const reservationForm = useForm({
     resolver: standardSchemaResolver(staffReservationFormSchema),
-    defaultValues: { customerName: "", customerPhone: "", partySize: "2", reservedAt: "", note: "" },
+    defaultValues: { customerName: "", customerPhone: "", partySize: "2", reservedAt: "", note: "", tableId: "" },
   });
 
   const waitlistForm = useForm({
@@ -158,13 +158,13 @@ export function ReservationsManager({
     setReservationError(null);
     const result = await actions.createReservation(branchId, {
       ...values,
-      reservedAt: values.reservedAt ? new Date(values.reservedAt).toISOString() : "",
+      tableId: values.tableId || undefined,
     });
     if (!result.ok) {
       setReservationError(tErrors(result.error));
       return;
     }
-    reservationForm.reset({ customerName: "", customerPhone: "", partySize: "2", reservedAt: "", note: "" });
+    reservationForm.reset({ customerName: "", customerPhone: "", partySize: "2", reservedAt: "", note: "", tableId: "" });
     router.refresh();
   }
 
@@ -207,12 +207,41 @@ export function ReservationsManager({
             </div>
             <div className="flex flex-col gap-1">
               <Label htmlFor="res-date">{t("reservedAt")}</Label>
-              <Input id="res-date" type="datetime-local" className="w-52" {...reservationForm.register("reservedAt")} />
+              <Input
+                id="res-date"
+                type="datetime-local"
+                className="w-52"
+                {...reservationForm.register("reservedAt", {
+                  setValueAs: (v: string) => (v ? new Date(v).toISOString() : ""),
+                })}
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="res-table">{t("tableOptional")}</Label>
+              <Controller
+                control={reservationForm.control}
+                name="tableId"
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={(v) => field.onChange(v ?? "")}>
+                    <SelectTrigger id="res-table" className="w-40" aria-label={t("tableOptional")}>
+                      <SelectValue placeholder={t("tablePlaceholder")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {tables.map((table) => (
+                        <SelectItem key={table.id} value={table.id}>
+                          {table.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             </div>
             <Button type="submit" size="sm">
               {t("add")}
             </Button>
           </form>
+          {reservationForm.formState.errors.reservedAt && <p className="text-xs text-destructive">{t("reservedAtInvalid")}</p>}
           {reservationError && <p className="text-xs text-destructive">{reservationError}</p>}
         </CardContent>
       </Card>
