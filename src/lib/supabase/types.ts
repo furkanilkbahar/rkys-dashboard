@@ -5314,6 +5314,10 @@ export type Database = {
         Args: { p_event_type: string; p_payload: Json; p_tenant_id: string }
         Returns: undefined
       }
+      ensure_system_call_types: {
+        Args: { p_tenant_id: string }
+        Returns: undefined
+      }
       get_active_anomaly_alerts: {
         Args: { p_branch_id: string }
         Returns: {
