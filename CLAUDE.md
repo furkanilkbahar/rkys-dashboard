@@ -71,3 +71,21 @@ supabase/
 
 ## Yasaklar
 Kesin yasaklar için `RULES.md` dosyasına uy — bu dosya her görevde geçerlidir.
+
+## gstack (makine-geneli skill paketi)
+Bu makinede `~/.claude/skills/gstack` kurulu (Garry Tan'ın açık kaynak Claude Code skill koleksiyonu). Web'de gezinme/QA gerektiren işler için **`/browse`** skill'i varsayılan yöntem — `mcp__claude-in-chrome__*` tool'ları yerine bunu tercih et. Kullanılabilir diğer skill'ler: `/office-hours`, `/plan-ceo-review`, `/plan-eng-review`, `/plan-design-review`, `/design-consultation`, `/design-shotgun`, `/design-html`, `/review`, `/ship`, `/land-and-deploy`, `/canary`, `/benchmark`, `/connect-chrome`, `/qa`, `/qa-only`, `/design-review`, `/setup-browser-cookies`, `/setup-deploy`, `/setup-gbrain`, `/retro`, `/investigate`, `/document-release`, `/document-generate`, `/codex`, `/cso`, `/autoplan`, `/plan-devex-review`, `/devex-review`, `/careful`, `/freeze`, `/guard`, `/unfreeze`, `/gstack-upgrade`, `/learn`.
+
+## Agent skills (Karpathy + Matt Pocock, makine-geneli)
+Bu makinede ayrıca `~/.claude/skills/` altına Andrej Karpathy'nin `karpathy-guidelines`'ı (varsayım yapmama, cerrahi değişiklik, aşırı mühendislik yapmama — model-invoked, otomatik tetiklenir) ve Matt Pocock'un mühendislik/üretkenlik skill seti kurulu: `ask-matt` (router — hangi skill ne zaman diye kafan karışırsa buna bak), `grill-with-docs`/`grilling`/`grill-me`, `to-spec`, `to-tickets`, `implement`, `tdd`, `code-review`, `diagnosing-bugs`, `triage`, `wayfinder`, `improve-codebase-architecture`, `domain-modeling`, `codebase-design`, `prototype`, `research`, `resolving-merge-conflicts`, `handoff`, `teach`, `writing-great-skills`.
+
+### Issue tracker
+
+Özel (PLAN.md-entegre) — spec'ler (`/to-spec`) ilgili Faz'ın `PLAN.md` bölümüne, ticket'lar (`/to-tickets`) aynı bölümdeki Adım/checkbox formatına yazılır; GitHub Issues **kullanılmaz** (repo'nun GitHub remote'u olsa da tek doğru kaynak PLAN.md'dir). Bkz. `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Varsayılan beş rol adı aynen kullanılır (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`) — pratikte yalnızca dışarıdan (repo dışı) bir GitHub issue/PR gelirse anlamlıdır. Bkz. `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: `CONTEXT.md` kök dizinde (ilk terim netleştiğinde lazy oluşturulur). **Sapma**: yeni ADR'lar `docs/adr/` yerine mevcut `DECISIONS.md`'ye D-numaralandırmasıyla eklenir — bu repo zaten kendi karar günlüğüne sahip. Bkz. `docs/agents/domain.md`.
