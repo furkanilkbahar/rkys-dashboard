@@ -213,21 +213,45 @@ export function TablesManager({
     createTable: (branchId: string, input: unknown) => Promise<QrRevealResult>;
     updateTable: (tableId: string, input: unknown) => Promise<TableActionResult>;
     regenerateTableQr: (tableId: string) => Promise<QrRevealResult>;
+    revealTableQr: (tableId: string) => Promise<QrRevealResult>;
     createGenericQr: (branchId: string, input: unknown) => Promise<QrRevealResult>;
     regenerateGenericQr: (genericQrId: string) => Promise<QrRevealResult>;
+    revealGenericQr: (genericQrId: string) => Promise<QrRevealResult>;
   };
 }) {
   const t = useTranslations("admin.tables");
   const tTable = useTranslations("admin.tables.table");
   const tZones = useTranslations("admin.tables.zones");
   const tGeneric = useTranslations("admin.tables.genericQr");
+  const tErrors = useTranslations("admin.tables.errors");
   const router = useRouter();
   const [reveal, setReveal] = useState<Reveal | null>(null);
+  const [revealError, setRevealError] = useState<string | null>(null);
 
   async function handleRegenerateTable(tableId: string, label: string) {
     if (!window.confirm(tTable("regenerateConfirm"))) return;
     const result = await actions.regenerateTableQr(tableId);
     if (result.ok) setReveal({ label, guestPath: result.guestPath });
+  }
+
+  async function handleRevealTable(tableId: string, label: string) {
+    setRevealError(null);
+    const result = await actions.revealTableQr(tableId);
+    if (result.ok) {
+      setReveal({ label, guestPath: result.guestPath });
+    } else {
+      setRevealError(result.error === "not_found" ? tErrors("revealUnavailable") : tErrors(result.error));
+    }
+  }
+
+  async function handleRevealGeneric(id: string, label: string) {
+    setRevealError(null);
+    const result = await actions.revealGenericQr(id);
+    if (result.ok) {
+      setReveal({ label, guestPath: result.guestPath });
+    } else {
+      setRevealError(result.error === "not_found" ? tErrors("revealUnavailable") : tErrors(result.error));
+    }
   }
 
   async function handleToggleZone(zone: AdminZone) {
@@ -302,6 +326,9 @@ export function TablesManager({
                 <Button type="button" size="sm" variant="outline" onClick={() => handleToggleTable(table)}>
                   {table.isActive ? tTable("archive") : tTable("activate")}
                 </Button>
+                <Button type="button" size="sm" variant="outline" onClick={() => handleRevealTable(table.id, table.label)}>
+                  {tTable("showQr")}
+                </Button>
                 <Button
                   type="button"
                   size="sm"
@@ -314,6 +341,7 @@ export function TablesManager({
             </div>
           ))}
           <TableForm branchId={branchId} zones={zones} createTable={actions.createTable} onRevealed={setReveal} />
+          {revealError && <p className="text-xs text-destructive">{revealError}</p>}
         </CardContent>
       </Card>
 
@@ -326,14 +354,19 @@ export function TablesManager({
           {genericQrCodes.map((qr) => (
             <div key={qr.id} className="flex items-center justify-between gap-2 rounded-md border border-border p-2 text-sm">
               <span className="font-medium">{qr.label}</span>
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                onClick={() => handleRegenerateGeneric(qr.id, qr.label)}
-              >
-                {tTable("regenerateQr")}
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button type="button" size="sm" variant="outline" onClick={() => handleRevealGeneric(qr.id, qr.label)}>
+                  {tTable("showQr")}
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => handleRegenerateGeneric(qr.id, qr.label)}
+                >
+                  {tTable("regenerateQr")}
+                </Button>
+              </div>
             </div>
           ))}
           <GenericQrForm branchId={branchId} createGenericQr={actions.createGenericQr} onRevealed={setReveal} />

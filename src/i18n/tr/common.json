@@ -302,7 +302,7 @@
         "download": "PNG İndir",
         "print": "Yazdır",
         "close": "Kapat",
-        "oneTimeWarning": "Bu kod bir daha gösterilemez — kaybederseniz yeniden oluşturmanız gerekir, eski fiziksel QR geçersiz olur."
+        "oneTimeWarning": "Bu QR yeniden oluşturulursa (Yenile) eski fiziksel kod geçersiz olur."
       },
       "errors": {
         "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
@@ -310,7 +310,8 @@
         "not_found": "Kayıt bulunamadı.",
         "unknown": "Kaydedilemedi, tekrar deneyin.",
         "required": "Bu alan zorunlu.",
-        "plan_limit_reached": "Planınızın masa limitine ulaştınız. Devam etmek için planınızı yükseltin."
+        "plan_limit_reached": "Planınızın masa limitine ulaştınız. Devam etmek için planınızı yükseltin.",
+        "revealUnavailable": "Bu QR tekrar gösterilemiyor (eski bir QR olabilir) — QR'ı Yenile ile yeni bir tane oluşturun."
       }
     },
     "staff": {

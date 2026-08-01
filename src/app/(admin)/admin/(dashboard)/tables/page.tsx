@@ -10,6 +10,8 @@ import {
   createZone,
   regenerateGenericQr,
   regenerateTableQr,
+  revealGenericQr,
+  revealTableQr,
   updateTable,
   updateZone,
 } from "./actions";
@@ -35,7 +37,17 @@ export default async function AdminTablesPage() {
       zones={zones}
       tables={tables}
       genericQrCodes={genericQrCodes}
-      actions={{ createZone, updateZone, createTable, updateTable, regenerateTableQr, createGenericQr, regenerateGenericQr }}
+      actions={{
+        createZone,
+        updateZone,
+        createTable,
+        updateTable,
+        regenerateTableQr,
+        revealTableQr,
+        createGenericQr,
+        regenerateGenericQr,
+        revealGenericQr,
+      }}
     />
   );
 }

@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { getCurrentActor } from "@/lib/auth/session";
-import { generateRawToken, hashToken } from "@/lib/qr/token";
+import { decryptToken, encryptToken, generateRawToken, hashToken } from "@/lib/qr/token";
 import {
   genericQrFormSchema,
   tableFormSchema,
@@ -70,6 +70,7 @@ export async function createTable(branchId: string, input: unknown): Promise<QrR
     zone_id: parsed.data.zoneId === "" ? null : parsed.data.zoneId,
     is_active: parsed.data.isActive,
     qr_token_hash: hashToken(rawToken),
+    qr_token_encrypted: encryptToken(rawToken),
   });
   if (error) {
     if (error.message.includes("plan table limit reached")) return { ok: false, error: "plan_limit_reached" };
@@ -104,9 +105,9 @@ export async function updateTable(tableId: string, input: unknown): Promise<Tabl
 }
 
 /**
- * Ham QR token hiç saklanmaz (RULES #7) — yeniden oluşturma eski fiziksel
- * QR'ı geçersiz kılar (yeni hash eskisinin üzerine yazılır). Yeni ham token
- * yalnızca bu action'ın dönüş değerinde bir kerelik görünür.
+ * Yeniden oluşturma eski fiziksel QR'ı geçersiz kılar (yeni hash+şifreli
+ * kopya eskisinin üzerine yazılır) — kalıcı olarak tekrar görüntülemek
+ * için bkz. revealTableQr (D86).
  */
 export async function regenerateTableQr(tableId: string): Promise<QrRevealResult> {
   const actor = await requireStaffActor();
@@ -116,12 +117,36 @@ export async function regenerateTableQr(tableId: string): Promise<QrRevealResult
   const supabase = await createClient();
   const { error } = await supabase
     .from("tables")
-    .update({ qr_token_hash: hashToken(rawToken) })
+    .update({ qr_token_hash: hashToken(rawToken), qr_token_encrypted: encryptToken(rawToken) })
     .eq("id", tableId)
     .eq("tenant_id", actor.tenantId);
   if (error) return { ok: false, error: "unknown" };
 
   revalidatePath("/admin/tables");
+  return { ok: true, rawToken, guestPath: `/masa/t/${rawToken}` };
+}
+
+/**
+ * D86: eski/mevcut fiziksel QR'ı geçersiz kılmadan (regenerate'in aksine)
+ * ham token'ı tekrar gösterir — şifreli kopya yoksa (QR_TOKEN_ENCRYPTION_KEY
+ * hiç ayarlanmamışken oluşturulmuş eski bir QR ise) "not_found" döner.
+ */
+export async function revealTableQr(tableId: string): Promise<QrRevealResult> {
+  const actor = await requireStaffActor();
+  if (!actor) return { ok: false, error: "forbidden" };
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("tables")
+    .select("qr_token_encrypted")
+    .eq("id", tableId)
+    .eq("tenant_id", actor.tenantId)
+    .maybeSingle();
+  if (error || !data) return { ok: false, error: "not_found" };
+
+  const rawToken = data.qr_token_encrypted ? decryptToken(data.qr_token_encrypted) : null;
+  if (!rawToken) return { ok: false, error: "not_found" };
+
   return { ok: true, rawToken, guestPath: `/masa/t/${rawToken}` };
 }
 
@@ -139,6 +164,7 @@ export async function createGenericQr(branchId: string, input: unknown): Promise
     branch_id: branchId,
     label: parsed.data.label,
     qr_token_hash: hashToken(rawToken),
+    qr_token_encrypted: encryptToken(rawToken),
   });
   if (error) return { ok: false, error: "unknown" };
 
@@ -154,11 +180,31 @@ export async function regenerateGenericQr(genericQrId: string): Promise<QrReveal
   const supabase = await createClient();
   const { error } = await supabase
     .from("generic_qr_codes")
-    .update({ qr_token_hash: hashToken(rawToken) })
+    .update({ qr_token_hash: hashToken(rawToken), qr_token_encrypted: encryptToken(rawToken) })
     .eq("id", genericQrId)
     .eq("tenant_id", actor.tenantId);
   if (error) return { ok: false, error: "unknown" };
 
   revalidatePath("/admin/tables");
+  return { ok: true, rawToken, guestPath: `/masa/g/${rawToken}` };
+}
+
+/** D86: bkz. revealTableQr — genel QR'ın tekrar-gösterme karşılığı. */
+export async function revealGenericQr(genericQrId: string): Promise<QrRevealResult> {
+  const actor = await requireStaffActor();
+  if (!actor) return { ok: false, error: "forbidden" };
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("generic_qr_codes")
+    .select("qr_token_encrypted")
+    .eq("id", genericQrId)
+    .eq("tenant_id", actor.tenantId)
+    .maybeSingle();
+  if (error || !data) return { ok: false, error: "not_found" };
+
+  const rawToken = data.qr_token_encrypted ? decryptToken(data.qr_token_encrypted) : null;
+  if (!rawToken) return { ok: false, error: "not_found" };
+
   return { ok: true, rawToken, guestPath: `/masa/g/${rawToken}` };
 }

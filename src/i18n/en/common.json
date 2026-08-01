@@ -302,7 +302,7 @@
         "download": "Download PNG",
         "print": "Print",
         "close": "Close",
-        "oneTimeWarning": "This code cannot be shown again — if you lose it, you'll need to regenerate it, which invalidates the old physical QR code."
+        "oneTimeWarning": "Regenerating this QR (Refresh) invalidates the old physical code."
       },
       "errors": {
         "invalid_input": "Please check the information you entered.",
@@ -310,7 +310,8 @@
         "not_found": "Record not found.",
         "unknown": "Could not save, please try again.",
         "required": "This field is required.",
-        "plan_limit_reached": "You've reached your plan's table limit. Upgrade your plan to continue."
+        "plan_limit_reached": "You've reached your plan's table limit. Upgrade your plan to continue.",
+        "revealUnavailable": "This QR can't be shown again (may be an older QR) — use Regenerate QR to create a new one."
       }
     },
     "staff": {
