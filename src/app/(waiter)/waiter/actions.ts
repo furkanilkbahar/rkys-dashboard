@@ -1,8 +1,13 @@
 "use server";
 
+import { getLocale } from "next-intl/server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
+import { getCurrentActor } from "@/lib/auth/session";
+import { getDefaultBranchId } from "@/lib/data/branch";
+import { getOrdersByStatus, type StaffOrderView } from "@/lib/data/staffOrders";
+import { getOpenWaiterCalls, type WaiterCallView } from "@/lib/data/waiterCalls";
 import { createClient } from "@/lib/supabase/server";
 
 const idSchema = z.object({ id: z.uuid() });
@@ -52,4 +57,26 @@ export async function approveOrder(input: { id: string }): Promise<{ ok: boolean
   const supabase = await createClient();
   const { error } = await supabase.rpc("approve_order", { p_order_id: parsed.data.id });
   return { ok: !error };
+}
+
+/**
+ * Realtime postgres_changes event'i kaçırılırsa (bağlantı kopması, kanal
+ * yeniden bağlanması, lokal Realtime'ın bilinen tenant_id filtre sorunu —
+ * bkz. PLAN.md Faz 19) diye D30 dayanıklılık deseni: bu, waiter-panel'in
+ * hem abonelik SUBSCRIBED olduğu an hem de kısa aralıklı yoklamada çağırdığı
+ * güvenlik ağı. session-panel.tsx'teki aynı desenin garson tarafı karşılığı.
+ */
+export async function refetchWaiterPanel(): Promise<{ calls: WaiterCallView[]; pendingOrders: StaffOrderView[] }> {
+  const actor = await getCurrentActor();
+  if (!actor) return { calls: [], pendingOrders: [] };
+
+  const branchId = await getDefaultBranchId(actor.tenantId);
+  if (!branchId) return { calls: [], pendingOrders: [] };
+
+  const locale = await getLocale();
+  const [calls, pendingOrders] = await Promise.all([
+    getOpenWaiterCalls(actor.tenantId, branchId, locale),
+    getOrdersByStatus(actor.tenantId, branchId, ["pending"]),
+  ]);
+  return { calls, pendingOrders };
 }

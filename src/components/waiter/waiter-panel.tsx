@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { approveOrder, acknowledgeCall, type MoveTableResult } from "@/app/(waiter)/waiter/actions";
+import { approveOrder, acknowledgeCall, refetchWaiterPanel, type MoveTableResult } from "@/app/(waiter)/waiter/actions";
 import { assignCourier, type CourierActionResult } from "@/app/(waiter)/waiter/courier-actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -69,6 +69,14 @@ export function WaiterPanel({
   useInsistentAlert(calls.length > 0, unlocked);
 
   useEffect(() => {
+    let cancelled = false;
+    async function refetch() {
+      const result = await refetchWaiterPanel();
+      if (cancelled) return;
+      setCalls(result.calls);
+      setPendingOrders(result.pendingOrders);
+    }
+
     const supabase = createClient();
     // Kanal adı her effect koşumunda benzersiz olmalı: React Strict Mode
     // (dev) mount'u iki kez tetikler; aynı topic adı paylaşılırsa ilk
@@ -87,14 +95,15 @@ export function WaiterPanel({
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "waiter_calls", filter: `tenant_id=eq.${tenantId}` },
-        () => {
-          // Basitlik için tam yeniden fetch — Faz1 kapsamında yeterli;
-          // ince taneli patch'leme (yalnız değişen satır) ileri fazda.
-          window.location.reload();
-        },
+        () => void refetch(),
       )
       .subscribe((status) => {
         setChannelState(status === "SUBSCRIBED" ? "connected" : status === "CLOSED" ? "disconnected" : "connecting");
+        // Abonelik tamamlandığı an bir "yakala" fetch'i: WebSocket handshake
+        // tamamlanmadan hemen önce/sırasında düşen bir çağrı/sipariş,
+        // postgres_changes event'ini kaçırabilir (session-panel.tsx ile
+        // aynı desen).
+        if (status === "SUBSCRIBED") void refetch();
       });
 
     const ordersChannel = supabase
@@ -102,11 +111,17 @@ export function WaiterPanel({
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "orders", filter: `tenant_id=eq.${tenantId}` },
-        () => {
-          window.location.reload();
-        },
+        () => void refetch(),
       )
       .subscribe();
+
+    // D30 dayanıklılık: Realtime tek başına güvenceli değildir (bkz.
+    // PLAN.md Faz 19 — lokal Realtime'ın tenant_id filtreli abonelikte
+    // bilinen bir sorunu var) — kısa aralıklı yoklama, açık çağrıların er ya
+    // da geç doğru duruma yakınsamasını garanti eden bir güvenlik ağıdır.
+    // Tam sayfa yenileme YAPILMAZ: hem garsonun akışını bozar hem de ses
+    // açma tercihini (useSoundUnlock) sıfırlardı.
+    const pollId = setInterval(() => void refetch(), 5000);
 
     // Kurye konumu sık güncellenir — bu kanal tam sayfa yenilemek yerine
     // yalnızca ilgili satırı state'te günceller (harita akıcı kalır).
@@ -127,6 +142,8 @@ export function WaiterPanel({
       .subscribe();
 
     return () => {
+      cancelled = true;
+      clearInterval(pollId);
       void supabase.removeChannel(callsChannel);
       void supabase.removeChannel(ordersChannel);
       void supabase.removeChannel(courierLocationsChannel);
