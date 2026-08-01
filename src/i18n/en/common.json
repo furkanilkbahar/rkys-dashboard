@@ -324,6 +324,7 @@
         "courier": "Courier"
       },
       "member": {
+        "role": "Role",
         "badgeNo": "Badge No",
         "active": "Active",
         "save": "Save",
@@ -331,6 +332,11 @@
         "newPin": "New PIN (4-8 digits)",
         "pinSet": "PIN set",
         "pinNotSet": "No PIN"
+      },
+      "create": {
+        "title": "Add Staff",
+        "pin": "PIN (4-8 digits)",
+        "add": "+ Add Staff"
       },
       "devices": {
         "title": "Authorized Devices",
@@ -1081,6 +1087,7 @@
       "invalid_destination": "Invalid destination table.",
       "unknown": "Could not move, please try again."
     },
+    "logout": "Log Out",
     "paymentNotices": "Payment Notices",
     "paymentReceived": "{table} — paid via {method}",
     "paymentMethods": {
@@ -1154,6 +1161,22 @@
         "invalid_input": "Please check the information you entered.",
         "invalid_secret": "Invalid device key."
       }
+    }
+  },
+  "waiterLogin": {
+    "title": "Waiter Login",
+    "deviceNotAuthorized": "This device isn't authorized.",
+    "goToSetup": "Go to device setup",
+    "adminLoginLink": "Admin login",
+    "pinPlaceholder": "Enter PIN",
+    "clear": "Clear",
+    "submit": "Log In",
+    "errors": {
+      "invalid_input": "Invalid input.",
+      "device_not_authorized": "This device isn't authorized.",
+      "invalid_pin": "Incorrect PIN.",
+      "forbidden": "This account can't log in to the panel.",
+      "unknown": "Could not log in, please try again."
     }
   },
   "menu": {

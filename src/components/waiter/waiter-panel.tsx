@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   approveOrder,
   acknowledgeCall,
+  logoutWaiter,
   refetchWaiterPanel,
   type MoveTableResult,
   type WaiterPaymentNotice,
@@ -190,6 +191,12 @@ export function WaiterPanel({
     }
   }
 
+  async function handleLogout() {
+    await logoutWaiter();
+    router.push("/waiter/login");
+    router.refresh();
+  }
+
   return (
     <main className="mx-auto flex min-h-screen max-w-3xl flex-col gap-6 p-4 sm:p-8">
       <header className="flex items-center justify-between gap-4">
@@ -203,6 +210,9 @@ export function WaiterPanel({
           <span className={isConnected ? "text-xs text-primary" : "text-xs text-destructive"}>
             {isConnected ? t("connected") : t("disconnected")}
           </span>
+          <Button type="button" size="sm" variant="ghost" onClick={handleLogout}>
+            {t("logout")}
+          </Button>
         </div>
       </header>
 

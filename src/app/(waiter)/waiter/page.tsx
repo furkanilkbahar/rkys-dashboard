@@ -20,9 +20,12 @@ import { seatReservation } from "@/app/(admin)/admin/(dashboard)/reservations/ac
 import { moveTableSession } from "./actions";
 
 export default async function WaiterHomePage() {
+  // D87: garsonun kendi PIN girişi (bkz. /waiter/login) — owner/manager
+  // hâlâ kendi admin oturumuyla da girebilir, getCurrentActor() (ve altında
+  // createClient()) her iki oturumu da şeffaf şekilde çözer.
   const actor = await getCurrentActor();
   if (!actor) {
-    redirect("/admin/login");
+    redirect("/waiter/login");
   }
   // Faz 4 Adım 3 (S13): admin panelle aynı kısıtlama, bkz. (dashboard)/layout.tsx.
   if (!(await isSubscriptionActive(actor.tenantId))) {

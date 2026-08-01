@@ -33,6 +33,7 @@
 - [x] Ayarlar: sipariş modu, timeout, çağrı tipleri, diller, para birimi, bahşiş çipleri, değerlendirme, tema, **Modül aç/kapa ekranı**
 - [x] Onboarding: demo veri (toplu temizleme) / sıfırdan kur (+**modül seçimi adımı**)
 - [x] **Faz 2 revizyonu (D85, 2026-07-28):** tek sabit demo şablonu yerine 3 çoklu demo menü şablonu (kafe/restoran/pastane, 4 kategori × 4 ürün + görsel) — hem giriş ekranındaki "Demo veriyle keşfet" hem sihirbazın "Şablon Menü" adımı `TemplatePicker` ile 3 kart gösteriyor. Görseller şimdilik stok arama ile geldi, AI üretimi altyapısı kurulunca değiştirilecek (bkz. Faz 20).
+- [x] **Faz 2 revizyonu (D87, bug-hunt 2026-08-01):** "yeni personel oluşturma" hiç yoktu (yalnızca var olanı düzenleme vardı) — `/admin/staff`'a rol+rozet+PIN ile gerçek hesap açan bir form eklendi. Aynı pakette: garson artık `/waiter/login`'den kendi PIN'iyle, owner'ın admin oturumundan tamamen bağımsız giriş yapabiliyor (owner çıkışı garsonu artık düşürmüyor) — ayrı cookie adı altında gerçek bir Supabase oturumu (`auth.admin.generateLink`+`verifyOtp`) açılarak, RLS/RPC katmanına hiç dokunulmadan.
 
 ## Faz 3 — Kasa + Ödeme + İade/İkram + Temel Raporlar
 - [x] **Kasa modülü:** vardiya aç/kapa, nakit sayım/fark, `cash_movements`, **POS-lite sipariş girişi**, gün sonu (`day_closures`)

@@ -23,6 +23,7 @@ import { PERMISSION_KEYS, type PermissionKey } from "@/lib/auth/permissions";
 import type { AdminStaffDevice, AdminStaffMember, RolePermissionMatrix } from "@/lib/data/adminStaff";
 import { STAFF_MANAGEABLE_ROLES, type StaffRole } from "@/lib/staff/roles";
 import {
+  createStaffMemberFormSchema,
   deviceFormSchema,
   pinResetFormSchema,
   staffUpdateFormSchema,
@@ -137,6 +138,75 @@ function StaffRow({
         </form>
       )}
     </div>
+  );
+}
+
+function CreateStaffForm({
+  createStaffMember,
+}: {
+  createStaffMember: (input: unknown) => Promise<StaffActionResult>;
+}) {
+  const t = useTranslations("admin.staff");
+  const tRole = useTranslations("admin.staff.role");
+  const tErrors = useTranslations("admin.staff.errors");
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const { register, control, handleSubmit, reset } = useForm({
+    resolver: standardSchemaResolver(createStaffMemberFormSchema),
+    defaultValues: { role: "waiter" as StaffRole, badgeNo: "", pin: "" },
+  });
+
+  async function onSubmit(values: { role: StaffRole; badgeNo: string; pin: string }) {
+    setError(null);
+    const result = await createStaffMember(values);
+    if (!result.ok) {
+      setError(tErrors(result.error));
+      return;
+    }
+    reset({ role: "waiter", badgeNo: "", pin: "" });
+    router.refresh();
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base">{t("create.title")}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-wrap items-end gap-3">
+          <Controller
+            control={control}
+            name="role"
+            render={({ field }) => (
+              <Select value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger className="w-36" aria-label={t("member.role")}>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {STAFF_MANAGEABLE_ROLES.map((r) => (
+                    <SelectItem key={r} value={r}>
+                      {tRole(r)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="create-badge-no">{t("member.badgeNo")}</Label>
+            <Input id="create-badge-no" {...register("badgeNo")} className="w-32" />
+          </div>
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="create-pin">{t("create.pin")}</Label>
+            <Input id="create-pin" inputMode="numeric" {...register("pin")} className="w-32" />
+          </div>
+          <Button type="submit" size="sm">
+            {t("create.add")}
+          </Button>
+          {error && <p className="text-xs text-destructive">{error}</p>}
+        </form>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -296,6 +366,7 @@ export function StaffManager({
   devices: AdminStaffDevice[];
   matrix: RolePermissionMatrix;
   actions: {
+    createStaffMember: (input: unknown) => Promise<StaffActionResult>;
     updateStaffMember: (profileId: string, input: unknown) => Promise<StaffActionResult>;
     resetStaffPin: (profileId: string, input: unknown) => Promise<StaffActionResult>;
     createStaffDevice: (branchId: string, input: unknown) => Promise<DeviceActionResult>;
@@ -319,6 +390,8 @@ export function StaffManager({
           />
         ))}
       </div>
+
+      <CreateStaffForm createStaffMember={actions.createStaffMember} />
 
       <DeviceSection
         branchId={branchId}

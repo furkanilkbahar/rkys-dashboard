@@ -9,6 +9,7 @@ import { getDefaultBranchId } from "@/lib/data/branch";
 import { getOrdersByStatus, type StaffOrderView } from "@/lib/data/staffOrders";
 import { getOpenWaiterCalls, type WaiterCallView } from "@/lib/data/waiterCalls";
 import { createClient } from "@/lib/supabase/server";
+import { createWaiterClient } from "@/lib/supabase/waiterClient";
 
 const idSchema = z.object({ id: z.uuid() });
 
@@ -109,4 +110,14 @@ export async function refetchWaiterPanel(
   }));
 
   return { calls, pendingOrders, newPayments };
+}
+
+/**
+ * D87: yalnızca garson PIN oturumunu (ayrı cookie) kapatır — owner/manager
+ * kendi admin oturumuyla /waiter'a girdiyse bu no-op'tur (o zaten hiç PIN
+ * oturumu açmamıştır), admin oturumları etkilenmez.
+ */
+export async function logoutWaiter(): Promise<void> {
+  const waiterClient = await createWaiterClient();
+  await waiterClient.auth.signOut({ scope: "local" });
 }

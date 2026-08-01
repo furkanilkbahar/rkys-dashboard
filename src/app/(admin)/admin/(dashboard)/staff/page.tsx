@@ -6,6 +6,7 @@ import { getDefaultBranchId } from "@/lib/data/branch";
 
 import {
   createStaffDevice,
+  createStaffMember,
   resetStaffPin,
   revokeStaffDevice,
   updateRolePermission,
@@ -33,7 +34,14 @@ export default async function AdminStaffPage() {
       staff={staff}
       devices={devices}
       matrix={matrix}
-      actions={{ updateStaffMember, resetStaffPin, createStaffDevice, revokeStaffDevice, updateRolePermission }}
+      actions={{
+        createStaffMember,
+        updateStaffMember,
+        resetStaffPin,
+        createStaffDevice,
+        revokeStaffDevice,
+        updateRolePermission,
+      }}
     />
   );
 }

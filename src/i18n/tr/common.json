@@ -324,6 +324,7 @@
         "courier": "Kurye"
       },
       "member": {
+        "role": "Rol",
         "badgeNo": "Rozet No",
         "active": "Aktif",
         "save": "Kaydet",
@@ -331,6 +332,11 @@
         "newPin": "Yeni PIN (4-8 hane)",
         "pinSet": "PIN tanımlı",
         "pinNotSet": "PIN yok"
+      },
+      "create": {
+        "title": "Personel Ekle",
+        "pin": "PIN (4-8 hane)",
+        "add": "+ Personel Ekle"
       },
       "devices": {
         "title": "Yetkili Cihazlar",
@@ -1081,6 +1087,7 @@
       "invalid_destination": "Geçersiz hedef masa.",
       "unknown": "Taşınamadı, tekrar deneyin."
     },
+    "logout": "Çıkış",
     "paymentNotices": "Ödeme Bildirimleri",
     "paymentReceived": "{table} — {method} ile ödendi",
     "paymentMethods": {
@@ -1154,6 +1161,22 @@
         "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
         "invalid_secret": "Cihaz anahtarı geçersiz."
       }
+    }
+  },
+  "waiterLogin": {
+    "title": "Garson Girişi",
+    "deviceNotAuthorized": "Bu cihaz yetkili değil.",
+    "goToSetup": "Cihaz kurulumuna git",
+    "adminLoginLink": "Yönetici girişi",
+    "pinPlaceholder": "PIN girin",
+    "clear": "Temizle",
+    "submit": "Giriş Yap",
+    "errors": {
+      "invalid_input": "Geçersiz giriş.",
+      "device_not_authorized": "Bu cihaz yetkili değil.",
+      "invalid_pin": "PIN hatalı.",
+      "forbidden": "Bu hesap panele giriş yapamaz.",
+      "unknown": "Giriş yapılamadı, tekrar deneyin."
     }
   },
   "menu": {

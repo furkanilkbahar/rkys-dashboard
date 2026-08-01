@@ -43,6 +43,14 @@ export async function proxy(request: NextRequest) {
   requestHeaders.set("x-rkys-tenant-name", tenant.tenant_name);
   requestHeaders.set("x-rkys-tenant-currency", tenant.tenant_currency);
   requestHeaders.set("x-rkys-tenant-theme", tenant.tenant_theme_key);
+  // D87: /waiter yüzeyinde, aynı tarayıcıda hem owner'ın admin oturumu hem
+  // garsonun PIN oturumu (ayrı cookie) aynı anda mevcut olabilir — ikisi de
+  // her isteğe eklenir (cookie'ler sekme değil, origin bazlıdır). /waiter
+  // altında garson cookie'si ÖNCELİKLİDİR (bkz. lib/supabase/server.ts);
+  // diğer tüm yüzeylerde (admin/cashier/kitchen) davranış değişmez.
+  if (request.nextUrl.pathname.startsWith("/waiter")) {
+    requestHeaders.set("x-rkys-prefer-waiter-session", "1");
+  }
 
   const response = NextResponse.next({ request: { headers: requestHeaders } });
   return updateSession(request, response);

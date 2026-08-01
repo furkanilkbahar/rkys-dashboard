@@ -6,13 +6,14 @@ import { assertCan, PERMISSION_KEYS, type PermissionKey } from "@/lib/auth/can";
 import { getCurrentActor } from "@/lib/auth/session";
 import { STAFF_MANAGEABLE_ROLES, type StaffRole } from "@/lib/data/adminStaff";
 import {
+  createStaffMemberFormSchema,
   deviceFormSchema,
   pinResetFormSchema,
   staffUpdateFormSchema,
   type DeviceActionResult,
   type StaffActionResult,
 } from "@/lib/staff/schemas";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createServiceRoleClient } from "@/lib/supabase/server";
 
 function mapRpcError(message: string | undefined): Extract<StaffActionResult, { ok: false }>["error"] {
   if (!message) return "unknown";
@@ -20,6 +21,67 @@ function mapRpcError(message: string | undefined): Extract<StaffActionResult, { 
   if (message.includes("permission denied") || message.includes("only an owner")) return "forbidden";
   if (message.includes("not found")) return "not_found";
   return "unknown";
+}
+
+/**
+ * D87: yeni personel oluşturur. auth.users satırı sentetik bir e-postayla
+ * (hiçbir yüzeyde gösterilmez, personel hiçbir zaman görmez/kullanmaz)
+ * service-role ile açılır — kimlik doğrulaması tamamen PIN üzerinden
+ * yürür (bkz. verify_staff_pin_identity, 0089). PIN, actor'ın KENDİ
+ * oturumuyla mevcut/test edilmiş reset_staff_pin RPC'si üzerinden set
+ * edilir (yeni bcrypt bağımlılığı gerekmez).
+ */
+export async function createStaffMember(input: unknown): Promise<StaffActionResult> {
+  const actor = await getCurrentActor();
+  if (!actor) return { ok: false, error: "forbidden" };
+  try {
+    await assertCan(actor, "staff.manage");
+  } catch {
+    return { ok: false, error: "forbidden" };
+  }
+
+  const parsed = createStaffMemberFormSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: "invalid_input" };
+
+  if (parsed.data.role === "owner" && actor.role !== "owner") {
+    return { ok: false, error: "forbidden" };
+  }
+
+  const service = createServiceRoleClient();
+  const syntheticEmail = `staff-${crypto.randomUUID()}@internal.rkys.local`;
+  const { data: authUser, error: authError } = await service.auth.admin.createUser({
+    email: syntheticEmail,
+    password: crypto.randomUUID(),
+    email_confirm: true,
+  });
+  if (authError || !authUser.user) {
+    return { ok: false, error: "unknown" };
+  }
+
+  const { error: profileError } = await service.from("profiles").insert({
+    id: authUser.user.id,
+    tenant_id: actor.tenantId,
+    role: parsed.data.role,
+    badge_no: parsed.data.badgeNo || null,
+    is_active: true,
+  });
+  if (profileError) {
+    await service.auth.admin.deleteUser(authUser.user.id);
+    return { ok: false, error: "unknown" };
+  }
+
+  const supabase = await createClient();
+  const { error: pinError } = await supabase.rpc("reset_staff_pin", {
+    p_profile_id: authUser.user.id,
+    p_new_pin: parsed.data.pin,
+  });
+  if (pinError) {
+    await service.auth.admin.deleteUser(authUser.user.id);
+    return { ok: false, error: "invalid_input" };
+  }
+
+  revalidatePath("/admin/staff");
+  return { ok: true };
 }
 
 export async function updateStaffMember(profileId: string, input: unknown): Promise<StaffActionResult> {

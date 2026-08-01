@@ -14,7 +14,7 @@ test("owner girişiyle KDS açılır", async ({ page, baseURL }) => {
   await expect(page.getByRole("heading", { name: "Mutfak Ekranı (KDS)" })).toBeVisible();
 });
 
-test("girişsiz ziyaretçi /waiter'a girince login'e yönlenir", async ({ page, baseURL }) => {
+test("girişsiz ziyaretçi /waiter'a girince kendi PIN login'ine yönlenir (D87, admin/login'e değil)", async ({ page, baseURL }) => {
   await page.goto(acmeUrl(baseURL!, "/waiter"));
-  await expect(page).toHaveURL(/\/admin\/login$/);
+  await expect(page).toHaveURL(/\/waiter\/login$/);
 });
