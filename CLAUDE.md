@@ -1,8 +1,16 @@
+## Bilgi Erişim Protokolü (ZORUNLU)
+1. Önce vault/00-index/INDEX.md oku.
+2. İlgili notu index'ten seç, SADECE onu oku.
+3. Index'te yoksa: obsidian search query="<terim>" format=json
+4. O da boşsa kodu tara, bulduğunu vault/ altına not yaz,
+   INDEX.md'ye link ekle.
+YASAK: proje genelinde grep -r, find ., toplu dosya okuma.
+
 # CLAUDE.md — Proje Talimatları (Claude Code)
 
 Bu proje çok kiracılı (multi-tenant), çok şubeli ve **modüler** bir **Kafe & Restoran Yönetim SaaS** platformudur.
 Ürün anayasası: çekirdek = QR menü; diğer her yetenek tenant'ın açıp kapattığı bir modüldür (Dinamik Ölçeklenme İlkesi, bkz. DECISIONS D38).
-Bağlam için sırasıyla oku: `PRD.md` → `ARCHITECTURE.md` → `PLAN.md` → `RULES.md` → `OPERATIONS.md` → `DECISIONS.md`.
+Bağlam için önce `vault/00-index/INDEX.md` oku (proje beyni — mimari/runbook/karar notları; yukarıdaki Bilgi Erişim Protokolü'nü izle). Yaşayan/tek-doğru-kaynak dosyalar kökte kalır ve gerektiğinde sırasıyla okunur: `PLAN.md` → `RULES.md` → `DECISIONS.md`. (`PRD.md`/`ARCHITECTURE.md`/`OPERATIONS.md`/`TESTING.md` içeriği vault'a taşındı; kökteki dosyalar artık yönlendirme notudur.)
 Bir davranışın gerekçesini merak edersen `DECISIONS.md` karar günlüğüne bak; kararları onaysız değiştirme.
 
 ## Dil ve İletişim

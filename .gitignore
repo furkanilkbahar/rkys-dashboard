@@ -42,3 +42,8 @@ pnpm-debug.log*
 next-env.d.ts
 .vercel
 .env*
+
+# Obsidian
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache

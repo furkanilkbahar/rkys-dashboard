@@ -28,7 +28,7 @@
 
 ## 🔁 Süreç
 19. Faz atlamak, kapsam dışı özellik eklemek yasak — öneri olarak sunulabilir, onaysız yapılmaz.
-20. Mimari bir karar değiştirilecekse önce `ARCHITECTURE.md` güncellenir ve onay alınır.
+20. Mimari bir karar değiştirilecekse önce ilgili `vault/20-mimari` notu güncellenir ve onay alınır (`ARCHITECTURE.md` içeriği 2026-08-01'de vault'a taşındı, kökteki dosya artık yönlendirme notu).
 21. Kütüphane eklemeden önce mevcut stack ile çözülüp çözülemeyeceği değerlendirilir; büyük bağımlılıklar onaya sunulur.
 22. Çalışan bir akışı bozan refactor, testler yeşile dönmeden commit edilmez.
 

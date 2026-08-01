@@ -6,7 +6,7 @@ Bu repo GitHub Issues **kullanmaz**. Tek doğru kaynak `PLAN.md`'dir (bkz. `CLAU
 
 ## Spec'ler (`/to-spec` çıktısı)
 
-İlgili `PLAN.md` Faz bölümüne bir alt başlık olarak eklenir (`## Faz N — <isim>` altına). Faz henüz `PLAN.md`'de yoksa, önce `PLAN.md`'ye yeni bir Faz bölümü olarak açılır. Ürün düzeyinde kapsam değişikliği varsa `PRD.md` de güncellenir. `ready-for-agent` triage etiketi uygulanmaz — bu repoda "hazır" durumu, Adım'ın "Blocked by" listesinin tamamlanmış olmasıyla ifade edilir (aşağıya bakın).
+İlgili `PLAN.md` Faz bölümüne bir alt başlık olarak eklenir (`## Faz N — <isim>` altına). Faz henüz `PLAN.md`'de yoksa, önce `PLAN.md`'ye yeni bir Faz bölümü olarak açılır. Ürün düzeyinde kapsam değişikliği varsa ilgili `vault/20-mimari` ürün notu da güncellenir (`PRD.md` içeriği 2026-08-01'de vault'a taşındı). `ready-for-agent` triage etiketi uygulanmaz — bu repoda "hazır" durumu, Adım'ın "Blocked by" listesinin tamamlanmış olmasıyla ifade edilir (aşağıya bakın).
 
 ## Ticket'lar (`/to-tickets` çıktısı)
 

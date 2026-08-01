@@ -7,14 +7,12 @@ QR menüden tam kapsamlı restoran yönetimine **modüler olarak ölçeklenen**,
 ## Dokümanlar
 | Dosya | İçerik |
 |---|---|
-| `PRD.md` | Ürün gereksinimleri: ilke, roller, tüm modüller, akışlar |
-| `ARCHITECTURE.md` | Mimari: şube katmanı, modül sistemi, veri modeli, adaptörler |
-| `PLAN.md` | 12 fazlı yol haritası (checklist) |
+| `vault/00-index/INDEX.md` | **Proje beyni** — mimari/runbook/karar notları (bkz. CLAUDE.md Bilgi Erişim Protokolü) |
+| `PRD.md`, `ARCHITECTURE.md`, `OPERATIONS.md`, `TESTING.md` | İçerik vault'a taşındı (2026-08-01); bu dosyalar artık kısa yönlendirme notu |
+| `PLAN.md` | Fazlı yol haritası (checklist) — tek doğru kaynak, kökte kalır |
 | `CLAUDE.md` | Claude Code çalışma talimatları ve kod standartları |
-| `RULES.md` | 45 kesin kural ve yasak |
-| `TESTING.md` | Test stratejisi, kritik E2E senaryoları, faz kapanış kriterleri |
-| `OPERATIONS.md` | Ortamlar, CI, izleme, yedekleme, güvenlik duruşu |
-| `DECISIONS.md` | D1–D72 karar günlüğü (bloklayıcı açık karar yok; D66 SMS sağlayıcı seçimi Faz 7'ye ertelendi) |
+| `RULES.md` | Kesin kural ve yasaklar — kökte kalır |
+| `DECISIONS.md` | D1–D87 karar günlüğü — kökte kalır, yeni kararlar buraya eklenir |
 
 ## Gün 0 — Kurulum Kontrol Listesi (kullanıcı makinesi)
 > Claude Code: İlk oturumda bu listeyi kullanıcıyla birlikte doğrula (sürüm komutlarıyla kontrol et). Eksik varsa adım adım yönlendir. **Tüm kutular işaretlendiğinde bu bölümü README'den tamamen sil** — bir daha sorma, dosyada tutma.
