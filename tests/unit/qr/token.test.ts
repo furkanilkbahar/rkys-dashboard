@@ -27,9 +27,17 @@ describe("QR token şifreleme (bug-hunt 2026-08-01, D86 — 'QR göster')", () =
       expect(hashToken(raw)).toBe(hashToken(raw));
     });
 
-    it("32 bayta çözülmeyen bir anahtar hata fırlatır", () => {
+    // Regresyon (bug-hunt sonrası, 2026-08-01): bu test önceden encryptToken'ın
+    // bozuk anahtarda HATA FIRLATMASINI bekliyordu — bu, gerçek kullanıcı
+    // raporuyla ortaya çıkan asıl bug'dı: bozuk/yanlış uzunlukta bir anahtar
+    // (ör. .env.local'e kopyala/yapıştır hatası) tüm createTable/
+    // regenerateTableQr action'ını çökertip "Kaydedilemedi" hatasına yol
+    // açıyordu — yalnızca QR göster değil, TEMEL masa oluşturma bile kırılmıştı.
+    // Doğru davranış: sessizce null dönüp teknik detayı log'a düşürmek.
+    it("32 bayta çözülmeyen bir anahtarda ÇÖKMEDEN null döner (oluşturma/yenileme akışını bozmaz)", () => {
       process.env.QR_TOKEN_ENCRYPTION_KEY = Buffer.from("kisa-anahtar").toString("base64");
-      expect(() => encryptToken(generateRawToken())).toThrow(/32 bytes/);
+      expect(() => encryptToken(generateRawToken())).not.toThrow();
+      expect(encryptToken(generateRawToken())).toBeNull();
     });
   });
 

@@ -230,8 +230,13 @@ export function TablesManager({
 
   async function handleRegenerateTable(tableId: string, label: string) {
     if (!window.confirm(tTable("regenerateConfirm"))) return;
+    setRevealError(null);
     const result = await actions.regenerateTableQr(tableId);
-    if (result.ok) setReveal({ label, guestPath: result.guestPath });
+    if (result.ok) {
+      setReveal({ label, guestPath: result.guestPath });
+    } else {
+      setRevealError(tErrors(result.error));
+    }
   }
 
   async function handleRevealTable(tableId: string, label: string) {
@@ -272,8 +277,13 @@ export function TablesManager({
 
   async function handleRegenerateGeneric(id: string, label: string) {
     if (!window.confirm(tTable("regenerateConfirm"))) return;
+    setRevealError(null);
     const result = await actions.regenerateGenericQr(id);
-    if (result.ok) setReveal({ label, guestPath: result.guestPath });
+    if (result.ok) {
+      setReveal({ label, guestPath: result.guestPath });
+    } else {
+      setRevealError(tErrors(result.error));
+    }
   }
 
   return (
@@ -370,6 +380,7 @@ export function TablesManager({
             </div>
           ))}
           <GenericQrForm branchId={branchId} createGenericQr={actions.createGenericQr} onRevealed={setReveal} />
+          {revealError && <p className="text-xs text-destructive">{revealError}</p>}
         </CardContent>
       </Card>
 

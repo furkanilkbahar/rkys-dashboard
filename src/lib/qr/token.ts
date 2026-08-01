@@ -20,14 +20,19 @@ export function hashToken(rawToken: string): string {
 // yerine değil) şifreli bir kopyası saklanır — bkz. tables.qr_token_encrypted
 // / generic_qr_codes.qr_token_encrypted. Anahtar yalnızca bu env
 // değişkeninde yaşar (LICENSE_SIGNING_PRIVATE_KEY ile aynı desen, sign.ts).
-// Anahtar yoksa şifreleme atlanır (kolon null kalır) — mevcut oluşturma/
-// yenileme akışları bu özellik olmadan da çalışmaya devam eder.
+// Anahtar yoksa YA DA bozuksa (yanlış uzunluk — kopyala/yapıştır hatası vb.)
+// şifreleme sessizce atlanır (kolon null kalır, teknik detay log'a düşer) —
+// mevcut oluşturma/yenileme akışları bu özellik olmadan da çalışmaya devam
+// eder. Önceki sürüm bozuk anahtarda throw ediyordu, bu da tüm masa
+// oluşturma/yenileme akışını kırıyordu (bug-hunt sonrası gerçek regresyon
+// — RULES: kullanıcıya anlaşılır mesaj yerine "Kaydedilemedi" alıyordu).
 function getEncryptionKey(): Buffer | null {
   const raw = process.env.QR_TOKEN_ENCRYPTION_KEY;
   if (!raw) return null;
   const key = Buffer.from(raw, "base64");
   if (key.length !== 32) {
-    throw new Error("QR_TOKEN_ENCRYPTION_KEY must decode to exactly 32 bytes (base64)");
+    console.error(`QR_TOKEN_ENCRYPTION_KEY must decode to exactly 32 bytes (base64), got ${key.length}`);
+    return null;
   }
   return key;
 }
