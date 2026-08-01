@@ -5807,6 +5807,19 @@ export type Database = {
         Args: { p_secret: string; p_tenant_id: string }
         Returns: string
       }
+      verify_staff_pin_identity: {
+        Args: {
+          p_device_id: string
+          p_device_secret: string
+          p_pin: string
+          p_tenant_id: string
+        }
+        Returns: {
+          badge_no: string
+          profile_id: string
+          role: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
