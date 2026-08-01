@@ -59,24 +59,54 @@ export async function approveOrder(input: { id: string }): Promise<{ ok: boolean
   return { ok: !error };
 }
 
+export type WaiterPaymentNotice = { id: string; tableLabel: string; method: string };
+
 /**
  * Realtime postgres_changes event'i kaçırılırsa (bağlantı kopması, kanal
  * yeniden bağlanması, lokal Realtime'ın bilinen tenant_id filtre sorunu —
  * bkz. PLAN.md Faz 19) diye D30 dayanıklılık deseni: bu, waiter-panel'in
  * hem abonelik SUBSCRIBED olduğu an hem de kısa aralıklı yoklamada çağırdığı
  * güvenlik ağı. session-panel.tsx'teki aynı desenin garson tarafı karşılığı.
+ *
+ * Ödeme bildirimleri (bug-hunt 2026-08-01) doğrudan realtime kanalına değil
+ * yalnızca bu yoklamaya bağlıdır — yerel Supabase Realtime'da tek başına bir
+ * `payments` kanalı bile (waiter_calls/orders'tan bağımsız, ayrı bir kanal
+ * olmasına rağmen) postgres_changes event'ini hiç tetiklemedi; kök nedeni
+ * netleşmedi (PLAN.md Faz 19'daki bilinen tenant_id filtre sorunuyla aynı
+ * ailede olabilir) ama D30 deseni zaten burada güvenilir bir alternatif
+ * sunuyor, bu yüzden ayrı bir kanal yerine `sincePaymentsIso` imleciyle
+ * mevcut yoklamaya eklendi.
  */
-export async function refetchWaiterPanel(): Promise<{ calls: WaiterCallView[]; pendingOrders: StaffOrderView[] }> {
+export async function refetchWaiterPanel(
+  sincePaymentsIso?: string,
+): Promise<{ calls: WaiterCallView[]; pendingOrders: StaffOrderView[]; newPayments: WaiterPaymentNotice[] }> {
   const actor = await getCurrentActor();
-  if (!actor) return { calls: [], pendingOrders: [] };
+  if (!actor) return { calls: [], pendingOrders: [], newPayments: [] };
 
   const branchId = await getDefaultBranchId(actor.tenantId);
-  if (!branchId) return { calls: [], pendingOrders: [] };
+  if (!branchId) return { calls: [], pendingOrders: [], newPayments: [] };
 
   const locale = await getLocale();
-  const [calls, pendingOrders] = await Promise.all([
+  const supabase = await createClient();
+  const [calls, pendingOrders, paymentsRes] = await Promise.all([
     getOpenWaiterCalls(actor.tenantId, branchId, locale),
     getOrdersByStatus(actor.tenantId, branchId, ["pending"]),
+    sincePaymentsIso
+      ? supabase
+          .from("payments")
+          .select("id, method, created_at, table_sessions(tables(label))")
+          .eq("tenant_id", actor.tenantId)
+          .eq("branch_id", branchId)
+          .gt("created_at", sincePaymentsIso)
+          .order("created_at")
+      : Promise.resolve({ data: null }),
   ]);
-  return { calls, pendingOrders };
+
+  const newPayments: WaiterPaymentNotice[] = (paymentsRes.data ?? []).map((p) => ({
+    id: p.id,
+    tableLabel: p.table_sessions?.tables?.label ?? "?",
+    method: p.method,
+  }));
+
+  return { calls, pendingOrders, newPayments };
 }

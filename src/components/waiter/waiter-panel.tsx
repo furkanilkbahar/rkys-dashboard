@@ -3,9 +3,15 @@
 import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import { approveOrder, acknowledgeCall, refetchWaiterPanel, type MoveTableResult } from "@/app/(waiter)/waiter/actions";
+import {
+  approveOrder,
+  acknowledgeCall,
+  refetchWaiterPanel,
+  type MoveTableResult,
+  type WaiterPaymentNotice,
+} from "@/app/(waiter)/waiter/actions";
 import { assignCourier, type CourierActionResult } from "@/app/(waiter)/waiter/courier-actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -61,6 +67,7 @@ export function WaiterPanel({
   const [pendingOrders, setPendingOrders] = useState(initialPendingOrders);
   const [reservations, setReservations] = useState(upcomingReservations);
   const [courierLocations, setCourierLocations] = useState(initialCourierLocations);
+  const [paymentNotices, setPaymentNotices] = useState<WaiterPaymentNotice[]>([]);
   const router = useRouter();
   const [channelState, setChannelState] = useState<ChannelState>("connecting");
   const { unlocked, unlock } = useSoundUnlock();
@@ -68,13 +75,20 @@ export function WaiterPanel({
   const isConnected = useConnectivity(channelState);
   useInsistentAlert(calls.length > 0, unlocked);
 
+  const lastPaymentCheckRef = useRef(new Date().toISOString());
+
   useEffect(() => {
     let cancelled = false;
     async function refetch() {
-      const result = await refetchWaiterPanel();
+      const sincePaymentsIso = lastPaymentCheckRef.current;
+      const result = await refetchWaiterPanel(sincePaymentsIso);
       if (cancelled) return;
       setCalls(result.calls);
       setPendingOrders(result.pendingOrders);
+      if (result.newPayments.length > 0) {
+        setPaymentNotices((prev) => [...prev, ...result.newPayments]);
+      }
+      lastPaymentCheckRef.current = new Date().toISOString();
     }
 
     const supabase = createClient();
@@ -150,6 +164,10 @@ export function WaiterPanel({
     };
   }, [tenantId, branchId]);
 
+  function dismissPaymentNotice(id: string) {
+    setPaymentNotices((prev) => prev.filter((n) => n.id !== id));
+  }
+
   async function handleAcknowledge(id: string) {
     const result = await acknowledgeCall({ id });
     if (result.ok) {
@@ -187,6 +205,20 @@ export function WaiterPanel({
           </span>
         </div>
       </header>
+
+      {paymentNotices.length > 0 && (
+        <section className="flex flex-col gap-3">
+          <h2 className="text-sm font-semibold text-muted-foreground">{t("paymentNotices")}</h2>
+          {paymentNotices.map((notice) => (
+            <div key={notice.id} className="flex items-center justify-between gap-2 rounded-md border border-primary/50 bg-primary/5 p-2 text-sm">
+              <span>{t("paymentReceived", { table: notice.tableLabel, method: t(`paymentMethods.${notice.method}`) })}</span>
+              <Button type="button" size="sm" variant="ghost" onClick={() => dismissPaymentNotice(notice.id)}>
+                {t("dismiss")}
+              </Button>
+            </div>
+          ))}
+        </section>
+      )}
 
       <section className="flex flex-col gap-3">
         <h2 className="text-sm font-semibold text-muted-foreground">{t("openCalls")}</h2>

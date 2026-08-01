@@ -1079,7 +1079,15 @@
       "occupied": "The selected table is already occupied.",
       "invalid_destination": "Invalid destination table.",
       "unknown": "Could not move, please try again."
-    }
+    },
+    "paymentNotices": "Payment Notices",
+    "paymentReceived": "{table} — paid via {method}",
+    "paymentMethods": {
+      "cash": "Cash",
+      "card_manual": "Card (Manual)",
+      "online": "Online"
+    },
+    "dismiss": "Dismiss"
   },
   "kitchen": {
     "title": "Kitchen Display",

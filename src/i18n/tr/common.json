@@ -1079,7 +1079,15 @@
       "occupied": "Seçilen masa zaten dolu.",
       "invalid_destination": "Geçersiz hedef masa.",
       "unknown": "Taşınamadı, tekrar deneyin."
-    }
+    },
+    "paymentNotices": "Ödeme Bildirimleri",
+    "paymentReceived": "{table} — {method} ile ödendi",
+    "paymentMethods": {
+      "cash": "Nakit",
+      "card_manual": "Kart (Manuel)",
+      "online": "Online"
+    },
+    "dismiss": "Kapat"
   },
   "kitchen": {
     "title": "Mutfak Ekranı (KDS)",
