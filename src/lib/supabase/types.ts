@@ -1402,6 +1402,7 @@ export type Database = {
           id: string
           is_active: boolean
           label: string
+          qr_token_encrypted: string | null
           qr_token_hash: string
           tenant_id: string
         }
@@ -1411,6 +1412,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           label?: string
+          qr_token_encrypted?: string | null
           qr_token_hash: string
           tenant_id: string
         }
@@ -1420,6 +1422,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           label?: string
+          qr_token_encrypted?: string | null
           qr_token_hash?: string
           tenant_id?: string
         }
@@ -4487,6 +4490,7 @@ export type Database = {
           is_active: boolean
           is_counter: boolean
           label: string
+          qr_token_encrypted: string | null
           qr_token_hash: string
           tenant_id: string
           zone_id: string | null
@@ -4498,6 +4502,7 @@ export type Database = {
           is_active?: boolean
           is_counter?: boolean
           label: string
+          qr_token_encrypted?: string | null
           qr_token_hash: string
           tenant_id: string
           zone_id?: string | null
@@ -4509,6 +4514,7 @@ export type Database = {
           is_active?: boolean
           is_counter?: boolean
           label?: string
+          qr_token_encrypted?: string | null
           qr_token_hash?: string
           tenant_id?: string
           zone_id?: string | null
