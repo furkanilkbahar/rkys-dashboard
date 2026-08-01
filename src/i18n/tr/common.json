@@ -1010,7 +1010,7 @@
       "title": "Kiosk Cihazları",
       "empty": "Henüz kiosk cihazı yok.",
       "deviceName": "Cihaz Adı",
-      "pairingUrlHint": "Tablette açın: {path}",
+      "pairingUrlHint": "Tablette açın: {url}",
       "add": "+ Ekle",
       "errors": {
         "invalid_input": "Girdiğiniz bilgileri kontrol edin.",

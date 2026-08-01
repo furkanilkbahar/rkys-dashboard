@@ -3,7 +3,7 @@
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
@@ -27,6 +27,15 @@ export function KioskManager({
   const tErrors = useTranslations("admin.kiosk.errors");
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
+  // KioskManager (farklı olarak QrRevealCard'dan) sayfa ilk yüklendiğinde
+  // SSR ediliyor — window'u doğrudan render'da okumak hydration mismatch'e
+  // yol açar. useSyncExternalStore, sunucuda boş / client'ta gerçek origin
+  // döndürerek bunu güvenli şekilde çözer (değer statik, abonelik gerekmez).
+  const origin = useSyncExternalStore(
+    () => () => {},
+    () => window.location.origin,
+    () => "",
+  );
   const { register, handleSubmit, reset } = useForm<KioskDeviceFormInput>({
     resolver: standardSchemaResolver(kioskDeviceFormSchema),
     defaultValues: { deviceName: "" },
@@ -61,7 +70,15 @@ export function KioskManager({
             <div key={device.id} className="flex items-center justify-between gap-2 rounded-md border border-border p-2 text-sm">
               <div className="flex flex-col">
                 <span className="font-medium">{device.deviceName}</span>
-                <span className="text-xs text-muted-foreground">{t("pairingUrlHint", { path: `/kiosk/${device.pairingCode}/baslat` })}</span>
+                {/* Kısmi bir path yerine tam URL: personel bunu manuel domain
+                    tahmin etmeden doğrudan tablete kopyalayabilsin (tables/
+                    qr-reveal-card.tsx ile aynı fikir; origin SSR güvenliği
+                    için mount sonrası dolduruluyor). */}
+                {origin && (
+                  <span className="text-xs break-all text-muted-foreground">
+                    {t("pairingUrlHint", { url: `${origin}/kiosk/${device.pairingCode}/baslat` })}
+                  </span>
+                )}
                 <code className="text-xs text-muted-foreground">{device.pairingCode}</code>
               </div>
               <Switch checked={device.isActive} onCheckedChange={(checked) => handleToggle(device.id, checked)} />

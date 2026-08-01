@@ -1010,7 +1010,7 @@
       "title": "Kiosk Devices",
       "empty": "No kiosk devices yet.",
       "deviceName": "Device Name",
-      "pairingUrlHint": "Open on the tablet: {path}",
+      "pairingUrlHint": "Open on the tablet: {url}",
       "add": "+ Add",
       "errors": {
         "invalid_input": "Please check the information you entered.",

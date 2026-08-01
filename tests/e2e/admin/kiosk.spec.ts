@@ -57,6 +57,13 @@ test("S46: admin kiosk cihazı ekler, tablet pairing code ile /paket'e bağlanı
     const pairingCode = await page.locator("code").textContent();
     expect(pairingCode).toMatch(/^[A-F0-9]{8}$/);
 
+    // bug-hunt 2026-08-01: önceden yalnızca "/kiosk/{code}/baslat" göreli
+    // yolu gösteriliyordu, personel domain'i elle tahmin etmek zorunda
+    // kalıyordu — artık tam, kopyalanabilir bir URL (tenant'ın kendi
+    // subdomain'i) gösterilir.
+    const expectedPairingUrl = tenantUrl(baseURL!, subdomain, `/kiosk/${pairingCode}/baslat`);
+    await expect(page.getByText(`Tablette açın: ${expectedPairingUrl}`)).toBeVisible();
+
     const kioskContext = await browser.newContext();
     const kioskPage = await kioskContext.newPage();
     await kioskPage.goto(tenantUrl(baseURL!, subdomain, `/kiosk/${pairingCode}/baslat`));
