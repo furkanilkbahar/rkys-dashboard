@@ -1240,8 +1240,12 @@
       "toggle": "Oturumum",
       "noOrders": "Henüz sipariş yok.",
       "subtotal": "Ara toplam: {amount}",
-      "requestCheck": "Hesap İste",
+      "requestCheck": "Garsondan Hesap İste",
       "checkRequested": "Hesap istendi",
+      "requestCheckErrors": {
+        "rate_limited": "Az önce istediniz, biraz bekleyin.",
+        "unknown": "Hesap isteği gönderilemedi, tekrar deneyin."
+      },
       "orderReady": "Siparişiniz hazır!",
       "enableSound": "Sesi Aç",
       "payOnline": "Kartla Öde",

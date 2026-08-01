@@ -49,6 +49,7 @@ export function SessionPanel({
   const [orders, setOrders] = useState(initialOrders);
   const [readyToast, setReadyToast] = useState(false);
   const [checkRequested, setCheckRequested] = useState(false);
+  const [checkError, setCheckError] = useState<string | null>(null);
   const [paying, setPaying] = useState(false);
   const [payError, setPayError] = useState<string | null>(null);
   const [couponCode, setCouponCode] = useState("");
@@ -193,9 +194,12 @@ export function SessionPanel({
   }
 
   async function handleRequestCheck() {
+    setCheckError(null);
     const result = await callWaiter({ callTypeKey: "check" });
     if (result.ok) {
       setCheckRequested(true);
+    } else {
+      setCheckError(t(`requestCheckErrors.${result.error === "rate_limited" ? "rate_limited" : "unknown"}`));
     }
   }
 
@@ -330,6 +334,7 @@ export function SessionPanel({
                 {checkRequested ? t("checkRequested") : t("requestCheck")}
               </Button>
             </div>
+            {checkError && <p className="text-xs text-destructive">{checkError}</p>}
             <Button type="button" size="sm" variant="outline" disabled={paying} onClick={handlePayOnline}>
               {paying ? t("payingOnline") : t("payOnline")}
             </Button>

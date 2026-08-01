@@ -74,6 +74,16 @@ export async function registerTenant(input: unknown): Promise<RegisterResult> {
     return { ok: false, error: "unknown" };
   }
 
+  // bug-hunt 2026-08-01: "su/hesap/yardım" gibi standart çağrı tiplerinin
+  // her tenant için var olduğunu garanti eder (D35) — eksikse "Hesap İste"
+  // her zaman "invalid call type" ile başarısız olurdu. Kayıt akışını
+  // bloklamaz: eksik kalırsa çağrı özelliği geçici olarak çalışmaz, tenant
+  // yine de oluşur.
+  const { error: callTypesError } = await service.rpc("ensure_system_call_types", { p_tenant_id: tenantId });
+  if (callTypesError) {
+    console.error("ensure_system_call_types failed for new tenant", tenantId, callTypesError);
+  }
+
   const provider = getDefaultSubscriptionProvider();
 
   let checkout;

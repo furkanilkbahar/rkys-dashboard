@@ -82,6 +82,21 @@ describe("registerTenant (Faz 4 revizyonu Adım 3, S52 — D80 kapalı kapı kay
     expect(subscription?.trial_ends_at).not.toBeNull();
     expect(subscription?.provider).toBe("mock");
     expect(subscription?.provider_ref).toBeTruthy();
+
+    // bug-hunt 2026-08-01: yeni tenant'lar 'water'/'check'/'assistance'
+    // sistem call_types'ları olmadan oluşuyordu — call_waiter RPC'si sabit
+    // bu key'lere göre satır aradığından "Hesap İste" (ve "Su İstiyorum")
+    // her zaman "invalid call type" ile başarısız olurdu (seed.sql'in
+    // acme/beta'yı elle bu satırlarla doldurması bunu yalnızca local dev'de
+    // gizliyordu). registerTenant artık ensure_system_call_types RPC'sini
+    // çağırıyor.
+    const { data: callTypes } = await service
+      .from("call_types")
+      .select("key, is_system")
+      .eq("tenant_id", tenant!.id)
+      .order("display_order");
+    expect(callTypes?.map((c) => c.key).sort()).toEqual(["assistance", "check", "water"]);
+    expect(callTypes?.every((c) => c.is_system)).toBe(true);
   });
 
   it("aynı alt alan adı ikinci kez kullanılamaz", async () => {

@@ -1240,8 +1240,12 @@
       "toggle": "My Session",
       "noOrders": "No orders yet.",
       "subtotal": "Subtotal: {amount}",
-      "requestCheck": "Request Check",
+      "requestCheck": "Ask Waiter for Check",
       "checkRequested": "Check requested",
+      "requestCheckErrors": {
+        "rate_limited": "You just asked, please wait a bit.",
+        "unknown": "Could not send the request, please try again."
+      },
       "orderReady": "Your order is ready!",
       "enableSound": "Enable Sound",
       "payOnline": "Pay by Card",
