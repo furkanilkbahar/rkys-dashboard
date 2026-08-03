@@ -3,6 +3,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { CartBar } from "@/components/menu/cart-bar";
 import { CartSessionSync } from "@/components/menu/cart-session-sync";
 import { CategorySection } from "@/components/menu/category-section";
+import { CategoryStrip } from "@/components/menu/category-strip";
 import { LanguageSwitcher } from "@/components/menu/language-switcher";
 import { RatingPrompt } from "@/components/menu/rating-prompt";
 import { SessionPanel } from "@/components/menu/session-panel";
@@ -25,6 +26,7 @@ import { redeemLoyaltyPoints, requestLoyaltyOtp, verifyLoyaltyOtp } from "./loya
 export default async function MenuPage() {
   const guest = await getCurrentGuestSession();
   const t = await getTranslations("menu.session");
+  const tEmpty = await getTranslations("menu.menuEmpty");
 
   if (!guest) {
     return (
@@ -82,11 +84,35 @@ export default async function MenuPage() {
           <LanguageSwitcher enabledLocales={enabledLocales as Locale[]} />
         </div>
       </header>
-      <div className="flex flex-col gap-8">
-        {categories.map((category) => (
-          <CategorySection key={category.id} category={category} currency={currency} />
-        ))}
-      </div>
+      <CategoryStrip categories={categories.map((c) => ({ id: c.id, name: c.name }))} />
+
+      {categories.length === 0 ? (
+        /* Adım 0 kabul kriteri 3 — boş menü tasarımsız kalmaz. */
+        <div className="flex flex-col items-center gap-2 py-16 text-center">
+          <h2
+            className="font-[family-name:var(--t-display)]"
+            style={{
+              fontWeight: "var(--t-display-w)",
+              letterSpacing: "var(--t-display-tr)",
+              fontSize: "var(--t-display-s)",
+            }}
+          >
+            {tEmpty("title")}
+          </h2>
+          <p className="max-w-[38ch] text-sm leading-relaxed text-[var(--fg-muted)]">{tEmpty("body")}</p>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-8">
+          {categories.map((category, index) => (
+            <CategorySection
+              key={category.id}
+              category={category}
+              currency={currency}
+              isFirst={index === 0}
+            />
+          ))}
+        </div>
+      )}
       <WaiterCallButton callTypes={callTypes} />
       <CartBar currency={currency} onSubmit={submitOrder} />
     </main>

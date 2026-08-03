@@ -105,6 +105,55 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* ─────────────────────────────────────────────────────────────────────
+   Menü ızgarası giriş animasyonu — CSS, framer-motion DEĞİL (D89).
+   Eskiden her ProductCard bir motion.div idi; ızgaranın tamamı client'a
+   çekiliyordu. Bu keyframe 0 KB JS maliyetiyle aynı işi yapıyor ve
+   prefers-reduced-motion kuralı (aşağıda) onu otomatik sadeleştiriyor.
+   ───────────────────────────────────────────────────────────────────── */
+@layer components {
+  /* Kaydırma çubuğunu gizler — kategori şeridi gibi yatay kaydırılan
+     yüzeylerde. Kaydırma davranışı korunur, yalnızca çubuk gizlenir. */
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .menu-card {
+    animation: menu-card-in var(--dur-slow) var(--ease-out) backwards;
+  }
+  /* Kademeli giriş — ilk 6 kart. Sonrası zaten kıvrımın altında. */
+  .menu-card:nth-child(2) {
+    animation-delay: 40ms;
+  }
+  .menu-card:nth-child(3) {
+    animation-delay: 80ms;
+  }
+  .menu-card:nth-child(4) {
+    animation-delay: 120ms;
+  }
+  .menu-card:nth-child(5) {
+    animation-delay: 160ms;
+  }
+  .menu-card:nth-child(n + 6) {
+    animation-delay: 200ms;
+  }
+}
+
+@keyframes menu-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--move-md));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* Güvenlik ağı: bir yüzey token'ı çözülemezse (data-surface eksik/bilinmeyen)
    nötr bir sete düşülür — beyaz sayfa yerine okunabilir bir ekran. */
 :root {

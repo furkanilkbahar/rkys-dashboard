@@ -1239,7 +1239,14 @@
       "soldOut": "Sold out",
       "priceFrom": "From {price}",
       "addToCart": "Add to cart",
-      "added": "Added"
+      "added": "Added",
+      "inCart": "{count} in cart",
+      "chooseOptions": "Open options for {name}",
+      "addNamed": "Add {name} to cart",
+      "variants": "Options",
+      "extras": "Extras",
+      "variantCount": "{count} options",
+      "extraCount": "{count} extras"
     },
     "cart": {
       "itemCount": "{count} items",
@@ -1259,7 +1266,10 @@
         "minBasketHint": "Minimum basket for this zone: {amount}",
         "address": "Delivery Address",
         "scheduledFor": "Delivery Time (optional)"
-      }
+      },
+      "empty": "Your cart is empty",
+      "emptyHint": "Add an item from the menu to get started.",
+      "view": "View cart"
     },
     "waiterCall": {
       "callWaiter": "Call Waiter",
@@ -1364,6 +1374,19 @@
         "no_session": "Your session could not be found.",
         "unknown": "Could not submit, please try again."
       }
+    },
+    "menuEmpty": {
+      "title": "Menu is being prepared",
+      "body": "There are no items to show at this branch right now. Staff can help you."
+    },
+    "categoryNav": {
+      "label": "Categories"
+    },
+    "connection": {
+      "online": "Connected",
+      "reconnecting": "Reconnecting…",
+      "offline": "No connection",
+      "offlineHint": "Your cart is saved and will be sent once you are back online."
     }
   },
   "platform": {

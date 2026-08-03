@@ -1239,7 +1239,14 @@
       "soldOut": "Tükendi",
       "priceFrom": "{price}'den itibaren",
       "addToCart": "Sepete ekle",
-      "added": "Eklendi"
+      "added": "Eklendi",
+      "inCart": "Sepette {count} adet",
+      "chooseOptions": "{name} için seçenekleri aç",
+      "addNamed": "{name} ürününü sepete ekle",
+      "variants": "Seçenekler",
+      "extras": "Ekstralar",
+      "variantCount": "{count} seçenek",
+      "extraCount": "{count} ekstra"
     },
     "cart": {
       "itemCount": "{count} ürün",
@@ -1259,7 +1266,10 @@
         "minBasketHint": "Bu bölge için minimum sepet: {amount}",
         "address": "Teslimat Adresi",
         "scheduledFor": "Teslim Zamanı (opsiyonel)"
-      }
+      },
+      "empty": "Sepetiniz boş",
+      "emptyHint": "Menüden ürün ekleyerek başlayın.",
+      "view": "Sepeti gör"
     },
     "waiterCall": {
       "callWaiter": "Garson Çağır",
@@ -1364,6 +1374,19 @@
         "no_session": "Oturumunuz bulunamadı.",
         "unknown": "Gönderilemedi, tekrar deneyin."
       }
+    },
+    "menuEmpty": {
+      "title": "Menü henüz hazırlanıyor",
+      "body": "Bu şubede şu an gösterilecek ürün yok. Personelden yardım isteyebilirsiniz."
+    },
+    "categoryNav": {
+      "label": "Kategoriler"
+    },
+    "connection": {
+      "online": "Bağlı",
+      "reconnecting": "Yeniden bağlanılıyor…",
+      "offline": "Bağlantı yok",
+      "offlineHint": "Sepetiniz korunuyor, bağlantı gelince gönderilecek."
     }
   },
   "platform": {

@@ -1,152 +1,91 @@
-"use client";
+import { getTranslations } from "next-intl/server";
 
-import { motion } from "framer-motion";
-import { useTranslations } from "next-intl";
-import Image from "next/image";
-import { useMemo, useState } from "react";
-
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { MenuProduct } from "@/lib/data/menu";
-import { lineKey, useCartStore } from "@/lib/store/cart";
 import { formatPrice } from "@/lib/utils/currency";
 
-export function ProductCard({ product, currency }: { product: MenuProduct; currency: string }) {
-  const t = useTranslations("menu.product");
-  const addLine = useCartStore((state) => state.addLine);
-  const [expanded, setExpanded] = useState(false);
-  const [selectedVariantId, setSelectedVariantId] = useState<string | null>(
-    product.variants.find((v) => v.isOrderable)?.id ?? product.variants[0]?.id ?? null,
-  );
-  const [selectedExtraIds, setSelectedExtraIds] = useState<string[]>([]);
-  const [justAdded, setJustAdded] = useState(false);
+import { AddToCart } from "./add-to-cart";
+import { ProductImage } from "./product-image";
 
-  const hasDetails = product.variants.length > 0 || product.extras.length > 0;
-  const selectedVariant = product.variants.find((v) => v.id === selectedVariantId) ?? null;
+/**
+ * Faz 21 Adım 0 — ürün kartı.
+ *
+ * SERVER COMPONENT. Eskiden bütün kart "use client" idi ve her karta framer-motion
+ * mount animasyonu bindiriliyordu; ızgaranın tamamı JS taşıyordu. Artık yalnızca
+ * <AddToCart /> yaprağı hidrate olur, giriş animasyonu CSS'tir (menu.css).
+ *
+ * Kart anatomisi (§2.2 kural 4): görsel → ad → detay ipucu → fiyat → sepete
+ * ekleme affordance'ı. Fiyat görsel olarak ayrıcalıklıdır — vurgu renginde,
+ * kalın, tabular (§2.2 kural 5).
+ *
+ * `textFirst`: kategoride fotoğraflı ürün oranı %50'nin altındaysa CategorySection
+ * bunu true geçer — görsel bloğu hiç çizilmez, tipografi büyür (kabul kriteri 2).
+ */
+export async function ProductCard({
+  product,
+  currency,
+  textFirst = false,
+  priority = false,
+}: {
+  product: MenuProduct;
+  currency: string;
+  textFirst?: boolean;
+  priority?: boolean;
+}) {
+  const t = await getTranslations("menu.product");
+
   const displayPrice =
-    product.variants.length > 0 ? Math.min(...product.variants.map((v) => v.priceMinor)) : product.priceMinor;
+    product.variants.length > 0
+      ? Math.min(...product.variants.map((v) => v.priceMinor))
+      : product.priceMinor;
 
-  const canAdd = useMemo(() => {
-    if (product.variants.length > 0) {
-      return selectedVariant !== null && selectedVariant.isOrderable;
-    }
-    return product.isOrderable;
-  }, [product, selectedVariant]);
-
-  function toggleExtra(extraId: string) {
-    setSelectedExtraIds((prev) =>
-      prev.includes(extraId) ? prev.filter((id) => id !== extraId) : [...prev, extraId],
-    );
-  }
-
-  function handleAdd() {
-    if (!canAdd) return;
-    const unitPrice = selectedVariant ? selectedVariant.priceMinor : product.priceMinor;
-    const chosenExtras = product.extras.filter((e) => selectedExtraIds.includes(e.id));
-
-    addLine({
-      key: lineKey(product.id, selectedVariantId, selectedExtraIds),
-      productId: product.id,
-      variantId: selectedVariantId,
-      productName: product.name,
-      variantName: selectedVariant?.name ?? null,
-      unitPriceMinor: unitPrice + chosenExtras.reduce((sum, e) => sum + e.priceMinor, 0),
-      extraIds: selectedExtraIds,
-      extraNames: chosenExtras.map((e) => e.name),
-    });
-
-    setSelectedExtraIds([]);
-    setJustAdded(true);
-    setTimeout(() => setJustAdded(false), 1200);
-  }
+  // MenuProduct'ta açıklama/gramaj alanı yok — uydurmuyoruz, elimizdeki
+  // gerçek bilgiyi (varyant/ekstra sayısı) ipucu olarak gösteriyoruz.
+  const hints: string[] = [];
+  if (product.variants.length > 0) hints.push(t("variantCount", { count: product.variants.length }));
+  if (product.extras.length > 0) hints.push(t("extraCount", { count: product.extras.length }));
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.25, ease: "easeOut" }}
+    <article
+      data-slot="product-card"
+      className="menu-card flex flex-col overflow-hidden rounded-[var(--radius)] border border-[var(--line)] bg-[var(--card)]"
     >
-      <Card>
-        {product.imageUrl && (
-          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-t-[calc(var(--radius)-1px)]">
-            <Image src={product.imageUrl} alt="" fill unoptimized className="object-cover" />
-          </div>
-        )}
-        <CardHeader
-          className={hasDetails ? "cursor-pointer" : undefined}
-          onClick={hasDetails ? () => setExpanded((v) => !v) : undefined}
+      {!textFirst && (
+        <div className="p-[7px] pb-0">
+          <ProductImage src={product.imageUrl} name={product.name} priority={priority} />
+        </div>
+      )}
+
+      <div
+        className="flex flex-1 flex-col gap-1.5 px-3 pb-3 pt-2.5"
+        style={{ paddingBlock: "calc(10px * var(--dens))" }}
+      >
+        <h3
+          className="font-[family-name:var(--t-display)] leading-tight"
+          style={{
+            fontWeight: "var(--t-card-w)",
+            letterSpacing: "var(--t-display-tr)",
+            fontSize: textFirst ? "1.16rem" : "1.04rem",
+          }}
         >
-          <CardTitle className="flex items-center justify-between gap-2">
-            <span>{product.name}</span>
-            {!product.isOrderable && <Badge variant="destructive">{t("soldOut")}</Badge>}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-3">
-          <p className="text-sm font-medium text-foreground">
+          {product.name}
+        </h3>
+
+        {hints.length > 0 && (
+          <p className="text-[11.5px] leading-snug text-[var(--fg-faint)]">{hints.join(" · ")}</p>
+        )}
+
+        <div className="mt-auto flex items-center justify-between gap-2 pt-2">
+          <span
+            className="tabular-nums tracking-tight text-[var(--accent)]"
+            style={{ fontWeight: "var(--t-price-w)", fontSize: "1rem" }}
+          >
             {product.variants.length > 0
               ? t("priceFrom", { price: formatPrice(displayPrice, currency) })
               : formatPrice(displayPrice, currency)}
-          </p>
-
-          {expanded && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              transition={{ duration: 0.2 }}
-              className="flex flex-col gap-3 text-sm"
-            >
-              {product.variants.length > 0 && (
-                <fieldset className="flex flex-col gap-1">
-                  {product.variants.map((variant) => (
-                    <label key={variant.id} className="flex items-center justify-between gap-2 text-muted-foreground">
-                      <span className="flex items-center gap-2">
-                        <input
-                          type="radio"
-                          name={`variant-${product.id}`}
-                          checked={selectedVariantId === variant.id}
-                          disabled={!variant.isOrderable}
-                          onChange={() => setSelectedVariantId(variant.id)}
-                        />
-                        {variant.name}
-                      </span>
-                      <span className="flex items-center gap-2">
-                        {!variant.isOrderable && <Badge variant="destructive">{t("soldOut")}</Badge>}
-                        {formatPrice(variant.priceMinor, currency)}
-                      </span>
-                    </label>
-                  ))}
-                </fieldset>
-              )}
-              {product.extras.length > 0 && (
-                <fieldset className="flex flex-col gap-1">
-                  {product.extras.map((extra) => (
-                    <label key={extra.id} className="flex items-center justify-between gap-2 text-muted-foreground">
-                      <span className="flex items-center gap-2">
-                        <input
-                          type="checkbox"
-                          checked={selectedExtraIds.includes(extra.id)}
-                          disabled={!extra.isOrderable}
-                          onChange={() => toggleExtra(extra.id)}
-                        />
-                        + {extra.name}
-                      </span>
-                      <span className="flex items-center gap-2">
-                        {!extra.isOrderable && <Badge variant="destructive">{t("soldOut")}</Badge>}
-                        {formatPrice(extra.priceMinor, currency)}
-                      </span>
-                    </label>
-                  ))}
-                </fieldset>
-              )}
-            </motion.div>
-          )}
-
-          <Button type="button" size="sm" disabled={!canAdd} onClick={handleAdd}>
-            {justAdded ? t("added") : t("addToCart")}
-          </Button>
-        </CardContent>
-      </Card>
-    </motion.div>
+          </span>
+          <AddToCart product={product} currency={currency} />
+        </div>
+      </div>
+    </article>
   );
 }
