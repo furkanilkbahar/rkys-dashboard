@@ -232,7 +232,7 @@ export function PosOrder({
                   type="button"
                   onClick={() => removeLine(line.key)}
                   aria-label={t("removeLine")}
-                  className="flex size-8 shrink-0 items-center justify-center rounded-[var(--r-xs)] text-[18px] leading-none text-[var(--sem-err)]"
+                  className="flex size-8 shrink-0 items-center justify-center rounded-[var(--r-xs)] text-[18px] leading-none text-[var(--sem-err-fg)]"
                 >
                   ×
                 </button>
@@ -246,8 +246,8 @@ export function PosOrder({
             </p>
           )}
 
-          {error && <p className="text-[13px] text-[var(--sem-err)]">{error}</p>}
-          {status === "success" && <p className="text-[13px] text-[var(--sem-ok)]">{t("submitted")}</p>}
+          {error && <p className="text-[13px] text-[var(--sem-err-fg)]">{error}</p>}
+          {status === "success" && <p className="text-[13px] text-[var(--sem-ok-fg)]">{t("submitted")}</p>}
 
           <Button
             type="button"

@@ -56,6 +56,17 @@
   --sem-err: oklch(0.58 0.19 22);
   --sem-info: oklch(0.6 0.11 240);
 
+  /* METİN varyantları — yukarıdakiler İŞARET renkleridir (nokta, şerit, dolu
+     buton zemini) ve doygunlukları oradan gelir. Aynı değerler METİN olarak
+     kullanılınca AA'yı tutturmuyor (ölçüldü: açık modda --sem-warn beyaz
+     üstünde 2.04:1). Bu yüzden metin için ayrı, MODA DUYARLI bir set var.
+     Buradaki değerler AÇIK zemin içindir (pazarlama + app light + :root
+     güvenlik ağı); koyu app yüzeyi surface-app.css'te bunları ezer.
+     En düşük ölçülen kontrast: 4.91:1. */
+  --sem-ok-fg: oklch(0.5 0.13 155);
+  --sem-warn-fg: oklch(0.52 0.12 75);
+  --sem-err-fg: oklch(0.53 0.19 22);
+
   /* Yoğunluk çarpanı — yüzey/tema kendi değerini verir; `pointer: coarse`
      altında dokunma hedefi için genişler (Adım 0 kabul kriteri 6). */
   --dens: 1;

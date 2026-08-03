@@ -91,6 +91,24 @@ Mevcut token setinde **63/63 kontrast kontrolü geçiyor** (ölçüldü). Yeni t
 | Yarıçap | kart 20px, buton pill, konteyner 28px | `--r-sm`, sistem geneli tek değer | tema token'ı |
 | Yoğunluk | ferah | sidebar/tablo kompakt (12px tablo, 7px satır), ana tuval ferah | dokunma hedefi ≥36px (kiosk için ≥44px) |
 
+## Operasyon Panelleri (2b'nin alt yüzeyi)
+
+`(kitchen)` `(waiter)` `(cashier)` `(courier)` admin ile **aynı Katman 2b token'larını** kullanır — ayrı bir tema değil. Ayrıldıkları tek yer okuma mesafesi: mutfak ekranı tezgâhın üstünde, garson tableti elde, kasa dokunmatikte, kurye telefonu motorda. Bu yüzden `.ops-surface` sınıfı bir kademe yukarı çeker:
+
+| | `(admin)` | `.ops-surface` |
+|---|---|---|
+| Dokunma hedefi | `--tap-min` (36px, coarse'ta 44px) | **44px, işaretçi türünden bağımsız** |
+| Sayfa başlığı | 20px bold | 22px bold |
+| Kart başlığı / birincil satır | 14px | **17px bold** |
+| Liste/kalem gövdesi | 12.5px | **15px** |
+| Yoğunluk (`--dens`) | 1 | 1.1 |
+
+Duvara asılı bir KDS fare ile kullanılabilir; hedefin o durumda küçülmesi "uzaktan okunabilir" kriterine aykırı olurdu — bu yüzden 44px `pointer: coarse`'a bağlı değildir.
+
+**Kanban** yalnızca durum makinesi olan yerde kullanılır: KDS'de `approved → preparing → ready` kolonları. Kolon başlığı yapışkandır (`--ops-header-h`), sayaç taşır, ve renk noktası kolonun anlamını verir. Kurye paneli bilinçli olarak kanban **değildir** — telefonda tek elle kullanılıyor, kolonlara bölmek yalnızca kaydırma ekler.
+
+**Fiş yaşlanması** renk ekonomisinin (§Renk) meşru kullanımıdır: `<10 dk` nötr, `≥10 dk` `--sem-warn`, `≥20 dk` `--sem-err`. Eşikler v1'de sabittir ve `use-elapsed.ts`'te belgelenmiştir; tenant başına ayarlanabilir hale getirmek ayrı bir modül ayarı kararı gerektirir — uydurulmaz.
+
 ## Hareket
 
 Token'lı: `--dur-fast 120ms` · `--dur-base 200ms` · `--dur-slow 340ms` · `--ease-out cubic-bezier(.22,1,.36,1)` · `--move-sm 6px` · `--move-md 14px`.
@@ -149,3 +167,6 @@ Tenant fotoğrafları telefonla çekilmiş, kötü ışıklı, farklı oranlı o
 | 2026-08-03 | Admin koyu birincil, açık tam doğrulanır | Tek görsel yönde kalibrasyon, QA yükü dengeli |
 | 2026-08-03 | Kor `--accent-fg` koyu | Doygun kırmızı beyaz metinle AA tutturamıyor (ölçüldü) |
 | 2026-08-03 | Sentry her yüzeyde kalıyor, bütçe yükseltildi | Kullanıcı kararı; izleme kaybı istenmedi |
+| 2026-08-03 | Operasyon panellerinde 44px hedef, işaretçi türünden bağımsız | Duvara asılı KDS fare ile de kullanılıyor; hedef o durumda küçülmemeli |
+| 2026-08-03 | Kanban yalnızca KDS'de, kurye panelinde yok | Kanban durum makinesini anlatır; kuryede aynı anda birkaç teslimat var, kolon yalnızca kaydırma ekler |
+| 2026-08-03 | Fiş yaşlanma eşikleri sabit (10 / 20 dk) | Tenant başına ayar ayrı bir modül kararı; uydurma varsayılan yazılmadı |

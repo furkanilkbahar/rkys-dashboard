@@ -96,7 +96,7 @@ export function CourierPanel({
       }
     >
       {locationError && (
-        <p role="alert" className="mb-3 text-[13px] text-[var(--sem-err)]">
+        <p role="alert" className="mb-3 text-[13px] text-[var(--sem-err-fg)]">
           {locationError}
         </p>
       )}

@@ -110,7 +110,7 @@ function CompForm({
       <Button type="button" size="sm" onClick={submit}>
         {t("confirm")}
       </Button>
-      {error && <p className="text-[13px] text-[var(--sem-err)]">{error}</p>}
+      {error && <p className="text-[13px] text-[var(--sem-err-fg)]">{error}</p>}
     </div>
   );
 }
@@ -258,7 +258,7 @@ function RecentPaymentRow({
               {t("confirm")}
             </Button>
           </div>
-          {error && <p className="text-[13px] text-[var(--sem-err)]">{error}</p>}
+          {error && <p className="text-[13px] text-[var(--sem-err-fg)]">{error}</p>}
         </div>
       )}
     </div>
@@ -581,7 +581,7 @@ export function PayScreen({
                 {t("paymentMode.pay")}
               </Button>
             )}
-            {paymentMode === "items" && error && <p className="text-[13px] text-[var(--sem-err)]">{error}</p>}
+            {paymentMode === "items" && error && <p className="text-[13px] text-[var(--sem-err-fg)]">{error}</p>}
           </CardContent>
         </Card>
       )}
@@ -606,7 +606,7 @@ export function PayScreen({
                 )}
               </div>
             ))}
-            {error && <p className="text-[13px] text-[var(--sem-err)]">{error}</p>}
+            {error && <p className="text-[13px] text-[var(--sem-err-fg)]">{error}</p>}
             {allPaid && <p className="text-sm text-primary">{t("allPaid")}</p>}
           </CardContent>
         </Card>

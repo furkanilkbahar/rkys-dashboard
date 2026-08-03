@@ -72,7 +72,7 @@ export function PinLoginPad({ loginWithPin }: { loginWithPin: (input: unknown) =
           {t("submit")}
         </Button>
       </div>
-      {error && <p role="alert" className="text-[14px] text-[var(--sem-err)]">{error}</p>}
+      {error && <p role="alert" className="text-[14px] text-[var(--sem-err-fg)]">{error}</p>}
     </div>
   );
 }

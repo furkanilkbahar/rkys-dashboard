@@ -70,7 +70,7 @@ function OpenShiftForm({
           <Button type="submit" size="sm">
             {t("openShift")}
           </Button>
-          {error && <p className="text-[13px] text-[var(--sem-err)]">{error}</p>}
+          {error && <p className="text-[13px] text-[var(--sem-err-fg)]">{error}</p>}
         </form>
       </CardContent>
     </Card>
@@ -112,7 +112,7 @@ function CloseShiftForm({
       <Button type="submit" size="sm" variant="destructive">
         {t("closeShift")}
       </Button>
-      {error && <p className="text-[13px] text-[var(--sem-err)]">{error}</p>}
+      {error && <p className="text-[13px] text-[var(--sem-err-fg)]">{error}</p>}
     </form>
   );
 }
@@ -172,7 +172,7 @@ function CashMovementForm({
       <Button type="submit" size="sm">
         {t("addMovement")}
       </Button>
-      {error && <p className="text-[13px] text-[var(--sem-err)]">{error}</p>}
+      {error && <p className="text-[13px] text-[var(--sem-err-fg)]">{error}</p>}
     </form>
   );
 }

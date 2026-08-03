@@ -3,12 +3,36 @@ import type { ReactNode } from "react";
 /** Anlam tonları — renk YALNIZCA durum/aciliyet taşıdığında (§2.3). */
 export type OpsTone = "neutral" | "ok" | "warn" | "err" | "accent";
 
-const TONE_COLOR: Record<OpsTone, string> = {
+/**
+ * İşaret rengi — nokta, kenar şeridi. Doygun `--sem-*` burada doğru:
+ * metin değil, grafik öğesi.
+ */
+const TONE_MARK: Record<OpsTone, string> = {
   neutral: "var(--surface-fg-faint)",
   ok: "var(--sem-ok)",
   warn: "var(--sem-warn)",
   err: "var(--sem-err)",
   accent: "var(--surface-accent)",
+};
+
+/**
+ * METİN rengi — ayrı bir set. Doygun işaret renklerini metin olarak
+ * kullanmak AA'yı kırıyordu (ölçüm: açık modda `--sem-warn` beyaz üstünde
+ * 2.04:1). `--sem-*-fg` moda duyarlı ve dört yüzey tonunda da ≥4.9:1.
+ */
+const TONE_TEXT: Record<OpsTone, string> = {
+  neutral: "var(--surface-fg-muted)",
+  ok: "var(--sem-ok-fg)",
+  warn: "var(--sem-warn-fg)",
+  err: "var(--sem-err-fg)",
+  accent: "var(--surface-accent)",
+};
+
+// Tailwind sınıfları statik yazılır (JIT tarayıcısı şablon dizesi üretemez).
+const BOARD_COLUMNS: Record<2 | 3 | 4, string> = {
+  2: "md:grid-cols-2",
+  3: "md:grid-cols-3",
+  4: "md:grid-cols-2 xl:grid-cols-4",
 };
 
 /**
@@ -23,13 +47,6 @@ const TONE_COLOR: Record<OpsTone, string> = {
  * Dar ekranda (telefon) kolonlar alt alta yığılır — pano yatay kaydırmaya
  * zorlanmaz; tablet ve üstünde yan yana.
  */
-// Tailwind sınıfları statik yazılır (JIT tarayıcısı şablon dizesi üretemez).
-const BOARD_COLUMNS: Record<2 | 3 | 4, string> = {
-  2: "md:grid-cols-2",
-  3: "md:grid-cols-3",
-  4: "md:grid-cols-2 xl:grid-cols-4",
-};
-
 export function OpsBoard({ children, columns }: { children: ReactNode; columns: 2 | 3 | 4 }) {
   return <div className={`grid items-start gap-3 lg:gap-4 ${BOARD_COLUMNS[columns]}`}>{children}</div>;
 }
@@ -65,7 +82,7 @@ export function OpsColumn({
         <span
           aria-hidden="true"
           className="size-2.5 shrink-0 rounded-full"
-          style={{ backgroundColor: TONE_COLOR[tone] }}
+          style={{ backgroundColor: TONE_MARK[tone] }}
         />
         <h2 className="text-[13px] font-semibold tracking-[0.06em] text-[var(--surface-fg-muted)] uppercase">
           {label}
@@ -110,7 +127,7 @@ export function OpsCard({
       style={
         tone === "neutral"
           ? undefined
-          : { borderInlineStartWidth: 3, borderInlineStartColor: TONE_COLOR[tone] }
+          : { borderInlineStartWidth: 3, borderInlineStartColor: TONE_MARK[tone] }
       }
     >
       {children}
@@ -122,11 +139,10 @@ export function OpsCard({
 export function OpsBadge({ tone = "neutral", children }: { tone?: OpsTone; children: ReactNode }) {
   return (
     <span
-      className="inline-flex shrink-0 items-center gap-1.5 rounded-[var(--r-xs)] px-1.5 py-0.5 text-[12px] font-semibold tabular-nums"
-      style={{
-        color: tone === "neutral" ? "var(--surface-fg-muted)" : TONE_COLOR[tone],
-        backgroundColor: tone === "neutral" ? "var(--surface-panel-2)" : "color-mix(in oklab, currentColor 14%, transparent)",
-      }}
+      // Zemin NÖTR: metnin kendi rengiyle tonlamak zemini metne yaklaştırıp
+      // kontrastı öldürüyordu. Anlamı renk + kartın kenar şeridi taşıyor.
+      className="inline-flex shrink-0 items-center gap-1.5 rounded-[var(--r-xs)] bg-[var(--surface-panel-2)] px-1.5 py-0.5 text-[12px] font-semibold tabular-nums"
+      style={{ color: TONE_TEXT[tone] }}
     >
       {children}
     </span>
