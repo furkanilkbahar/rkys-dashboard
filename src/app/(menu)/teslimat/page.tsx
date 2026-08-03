@@ -49,7 +49,8 @@ export default async function DeliveryPage() {
   const loyaltyBalance = sessionCustomerId ? await getSessionLoyaltyBalance(sessionCustomerId) : 0;
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-3xl flex-col gap-6 p-4 pb-24 sm:p-8">
+    <main className="mx-auto flex min-h-screen max-w-3xl flex-col gap-6 p-4 sm:p-8"
+      style={{ paddingBottom: "var(--cart-bar-space)" }}>
       <CartSessionSync tableSessionId={guest.tableSessionId} />
       <header className="flex items-center justify-between gap-4">
         <p className="text-sm text-muted-foreground">{t("connected")}</p>

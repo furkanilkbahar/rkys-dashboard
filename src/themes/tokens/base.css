@@ -60,6 +60,10 @@
      altında dokunma hedefi için genişler (Adım 0 kabul kriteri 6). */
   --dens: 1;
   --tap-min: 36px;
+
+  /* Misafir menüsünde yüzen alt çubuğun rezerve ettiği dikey alan —
+     içerik onun altında kalmasın (kart kaydırma payı + sayfa dolgusu). */
+  --cart-bar-space: 104px;
 }
 
 /* prefers-reduced-motion: süre ~0, mesafe 0. Opaklık geçişi KALIR —

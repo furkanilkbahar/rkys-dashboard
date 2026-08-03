@@ -1,6 +1,31 @@
 import Image from "next/image";
 
 /**
+ * Next 16, SSRF koruması gereği ÖZEL/loopback IP'ye çözülen uzak görselleri
+ * optimize etmeyi reddediyor ("resolved to private ip"). Yerel geliştirmede
+ * Supabase 127.0.0.1'de çalıştığı için tüm menü görselleri 400 dönüyordu.
+ * Prod'da host <ref>.supabase.co olduğundan optimizasyon normal çalışır —
+ * bu escape hatch YALNIZCA özel IP'li kurulumlarda devreye girer.
+ */
+const SUPABASE_HOST_IS_PRIVATE = (() => {
+  const raw = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!raw) return false;
+  try {
+    const { hostname } = new URL(raw);
+    return (
+      hostname === "localhost" ||
+      hostname === "::1" ||
+      /^127\./.test(hostname) ||
+      /^10\./.test(hostname) ||
+      /^192\.168\./.test(hostname) ||
+      /^172\.(1[6-9]|2\d|3[01])\./.test(hostname)
+    );
+  } catch {
+    return false;
+  }
+})();
+
+/**
  * Faz 21 Adım 0 kabul kriteri 2 — görselsiz zarif çökme.
  *
  * Server Component: hiçbir client JS taşımaz.
@@ -41,6 +66,7 @@ export function ProductImage({
           fill
           sizes={sizes}
           priority={priority}
+          unoptimized={SUPABASE_HOST_IS_PRIVATE}
           className="object-cover"
         />
       ) : (

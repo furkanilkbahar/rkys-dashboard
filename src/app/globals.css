@@ -124,6 +124,10 @@
 
   .menu-card {
     animation: menu-card-in var(--dur-slow) var(--ease-out) backwards;
+    /* Yüzen sepet çubuğu (fixed, ~64px + güvenli alan) son satırı örtüyordu;
+       tarayıcı "görünür alana kaydır" yaparken kartı çubuğun ALTINA
+       yerleştirebiliyordu. Kaydırma payı bunu kesin çözer. */
+    scroll-margin-bottom: var(--cart-bar-space);
   }
   /* Kademeli giriş — ilk 6 kart. Sonrası zaten kıvrımın altında. */
   .menu-card:nth-child(2) {
