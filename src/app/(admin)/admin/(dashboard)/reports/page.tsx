@@ -50,6 +50,14 @@ function daysBeforeIso(dateIso: string, days: number): string {
   return shifted.toISOString().slice(0, 10);
 }
 
+// D47 menü mühendisliği kategorileri → anlam token'ları (RULES #13).
+const MENU_ENGINEERING_TONE: Record<string, string> = {
+  star: "var(--sem-ok)",
+  plowhorse: "var(--sem-warn)",
+  puzzle: "var(--sem-info)",
+  dog: "var(--sem-err)",
+};
+
 export default async function AdminReportsPage({
   searchParams,
 }: {
@@ -347,16 +355,15 @@ export default async function AdminReportsPage({
               menuEngineering.map((row) => (
                 <div key={row.productName} className="flex items-center justify-between gap-2 text-sm">
                   <span className="flex items-center gap-2">
+                    {/* RULES #13: sabit palet sınıfları yerine ANLAM token'ları.
+                        Menü mühendisliği kategorileri (D47) semantik: star=iyi,
+                        plowhorse=dikkat, puzzle=bilgi, dog=sorunlu. */}
                     <span
-                      className={`rounded px-1.5 py-0.5 text-xs font-medium ${
-                        row.category === "star"
-                          ? "bg-emerald-500/10 text-emerald-600"
-                          : row.category === "plowhorse"
-                            ? "bg-amber-500/10 text-amber-600"
-                            : row.category === "puzzle"
-                              ? "bg-sky-500/10 text-sky-600"
-                              : "bg-destructive/10 text-destructive"
-                      }`}
+                      className="rounded px-1.5 py-0.5 text-xs font-medium"
+                      style={{
+                        color: MENU_ENGINEERING_TONE[row.category],
+                        backgroundColor: `color-mix(in oklch, ${MENU_ENGINEERING_TONE[row.category]} 12%, transparent)`,
+                      }}
                     >
                       {t(`period.menuEngineering.${row.category}`)}
                     </span>

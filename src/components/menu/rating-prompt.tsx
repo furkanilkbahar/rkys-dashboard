@@ -90,7 +90,10 @@ export function RatingPrompt({
               type="button"
               aria-label={t("star", { n })}
               onClick={() => setStars(n)}
-              className={`text-3xl ${n <= stars ? "text-yellow-500" : "text-muted-foreground"}`}
+              className="text-3xl"
+              // RULES #13: sabit palet yerine anlam token'ı. Tema vurgusu
+              // KULLANILMIYOR — Kor temasında yıldızlar kırmızı olurdu.
+              style={{ color: n <= stars ? "var(--sem-warn)" : "var(--fg-faint, var(--muted-foreground))" }}
             >
               ★
             </button>
@@ -130,7 +133,8 @@ export function RatingPrompt({
                     type="button"
                     aria-label={t("staffStar", { n })}
                     onClick={() => setStaffStars(n)}
-                    className={`text-2xl ${n <= staffStars ? "text-yellow-500" : "text-muted-foreground"}`}
+                    className="text-2xl"
+                    style={{ color: n <= staffStars ? "var(--sem-warn)" : "var(--fg-faint, var(--muted-foreground))" }}
                   >
                     ★
                   </button>
