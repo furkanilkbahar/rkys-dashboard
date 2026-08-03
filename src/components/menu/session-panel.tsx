@@ -287,7 +287,12 @@ export function SessionPanel({
         <button
           type="button"
           onClick={unlock}
-          className="fixed top-4 left-4 z-20 rounded-full bg-muted px-3 py-1 text-xs text-muted-foreground"
+          // Faz 21: eskiden `fixed top-4 left-4` idi ve yeni bağlantı
+          // göstergesinin (D30, başlığın sol başı) tam üstüne biniyordu.
+          // Sepet çubuğunun hemen üstüne alındı — hem çakışma bitti hem de
+          // "sesi aç" çağrısı, sesin gerçekten gerektiği (sipariş/çağrı)
+          // eylemlerin yanında duruyor.
+          className="fixed bottom-[76px] left-3 z-20 min-h-9 rounded-full bg-[var(--card)]/90 px-3 text-xs text-[var(--fg-muted)] shadow-lg backdrop-blur"
         >
           {t("enableSound")}
         </button>

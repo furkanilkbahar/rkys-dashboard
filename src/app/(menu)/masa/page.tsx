@@ -4,6 +4,7 @@ import { CartBar } from "@/components/menu/cart-bar";
 import { CartSessionSync } from "@/components/menu/cart-session-sync";
 import { CategorySection } from "@/components/menu/category-section";
 import { CategoryStrip } from "@/components/menu/category-strip";
+import { ConnectionIndicator } from "@/components/menu/connection-indicator";
 import { LanguageSwitcher } from "@/components/menu/language-switcher";
 import { RatingPrompt } from "@/components/menu/rating-prompt";
 import { SessionPanel } from "@/components/menu/session-panel";
@@ -65,9 +66,9 @@ export default async function MenuPage() {
         waiters={waiters}
         alreadyRated={alreadyRated}
       />
-      <header className="flex items-center justify-between gap-4">
-        <p className="text-sm text-muted-foreground">{t("connected")}</p>
-        <div className="flex items-center gap-2">
+      <header className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+        <ConnectionIndicator />
+        <div className="flex shrink-0 items-center gap-2">
           <SessionPanel
             tableSessionId={guest.tableSessionId}
             currency={currency}
@@ -113,8 +114,7 @@ export default async function MenuPage() {
           ))}
         </div>
       )}
-      <WaiterCallButton callTypes={callTypes} />
-      <CartBar currency={currency} onSubmit={submitOrder} />
+      <CartBar currency={currency} onSubmit={submitOrder} trailing={<WaiterCallButton callTypes={callTypes} />} />
     </main>
   );
 }

@@ -46,7 +46,11 @@ export async function ProductCard({
 
   return (
     <article
-      data-slot="product-card"
+      // §5: `data-slot="card"` bir LOCATOR YÜZEYİDİR — menü E2E'leri ürün
+      // kartını bununla buluyor (ör. session-panel.spec.ts:63). Kart artık
+      // shadcn <Card> değil ama sözleşme korunuyor; keyfi değiştirilmez.
+      data-slot="card"
+      data-testid="product-card"
       className="menu-card flex flex-col overflow-hidden rounded-[var(--radius)] border border-[var(--line)] bg-[var(--card)]"
     >
       {!textFirst && (
@@ -76,7 +80,7 @@ export async function ProductCard({
 
         <div className="mt-auto flex items-center justify-between gap-2 pt-2">
           <span
-            className="tabular-nums tracking-tight text-[var(--accent)]"
+            className="min-w-0 flex-1 tabular-nums tracking-tight text-[var(--accent)]"
             style={{ fontWeight: "var(--t-price-w)", fontSize: "1rem" }}
           >
             {product.variants.length > 0

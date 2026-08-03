@@ -71,7 +71,7 @@ export function AddToCart({ product, currency }: { product: MenuProduct; currenc
 
   return (
     <>
-      <div className="flex items-center gap-2">
+      <div className="flex shrink-0 items-center gap-2">
         {quantityInCart > 0 && (
           <span
             className="tabular-nums text-xs font-semibold text-[var(--accent)]"

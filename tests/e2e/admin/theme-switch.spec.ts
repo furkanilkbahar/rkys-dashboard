@@ -46,12 +46,15 @@ test("S29: tenant teması misafir menüsünde uygulanır, admin'e sızmaz", asyn
     await page.getByRole("option", { name: "Kor" }).click();
 
     // ThemeCard router.refresh() çağırıyor — kök layout tenant'ın theme_key'ini
-    // yeniden okur. Admin'de data-theme değişse bile GÖRSEL ETKİSİ OLMAMALI:
-    // tenant tema bloğu [data-surface="guest"] altında, admin "app".
-    await expect
-      .poll(async () => cssVar(page, "--primary"), { timeout: 10_000 })
-      .toBe(adminPrimaryBefore);
+    // yeniden okur, `data-theme` HER yüzeyde güncellenir. Bu aynı zamanda
+    // kaydın tamamlandığının beklemesidir: aşağıdaki izolasyon kontrolü ancak
+    // yeni değer yansıdıktan sonra anlamlı.
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "kor", { timeout: 10_000 });
     await expect(page.locator("html")).toHaveAttribute("data-surface", "app");
+
+    // İZOLASYON (D88): data-theme değişti ama admin uygulama chrome'u olduğu
+    // için GÖRSEL ETKİ YOK — tenant tema bloğu [data-surface="guest"] altında.
+    expect(await cssVar(page, "--primary")).toBe(adminPrimaryBefore);
 
     // Misafir tarafında değişiklik GERÇEKTEN uygulanmış olmalı.
     await page.goto(acmeUrl(baseURL!, "/masa"));
