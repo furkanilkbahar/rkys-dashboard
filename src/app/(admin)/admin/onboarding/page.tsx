@@ -34,7 +34,7 @@ export default async function OnboardingPage() {
       isOwner={actor.role === "owner"}
       branchId={branchId}
       themes={themes}
-      themeKey={settings?.themeKey ?? "warm-luxury"}
+      themeKey={settings?.themeKey ?? "gece"}
       actions={{
         clearDemoData,
         applyMenuTemplate,

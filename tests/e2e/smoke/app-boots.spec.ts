@@ -1,10 +1,14 @@
 import { expect, test } from "@playwright/test";
 
-test("kök domain marketing sayfasını warm-luxury temasıyla açar", async ({ page }) => {
+// D88: kök domainde tenant teması geçerli DEĞİL — pazarlama kendi token
+// katmanını (2a) kullanır. Eskiden bu test görünür bir `warm-luxury` rozetini
+// doğruluyordu; o rozet bir debug artefaktıydı ve canlı pazarlama sayfasında
+// duruyordu, kaldırıldı. Assertion tema anahtarından YÜZEYE daraltıldı —
+// anlamlı sözleşme bu.
+test("kök domain marketing sayfasını pazarlama yüzeyiyle açar", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("banner").getByText("RKYS Dashboard")).toBeVisible();
-  await expect(page.getByText("warm-luxury")).toBeVisible();
-  await expect(page.locator("html")).toHaveAttribute("data-theme", "warm-luxury");
+  await expect(page.locator("html")).toHaveAttribute("data-surface", "marketing");
 });
 
 test("bilinmeyen subdomain tenant-not-found sayfasına düşer", async ({ page, baseURL }) => {

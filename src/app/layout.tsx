@@ -8,9 +8,10 @@ import "./globals.css";
 import { getCurrentTenant } from "@/lib/data/tenant";
 import { isSurface, SURFACE_HEADER } from "@/themes/surface";
 
-// STRANGLER (RULES #22): migration 0090 uygulanana kadar varsayılan eski
-// katalogda kalır; o commit'te "gece" olur.
-const DEFAULT_THEME_KEY = "warm-luxury";
+// Migration 0090 sonrası varsayılan. Kök domainde (marketing/platform) tenant
+// yok — o durumda da bir tema anahtarı gerekir, ama orada Katman 1 zaten
+// eşleşmez (data-surface="marketing"/"app").
+const DEFAULT_THEME_KEY = "gece";
 
 /** Koyu/açık tercihi cookie'de tutulur — localStorage değil. Client'ta
  *  okunsaydı ilk boyamada beyaz flaş olurdu (D88). */

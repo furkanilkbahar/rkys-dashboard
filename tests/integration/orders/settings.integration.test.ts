@@ -172,7 +172,7 @@ describe("Tema yönetimi (Faz 6 Adım 4, S29)", () => {
     const { data, error } = await owner.from("themes").select("key, is_public");
     expect(error).toBeNull();
     expect(data!.every((t) => t.is_public)).toBe(true);
-    expect(data!.map((t) => t.key)).toEqual(expect.arrayContaining(["warm-luxury", "sage-bistro"]));
+    expect(data!.map((t) => t.key)).toEqual(expect.arrayContaining(["gece", "kagit", "kor"]));
   });
 
   it("private (is_public=false) bir tema staff'a hiç görünmez", async () => {
@@ -188,13 +188,13 @@ describe("Tema yönetimi (Faz 6 Adım 4, S29)", () => {
 
   it("staff tenant_settings.theme_key'i geçerli bir temaya değiştirebilir", async () => {
     const owner = await signInAsSeededOwner(SEED.acme.ownerEmail);
-    const { error } = await owner.from("tenant_settings").update({ theme_key: "sage-bistro" }).eq("tenant_id", SEED.acme.tenantId);
+    const { error } = await owner.from("tenant_settings").update({ theme_key: "kor" }).eq("tenant_id", SEED.acme.tenantId);
     expect(error).toBeNull();
 
     const { data } = await serviceRoleClient().from("tenant_settings").select("theme_key").eq("tenant_id", SEED.acme.tenantId).single();
-    expect(data?.theme_key).toBe("sage-bistro");
+    expect(data?.theme_key).toBe("kor");
 
-    await serviceRoleClient().from("tenant_settings").update({ theme_key: "warm-luxury" }).eq("tenant_id", SEED.acme.tenantId);
+    await serviceRoleClient().from("tenant_settings").update({ theme_key: "kagit" }).eq("tenant_id", SEED.acme.tenantId);
   });
 
   it("themes'te bulunmayan bir theme_key FK kısıtına takılır", async () => {
@@ -211,6 +211,6 @@ describe("Tema yönetimi (Faz 6 Adım 4, S29)", () => {
 
     const { data, error } = await anonClient().rpc("resolve_tenant_by_domain", { p_domain: domainRow!.domain });
     expect(error).toBeNull();
-    expect(data![0].tenant_theme_key).toBe("warm-luxury");
+    expect(data![0].tenant_theme_key).toBe("kagit");
   });
 });
