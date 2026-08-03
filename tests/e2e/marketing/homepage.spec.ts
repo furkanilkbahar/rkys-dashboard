@@ -13,7 +13,14 @@ test("S56/S57: ana sayfa gerçek fiyat, modül vitrini ve entegrasyon şeridini 
   await expect(page.getByText("Zaten kullandığınız araçlarla çalışır")).toBeVisible();
   await expect(page.getByText("Yemeksepeti").first()).toBeVisible();
 
-  await expect(page.getByText("Neden RKYS Dashboard")).toBeVisible();
+  // Faz 21 Adım 2: §2.4'ün bölüm iskeleti uygulandı ve "Neden RKYS Dashboard"
+  // güven bölümü kaldırıldı — içerdiği gerçek iddialar (tenant izolasyonu,
+  // modül disiplini, trial, self-hosted) artık bölünmüş içerik bölümlerine ve
+  // lisans bölümüne dağıldı. Yerine §2.4'ün AÇIKÇA istediği şey doğrulanıyor:
+  // ikinci satış modeli (lifetime/self-hosted lisans) sayfada görünür olmalı,
+  // dipnota gömülmemeli.
+  await expect(page.getByRole("heading", { name: /lisansı satın alın/i })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Lisans için iletişime geçin" })).toBeVisible();
 });
 
 test("S59: blog sayfası boş durum gösterir", async ({ page, baseURL }) => {

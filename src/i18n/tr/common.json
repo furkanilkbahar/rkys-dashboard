@@ -1593,13 +1593,22 @@
       "faq": "SSS",
       "contact": "İletişim",
       "register": "Kayıt Ol",
-      "login": "Giriş Yap"
+      "login": "Giriş Yap",
+      "modules": "Modüller",
+      "pricing": "Fiyatlandırma",
+      "integrations": "Entegrasyonlar",
+      "developers": "Geliştirici"
     },
     "hero": {
       "title": "Restoran ve kafenizi tek panelden yönetin",
       "subtitle": "QR menüden mutfak ekranına, kasadan raporlara — ihtiyacınız olan modülleri açın, gerisini kapalı bırakın.",
       "cta": "Ücretsiz Deneyin",
-      "trialNote": "14 gün kartsız deneme — istediğiniz zaman iptal edin."
+      "trialNote": "14 gün kartsız deneme — istediğiniz zaman iptal edin.",
+      "badge": "{count} modül — istediğinizi açın, istemediğinizi kapatın",
+      "titleLine1": "Karmaşık operasyon,",
+      "titleLine2": "kolay yönetilen ekranlar.",
+      "lead": "QR menüden mutfağa, kasadan stoğa kadar restoranınızın tamamı tek panelde. Abonelikle başlayın ya da lisansı satın alıp kendi sunucunuzda çalıştırın.",
+      "secondaryCta": "Nasıl çalışır?"
     },
     "value": {
       "guest": {
@@ -1617,7 +1626,7 @@
     },
     "moduleShowcase": {
       "title": "İhtiyacınız olan modülü açın",
-      "subtitle": "Çekirdek QR menü her zaman açık; aşağıdaki 16 modülün her biri planınıza dahilse veya talep ettiğinizde ayrı ayrı devreye girer.",
+      "subtitle": "Çekirdek QR menü her zaman açık; aşağıdaki {count} modülün her birini ayrı ayrı açıp kapatabilirsiniz.",
       "descriptions": {
         "pos_cash": "Vardiya, gün sonu ve kasa raporları tek ekranda.",
         "inventory": "Stok ve maliyeti gerçek zamanlı takip edin.",
@@ -1635,6 +1644,14 @@
         "accounting_export": "Muhasebe programınıza uyumlu export.",
         "api_access": "Kendi entegrasyonlarınız için API ve webhook.",
         "fiscal_integration": "Ödemeler için ÖKC (mali yazarkasa) fişi kesimi."
+      },
+      "eyebrow": "Modüler yapı",
+      "cta": "Fiyatlandırmayı gör",
+      "groups": {
+        "sales": "Satış & Kasa",
+        "stock": "Stok & Maliyet",
+        "channels": "Kanallar",
+        "ops": "Operasyon & Entegrasyon"
       }
     },
     "integrations": {
@@ -1700,7 +1717,51 @@
       "veriSilme": "Veri Silme",
       "blog": "Blog",
       "developers": "Geliştiriciler",
-      "hardware": "Donanım"
+      "hardware": "Donanım",
+      "tagline": "Restoran, kafe ve pastanelerin tüm operasyonunu tek çatı altında toplayan yönetim sistemi.",
+      "product": "Ürün",
+      "company": "Kurumsal",
+      "resources": "Kaynaklar",
+      "legal": "Yasal",
+      "rights": "Tüm hakları saklıdır."
+    },
+    "split": {
+      "guest": {
+        "eyebrow": "QR Menü",
+        "title": "Misafiriniz masaya oturur, menü açılır.",
+        "b1": "Uygulama indirme yok, üyelik yok — QR yeter",
+        "b2": "Üç hazır tema; menünüz işletmenize benzer",
+        "b3": "Stoğu biten ürün sepete eklenemez, kontrol sunucuda",
+        "b4": "Garson çağır tek dokunuşta panele düşer"
+      },
+      "staff": {
+        "eyebrow": "Mutfak & Garson",
+        "title": "Sipariş mutfağa anında düşer.",
+        "b1": "Mutfak ekranı siparişi gerçek zamanlı gösterir",
+        "b2": "İstasyon bazlı filtreleme ile karışıklık olmaz",
+        "b3": "Garson kendi PIN'iyle kendi oturumunu açar",
+        "b4": "Bağlantı kesilse de sepet korunur, gelince gönderilir"
+      },
+      "owner": {
+        "eyebrow": "Kasa & Raporlar",
+        "title": "Günü tek tuşla kapatın.",
+        "b1": "Vardiya kasası, nakit sayım ve fark takibi",
+        "b2": "Kalem bazlı hesap bölme, kısmi iade, bahşiş",
+        "b3": "Ciro, kâr marjı ve menü mühendisliği raporları",
+        "b4": "İkram ve iade sebep koduyla kayıt altında"
+      }
+    },
+    "license": {
+      "eyebrow": "İkinci model",
+      "title": "Ya da lisansı satın alın, kendi sunucunuzda çalıştırın.",
+      "body": "Abonelik istemiyorsanız lifetime lisans alıp sistemi kendi altyapınızda barındırabilirsiniz. Tek bir docker-compose ile kurulur; lisans doğrulaması tamamen çevrimdışı, imzalı dosya ile yapılır — dışarıya hiçbir çağrı gitmez.",
+      "note": "Lisans fiyatlandırması işletme ölçeğine göre belirlenir.",
+      "cta": "Lisans için iletişime geçin"
+    },
+    "closing": {
+      "title": "14 gün ücretsiz deneyin.",
+      "body": "Kart istemiyoruz. Kurulum sihirbazı menünüzü dakikalar içinde hazırlıyor.",
+      "cta": "Hemen başlayın"
     }
   },
   "developerDocs": {

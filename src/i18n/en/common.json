@@ -1593,13 +1593,22 @@
       "faq": "FAQ",
       "contact": "Contact",
       "register": "Sign Up",
-      "login": "Log In"
+      "login": "Log In",
+      "modules": "Modules",
+      "pricing": "Pricing",
+      "integrations": "Integrations",
+      "developers": "Developers"
     },
     "hero": {
       "title": "Run your restaurant or cafe from one dashboard",
       "subtitle": "From QR menus to the kitchen display, from the register to reports — turn on the modules you need, leave the rest off.",
       "cta": "Try It Free",
-      "trialNote": "14-day free trial, no card required — cancel anytime."
+      "trialNote": "14-day free trial, no card required — cancel anytime.",
+      "badge": "{count} modules — switch on what you need, off what you don't",
+      "titleLine1": "Complex operations,",
+      "titleLine2": "screens that stay simple.",
+      "lead": "From the QR menu to the kitchen, from the till to stock — your whole restaurant in one panel. Start with a subscription, or buy the licence and run it on your own server.",
+      "secondaryCta": "How it works"
     },
     "value": {
       "guest": {
@@ -1617,7 +1626,7 @@
     },
     "moduleShowcase": {
       "title": "Turn on the modules you need",
-      "subtitle": "The core QR menu is always on; each of the 16 modules below activates on its own once it's in your plan or you request it.",
+      "subtitle": "The core QR menu is always on; each of the {count} modules below can be switched on or off independently.",
       "descriptions": {
         "pos_cash": "Shift open/close, end-of-day and register reports in one screen.",
         "inventory": "Track stock and cost in real time.",
@@ -1635,6 +1644,14 @@
         "accounting_export": "Export compatible with your accounting software.",
         "api_access": "API and webhooks for your own integrations.",
         "fiscal_integration": "Fiscal register (ÖKC) receipt issuance for payments."
+      },
+      "eyebrow": "Modular by design",
+      "cta": "See pricing",
+      "groups": {
+        "sales": "Sales & Till",
+        "stock": "Stock & Cost",
+        "channels": "Channels",
+        "ops": "Operations & Integrations"
       }
     },
     "integrations": {
@@ -1700,7 +1717,51 @@
       "veriSilme": "Data Deletion",
       "blog": "Blog",
       "developers": "Developers",
-      "hardware": "Hardware"
+      "hardware": "Hardware",
+      "tagline": "The management system that brings every part of a restaurant, café or patisserie under one roof.",
+      "product": "Product",
+      "company": "Company",
+      "resources": "Resources",
+      "legal": "Legal",
+      "rights": "All rights reserved."
+    },
+    "split": {
+      "guest": {
+        "eyebrow": "QR Menu",
+        "title": "Your guest sits down, the menu opens.",
+        "b1": "No app download, no sign-up — the QR is enough",
+        "b2": "Three ready themes; the menu looks like your venue",
+        "b3": "Out-of-stock items can't be added, enforced on the server",
+        "b4": "Call-waiter reaches the panel in one tap"
+      },
+      "staff": {
+        "eyebrow": "Kitchen & Waiter",
+        "title": "Orders reach the kitchen instantly.",
+        "b1": "The kitchen display shows orders in real time",
+        "b2": "Station filtering keeps tickets from piling up",
+        "b3": "Waiters sign in with their own PIN and session",
+        "b4": "Carts survive dropped connections and send on reconnect"
+      },
+      "owner": {
+        "eyebrow": "Till & Reports",
+        "title": "Close the day in one tap.",
+        "b1": "Shift till, cash count and variance tracking",
+        "b2": "Item-level bill splitting, partial refunds, tips",
+        "b3": "Revenue, margin and menu-engineering reports",
+        "b4": "Comps and refunds recorded with a reason code"
+      }
+    },
+    "license": {
+      "eyebrow": "A second model",
+      "title": "Or buy the licence and host it yourself.",
+      "body": "If you would rather not subscribe, buy a lifetime licence and run the system on your own infrastructure. It installs with a single docker-compose; licence verification is fully offline via a signed file — no outbound calls.",
+      "note": "Licence pricing depends on the size of your business.",
+      "cta": "Contact us about licensing"
+    },
+    "closing": {
+      "title": "Try it free for 14 days.",
+      "body": "No card required. The setup wizard builds your menu in minutes.",
+      "cta": "Get started"
     }
   },
   "developerDocs": {
