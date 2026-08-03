@@ -10,7 +10,8 @@ describe("RLS: product_variants", () => {
     const { data, error } = await acme.from("product_variants").select("tenant_id");
 
     expect(error).toBeNull();
-    expect(data).toHaveLength(2);
+    // Seed'i takip eder (Faz 21: Latte 2 + Türk Kahvesi 3 + Cold Brew 2).
+    expect(data).toHaveLength(7);
     expect(data?.every((row) => row.tenant_id === SEED.acme.tenantId)).toBe(true);
   });
 

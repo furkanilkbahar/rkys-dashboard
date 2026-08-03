@@ -10,7 +10,8 @@ describe("RLS: product_extras", () => {
     const { data, error } = await acme.from("product_extras").select("tenant_id");
 
     expect(error).toBeNull();
-    expect(data).toHaveLength(2);
+    // Seed'i takip eder (Faz 21: Cheesecake 2 + Latte 3 + Kaşarlı Tost 2).
+    expect(data).toHaveLength(7);
     expect(data?.every((row) => row.tenant_id === SEED.acme.tenantId)).toBe(true);
   });
 

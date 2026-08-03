@@ -11,7 +11,9 @@ describe("RLS: products", () => {
     const { data, error } = await acme.from("products").select("tenant_id");
 
     expect(error).toBeNull();
-    expect(data).toHaveLength(3);
+    // Seed'i takip eder (Faz 21 demo genişletmesi: 3 → 16). Sayı, RLS'in
+    // "eksik satır" ucunu korur; "sızan satır" ucunu aşağıdaki every() korur.
+    expect(data).toHaveLength(16);
     expect(data?.every((row) => row.tenant_id === SEED.acme.tenantId)).toBe(true);
   });
 

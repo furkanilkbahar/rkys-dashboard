@@ -19,7 +19,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState, type ReactNode } from "react";
+import { useId, useState, type ReactNode } from "react";
 
 function SortableItem({ id, children }: { id: string; children: (dragHandle: ReactNode) => ReactNode }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
@@ -66,6 +66,7 @@ export function SortableList<T extends { id: string }>({
     setLocalItems(items);
   }
 
+  const dndId = useId();
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
@@ -85,7 +86,12 @@ export function SortableList<T extends { id: string }>({
   }
 
   return (
-    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+    // `id` ZORUNLU: verilmezse dnd-kit kendi artan sayacını kullanıyor ve
+    // sunucuda "DndDescribedBy-0", istemcide "DndDescribedBy-54" üretip
+    // hidrasyon uyumsuzluğu veriyordu (React attribute uyumsuzluğunu
+    // yamamıyor — sürükleme tutamağının aria-describedby'ı yanlış öğeyi
+    // gösteriyordu). useId sunucu ve istemcide aynı değeri üretir.
+    <DndContext id={dndId} sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <SortableContext items={localItems.map((i) => i.id)} strategy={verticalListSortingStrategy}>
         <div className={className}>
           {localItems.map((item) => (

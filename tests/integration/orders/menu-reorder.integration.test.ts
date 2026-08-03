@@ -8,12 +8,30 @@ import { SEED, bootstrapGuestForTable, serviceRoleClient, signInAsSeededOwner } 
 let openedSessionId: string | null = null;
 
 afterAll(async () => {
+  const service = serviceRoleClient();
+
   if (openedSessionId) {
-    await serviceRoleClient()
+    await service
       .from("table_sessions")
       .update({ status: "closed", closed_at: new Date().toISOString() })
       .eq("id", openedSessionId);
   }
+
+  // Bu dosya acme'nin GERÇEK demo kataloğunu yeniden sıralıyor ve eskiden
+  // sırayı ters bırakıyordu: `pnpm test:integration` koştuktan sonra demo
+  // menüde "Tatlılar" içeceklerin önüne geçiyor, Latte de Filtre Kahve'nin
+  // önüne. Yukarıdaki table_sessions temizliğiyle aynı gerekçe — paylaşılan
+  // seed verisi test koşumundan etkilenmemeli — seed sırası geri yüklenir.
+  await Promise.all([
+    service.from("menu_categories").update({ display_order: 0 }).eq("id", ACME_CATEGORY_DRINKS),
+    service.from("menu_categories").update({ display_order: 1 }).eq("id", ACME_CATEGORY_DESSERTS),
+    service.from("products").update({ display_order: 0 }).eq("id", ACME_PRODUCT_COFFEE),
+    service.from("products").update({ display_order: 1 }).eq("id", ACME_PRODUCT_LATTE),
+    service.from("product_variants").update({ display_order: 0 }).eq("id", ACME_VARIANT_SMALL),
+    service.from("product_variants").update({ display_order: 1 }).eq("id", ACME_VARIANT_LARGE),
+    service.from("product_extras").update({ display_order: 0 }).eq("id", ACME_EXTRA_SAUCE1),
+    service.from("product_extras").update({ display_order: 1 }).eq("id", ACME_EXTRA_SAUCE2),
+  ]);
 });
 
 const ACME_CATEGORY_DRINKS = "00000000-0000-4000-8000-000000000101";

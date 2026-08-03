@@ -10,7 +10,8 @@ describe("RLS: menu_categories", () => {
     const { data, error } = await acme.from("menu_categories").select("tenant_id");
 
     expect(error).toBeNull();
-    expect(data).toHaveLength(2);
+    // Seed'i takip eder (Faz 21 demo genişletmesi: 2 → 6).
+    expect(data).toHaveLength(6);
     expect(data?.every((row) => row.tenant_id === SEED.acme.tenantId)).toBe(true);
   });
 
