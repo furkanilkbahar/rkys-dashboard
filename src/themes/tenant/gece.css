@@ -1,0 +1,67 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   KATMAN 1 — TENANT TEMASI: "Gece"  (D88)
+   Neredeyse siyah + amber vurgu. Modern casual restoran, akşam servisi.
+   Varsayılan tema (yeni tenant'lar bunu alır).
+
+   YALNIZCA [data-surface="guest"] altında geçerli — admin/pazarlama
+   yüzeylerinde bu blok HİÇ eşleşmez. Sızıntı burada kesilir.
+
+   Üç tema AYNI bileşen setini kullanır; yalnızca aşağıdaki token'lar
+   değişir. Tema başına ayrı bileşen YASAK. Eksik token = lint hatası
+   (bkz. scripts/check-theme-tokens.ts).
+   ═══════════════════════════════════════════════════════════════════════ */
+[data-surface="guest"][data-theme="gece"] {
+  /* yüzeyler */
+  --bg: oklch(0.15 0.012 55);
+  --bg-2: oklch(0.2 0.015 55);
+  --card: oklch(0.22 0.016 55);
+  --card-2: oklch(0.26 0.018 55);
+
+  /* metin — ölçüldü: gövde 18.05:1, ikincil 7.92:1, silik 4.57:1 (AA) */
+  --fg: oklch(0.97 0.006 80);
+  --fg-muted: oklch(0.72 0.015 70);
+  --fg-faint: oklch(0.61 0.015 70);
+
+  /* vurgu — fiyat, aktif durum, birincil CTA. Başka yere dağıtılmaz. */
+  --accent: oklch(0.78 0.155 65);
+  --accent-fg: oklch(0.18 0.03 60);
+  --line: oklch(1 0 0 / 0.08);
+
+  /* görselsiz fallback — KENDİ token'ı, --card-2'den türetilmez.
+     Kabul kriteri 2: fotoğraf yokken yüzey net ayırt edilebilir olmalı. */
+  --placeholder: oklch(0.27 0.02 58);
+  --placeholder-fg: oklch(0.62 0.03 62);
+
+  /* biçim */
+  --radius: var(--r-xl);
+  --radius-img: var(--r-lg);
+
+  /* tipografi — display ailesi üç temada da Fraunces, karakter ağırlık/
+     ölçek/tracking token'larıyla ayrışır */
+  --t-display: var(--font-display);
+  --t-display-w: 500;
+  --t-display-tr: -0.015em;
+  --t-display-s: 1.62rem;
+  --t-card-w: 500; /* ürün adı — başlıktan ayrı, küçük boyutta ayarlanabilsin */
+  --t-price-w: 650;
+
+  --dens: 1;
+
+  /* shadcn köprüsü (strangler — eski menü bileşenleri çalışmaya devam eder) */
+  --background: var(--bg);
+  --foreground: var(--fg);
+  --card-foreground: var(--fg);
+  --popover: var(--card);
+  --popover-foreground: var(--fg);
+  --primary: var(--accent);
+  --primary-foreground: var(--accent-fg);
+  --secondary: var(--card-2);
+  --secondary-foreground: var(--fg);
+  --muted: var(--card-2);
+  --muted-foreground: var(--fg-muted);
+  --accent-foreground: var(--fg);
+  --destructive: var(--sem-err);
+  --border: var(--line);
+  --input: var(--line);
+  --ring: var(--accent);
+}

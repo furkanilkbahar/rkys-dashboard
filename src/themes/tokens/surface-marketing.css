@@ -1,0 +1,61 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   KATMAN 2a — PAZARLAMA  (D88)   (marketing) route grubu
+
+   Açık kırık-beyaz zemin, beyaz kartlar, yükseklik GÖLGEYLE anlatılır,
+   gradient ve pastel tint serbest. Canlı ve davetkâr.
+   2b ile marka primitiflerini paylaşır, yüzey işlemesini paylaşmaz.
+   ═══════════════════════════════════════════════════════════════════════ */
+[data-surface="marketing"] {
+  /* ---- yeni semantik set ---- */
+  --surface-bg: oklch(0.985 0.006 90); /* sıcak kırık beyaz */
+  --surface-panel: oklch(1 0 0);
+  --surface-fg: oklch(0.21 0.015 240);
+  --surface-fg-muted: oklch(0.5 0.012 240);
+  --surface-fg-faint: oklch(0.58 0.012 240);
+  --surface-line: oklch(0.21 0.015 240 / 0.09);
+  --surface-accent: var(--brand-600);
+  --surface-accent-fg: oklch(1 0 0);
+  --surface-tint: oklch(0.95 0.03 200); /* eyebrow çipi zemini */
+
+  /* Yükseklik = gölge (2b'nin tersine). */
+  --shadow-sm: 0 1px 2px oklch(0.2 0.02 240 / 0.06), 0 4px 12px oklch(0.2 0.02 240 / 0.05);
+  --shadow-md: 0 2px 4px oklch(0.2 0.02 240 / 0.06), 0 14px 34px oklch(0.2 0.02 240 / 0.08);
+
+  /* Cömert yarıçap: kart ~20px, büyük konteyner ~28px, buton pill. */
+  --radius: var(--r-xl);
+
+  /* ---- shadcn köprüsü ---- */
+  --background: var(--surface-bg);
+  --foreground: var(--surface-fg);
+  --card: var(--surface-panel);
+  --card-foreground: var(--surface-fg);
+  --popover: var(--surface-panel);
+  --popover-foreground: var(--surface-fg);
+  --primary: var(--surface-accent);
+  --primary-foreground: var(--surface-accent-fg);
+  --secondary: var(--surface-tint);
+  --secondary-foreground: var(--brand-700);
+  --muted: oklch(0.96 0.005 90);
+  --muted-foreground: var(--surface-fg-muted);
+  --accent: var(--surface-tint);
+  --accent-foreground: var(--brand-700);
+  --destructive: var(--sem-err);
+  --border: var(--surface-line);
+  --input: var(--surface-line);
+  --ring: var(--surface-accent);
+
+  --chart-1: var(--brand-600);
+  --chart-2: var(--sem-ok);
+  --chart-3: var(--sem-warn);
+  --chart-4: var(--sem-info);
+  --chart-5: var(--brand-300);
+
+  --sidebar: var(--surface-panel);
+  --sidebar-foreground: var(--surface-fg-muted);
+  --sidebar-primary: var(--surface-accent);
+  --sidebar-primary-foreground: var(--surface-accent-fg);
+  --sidebar-accent: var(--surface-tint);
+  --sidebar-accent-foreground: var(--brand-700);
+  --sidebar-border: var(--surface-line);
+  --sidebar-ring: var(--surface-accent);
+}

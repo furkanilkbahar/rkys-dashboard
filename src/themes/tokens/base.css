@@ -1,0 +1,79 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   KATMAN 0 — RKYS MARKA PRİMİTİFLERİ  (D88)
+
+   Katman 2a (pazarlama) ve 2b (uygulama chrome'u) bunları PAYLAŞIR.
+   Katman 1 (tenant teması) bunlara ASLA dokunmaz — tenant yalnızca
+   [data-surface="guest"] altındaki yüzey token'larını değiştirir.
+
+   Buradaki hiçbir değer doğrudan bileşende kullanılmaz; yüzey katmanları
+   (surface-*.css) bunları semantik token'lara bağlar.
+   ═══════════════════════════════════════════════════════════════════════ */
+:root {
+  /* Marka: petrol/teal. TEK vurgu.
+     Üç tenant temasının vurgularından (amber / altın / kırmızı) kasten
+     ayrışır — pazarlama sayfasında QR menü ekran görüntüsü gösterildiğinde
+     marka chrome'u ürünün içeriğiyle yarışmasın diye. */
+  --brand-50: oklch(0.97 0.015 200);
+  --brand-100: oklch(0.93 0.03 200);
+  --brand-300: oklch(0.78 0.07 200);
+  --brand-500: oklch(0.58 0.1 200);
+  --brand-600: oklch(0.52 0.095 200);
+  --brand-700: oklch(0.44 0.08 200);
+  --brand-900: oklch(0.28 0.05 205);
+
+  /* Tipografi aileleri. Geist zaten next/font ile yükleniyor (0 KB ek).
+     Fraunces yalnızca display rolünde; `(admin)`/`(platform)` onu hiç
+     referans vermez, dolayısıyla oraya inmez. */
+  --font-body: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+
+  /* Yarıçap ölçeği — sistem geneli. Yüzeyler --radius ile kendi seviyesini seçer. */
+  --r-xs: 4px;
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 20px;
+  --r-2xl: 28px;
+  --r-pill: 999px;
+
+  /* Hareket — token'lı (§2.7). Süre, easing ve MESAFE ayrı ayrı. */
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+  --dur-slow: 340ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --move-sm: 6px;
+  --move-md: 14px;
+
+  /* Anlam renkleri — YALNIZCA anlam taşıdığında (durum rozeti, uyarı seviyesi,
+     grafik serisi). Dekoratif kullanım yasak (§2.3 renk ekonomisi). */
+  --sem-ok: oklch(0.62 0.13 155);
+  --sem-warn: oklch(0.75 0.14 75);
+  --sem-err: oklch(0.58 0.19 22);
+  --sem-info: oklch(0.6 0.11 240);
+
+  /* Yoğunluk çarpanı — yüzey/tema kendi değerini verir; `pointer: coarse`
+     altında dokunma hedefi için genişler (Adım 0 kabul kriteri 6). */
+  --dens: 1;
+  --tap-min: 36px;
+}
+
+/* prefers-reduced-motion: süre ~0, mesafe 0. Opaklık geçişi KALIR —
+   hareket kaybolur ama durum değişimi hâlâ okunur (§2.7). */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0.01ms;
+    --dur-base: 0.01ms;
+    --dur-slow: 0.01ms;
+    --move-sm: 0px;
+    --move-md: 0px;
+  }
+}
+
+/* Dokunmatik cihaz: kiosk ve tablet. Hedefler büyür, yoğunluk gevşer. */
+@media (pointer: coarse) {
+  :root {
+    --tap-min: 44px;
+    --dens: 1.15;
+  }
+}

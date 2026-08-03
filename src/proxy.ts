@@ -3,6 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { updateSession } from "@/lib/supabase/middleware";
 import type { Database } from "@/lib/supabase/types";
+import { resolveSurface, SURFACE_HEADER } from "@/themes/surface";
 
 // Vercel'de tek deployment'a birden fazla *.vercel.app alias'ı bağlanabiliyor
 // (proje/takım adı değişiklikleri, yeniden adlandırmalar birikiyor) — hepsi
@@ -21,7 +22,11 @@ export async function proxy(request: NextRequest) {
 
   if (ROOT_DOMAINS.has(host)) {
     // Kök domain: marketing/platform yüzeyleri, tenant context'i yok.
-    return updateSession(request, NextResponse.next());
+    // D88: tenant teması olmasa da token yüzeyi belirtilmeli — kök layout
+    // `data-surface`'i buradan okur (marketing vs. platform chrome'u).
+    const rootHeaders = new Headers(request.headers);
+    rootHeaders.set(SURFACE_HEADER, resolveSurface(request.nextUrl.pathname, true));
+    return updateSession(request, NextResponse.next({ request: { headers: rootHeaders } }));
   }
 
   const anon = createClient<Database>(
@@ -43,6 +48,10 @@ export async function proxy(request: NextRequest) {
   requestHeaders.set("x-rkys-tenant-name", tenant.tenant_name);
   requestHeaders.set("x-rkys-tenant-currency", tenant.tenant_currency);
   requestHeaders.set("x-rkys-tenant-theme", tenant.tenant_theme_key);
+  // D88: tenant subdomain'inde misafir menüsü tenant temasını (Katman 1),
+  // personel yüzeyleri RKYS uygulama chrome'unu (Katman 2b) alır. Tenant
+  // token'ı `data-surface="app"` altında hiç eşleşmez — sızıntı burada kesilir.
+  requestHeaders.set(SURFACE_HEADER, resolveSurface(request.nextUrl.pathname, false));
   // D87: /waiter yüzeyinde, aynı tarayıcıda hem owner'ın admin oturumu hem
   // garsonun PIN oturumu (ayrı cookie) aynı anda mevcut olabilir — ikisi de
   // her isteğe eklenir (cookie'ler sekme değil, origin bazlıdır). /waiter

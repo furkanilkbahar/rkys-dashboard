@@ -1,0 +1,59 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   KATMAN 1 — TENANT TEMASI: "Kor"  (D88)
+   Dokulu siyah + doygun kırmızı, büyük display tipografi, yoğun ızgara,
+   yüksek iştah enerjisi. Fast food, burger, pizza, restobar.
+
+   ÖLÇÜMLE ÇIKAN KISIT (D88): doygun kırmızı, siyah zeminde okunacak kadar
+   AÇIK ve üstünde BEYAZ metin taşıyacak kadar KOYU aynı anda olamıyor —
+   hangi doygunlukta denendiyse beyaz CTA metni ≈3.9:1'de takıldı. Çözüm:
+   --accent L .60 → .615 açıldı, --accent-fg KOYUYA çevrildi (4.68:1).
+   Bu yüzden Kor'da CTA metni koyu, diğer iki temada açıktır.
+   ═══════════════════════════════════════════════════════════════════════ */
+[data-surface="guest"][data-theme="kor"] {
+  --bg: oklch(0.12 0.006 30);
+  --bg-2: oklch(0.17 0.012 30);
+  --card: oklch(0.19 0.014 30);
+  --card-2: oklch(0.24 0.018 30);
+
+  /* gövde 18.61:1 · ikincil 7.86:1 · silik 4.58:1 */
+  --fg: oklch(0.97 0.004 60);
+  --fg-muted: oklch(0.71 0.012 50);
+  --fg-faint: oklch(0.595 0.012 50);
+
+  /* fiyat/kart 4.50:1 · CTA metni 4.68:1 (bkz. yukarıdaki kısıt) */
+  --accent: oklch(0.615 0.21 28);
+  --accent-fg: oklch(0.17 0.03 30);
+  --line: oklch(1 0 0 / 0.1);
+
+  --placeholder: oklch(0.24 0.02 32);
+  --placeholder-fg: oklch(0.6 0.025 40);
+
+  --radius: var(--r-xs);
+  --radius-img: var(--r-xs);
+
+  --t-display: var(--font-display);
+  --t-display-w: 800;
+  --t-display-tr: -0.028em;
+  --t-display-s: 1.95rem;
+  --t-card-w: 700;
+  --t-price-w: 800;
+
+  --dens: 0.88;
+
+  --background: var(--bg);
+  --foreground: var(--fg);
+  --card-foreground: var(--fg);
+  --popover: var(--card);
+  --popover-foreground: var(--fg);
+  --primary: var(--accent);
+  --primary-foreground: var(--accent-fg);
+  --secondary: var(--card-2);
+  --secondary-foreground: var(--fg);
+  --muted: var(--card-2);
+  --muted-foreground: var(--fg-muted);
+  --accent-foreground: var(--fg);
+  --destructive: var(--sem-err);
+  --border: var(--line);
+  --input: var(--line);
+  --ring: var(--accent);
+}

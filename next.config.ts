@@ -4,7 +4,34 @@ import { withSentryConfig } from "@sentry/nextjs";
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
+// Faz 21 / D89 önkoşulu: menü ürün görselleri `unoptimized` ile servis ediliyordu
+// çünkü Supabase Storage host'u remotePatterns'da yoktu — next/image boru hattı
+// (srcset, boyut varyantı, modern format) tamamen atlanıyordu. LCP'yi asıl
+// belirleyen bu. Host env'den türetilir: yerelde 127.0.0.1:54321, prod'da
+// <ref>.supabase.co.
+function supabaseImagePattern(): NonNullable<NonNullable<NextConfig["images"]>["remotePatterns"]> {
+  const raw = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!raw) return [];
+  try {
+    const url = new URL(raw);
+    return [
+      {
+        protocol: url.protocol.replace(":", "") as "http" | "https",
+        hostname: url.hostname,
+        ...(url.port ? { port: url.port } : {}),
+        pathname: "/storage/v1/object/public/**",
+      },
+    ];
+  } catch {
+    // Bozuk env değeri build'i düşürmesin — görseller optimize edilmeden servis edilir.
+    return [];
+  }
+}
+
 const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: supabaseImagePattern(),
+  },
   // Dev overlay göstergesi bazı viewport/scroll durumlarında sayfanın
   // üzerine gelip pointer event'leri yakalıyor (Playwright click'lerini
   // engelliyordu) — salt kozmetik, kapatılması güvenli.

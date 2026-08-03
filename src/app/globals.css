@@ -2,17 +2,71 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "leaflet/dist/leaflet.css";
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Faz 21 / D88 — üç katmanlı token mimarisi.
+
+   Tek CSS paketi, ama kapsamlama SEÇİCİ ile yapılır:
+     [data-surface="guest"][data-theme="…"]  → Katman 1, tenant teması
+     [data-surface="app"] ± [data-mode]      → Katman 2b, uygulama chrome'u
+     [data-surface="marketing"]              → Katman 2a, pazarlama
+
+   `data-surface` `src/proxy.ts`'te pathname'den türetilip `<html>`'e basılır.
+   Sarmalayıcı <div> KULLANILMAZ: dropdown-menu/select/sheet Base UI Portal
+   ile document.body'ye render oluyor, subtree token'larını göremezlerdi.
+
+   Sızıntı testi: `pnpm test:unit` içindeki theme-tokens testi, tenant tema
+   dosyalarının yalnızca [data-surface="guest"] seçicisi yazdığını ve üç
+   temanın AYNI token setini tanımladığını doğrular.
+   ═══════════════════════════════════════════════════════════════════════ */
+@import "../themes/tokens/base.css";
+@import "../themes/tokens/surface-app.css";
+@import "../themes/tokens/surface-marketing.css";
+@import "../themes/tenant/gece.css";
+@import "../themes/tenant/kagit.css";
+@import "../themes/tenant/kor.css";
+
+/* STRANGLER (RULES #22): emekli temalar, migration 0090 uygulanana ve menü
+   dikey dilimi devralana kadar duruyor — silinmiyor. */
 @import "../themes/premium/warm-luxury/tokens.css";
 @import "../themes/premium/sage-bistro/tokens.css";
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:is([data-mode="dark"] *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-heading: var(--font-display);
+
+  /* Faz 21 semantik yüzey token'ları — yeni bileşenler bunları kullanır. */
+  --color-surface-bg: var(--surface-bg);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-surface-panel: var(--surface-panel);
+  --color-surface-panel-2: var(--surface-panel-2);
+  --color-surface-fg: var(--surface-fg);
+  --color-surface-fg-muted: var(--surface-fg-muted);
+  --color-surface-fg-faint: var(--surface-fg-faint);
+  --color-surface-line: var(--surface-line);
+  --color-surface-accent: var(--surface-accent);
+  --color-surface-accent-fg: var(--surface-accent-fg);
+  --color-placeholder: var(--placeholder);
+  --color-placeholder-fg: var(--placeholder-fg);
+  --color-ok: var(--sem-ok);
+  --color-warn: var(--sem-warn);
+  --color-err: var(--sem-err);
+  --color-info: var(--sem-info);
+
+  /* Hareket token'ları — Tailwind duration/ease utility'lerine bağlanır. */
+  --animate-duration-fast: var(--dur-fast);
+  --animate-duration-base: var(--dur-base);
+  --animate-duration-slow: var(--dur-slow);
+  --ease-out-token: var(--ease-out);
+  --ease-in-out-token: var(--ease-in-out);
+
+  /* shadcn köprüsü (mevcut 41 bileşen bunları kullanmaya devam ediyor) */
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -51,6 +105,8 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* Güvenlik ağı: bir yüzey token'ı çözülemezse (data-surface eksik/bilinmeyen)
+   nötr bir sete düşülür — beyaz sayfa yerine okunabilir bir ekran. */
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -66,7 +122,7 @@
   --muted-foreground: oklch(0.556 0 0);
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
+  --destructive: var(--sem-err);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
@@ -86,40 +142,6 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
-}
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -129,5 +151,11 @@
   }
   html {
     @apply font-sans;
+  }
+  /* Klavye odağı — Adım 0 kabul kriteri 7. Tüm etkileşimli öğelerde. */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: var(--r-xs);
   }
 }

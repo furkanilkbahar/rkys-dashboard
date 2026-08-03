@@ -1,0 +1,61 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   KATMAN 1 — TENANT TEMASI: "Kâğıt"  (D88)
+   AÇIK tema: krem/kırık beyaz zemin + espresso koyu metin + altın vurgu.
+   Tipografi öncelikli, ferah boşluk. Pastane, kahvaltı kafesi, specialty
+   kahve, fine dining. Emekli `warm-luxury`'nin espresso/krem/altın kimliği
+   burada devam ediyor (migration 0090 onu buraya eşledi).
+
+   GÜNDÜZ ve GÜNEŞ ALTINDA okunaklı olması bu temanın varlık sebebi:
+   gövde metni AAA (7:1) hedefiyle kuruldu — ölçüldü, 14.57:1.
+   ═══════════════════════════════════════════════════════════════════════ */
+[data-surface="guest"][data-theme="kagit"] {
+  --bg: oklch(0.965 0.014 82);
+  --bg-2: oklch(0.985 0.008 82);
+  --card: oklch(0.995 0.004 82);
+  --card-2: oklch(0.955 0.014 82);
+
+  /* AAA gövde: 14.57:1 · ikincil 7.71:1 · silik 4.82:1 */
+  --fg: oklch(0.23 0.038 48);
+  --fg-muted: oklch(0.4 0.028 50);
+  --fg-faint: oklch(0.53 0.022 52);
+
+  --accent: oklch(0.52 0.092 72);
+  --accent-fg: oklch(0.99 0.005 82);
+  --line: oklch(0.25 0.035 48 / 0.16);
+
+  /* Açık temada placeholder'ın --card-2'den türetilmesi onu neredeyse
+     görünmez yapıyordu (tasarım incelemesi P0). Kendi, belirgin değeri: */
+  --placeholder: oklch(0.9 0.026 78);
+  --placeholder-fg: oklch(0.52 0.032 60);
+
+  --radius: 2px;
+  --radius-img: 2px;
+
+  --t-display: var(--font-display);
+  --t-display-w: 350;
+  --t-display-tr: -0.01em;
+  --t-display-s: 2.05rem;
+  /* Ürün adı başlıktan AYRI ağırlık: 350 serif ~17px'te zayıf okunuyordu
+     (tasarım incelemesi P2). */
+  --t-card-w: 450;
+  --t-price-w: 550;
+
+  --dens: 1.4;
+
+  --background: var(--bg);
+  --foreground: var(--fg);
+  --card-foreground: var(--fg);
+  --popover: var(--card);
+  --popover-foreground: var(--fg);
+  --primary: var(--accent);
+  --primary-foreground: var(--accent-fg);
+  --secondary: var(--card-2);
+  --secondary-foreground: var(--fg);
+  --muted: var(--card-2);
+  --muted-foreground: var(--fg-muted);
+  --accent-foreground: var(--fg);
+  --destructive: var(--sem-err);
+  --border: var(--line);
+  --input: var(--line);
+  --ring: var(--accent);
+}

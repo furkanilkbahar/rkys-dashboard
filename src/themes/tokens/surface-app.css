@@ -1,0 +1,87 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   KATMAN 2b — UYGULAMA CHROME'U  (D88)
+   (admin) · (platform) · (analytics) · (waiter) · (kitchen) · (cashier) · (courier)
+
+   Düz, nötr, ÇİFT MODLU (koyu varsayılan + açık tam destekli).
+   Yükseklik GÖLGEYLE DEĞİL dolgu açıklığıyla anlatılır — gölge yok/minimal.
+   Renk yalnızca anlam taşıdığında: durum rozeti, uyarı, aktif nav, grafik.
+
+   Değişken adları shadcn setiyle hizalı (strangler, RULES #22): eski
+   bileşenler yeni token'larla çalışmaya devam eder, yenileri --surface-*
+   adlarını kullanır.
+   ═══════════════════════════════════════════════════════════════════════ */
+[data-surface="app"] {
+  /* ---- yeni semantik set ---- */
+  --surface-bg: oklch(0.19 0.008 240);
+  --surface-sunken: oklch(0.16 0.008 240);
+  --surface-panel: oklch(0.23 0.009 240);
+  --surface-panel-2: oklch(0.26 0.009 240);
+  --surface-fg: oklch(0.96 0.003 240);
+  --surface-fg-muted: oklch(0.7 0.012 240);
+  --surface-fg-faint: oklch(0.615 0.012 240); /* AA: 4.55:1 panel üstünde */
+  --surface-line: oklch(1 0 0 / 0.07);
+  --surface-line-strong: oklch(1 0 0 / 0.13);
+  --surface-accent: var(--brand-300);
+  --surface-accent-fg: oklch(0.18 0.01 240);
+  --surface-accent-soft: oklch(0.78 0.07 200 / 0.14);
+
+  /* Yoğunluk: sidebar ve tablolar kompakt, ana tuval ferah (§2.3). */
+  --pad-panel: 16px;
+  --pad-row: 7px 12px;
+  --fs-table: 12.5px; /* Adım 1 kabul kriteri: tablo gövdesi tabanı */
+  --fs-label: 11px; /* Adım 1 kabul kriteri: uppercase etiket tabanı */
+
+  /* ---- shadcn köprüsü ---- */
+  --background: var(--surface-bg);
+  --foreground: var(--surface-fg);
+  --card: var(--surface-panel);
+  --card-foreground: var(--surface-fg);
+  --popover: var(--surface-panel);
+  --popover-foreground: var(--surface-fg);
+  --primary: var(--surface-accent);
+  --primary-foreground: var(--surface-accent-fg);
+  --secondary: var(--surface-panel-2);
+  --secondary-foreground: var(--surface-fg);
+  --muted: var(--surface-panel-2);
+  --muted-foreground: var(--surface-fg-muted);
+  --accent: var(--surface-accent-soft);
+  --accent-foreground: var(--surface-fg);
+  --destructive: var(--sem-err);
+  --border: var(--surface-line);
+  --input: var(--surface-line-strong);
+  --ring: var(--surface-accent);
+  --radius: var(--r-sm);
+
+  --chart-1: var(--brand-300);
+  --chart-2: var(--sem-ok);
+  --chart-3: var(--sem-warn);
+  --chart-4: var(--sem-info);
+  --chart-5: var(--brand-500);
+
+  --sidebar: var(--surface-sunken);
+  --sidebar-foreground: var(--surface-fg-muted);
+  --sidebar-primary: var(--surface-accent);
+  --sidebar-primary-foreground: var(--surface-accent-fg);
+  --sidebar-accent: var(--surface-accent-soft);
+  --sidebar-accent-foreground: var(--surface-fg);
+  --sidebar-border: var(--surface-line);
+  --sidebar-ring: var(--surface-accent);
+}
+
+/* Açık mod — pazarlık konusu değil, her ekran iki modda da doğrulanır.
+   Yüzeyler yeniden tasarlanır (koyunun tersi değil): panel saf beyaz,
+   zemin kırık beyaz, böylece kenarlıksız da yükseklik okunur. */
+[data-surface="app"][data-mode="light"] {
+  --surface-bg: oklch(0.98 0.003 240);
+  --surface-sunken: oklch(0.955 0.004 240);
+  --surface-panel: oklch(1 0 0);
+  --surface-panel-2: oklch(0.975 0.003 240);
+  --surface-fg: oklch(0.22 0.01 240);
+  --surface-fg-muted: oklch(0.48 0.012 240);
+  --surface-fg-faint: oklch(0.565 0.01 240); /* AA: 4.55:1 beyaz panel üstünde */
+  --surface-line: oklch(0.22 0.01 240 / 0.1);
+  --surface-line-strong: oklch(0.22 0.01 240 / 0.18);
+  --surface-accent: var(--brand-600);
+  --surface-accent-fg: oklch(1 0 0);
+  --surface-accent-soft: oklch(0.58 0.1 200 / 0.1);
+}
