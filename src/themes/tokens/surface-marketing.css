@@ -5,7 +5,7 @@
    gradient ve pastel tint serbest. Canlı ve davetkâr.
    2b ile marka primitiflerini paylaşır, yüzey işlemesini paylaşmaz.
    ═══════════════════════════════════════════════════════════════════════ */
-[data-surface="marketing"] {
+html[data-surface="marketing"] {
   /* ---- yeni semantik set ---- */
   --surface-bg: oklch(0.985 0.006 90); /* sıcak kırık beyaz */
   --surface-panel: oklch(1 0 0);

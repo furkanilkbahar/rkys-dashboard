@@ -24,32 +24,51 @@ import {
 
 import type { ModuleKey } from "@/lib/modules/keys";
 
+/**
+ * Faz 21 (§2.3): referans panonun 5 maddelik sidebar'ı bu ürüne ÖLÇEKLENMEZ —
+ * burada 15 modül ve 33 admin sayfası var. Nav maddeleri anlam gruplarına
+ * ayrıldı; SidebarNav bunları başlıklarla render eder ve üstüne arama koyar.
+ *
+ * Gruplama YALNIZCA sunum içindir. Modül/izin filtreleme mantığı değişmedi:
+ * `moduleKey` alanı ve `enabledModules` filtresi aynen korunuyor (RULES #34).
+ */
+export const NAV_GROUPS = ["daily", "sales", "inventory", "channels", "integration", "management"] as const;
+export type NavGroup = (typeof NAV_GROUPS)[number];
+
 export const ADMIN_NAV_ITEMS = [
-  { href: "/admin", labelKey: "dashboard", icon: LayoutDashboard, exact: true, moduleKey: null },
-  { href: "/admin/menu", labelKey: "menu", icon: UtensilsCrossed, exact: false, moduleKey: null },
-  { href: "/admin/tables", labelKey: "tables", icon: Table2, exact: false, moduleKey: null },
-  { href: "/admin/staff", labelKey: "staff", icon: Users, exact: false, moduleKey: null },
+  { href: "/admin", labelKey: "dashboard", icon: LayoutDashboard, exact: true, moduleKey: null, group: "daily" },
+  { href: "/admin/menu", labelKey: "menu", icon: UtensilsCrossed, exact: false, moduleKey: null, group: "daily" },
+  { href: "/admin/tables", labelKey: "tables", icon: Table2, exact: false, moduleKey: null, group: "daily" },
+  { href: "/admin/ratings", labelKey: "ratings", icon: Star, exact: false, moduleKey: null, group: "daily" },
   {
     href: "/admin/reservations",
     labelKey: "reservations",
     icon: CalendarClock,
     exact: false,
     moduleKey: "reservations" satisfies ModuleKey,
+    group: "sales",
   },
-  { href: "/admin/kiosk", labelKey: "kiosk", icon: Tablet, exact: false, moduleKey: "kiosk" satisfies ModuleKey },
-  { href: "/admin/scheduling", labelKey: "scheduling", icon: Clock, exact: false, moduleKey: "staff_scheduling" satisfies ModuleKey },
-  { href: "/admin/ratings", labelKey: "ratings", icon: Star, exact: false, moduleKey: null },
-  { href: "/admin/campaigns", labelKey: "campaigns", icon: Tag, exact: false, moduleKey: "campaigns" satisfies ModuleKey },
-  { href: "/admin/loyalty", labelKey: "loyalty", icon: Heart, exact: false, moduleKey: "crm_loyalty" satisfies ModuleKey },
-  { href: "/admin/gift-cards", labelKey: "giftCards", icon: Gift, exact: false, moduleKey: "gift_cards" satisfies ModuleKey },
-  { href: "/admin/ingredients", labelKey: "ingredients", icon: Boxes, exact: false, moduleKey: "inventory" satisfies ModuleKey },
-  { href: "/admin/suppliers", labelKey: "suppliers", icon: Truck, exact: false, moduleKey: "inventory" satisfies ModuleKey },
-  { href: "/admin/delivery-zones", labelKey: "deliveryZones", icon: MapPin, exact: false, moduleKey: "delivery" satisfies ModuleKey },
-  { href: "/admin/api-keys", labelKey: "apiKeys", icon: KeyRound, exact: false, moduleKey: "api_access" satisfies ModuleKey },
-  { href: "/admin/webhooks", labelKey: "webhooks", icon: Webhook, exact: false, moduleKey: "api_access" satisfies ModuleKey },
-  { href: "/admin/marketplace", labelKey: "marketplace", icon: Store, exact: false, moduleKey: "marketplace" satisfies ModuleKey },
-  { href: "/admin/accounting", labelKey: "accounting", icon: Receipt, exact: false, moduleKey: "accounting_export" satisfies ModuleKey },
-  { href: "/admin/reports", labelKey: "reports", icon: BarChart3, exact: false, moduleKey: null },
-  { href: "/admin/support", labelKey: "support", icon: LifeBuoy, exact: false, moduleKey: null },
-  { href: "/admin/settings", labelKey: "settings", icon: Settings, exact: false, moduleKey: null },
-] as const;
+  { href: "/admin/campaigns", labelKey: "campaigns", icon: Tag, exact: false, moduleKey: "campaigns" satisfies ModuleKey, group: "sales" },
+  { href: "/admin/loyalty", labelKey: "loyalty", icon: Heart, exact: false, moduleKey: "crm_loyalty" satisfies ModuleKey, group: "sales" },
+  { href: "/admin/gift-cards", labelKey: "giftCards", icon: Gift, exact: false, moduleKey: "gift_cards" satisfies ModuleKey, group: "sales" },
+  { href: "/admin/ingredients", labelKey: "ingredients", icon: Boxes, exact: false, moduleKey: "inventory" satisfies ModuleKey, group: "inventory" },
+  { href: "/admin/suppliers", labelKey: "suppliers", icon: Truck, exact: false, moduleKey: "inventory" satisfies ModuleKey, group: "inventory" },
+  { href: "/admin/delivery-zones", labelKey: "deliveryZones", icon: MapPin, exact: false, moduleKey: "delivery" satisfies ModuleKey, group: "channels" },
+  { href: "/admin/marketplace", labelKey: "marketplace", icon: Store, exact: false, moduleKey: "marketplace" satisfies ModuleKey, group: "channels" },
+  { href: "/admin/kiosk", labelKey: "kiosk", icon: Tablet, exact: false, moduleKey: "kiosk" satisfies ModuleKey, group: "channels" },
+  { href: "/admin/api-keys", labelKey: "apiKeys", icon: KeyRound, exact: false, moduleKey: "api_access" satisfies ModuleKey, group: "integration" },
+  { href: "/admin/webhooks", labelKey: "webhooks", icon: Webhook, exact: false, moduleKey: "api_access" satisfies ModuleKey, group: "integration" },
+  { href: "/admin/accounting", labelKey: "accounting", icon: Receipt, exact: false, moduleKey: "accounting_export" satisfies ModuleKey, group: "integration" },
+  { href: "/admin/staff", labelKey: "staff", icon: Users, exact: false, moduleKey: null, group: "management" },
+  { href: "/admin/scheduling", labelKey: "scheduling", icon: Clock, exact: false, moduleKey: "staff_scheduling" satisfies ModuleKey, group: "management" },
+  { href: "/admin/reports", labelKey: "reports", icon: BarChart3, exact: false, moduleKey: null, group: "management" },
+  { href: "/admin/support", labelKey: "support", icon: LifeBuoy, exact: false, moduleKey: null, group: "management" },
+  { href: "/admin/settings", labelKey: "settings", icon: Settings, exact: false, moduleKey: null, group: "management" },
+] as const satisfies readonly {
+  href: string;
+  labelKey: string;
+  icon: typeof LayoutDashboard;
+  exact: boolean;
+  moduleKey: ModuleKey | null;
+  group: NavGroup;
+}[];

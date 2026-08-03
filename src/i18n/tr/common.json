@@ -157,7 +157,19 @@
       "support": "Destek",
       "settings": "Ayarlar",
       "menuOpen": "Menüyü aç",
-      "menuClose": "Menüyü kapat"
+      "menuClose": "Menüyü kapat",
+      "search": "Modül ara…",
+      "searchEmpty": "Eşleşen modül yok.",
+      "modeLight": "Açık moda geç",
+      "modeDark": "Koyu moda geç",
+      "groups": {
+        "daily": "Günlük",
+        "sales": "Satış & Müşteri",
+        "inventory": "Stok & Maliyet",
+        "channels": "Kanallar",
+        "integration": "Entegrasyon",
+        "management": "Yönetim"
+      }
     },
     "topbar": {
       "logout": "Çıkış yap"

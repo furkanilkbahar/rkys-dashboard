@@ -157,7 +157,19 @@
       "support": "Support",
       "settings": "Settings",
       "menuOpen": "Open menu",
-      "menuClose": "Close menu"
+      "menuClose": "Close menu",
+      "search": "Search modules…",
+      "searchEmpty": "No matching module.",
+      "modeLight": "Switch to light mode",
+      "modeDark": "Switch to dark mode",
+      "groups": {
+        "daily": "Daily",
+        "sales": "Sales & Customers",
+        "inventory": "Inventory & Cost",
+        "channels": "Channels",
+        "integration": "Integrations",
+        "management": "Management"
+      }
     },
     "topbar": {
       "logout": "Sign out"

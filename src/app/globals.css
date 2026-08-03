@@ -155,7 +155,11 @@
 }
 
 /* Güvenlik ağı: bir yüzey token'ı çözülemezse (data-surface eksik/bilinmeyen)
-   nötr bir sete düşülür — beyaz sayfa yerine okunabilir bir ekran. */
+   nötr bir sete düşülür — beyaz sayfa yerine okunabilir bir ekran.
+   ÖZGÜLLÜK NOTU: bu blok `:root` (0,1,0) ve @import'lardan SONRA geliyor;
+   yüzey blokları bu yüzden `html[data-surface=...]` (0,1,1) ile yazılır,
+   aksi halde berabere kalıp kaynak sırasıyla BU blok kazanırdı (admin
+   panelinde beyaz kartlar olarak ortaya çıkmıştı). */
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);

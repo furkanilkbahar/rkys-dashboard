@@ -6,16 +6,13 @@ import { getLocale, getMessages } from "next-intl/server";
 import "./globals.css";
 
 import { getCurrentTenant } from "@/lib/data/tenant";
+import { MODE_COOKIE, parseMode } from "@/themes/mode";
 import { isSurface, SURFACE_HEADER } from "@/themes/surface";
 
 // Migration 0090 sonrası varsayılan. Kök domainde (marketing/platform) tenant
 // yok — o durumda da bir tema anahtarı gerekir, ama orada Katman 1 zaten
 // eşleşmez (data-surface="marketing"/"app").
 const DEFAULT_THEME_KEY = "gece";
-
-/** Koyu/açık tercihi cookie'de tutulur — localStorage değil. Client'ta
- *  okunsaydı ilk boyamada beyaz flaş olurdu (D88). */
-const MODE_COOKIE = "rkys-mode";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -58,7 +55,7 @@ export default async function RootLayout({
   const surface = isSurface(surfaceHeader) ? surfaceHeader : "app";
 
   const cookieStore = await cookies();
-  const mode = cookieStore.get(MODE_COOKIE)?.value === "light" ? "light" : "dark";
+  const mode = parseMode(cookieStore.get(MODE_COOKIE)?.value);
 
   return (
     <html

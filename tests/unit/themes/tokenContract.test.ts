@@ -31,8 +31,16 @@ function declaredTokens(css: string): Set<string> {
   return tokens;
 }
 
+/** CSS yorumlarını ayıklar — seçici ayrıştırması yorum bloklarını yutmasın. */
+function stripComments(css: string): string {
+  return css.replace(/\/\*[\s\S]*?\*\//g, "");
+}
+
+/** Dosyadaki tüm kural seçicilerini döner (at-rule'lar hariç). */
 function selectors(css: string): string[] {
-  return [...css.matchAll(/^(\[[^{]+?)\s*\{/gm)].map((m) => m[1].trim());
+  return [...stripComments(css).matchAll(/(^|\})\s*([^{}@]+?)\s*\{/g)]
+    .map((m) => m[2].trim())
+    .filter((selector) => selector.length > 0 && !selector.startsWith("@"));
 }
 
 describe("tenant tema token sözleşmesi", () => {
@@ -68,6 +76,32 @@ describe("tenant tema token sözleşmesi", () => {
           selector.startsWith('[data-surface="guest"]'),
           `${name}.css yüzey dışına yazıyor: ${selector}`,
         ).toBe(true);
+      }
+    }
+  });
+});
+
+describe("yüzey seçicileri :root güvenlik ağını yenmeli", () => {
+  // REGRESYON: `globals.css`'teki `:root` fallback bloğu (0,1,0) @import'lardan
+  // SONRA geliyor. Yüzey blokları düz `[data-surface="app"]` (0,1,0) ile
+  // yazılırsa özgüllük berabere kalır ve kaynak sırasıyla fallback KAZANIR —
+  // admin panelinde koyu zemin üstünde beyaz kartlar olarak ortaya çıkmıştı.
+  // `html` öneki özgüllüğü (0,1,1)'e çıkarıp bunu kesin çözer.
+  it.each(["surface-app", "surface-marketing"])("%s.css seçicileri html öneki taşır", (file) => {
+    const css = readFileSync(path.join(THEME_DIR, "tokens", `${file}.css`), "utf8");
+    const blocks = selectors(css).filter((selector) => selector.includes("data-surface"));
+
+    expect(blocks.length).toBeGreaterThan(0);
+    for (const selector of blocks) {
+      expect(selector.startsWith("html["), `${file}.css: "${selector}" html öneki taşımıyor`).toBe(true);
+    }
+  });
+
+  it("tenant tema seçicileri iki öznitelikli olduğu için zaten fallback'i yener", () => {
+    for (const name of TENANT_THEMES) {
+      for (const selector of selectors(readTheme(name))) {
+        const attributeCount = (selector.match(/\[/g) ?? []).length;
+        expect(attributeCount, `${name}.css: "${selector}" tek öznitelikli`).toBeGreaterThanOrEqual(2);
       }
     }
   });

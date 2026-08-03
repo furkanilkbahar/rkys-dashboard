@@ -10,7 +10,7 @@
    bileşenler yeni token'larla çalışmaya devam eder, yenileri --surface-*
    adlarını kullanır.
    ═══════════════════════════════════════════════════════════════════════ */
-[data-surface="app"] {
+html[data-surface="app"] {
   /* ---- yeni semantik set ---- */
   --surface-bg: oklch(0.19 0.008 240);
   --surface-sunken: oklch(0.16 0.008 240);
@@ -71,7 +71,7 @@
 /* Açık mod — pazarlık konusu değil, her ekran iki modda da doğrulanır.
    Yüzeyler yeniden tasarlanır (koyunun tersi değil): panel saf beyaz,
    zemin kırık beyaz, böylece kenarlıksız da yükseklik okunur. */
-[data-surface="app"][data-mode="light"] {
+html[data-surface="app"][data-mode="light"] {
   --surface-bg: oklch(0.98 0.003 240);
   --surface-sunken: oklch(0.955 0.004 240);
   --surface-panel: oklch(1 0 0);

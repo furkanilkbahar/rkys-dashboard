@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { AdminShell } from "@/components/admin/admin-shell";
@@ -8,6 +9,7 @@ import { getAdminTenantName } from "@/lib/data/tenant";
 import { isOnboardingCompleted } from "@/lib/data/onboarding";
 import { isSubscriptionActive } from "@/lib/data/subscription";
 import { resolveLicenseGateRedirect } from "@/lib/licensing/verify";
+import { MODE_COOKIE, parseMode, type Mode } from "@/themes/mode";
 
 export default async function AdminDashboardLayout({ children }: { children: React.ReactNode }) {
   const actor = await requireAdminActor();
@@ -40,12 +42,16 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
   ]);
   const enabledModules = modules.filter((m) => m.isEnabled).map((m) => m.moduleKey);
 
+  // D88: koyu/açık tercihi cookie'den — client'ta okunsaydı ilk boyamada flaş olurdu.
+  const mode: Mode = parseMode((await cookies()).get(MODE_COOKIE)?.value);
+
   return (
     <AdminShell
       tenantName={tenantName ?? "—"}
       role={actor.role}
       enabledModules={enabledModules}
       announcement={announcement}
+      mode={mode}
     >
       {children}
     </AdminShell>
