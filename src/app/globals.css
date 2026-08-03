@@ -158,4 +158,39 @@
     outline-offset: 2px;
     border-radius: var(--r-xs);
   }
+
+  /* Adım 0 kabul kriteri 4/5 — hareket politikası.
+     shadcn/base-nova primitive'leri sabit `duration-100/150/200` ile geliyor;
+     bu utility'ler token'ları atlar, dolayısıyla prefers-reduced-motion'ı da
+     atlarlardı. 12 dosyayı tek tek düzenlemek yerine kuralı burada kesiyoruz:
+     hareket TAMAMEN kaybolmaz, ihmal edilebilir hâle gelir — durum değişimi
+     hâlâ okunur ama vestibüler rahatsızlık üretmez. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Adım 0 kabul kriteri 6 — dokunma hedefi ≥44px.
+     Kiosk (§2.2) ve tablet (§2.3) gerçek kullanım gerektiriyor; primitive'ler
+     masaüstü için h-8 (32px) geliyor. Satır içi metin bağlantıları KAPSAM DIŞI
+     (a[href] listelenmedi) — paragraf içinde 44px yükseklik metni bozar. */
+  @media (pointer: coarse) {
+    button,
+    [role="button"],
+    [role="option"],
+    [role="menuitem"],
+    [role="tab"],
+    [role="switch"],
+    input:not([type="hidden"]),
+    select,
+    textarea {
+      min-height: var(--tap-min);
+    }
+  }
 }
