@@ -134,6 +134,31 @@ Gerçek GİB sertifikasyonu bu kapsamda alınamaz — iyzico/e-posta ile aynı m
 - [ ] 48 stok fotoğrafını AI üretimi görselleriyle değiştir (GEMINI_API_KEY + `google-genai` paketi kurulunca)
 - [x] `_templates/*` görsellerini local Supabase Storage'dan prod Supabase Cloud'a senkronize et (2026-07-28) — 48/48 başarıyla senkronize edildi, canlıda erişilebilir
 
+## Faz 21 — Frontend Yeniden Tasarımı (Design System + 3 Tema)
+81 sayfa / 9 route grubu / 41 bileşenin görsel dili dağınık ve tutarsız. D88 ile tema mimarisi üç katmana ayrılıyor (tenant teması yalnızca misafir yüzeyini boyar), `warm-luxury`/`sage-bistro` emekliye ayrılıp yerlerine **Gece / Kâğıt / Kor** geliyor. Görsel yön ve token sistemi kökteki `DESIGN.md`'de. Strangler kuralı (RULES #22): eski bileşenler yeni sistem o yüzeyi devralana kadar silinmez; her Adım sonunda uygulama çalışır durumda.
+
+**Faz kabul kriterleri (tüm Adım'lar için geçerli):** token sızıntısı yok (tenant token'ı `data-surface="app"` altında, RKYS ürün token'ı `data-surface="guest"` altında hiç eşleşmez — lint + tip + E2E ile yakalanır) · hardcoded renk/metin yok (RULES #11/#13) · `any`/`@ts-ignore` yok (RULES #9) · uydurma iddia/sayı/logo/testimonial yok (bölüm gerekiyorsa kaldırılır, uydurulmaz) · her animasyon `prefers-reduced-motion: reduce` altında sadeleşir · kontrast AA + Kâğıt gövdesinde AAA · `getByRole` + accessible name yüzeyi korunur, test silinmez/skip'lenmez (RULES #44).
+
+- [ ] **Adım 0 — Tema mimarisi + design system + shell + QR menü dikey dilimi**
+      Blocked by: Yok — hemen başlanabilir
+      Kapsam: **(önkoşul)** `next.config.ts`'e `images.remotePatterns` eklenir, `product-card.tsx`'teki `unoptimized` kaldırılır — bu yapılmadan LCP bütçesi tutmaz · **token katmanı** (`:root` marka primitifleri + 2a pazarlama + 2b app ± light + üç tenant teması; `data-surface` `proxy.ts`'te pathname'den header ile, `data-mode` **cookie**'den — localStorage değil, ilk boyamada flaş olmasın; hareket/yoğunluk/tipografi de token'lanır, eksik token derleme/lint hatası verir) · **primitive katmanı** (kullanım sıklığına göre: button 68, card 53, input 34, label 32, badge 26, select 24, switch 16, textarea 9 yeniden yazılır; dropdown-menu/sheet/accordion taşınır; `separator` (0 kullanım) silinir) · **shell katmanı** (route grubu başına layout; admin §2.3'e göre iki kolon, gruplanmış+aranabilir nav; modül/izin mantığı `src/lib` + `nav-items.ts`'ten **tüketilir, yeniden yazılmaz**) · **tema geçiş migration'ı 0090 (AYRI COMMIT)** · **dikey dilim:** `(menu)/masa` → kategori → ürün → sepet → sipariş → durum akışı **üç temada da** yeni tasarıma taşınır.
+      Kabul kriterleri: (1) üç tema aynı bileşen setini kullanır, tema başına ayrı bileşen yok · (2) **görselsiz kanıt** — hiç fotoğrafı olmayan menü üç temada da ekran görüntüsüyle kanıtlanır; her tema kendi `--placeholder` token'ını tanımlar (`--card-2`'den türetilmez); bir kategoride fotoğraflı ürün oranı %50'nin altındaysa **o kategori tamamen** metin öncelikli düzene geçer; görselli/görselsiz fark CLS üretmez · (3) **boş/hata durumları tasarlanır** — ürünsüz menü, tamamı tükenmiş kategori, boş sepet, **bağlantı kesintisi göstergesi (D30)** · (4) **durum hareketi** — sipariş durum geçişi, sepet sayacı artışı, bağlantı durumu değişimi animasyonla anlatılır; yalnızca giriş/stagger yeterli değil · (5) menü ızgarası Server Component kalır, giriş animasyonu CSS; framer-motion yalnızca etkileşimli yaprakta; ızgarada `layout` animasyonu yasak · (6) dokunma hedefi ≥44px (`@media (pointer: coarse)` altında yoğunluk token'ı genişler) · (7) `:focus-visible` tüm etkileşimli öğelerde · (8) `/masa` first-load JS ≤300 KB gzip (bugün 488), LCP ≤2.5s, INP ≤200ms, CLS ≤0.05 · (9) token izolasyon testi: admin'de tema değişimi `--primary`'yi değiştirmez.
+
+- [ ] **Adım 1 — `(admin)` + `(platform)` + `(analytics)`**
+      Blocked by: Adım 0
+      Kapsam: 33 admin + 13 platform + 1 analytics sayfası yeni shell ve primitive'lere taşınır. Sayfa header deseni (eyebrow + başlık + meta/aksiyon satırı) 33 sayfanın tamamında tek tip. İstatistik kartı + kanban kolonu desenleri. Mevcut 6 analitik widget'ı recharts ile kalır — **yeni grafik kütüphanesi eklenmez**.
+      Kabul kriterleri: her ekran **koyu ve açık modda** doğrulanır · uppercase etiketlerde taban 11px, tablo gövdesinde 12.5px · tablo satırında hover + `:focus-visible` · tablette gerçek kullanım · `can()` ve modül kapama server tarafında korunur (RULES #34/#41) · `admin-nav.spec.ts` sidebar'a eklenen arama input'una karşı doğrulanır.
+
+- [ ] **Adım 2 — `(marketing)` anasayfa + alt sayfalar**
+      Blocked by: Adım 1
+      Kapsam: §2.4'ün 8 bölümlük iskeleti (nav → hero → entegrasyon şeridi → modül vitrini → bölünmüş içerik → fiyatlandırma → kapanış CTA → footer) + `/sss` `/iletisim` `/gelistirici` `/donanim` `/blog` `/legal/*` `/kayit`. TR + EN.
+      Kabul kriterleri: fiyatlar `plans`/`plan_modules`'tan gerçek ₺ (HTML'e gömülmez) · **iki satış modeli** (plan bazlı SaaS + lifetime/self-hosted lisans) eşit görünürlükte · 15 modül vitrini ölçeklenir (kart başına farklı pastel tint kullanılmaz) · **istatistik şeridi, müşteri logosu ve testimonial bölümü sayfada hiç yer almaz** · `(marketing)/layout.tsx`'teki `warm-luxury` debug rozeti kaldırılır ve `app-boots.spec.ts`'in ilgili assertion'ı marka adına daraltılır.
+
+- [ ] **Adım 3 — `(waiter)` + `(kitchen)` + `(cashier)` + `(courier)`**
+      Blocked by: Adım 2
+      Kapsam: operasyon panelleri; kanban deseni KDS istasyon panosuna ve sipariş durum makinesine uygulanır.
+      Kabul kriterleri: yoğun, hızlı, **uzaktan okunabilir** · tablet/büyük ekran birincil · okunabilirlik estetiğe feda edilmez · ısrarcı ses/bağlantı göstergesi davranışı korunur (D28/D30).
+
 ---
 
 ## Çalışma Prensipleri

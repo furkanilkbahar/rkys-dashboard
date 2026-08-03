@@ -45,6 +45,12 @@ Bir davranışın gerekçesini merak edersen `DECISIONS.md` karar günlüğüne 
 - Para değerleri integer kuruş (minor units) olarak saklanır ve hesaplanır.
 - Tarihler UTC saklanır, tenant timezone'una göre gösterilir.
 
+## Tasarım Sistemi
+Görsel veya UI kararı vermeden önce kökteki `DESIGN.md` okunur — token mimarisi (3 katman), üç tenant teması, tipografi, renk, yoğunluk, hareket ve performans bütçesi orada tanımlıdır. Onaysız sapılmaz; sapmak gerekiyorsa önce `DESIGN.md` güncellenir (RULES #20 deseni).
+- Kod incelemesinde (`/code-review`, `/design-review`) `DESIGN.md`'ye uymayan kod işaretlenir.
+- **Uydurma iddia yasak:** müşteri sayısı, uptime yüzdesi, puan, referans/testimonial, müşteri logosu veya kaynağı olmayan entegrasyon iddiası arayüze yazılmaz. Tasarım bir yeri doldurmayı gerektiriyorsa o bölüm kaldırılır, uydurulmaz — bir sayı veya marka adı gerekiyorsa kullanıcıya sorulur.
+> Faz 21 (frontend yeniden tasarımı) spec'i onaylanana kadar `DESIGN.md` **öneri** statüsündedir; mevcut kod hâlâ eski `warm-luxury`/`sage-bistro` token setini kullanır.
+
 ## Veritabanı Kuralları
 - Şema değişikliği **yalnızca migration dosyasıyla** yapılır; dashboard'dan elle değişiklik yok.
 - Yeni tenant tablosu = `tenant_id` kolonu + RLS politikaları + index, aynı migration içinde.
