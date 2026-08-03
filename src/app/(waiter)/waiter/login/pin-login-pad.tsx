@@ -44,10 +44,10 @@ export function PinLoginPad({ loginWithPin }: { loginWithPin: (input: unknown) =
 
   return (
     <div className="flex flex-col items-center gap-4">
-      <div className="flex h-12 items-center justify-center rounded-md border border-border px-6 text-2xl tracking-widest">
-        {"•".repeat(pin.length) || <span className="text-muted-foreground">{t("pinPlaceholder")}</span>}
+      <div className="flex h-14 min-w-[14rem] items-center justify-center rounded-[var(--r-sm)] border border-[var(--surface-line-strong)] bg-[var(--surface-panel)] px-6 text-[26px] tracking-[0.35em]">
+        {"•".repeat(pin.length) || <span className="text-[15px] tracking-normal text-[var(--surface-fg-muted)]">{t("pinPlaceholder")}</span>}
       </div>
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-3 gap-2.5">
         {["1", "2", "3", "4", "5", "6", "7", "8", "9", "", "0", "⌫"].map((key, index) =>
           key === "" ? (
             <div key={index} />
@@ -56,7 +56,7 @@ export function PinLoginPad({ loginWithPin }: { loginWithPin: (input: unknown) =
               key={index}
               type="button"
               variant="outline"
-              className="h-14 w-14 text-lg"
+              className="size-16 text-[20px] font-semibold"
               onClick={() => (key === "⌫" ? setPin((prev) => prev.slice(0, -1)) : press(key))}
             >
               {key}
@@ -72,7 +72,7 @@ export function PinLoginPad({ loginWithPin }: { loginWithPin: (input: unknown) =
           {t("submit")}
         </Button>
       </div>
-      {error && <p className="text-sm text-destructive">{error}</p>}
+      {error && <p role="alert" className="text-[14px] text-[var(--sem-err)]">{error}</p>}
     </div>
   );
 }

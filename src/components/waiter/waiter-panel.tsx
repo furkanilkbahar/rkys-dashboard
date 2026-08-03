@@ -14,8 +14,10 @@ import {
   type WaiterPaymentNotice,
 } from "@/app/(waiter)/waiter/actions";
 import { assignCourier, type CourierActionResult } from "@/app/(waiter)/waiter/courier-actions";
+import { OpsBadge, OpsBoard, OpsCard, OpsColumn } from "@/components/ops/ops-board";
+import { OpsConnection, OpsRow, OpsSection, OpsShell } from "@/components/ops/ops-shell";
+import { agingTone, elapsedMinutes, useNowMs } from "@/components/ops/use-elapsed";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { AdminTable } from "@/lib/data/adminTables";
 import type { CourierLocationView, CourierOption, DeliveryOrderView } from "@/lib/data/courier";
@@ -74,6 +76,7 @@ export function WaiterPanel({
   const { unlocked, unlock } = useSoundUnlock();
 
   const isConnected = useConnectivity(channelState);
+  const nowMs = useNowMs();
   useInsistentAlert(calls.length > 0, unlocked);
 
   const lastPaymentCheckRef = useRef(new Date().toISOString());
@@ -198,120 +201,164 @@ export function WaiterPanel({
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-3xl flex-col gap-6 p-4 sm:p-8">
-      <header className="flex items-center justify-between gap-4">
-        <h1 className="text-lg font-semibold">{t("title")}</h1>
-        <div className="flex items-center gap-3">
+    <OpsShell
+      title={t("title")}
+      status={<OpsConnection connected={isConnected} connectedLabel={t("connected")} disconnectedLabel={t("disconnected")} />}
+      actions={
+        <>
           {!unlocked && (
-            <Button type="button" size="sm" variant="outline" onClick={unlock}>
+            <Button type="button" variant="outline" onClick={unlock}>
               {t("enableSound")}
             </Button>
           )}
-          <span className={isConnected ? "text-xs text-primary" : "text-xs text-destructive"}>
-            {isConnected ? t("connected") : t("disconnected")}
-          </span>
-          <Button type="button" size="sm" variant="ghost" onClick={handleLogout}>
+          <Button type="button" variant="ghost" onClick={handleLogout}>
             {t("logout")}
           </Button>
-        </div>
-      </header>
-
+        </>
+      }
+    >
+      {/* Ödeme bildirimi geçici ve dikkat isteyen bir olay — panonun üstünde,
+          tam genişlikte durur ve garson kapatana kadar kaybolmaz. */}
       {paymentNotices.length > 0 && (
-        <section className="flex flex-col gap-3">
-          <h2 className="text-sm font-semibold text-muted-foreground">{t("paymentNotices")}</h2>
+        <div className="mb-4 flex flex-col gap-2">
           {paymentNotices.map((notice) => (
-            <div key={notice.id} className="flex items-center justify-between gap-2 rounded-md border border-primary/50 bg-primary/5 p-2 text-sm">
-              <span>{t("paymentReceived", { table: notice.tableLabel, method: t(`paymentMethods.${notice.method}`) })}</span>
-              <Button type="button" size="sm" variant="ghost" onClick={() => dismissPaymentNotice(notice.id)}>
+            <div
+              key={notice.id}
+              className="flex flex-wrap items-center justify-between gap-2 rounded-[var(--r-sm)] border border-[var(--surface-line)] bg-[var(--surface-panel)] px-3 py-2"
+              style={{ borderInlineStartWidth: 3, borderInlineStartColor: "var(--sem-ok)" }}
+            >
+              <span className="text-[15px] font-medium">
+                {t("paymentReceived", { table: notice.tableLabel, method: t(`paymentMethods.${notice.method}`) })}
+              </span>
+              <Button type="button" variant="ghost" onClick={() => dismissPaymentNotice(notice.id)}>
                 {t("dismiss")}
               </Button>
             </div>
           ))}
-        </section>
+        </div>
       )}
 
-      <section className="flex flex-col gap-3">
-        <h2 className="text-sm font-semibold text-muted-foreground">{t("openCalls")}</h2>
-        {calls.length === 0 && <p className="text-sm text-muted-foreground">{t("noOpenCalls")}</p>}
-        {calls.map((call) => (
-          <Card key={call.id}>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between gap-2 text-sm">
-                <span>
-                  {call.tableLabel} — {call.callTypeName ?? t("untypedCall")}
-                </span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Button type="button" size="sm" onClick={() => handleAcknowledge(call.id)}>
-                {t("acknowledge")}
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
-      </section>
+      {/* İki kolonlu pano: solda garsonun ŞİMDİ yapması gereken iş (çağrılar),
+          sağda onay bekleyenler. Kolon başlığındaki sayaç, tablete bakmadan
+          da yükü gösterir. */}
+      <OpsBoard columns={2}>
+        <OpsColumn
+          label={t("openCalls")}
+          count={calls.length}
+          tone={calls.length > 0 ? "err" : "neutral"}
+          emptyLabel={t("noOpenCalls")}
+        >
+          {calls.map((call) => {
+            const minutes = elapsedMinutes(call.createdAt, nowMs);
+            return (
+              // Çağrı kartı TEK SATIR: garson tabletine baktığında bir ekranda
+              // olabildiğince çok çağrı görmeli. Aksiyon satırın sağında —
+              // kolon KDS'ninkinden geniş, tam genişlik buton yer israfı.
+              <OpsCard key={call.id} tone="err">
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-2 px-3 py-2.5">
+                  <h3 className="text-[17px] leading-tight font-bold text-[var(--surface-fg)]">{call.tableLabel}</h3>
+                  <span className="text-[15px] text-[var(--surface-fg-muted)]">
+                    {call.callTypeName ?? t("untypedCall")}
+                  </span>
+                  {minutes !== null && <OpsBadge tone={agingTone(minutes)}>{t("elapsed", { minutes })}</OpsBadge>}
+                  <Button
+                    type="button"
+                    className="ml-auto min-w-[8.5rem] text-[14px] font-semibold"
+                    onClick={() => handleAcknowledge(call.id)}
+                  >
+                    {t("acknowledge")}
+                  </Button>
+                </div>
+                {call.note && <p className="px-3 pb-2.5 text-[14px] text-[var(--surface-fg-muted)]">{call.note}</p>}
+              </OpsCard>
+            );
+          })}
+        </OpsColumn>
 
-      <section className="flex flex-col gap-3">
-        <h2 className="text-sm font-semibold text-muted-foreground">{t("pendingApproval")}</h2>
-        {pendingOrders.length === 0 && <p className="text-sm text-muted-foreground">{t("noPendingOrders")}</p>}
-        {pendingOrders.map((order) => (
-          <Card key={order.id}>
-            <CardHeader>
-              <CardTitle className="text-sm">
-                {order.tableLabel ??
-                  (order.pickupCode
-                    ? t("pickupLabel", { code: order.pickupCode })
-                    : order.isDelivery
-                      ? t("deliveryLabel")
-                      : order.marketplaceProvider
-                        ? t("marketplaceLabel", { provider: order.marketplaceProvider })
-                        : "?")}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-2">
-              <ul className="text-sm text-muted-foreground">
-                {order.items.map((item, index) => (
-                  <li key={index}>
-                    {item.quantity}× {item.name}
-                    {item.variantName ? ` (${item.variantName})` : ""}
-                  </li>
-                ))}
-              </ul>
-              <Button type="button" size="sm" onClick={() => handleApprove(order.id)}>
-                {t("approve")}
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
-      </section>
+        <OpsColumn
+          label={t("pendingApproval")}
+          count={pendingOrders.length}
+          tone={pendingOrders.length > 0 ? "accent" : "neutral"}
+          emptyLabel={t("noPendingOrders")}
+        >
+          {pendingOrders.map((order) => {
+            const minutes = elapsedMinutes(order.createdAt, nowMs);
+            return (
+              <OpsCard key={order.id} tone={agingTone(minutes)}>
+                <div className="flex items-start gap-2 px-3 pt-2.5">
+                  <h3 className="min-w-0 flex-1 text-[17px] leading-tight font-bold break-words text-[var(--surface-fg)]">
+                    {order.tableLabel ??
+                      (order.pickupCode
+                        ? t("pickupLabel", { code: order.pickupCode })
+                        : order.isDelivery
+                          ? t("deliveryLabel")
+                          : order.marketplaceProvider
+                            ? t("marketplaceLabel", { provider: order.marketplaceProvider })
+                            : "?")}
+                  </h3>
+                  <span className="min-h-[22px] shrink-0">
+                    {minutes !== null && <OpsBadge tone={agingTone(minutes)}>{t("elapsed", { minutes })}</OpsBadge>}
+                  </span>
+                </div>
+
+                <ul className="flex flex-col gap-1 px-3 py-2.5">
+                  {order.items.map((item, index) => (
+                    <li key={index} className="flex items-baseline gap-2 text-[15px] leading-snug">
+                      <span className="min-w-[1.5rem] shrink-0 text-right font-bold tabular-nums text-[var(--surface-accent)]">
+                        {item.quantity}
+                      </span>
+                      <span className="min-w-0 text-[var(--surface-fg)]">
+                        {item.name}
+                        {item.variantName && <span className="text-[var(--surface-fg-muted)]"> ({item.variantName})</span>}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="flex px-2.5 pb-2.5">
+                  <Button
+                    type="button"
+                    className="ml-auto min-w-[9rem] text-[14px] font-semibold"
+                    onClick={() => handleApprove(order.id)}
+                  >
+                    {t("approve")}
+                  </Button>
+                </div>
+              </OpsCard>
+            );
+          })}
+        </OpsColumn>
+      </OpsBoard>
 
       {reservations.length > 0 && (
-        <section className="flex flex-col gap-3">
-          <h2 className="text-sm font-semibold text-muted-foreground">{t("upcomingReservations")}</h2>
+        <OpsSection title={t("upcomingReservations")}>
           {reservations.map((reservation) => (
-            <div key={reservation.id} className="flex items-center justify-between gap-2 rounded-md border border-border p-2 text-sm">
-              <span>
-                <span className="font-medium">{reservation.customerName}</span> · {t("reservationPartySize", { count: reservation.partySize })}
+            <OpsRow key={reservation.id}>
+              <span className="text-[15px]">
+                <span className="font-semibold">{reservation.customerName}</span> ·{" "}
+                {t("reservationPartySize", { count: reservation.partySize })}
                 {reservation.tableLabel && <> · {reservation.tableLabel}</>}
                 {" · "}
                 {new Date(reservation.reservedAt).toLocaleString("tr-TR")}
               </span>
               {reservation.status === "confirmed" && (
-                <Button type="button" size="sm" onClick={() => handleSeatReservation(reservation.id)}>
+                <Button type="button" onClick={() => handleSeatReservation(reservation.id)}>
                   {t("seatReservation")}
                 </Button>
               )}
-            </div>
+            </OpsRow>
           ))}
-        </section>
+        </OpsSection>
       )}
 
       {occupiedTables.length > 0 && moveTableSession && (
-        <section className="flex flex-col gap-3">
-          <h2 className="text-sm font-semibold text-muted-foreground">{t("tableMove")}</h2>
+        <OpsSection title={t("tableMove")}>
           {occupiedTables.map((table) => (
-            <div key={table.tableSessionId} className="flex items-center justify-between gap-2 rounded-md border border-border p-2 text-sm">
-              <span className="font-medium">{table.tableLabel}</span>
+            // DİKKAT (§5): `table-move.spec.ts` masa etiketini bulup
+            // `.locator("..")` ile ÜST öğeye çıkıyor ve seçiciyi orada arıyor
+            // — etiket ile seçici arasına sarmalayıcı eklenemez.
+            <OpsRow key={table.tableSessionId}>
+              <span className="text-[15px] font-semibold">{table.tableLabel}</span>
               <TableMovePicker
                 tableSessionId={table.tableSessionId}
                 freeTables={freeTables}
@@ -319,35 +366,50 @@ export function WaiterPanel({
                 label={t("tableMoveTo")}
                 onMoved={() => router.refresh()}
               />
-            </div>
+            </OpsRow>
           ))}
-        </section>
+        </OpsSection>
       )}
 
       {couriers.length > 0 && (
-        <section className="flex flex-col gap-3">
-          <h2 className="text-sm font-semibold text-muted-foreground">{t("courierAssignment")}</h2>
+        <OpsSection title={t("courierAssignment")}>
           {courierLocations.length > 0 && (
             <CourierMap
               points={courierLocations.map((loc): CourierMapPoint => {
                 const courier = couriers.find((c) => c.id === loc.courierId);
-                return { courierId: loc.courierId, latitude: loc.latitude, longitude: loc.longitude, label: courier?.badgeNo ?? loc.courierId.slice(0, 8) };
+                return {
+                  courierId: loc.courierId,
+                  latitude: loc.latitude,
+                  longitude: loc.longitude,
+                  label: courier?.badgeNo ?? loc.courierId.slice(0, 8),
+                };
               })}
             />
           )}
-          {deliveryOrders.length === 0 && <p className="text-sm text-muted-foreground">{t("noDeliveryOrders")}</p>}
+          {deliveryOrders.length === 0 && (
+            <p className="rounded-[var(--r-sm)] border border-dashed border-[var(--surface-line)] px-3 py-5 text-center text-[13px] text-[var(--surface-fg-faint)]">
+              {t("noDeliveryOrders")}
+            </p>
+          )}
           {deliveryOrders.map((order) => (
-            <div key={order.id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border p-2 text-sm">
-              <div className="flex flex-col">
-                <span>{order.addressSnapshot ?? "—"}</span>
-                <span className="text-xs text-muted-foreground">{formatPrice(order.subtotalMinor, currency)}</span>
+            <OpsRow key={order.id}>
+              <div className="flex min-w-0 flex-col">
+                <span className="text-[15px]">{order.addressSnapshot ?? "—"}</span>
+                <span className="text-[13px] tabular-nums text-[var(--surface-fg-muted)]">
+                  {formatPrice(order.subtotalMinor, currency)}
+                </span>
               </div>
-              <CourierPicker orderId={order.id} couriers={couriers} currentCourierId={order.assignment?.courierId ?? null} label={t("assign")} />
-            </div>
+              <CourierPicker
+                orderId={order.id}
+                couriers={couriers}
+                currentCourierId={order.assignment?.courierId ?? null}
+                label={t("assign")}
+              />
+            </OpsRow>
           ))}
-        </section>
+        </OpsSection>
       )}
-    </main>
+    </OpsShell>
   );
 }
 

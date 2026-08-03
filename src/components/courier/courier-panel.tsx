@@ -4,8 +4,9 @@ import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 
 import { advanceCourierAssignment, updateCourierLocation } from "@/app/(waiter)/waiter/courier-actions";
+import { OpsBadge, OpsCard } from "@/components/ops/ops-board";
+import { OpsShell } from "@/components/ops/ops-shell";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { CourierAssignmentView } from "@/lib/data/courier";
 import { formatPrice } from "@/lib/utils/currency";
 
@@ -77,36 +78,64 @@ export function CourierPanel({
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-2xl flex-col gap-4 p-4 sm:p-8">
-      <div className="flex items-center justify-between gap-2">
-        <h1 className="text-lg font-semibold">{t("title")}</h1>
-        <Button type="button" size="sm" variant={sharingLocation ? "default" : "outline"} onClick={handleToggleLocationSharing}>
+    // Kurye yüzeyi tek elle, motor üstünde, güneşte okunuyor: dar kolon,
+    // büyük adres tipografisi, tam genişlikte tek aksiyon. Kanban DEĞİL —
+    // kuryenin aynı anda gördüğü teslimat sayısı zaten bir avuç, kolonlara
+    // bölmek telefonda yalnızca kaydırma ekler.
+    <OpsShell
+      title={t("title")}
+      width="narrow"
+      actions={
+        <Button
+          type="button"
+          variant={sharingLocation ? "default" : "outline"}
+          onClick={handleToggleLocationSharing}
+        >
           {sharingLocation ? t("locationSharing.stop") : t("locationSharing.start")}
         </Button>
-      </div>
-      {locationError && <p className="text-xs text-destructive">{locationError}</p>}
-      {assignments.length === 0 && <p className="text-sm text-muted-foreground">{t("noAssignments")}</p>}
-      {assignments.map((assignment) => {
-        const next = NEXT_STATUS[assignment.status];
-        return (
-          <Card key={assignment.id}>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between text-sm">
-                <span>{assignment.addressSnapshot ?? "—"}</span>
-                <span className="text-xs text-muted-foreground">{t(`status.${assignment.status}`)}</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="flex items-center justify-between gap-2">
-              <span className="text-sm font-medium">{formatPrice(assignment.subtotalMinor, currency)}</span>
-              {next && (
-                <Button type="button" size="sm" onClick={() => handleAdvance(assignment)}>
-                  {t(`advanceTo.${next}`)}
-                </Button>
-              )}
-            </CardContent>
-          </Card>
-        );
-      })}
-    </main>
+      }
+    >
+      {locationError && (
+        <p role="alert" className="mb-3 text-[13px] text-[var(--sem-err)]">
+          {locationError}
+        </p>
+      )}
+
+      {assignments.length === 0 ? (
+        <p className="rounded-[var(--r-md)] border border-dashed border-[var(--surface-line)] px-4 py-16 text-center text-[15px] text-[var(--surface-fg-muted)]">
+          {t("noAssignments")}
+        </p>
+      ) : (
+        <div className="flex flex-col gap-3">
+          {assignments.map((assignment) => {
+            const next = NEXT_STATUS[assignment.status];
+            return (
+              <OpsCard key={assignment.id} tone={assignment.status === "en_route" ? "warn" : "accent"}>
+                <div className="flex items-start justify-between gap-2 px-3.5 pt-3">
+                  <h2 className="min-w-0 text-[17px] leading-snug font-semibold break-words text-[var(--surface-fg)]">
+                    {assignment.addressSnapshot ?? "—"}
+                  </h2>
+                  <OpsBadge tone={assignment.status === "en_route" ? "warn" : "accent"}>
+                    {t(`status.${assignment.status}`)}
+                  </OpsBadge>
+                </div>
+
+                <p className="px-3.5 pt-1 text-[15px] font-bold tabular-nums text-[var(--surface-fg)]">
+                  {formatPrice(assignment.subtotalMinor, currency)}
+                </p>
+
+                {next && (
+                  <div className="px-3 py-3">
+                    <Button type="button" className="w-full text-[15px] font-semibold" onClick={() => handleAdvance(assignment)}>
+                      {t(`advanceTo.${next}`)}
+                    </Button>
+                  </div>
+                )}
+              </OpsCard>
+            );
+          })}
+        </div>
+      )}
+    </OpsShell>
   );
 }

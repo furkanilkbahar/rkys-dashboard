@@ -1108,7 +1108,8 @@
       "card_manual": "Kart (Manuel)",
       "online": "Online"
     },
-    "dismiss": "Kapat"
+    "dismiss": "Kapat",
+    "elapsed": "{minutes} dk"
   },
   "kitchen": {
     "title": "Mutfak Ekranı (KDS)",
@@ -1128,7 +1129,9 @@
       "preparing": "Hazırlamaya Başla",
       "ready": "Hazır",
       "served": "Servis Edildi"
-    }
+    },
+    "columnEmpty": "Boş",
+    "elapsed": "{minutes} dk"
   },
   "courier": {
     "title": "Kurye Paneli",

@@ -122,6 +122,34 @@
     display: none;
   }
 
+  /* ── Operasyon panelleri (Faz 21 Adım 3) ────────────────────────────
+     `(kitchen)` `(waiter)` `(cashier)` `(courier)`: tablet/büyük ekran
+     birincil, uzaktan okunur. Dokunma hedefi `pointer` türünden BAĞIMSIZ
+     olarak 44px — duvara asılı bir KDS fare ile de kullanılsa hedefin
+     küçülmesi kabul kriterine ("uzaktan okunabilir") aykırı olurdu. */
+  .ops-surface {
+    --tap-min: 44px;
+    --dens: 1.1;
+    /* Yapışkan panel başlığının yüksekliği — pano kolonu kendi başlığını
+       bunun altına yapıştırır (ops-board.tsx). Tek yerde tanımlı ki ikisi
+       birbirinden ayrı düşmesin. */
+    --ops-header-h: 53px;
+  }
+  .ops-surface button,
+  .ops-surface [role="button"],
+  .ops-surface [role="combobox"],
+  .ops-surface select,
+  .ops-surface input:not([type="hidden"]) {
+    min-height: var(--tap-min);
+  }
+
+  /* Bağlantı koptuğunda göstergenin nabzı — durum değişimi hareketle de
+     anlatılır (kabul kriteri 4). Renk ve metin tek başına yeterli bilgiyi
+     zaten taşır, bu yüzden reduced-motion altında kaybolması sorun değil. */
+  .ops-pulse {
+    animation: ops-pulse 1.4s var(--ease-in-out) infinite;
+  }
+
   .menu-card {
     animation: menu-card-in var(--dur-slow) var(--ease-out) backwards;
     /* Yüzen sepet çubuğu (fixed, ~64px + güvenli alan) son satırı örtüyordu;
@@ -144,6 +172,12 @@
   }
   .menu-card:nth-child(n + 6) {
     animation-delay: 200ms;
+  }
+}
+
+@keyframes ops-pulse {
+  50% {
+    opacity: 0.3;
   }
 }
 

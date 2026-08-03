@@ -110,7 +110,7 @@ function CompForm({
       <Button type="button" size="sm" onClick={submit}>
         {t("confirm")}
       </Button>
-      {error && <p className="text-xs text-destructive">{error}</p>}
+      {error && <p className="text-[13px] text-[var(--sem-err)]">{error}</p>}
     </div>
   );
 }
@@ -203,7 +203,7 @@ function RecentPaymentRow({
       </div>
       {open && isRefundable && (
         <div className="flex flex-col gap-2">
-          <p className="text-xs text-muted-foreground">
+          <p className="text-[13px] text-[var(--surface-fg-muted)]">
             {t("remaining")}: {formatPrice(remainingMinor, currency)}
           </p>
 
@@ -258,7 +258,7 @@ function RecentPaymentRow({
               {t("confirm")}
             </Button>
           </div>
-          {error && <p className="text-xs text-destructive">{error}</p>}
+          {error && <p className="text-[13px] text-[var(--sem-err)]">{error}</p>}
         </div>
       )}
     </div>
@@ -410,7 +410,7 @@ export function PayScreen({
   const allPaid = shares.length > 0 && shares.every((s) => s.paid);
 
   return (
-    <div className="mx-auto flex max-w-lg flex-col gap-4">
+    <div className="mx-auto flex max-w-2xl flex-col gap-4">
       <Card>
         <CardHeader>
           <CardTitle className="text-base">{t("selectSession")}</CardTitle>
@@ -496,7 +496,7 @@ export function PayScreen({
                   ))}
                 </div>
                 {tipTotalMinor > 0 && (
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-[13px] text-[var(--surface-fg-muted)]">
                     {t("tipAmount")}: {formatPrice(tipTotalMinor, currency)}
                   </p>
                 )}
@@ -581,7 +581,7 @@ export function PayScreen({
                 {t("paymentMode.pay")}
               </Button>
             )}
-            {paymentMode === "items" && error && <p className="text-xs text-destructive">{error}</p>}
+            {paymentMode === "items" && error && <p className="text-[13px] text-[var(--sem-err)]">{error}</p>}
           </CardContent>
         </Card>
       )}
@@ -606,7 +606,7 @@ export function PayScreen({
                 )}
               </div>
             ))}
-            {error && <p className="text-xs text-destructive">{error}</p>}
+            {error && <p className="text-[13px] text-[var(--sem-err)]">{error}</p>}
             {allPaid && <p className="text-sm text-primary">{t("allPaid")}</p>}
           </CardContent>
         </Card>

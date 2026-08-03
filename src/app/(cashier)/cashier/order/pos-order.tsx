@@ -65,12 +65,12 @@ function ProductRow({
   }
 
   return (
-    <div className="flex flex-col gap-2 rounded-md border border-border p-2">
+    <div className="flex flex-col gap-2 rounded-[var(--r-sm)] border border-[var(--surface-line)] bg-[var(--surface-panel)] p-2.5">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-sm font-medium">{product.name}</span>
+        <span className="text-[15px] font-semibold">{product.name}</span>
         <div className="flex items-center gap-2">
           {!canAdd && <Badge variant="destructive">{t("soldOut")}</Badge>}
-          <span className="text-sm text-muted-foreground">{formatPrice(unitPrice, currency)}</span>
+          <span className="text-[15px] tabular-nums text-[var(--surface-fg-muted)]">{formatPrice(unitPrice, currency)}</span>
         </div>
       </div>
 
@@ -92,7 +92,7 @@ function ProductRow({
       {product.extras.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {product.extras.map((extra) => (
-            <label key={extra.id} className="flex items-center gap-1 text-xs text-muted-foreground">
+            <label key={extra.id} className="flex items-center gap-1.5 text-[13px] text-[var(--surface-fg-muted)]">
               <input
                 type="checkbox"
                 checked={extraIds.includes(extra.id)}
@@ -105,7 +105,7 @@ function ProductRow({
         </div>
       )}
 
-      <Button type="button" size="sm" disabled={!canAdd} onClick={handleAdd} className="w-fit">
+      <Button type="button" disabled={!canAdd} onClick={handleAdd} className="w-fit px-5 text-[14px] font-semibold">
         {t("addToOrder")}
       </Button>
     </div>
@@ -173,7 +173,7 @@ export function PosOrder({
   }
 
   return (
-    <div className="mx-auto grid max-w-4xl gap-4 lg:grid-cols-[2fr_1fr]">
+    <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,22rem)] xl:gap-5">
       <div className="flex flex-col gap-4">
         <Card>
           <CardHeader>
@@ -214,25 +214,25 @@ export function PosOrder({
           <CardTitle className="text-base">{t("cartTitle")}</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
-          {cart.length === 0 && <p className="text-sm text-muted-foreground">{t("emptyCart")}</p>}
+          {cart.length === 0 && <p className="text-[14px] text-[var(--surface-fg-muted)]">{t("emptyCart")}</p>}
           {cart.map((line) => (
-            <div key={line.key} className="flex items-start justify-between gap-2 text-sm">
+            <div key={line.key} className="flex items-start justify-between gap-2 text-[15px]">
               <div>
                 <p>
                   {line.quantity}× {line.productName}
                   {line.variantName ? ` (${line.variantName})` : ""}
                 </p>
                 {line.extraNames.length > 0 && (
-                  <p className="text-xs text-muted-foreground">+ {line.extraNames.join(", ")}</p>
+                  <p className="text-[13px] text-[var(--surface-fg-muted)]">+ {line.extraNames.join(", ")}</p>
                 )}
               </div>
               <div className="flex items-center gap-2">
-                <span>{formatPrice(line.unitPriceMinor * line.quantity, currency)}</span>
+                <span className="tabular-nums">{formatPrice(line.unitPriceMinor * line.quantity, currency)}</span>
                 <button
                   type="button"
                   onClick={() => removeLine(line.key)}
                   aria-label={t("removeLine")}
-                  className="text-xs text-destructive"
+                  className="flex size-8 shrink-0 items-center justify-center rounded-[var(--r-xs)] text-[18px] leading-none text-[var(--sem-err)]"
                 >
                   ×
                 </button>
@@ -241,18 +241,19 @@ export function PosOrder({
           ))}
 
           {cart.length > 0 && (
-            <p className="border-t border-border pt-2 text-sm font-semibold">
+            <p className="border-t border-[var(--surface-line)] pt-2 text-[16px] font-bold tabular-nums">
               {t("subtotal")}: {formatPrice(subtotalMinor, currency)}
             </p>
           )}
 
-          {error && <p className="text-xs text-destructive">{error}</p>}
-          {status === "success" && <p className="text-xs text-primary">{t("submitted")}</p>}
+          {error && <p className="text-[13px] text-[var(--sem-err)]">{error}</p>}
+          {status === "success" && <p className="text-[13px] text-[var(--sem-ok)]">{t("submitted")}</p>}
 
           <Button
             type="button"
             disabled={!tableId || cart.length === 0 || status === "submitting"}
             onClick={handleSubmit}
+            className="text-[15px] font-semibold"
           >
             {status === "submitting" ? t("submitting") : t("submit")}
           </Button>

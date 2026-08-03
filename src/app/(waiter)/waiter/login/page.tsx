@@ -25,12 +25,12 @@ export default async function WaiterLoginPage() {
 
   if (!tenant || !isDeviceValid) {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center gap-3 p-8 text-center">
-        <p className="text-sm font-medium">{t("deviceNotAuthorized")}</p>
-        <Link href="/vardiya/kurulum" className="text-sm text-primary underline">
+      <main className="ops-surface flex min-h-dvh flex-col items-center justify-center gap-3 bg-[var(--surface-bg)] p-8 text-center text-[var(--surface-fg)]">
+        <p className="text-[15px] font-medium">{t("deviceNotAuthorized")}</p>
+        <Link href="/vardiya/kurulum" className="text-[14px] text-[var(--surface-accent)] underline">
           {t("goToSetup")}
         </Link>
-        <Link href="/admin/login" className="text-xs text-muted-foreground underline">
+        <Link href="/admin/login" className="text-[13px] text-[var(--surface-fg-muted)] underline">
           {t("adminLoginLink")}
         </Link>
       </main>
@@ -38,10 +38,13 @@ export default async function WaiterLoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-8">
-      <h1 className="text-xl font-semibold">{t("title")}</h1>
+    // Vardiya başında, ayakta, tablette kullanılan tek ekran — dikey ortalı
+    // ve tuşları büyük. `.ops-surface` diğer operasyon panelleriyle aynı
+    // dokunma hedefi tabanını verir.
+    <main className="ops-surface flex min-h-dvh flex-col items-center justify-center gap-6 bg-[var(--surface-bg)] p-8 text-[var(--surface-fg)]">
+      <h1 className="text-[22px] font-bold tracking-[-0.02em]">{t("title")}</h1>
       <PinLoginPad loginWithPin={loginWithPin} />
-      <Link href="/admin/login" className="text-xs text-muted-foreground underline">
+      <Link href="/admin/login" className="text-[13px] text-[var(--surface-fg-muted)] underline">
         {t("adminLoginLink")}
       </Link>
     </main>
