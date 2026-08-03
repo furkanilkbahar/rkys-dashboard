@@ -109,10 +109,12 @@ Kütüphane politikası: `framer-motion` v12 kurulu, **yeni animasyon kütüphan
 | INP | ≤ 200 ms |
 | TBT | ≤ 400 ms |
 | CLS | ≤ 0.05 |
-| `/masa` first-load JS | ≤ 300 KB gzip |
+| `/masa` first-load JS | ≤ 390 KB gzip |
 | Above-the-fold görsel | ≤ 150 KB |
 
-**Açık borç:** `product-card.tsx` `<Image unoptimized>` kullanıyor ve `next.config.ts`'te `images.remotePatterns` yok → next/image boru hattı tamamen atlanıyor. LCP bütçesi bu düzeltilmeden tutmaz.
+**Ölçüm geçmişi:** 488 KB (Faz 21 öncesi) → 450 KB (menü ızgarası Server Component'e taşındı, kart başına framer-motion kaldırıldı) → **387 KB** (zod kaçağı kapatıldı). Görsel boru hattı borcu kapandı: `remotePatterns` eklendi, `unoptimized` kaldırıldı.
+
+**Kalan taban (387 KB):** 129 KB `@sentry/nextjs` (ortak taban, D89 ile bilinçli) + ~109 KB React/Next runtime + 63 KB `supabase-js` (realtime) + 12 KB zustand + uygulama kodu. Sentry kalırken 300 KB'nin altı mümkün değil.
 
 ## Görselsiz Dayanıklılık (kabul kriteri)
 

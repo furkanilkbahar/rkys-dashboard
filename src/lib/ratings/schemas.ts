@@ -12,9 +12,8 @@ export type SubmitRatingResult =
   | { ok: true; ratingId: string }
   | { ok: false; error: "invalid_input" | "no_session" | "unknown" };
 
-// PRD §4 / RULES #30: yalnızca 4-5★ Google'a yönlenir, ≤3★ hiçbir koşulda
-// yönlendirmez — regresyon riski yüksek olduğu için ayrı, saf bir fonksiyon
-// olarak tutulur (bkz. tests/unit/ratings/threshold.test.ts).
-export function shouldRedirectToGoogle(stars: number, googleReviewUrl: string | null): boolean {
-  return stars > 3 && Boolean(googleReviewUrl);
-}
+// D89: saf eşik fonksiyonu ./threshold.ts'e taşındı — client bileşenleri onu
+// bu dosyadan (zod'lu) import ettiğinde 63 KB gzip misafir bundle'ına
+// giriyordu. Geriye dönük uyumluluk için yeniden export ediliyor; YENİ client
+// kodu doğrudan "@/lib/ratings/threshold"tan almalı.
+export { shouldRedirectToGoogle } from "./threshold";

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { shouldRedirectToGoogle } from "@/lib/ratings/schemas";
+import { shouldRedirectToGoogle } from "@/lib/ratings/threshold";
 
 describe("shouldRedirectToGoogle (RULES #30)", () => {
   it("4-5★ ve tanımlı url'de yönlendirir", () => {

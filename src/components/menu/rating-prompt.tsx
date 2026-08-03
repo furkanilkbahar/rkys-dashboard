@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { submitRating } from "@/app/(menu)/masa/rating-actions";
 import { Button } from "@/components/ui/button";
 import type { RatingWaiterOption } from "@/lib/data/ratings";
-import { shouldRedirectToGoogle } from "@/lib/ratings/schemas";
+import { shouldRedirectToGoogle } from "@/lib/ratings/threshold";
 import { createClient } from "@/lib/supabase/client";
 
 // D33/session-panel.tsx ile aynı poll deseni (5sn) — oturum kapanışı
