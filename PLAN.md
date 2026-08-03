@@ -171,7 +171,18 @@ Gerçek GİB sertifikasyonu bu kapsamda alınamaz — iyzico/e-posta ile aynı m
       - `/admin/menu`'de hidrasyon uyumsuzluğu: dnd-kit `DndContext`'e `id` verilmediğinde kendi artan sayacını kullanıyor (sunucu `DndDescribedBy-0`, istemci `-54`); sürükleme tutamağının `aria-describedby`'ı yanlış öğeyi gösteriyordu. `useId()` ile çözüldü. Faz 5'ten beri duruyordu.
 
       **Faz 21 takip maddeleri (kapsam dışı, ayrı ele alınacak):**
-      1. **E2E paketi dev sunucusunu doyuruyor** — varsayılan 5 worker × 2 proje, on-demand derleyen `pnpm dev`'e karşı koşuyor; `page.goto` 45sn'yi aşıyor ve `retries: 2` bile emmiyor (tam paket: 5 worker'da 44 kırık, aynı testler `--workers=1`'de geçiyor). Sayfa sayısı ve boyutu Faz 21 ile arttığı için eşik aşıldı. Kalıcı çözüm: E2E'yi `next build` + `next start` üzerinde koşturmak (derleme gecikmesi ortadan kalkar) ya da worker sayısını düşürmek — `playwright.config.ts` kararı, ayrıca ele alınmalı.
+      1. **E2E paketi `pnpm dev`'e karşı koşuyor ve asıl kırılganlık kaynağı bu — ÖLÇÜLDÜ.** Dev sunucusu route'ları istek anında derliyor; 5 worker × 2 proje altında `page.goto` 45sn'yi aşıyor ve `retries: 2` bile emmiyor.
+
+         | Ortam | Kırık |
+         |---|---|
+         | `pnpm dev`, 5 worker | 44 |
+         | `pnpm dev`, 2 worker | 21 |
+         | `pnpm dev`, 1 worker (nokta atışı) | çoğu geçiyor |
+         | `next build` + `next start` | önceki 6 kırığın 5'i geçti |
+
+         En çarpıcı tekil ölçüm: `trial-subscription.spec.ts:60` dev'de 45sn'de timeout oluyordu, prod build'de **2.2 saniyede** geçti.
+
+         **Öneri (karar kullanıcının):** `playwright.config.ts` → `webServer.command` `pnpm dev` yerine `pnpm build && pnpm start`. Maliyeti bir kerelik build süresi; kazancı, koşumun gerçek ürün davranışını ölçmesi ve derleme gecikmesinin tamamen kalkması. `reuseExistingServer: true` korunursa yerel geliştirmede dev sunucusu açıkken de çalışmaya devam eder.
       2. **E2E hidrasyon yarışı** — `mobile-safari`'de bazı senaryolar react-hook-form formuna hidrasyondan önce yazıp/tıklayarak kırılıyor (`kitchen-station-filter` HEAD'de 3/5). Bekleme stratejisi sorunu; Faz 19 bakım borcu.
       3. **`webhooks.integration.test.ts` üçüncü partiye bağımlı** — `https://httpbin.org/post`'a gerçek istek atıyor; o servis 503 verdiğinde test kırılıyor (bu oturumda gözlendi). Yerel bir mock uca taşınmalı.
       4. `themes` tablosunun asimetrik GRANT'i (0052): `service_role` yazabiliyor ama okuyamıyor.

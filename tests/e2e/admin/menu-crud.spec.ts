@@ -1,6 +1,41 @@
+import { createClient } from "@supabase/supabase-js";
 import { expect, test } from "@playwright/test";
 
 import { acmeUrl, loginAsAcmeOwner } from "../helpers/tenant";
+
+// Aynı sabit lokal demo anahtarları — kitchen-station-filter.spec.ts deseni.
+function serviceClient() {
+  return createClient(
+    "http://127.0.0.1:54321",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU",
+  );
+}
+
+const ACME_TENANT_ID = "00000000-0000-4000-8000-000000000001";
+const CREATED_CATEGORY_NAME = "Sıcak İçecekler";
+
+// Bu dosya acme'nin GERÇEK demo kataloğuna kategori+ürün ekliyor ve eskiden
+// hiç temizlemiyordu: her koşumda bir "Sıcak İçecekler" + "Espresso" daha
+// birikiyordu. İki somut zarar ölçüldü — (1) demo menüsü tekrar eden
+// kayıtlarla doluyordu, (2) `menu-reorder.spec.ts` biriken kategoriler
+// yüzünden kırılıyordu (çöp silinince aynı test 2.4sn'de geçiyor).
+// menu-reorder.integration.test.ts'teki afterAll temizliğiyle aynı gerekçe.
+test.afterAll(async () => {
+  const service = serviceClient();
+  const { data: rows } = await service
+    .from("content_translations")
+    .select("entity_id")
+    .eq("tenant_id", ACME_TENANT_ID)
+    .eq("entity_type", "menu_category")
+    .eq("field", "name")
+    .eq("value", CREATED_CATEGORY_NAME);
+
+  const ids = (rows ?? []).map((r) => r.entity_id);
+  if (ids.length > 0) {
+    // Ürün/varyant/ekstra kategoriye FK ile bağlı — cascade onları da alır.
+    await service.from("menu_categories").delete().in("id", ids);
+  }
+});
 
 test("owner kategori+ürün+varyant+ekstra oluşturup çeviri editörünü kullanabilir", async ({ page, baseURL }) => {
   await loginAsAcmeOwner(page, baseURL!);
