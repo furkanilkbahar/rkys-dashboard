@@ -7,6 +7,7 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import type { z } from "zod";
 
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -69,7 +70,7 @@ export function IngredientsManager({
 
   return (
     <div className="flex flex-col gap-8">
-      <h1 className="text-xl font-semibold">{t("pageTitle")}</h1>
+      <AdminPageHeader title={t("pageTitle")} />
       {criticalIngredients.length > 0 && (
         <div className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
           {t("criticalSummary", { count: criticalIngredients.length, names: criticalIngredients.map((i) => i.name).join(", ") })}

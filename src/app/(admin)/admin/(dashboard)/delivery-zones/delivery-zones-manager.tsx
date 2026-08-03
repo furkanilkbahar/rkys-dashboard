@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -53,7 +54,7 @@ export function DeliveryZonesManager({
 
   return (
     <div className="flex flex-col gap-8">
-      <h1 className="text-xl font-semibold">{t("pageTitle")}</h1>
+      <AdminPageHeader title={t("pageTitle")} />
       <Card>
         <CardHeader>
           <CardTitle className="text-base">{t("title")}</CardTitle>

@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { requireAdminActor } from "@/lib/auth/adminGuard";
 import { getAdminRatings } from "@/lib/data/adminRatings";
 
@@ -10,7 +11,7 @@ export default async function AdminRatingsPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-xl font-semibold">{t("title")}</h1>
+      <AdminPageHeader title={t("title")} />
 
       <p className="text-sm text-muted-foreground">
         {count > 0 ? t("average", { stars: averageStars!.toFixed(1), count }) : t("empty")}

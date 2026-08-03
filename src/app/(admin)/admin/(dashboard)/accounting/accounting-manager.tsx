@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { AccountingActionResult } from "@/lib/accounting/schemas";
@@ -40,7 +41,7 @@ export function AccountingManager({
 
   return (
     <div className="flex flex-col gap-8">
-      <h1 className="text-xl font-semibold">{t("pageTitle")}</h1>
+      <AdminPageHeader title={t("pageTitle")} />
       <Card>
         <CardHeader>
           <CardTitle className="text-base">{t("syncableTitle")}</CardTitle>

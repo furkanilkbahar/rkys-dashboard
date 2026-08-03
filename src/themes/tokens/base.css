@@ -26,6 +26,10 @@
      referans vermez, dolayısıyla oraya inmez. */
   --font-body: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  /* Başlık ailesi YÜZEY BAZINDA seçilir. Varsayılan gövde fontudur; yalnızca
+     pazarlama ve misafir temaları display'e yükseltir. DESIGN.md: "(admin)/
+     (platform) yalnızca Geist kullanır, Fraunces oraya inmez." */
+  --font-heading-family: var(--font-body);
 
   /* Yarıçap ölçeği — sistem geneli. Yüzeyler --radius ile kendi seviyesini seçer. */
   --r-xs: 4px;

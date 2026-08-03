@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireAdminActor } from "@/lib/auth/adminGuard";
 import { getAdminTenantName } from "@/lib/data/tenant";
@@ -11,7 +12,7 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-xl font-semibold">{t("welcome", { tenantName })}</h1>
+      <AdminPageHeader title={t("welcome", { tenantName })} />
       <Card className="max-w-sm">
         <CardHeader>
           <CardTitle className="text-sm text-muted-foreground">{t("tenantLabel")}</CardTitle>

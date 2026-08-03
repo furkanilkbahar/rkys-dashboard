@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -72,9 +73,13 @@ export function RecipeEditor({
 
   return (
     <div className="flex max-w-2xl flex-col gap-4">
-      <h1 className="text-xl font-semibold">
-        {t("pageTitle")}: {recipe.productName}
-      </h1>
+      <AdminPageHeader
+        title={
+          <>
+            {t("pageTitle")}: {recipe.productName}
+          </>
+        }
+      />
 
       {recipe.variants.length > 1 && (
         <div className="flex flex-wrap gap-2">

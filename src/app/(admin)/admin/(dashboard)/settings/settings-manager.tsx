@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -843,7 +844,7 @@ export function SettingsManager({
 
   return (
     <div className="flex flex-col gap-8">
-      <h1 className="text-xl font-semibold">{t("title")}</h1>
+      <AdminPageHeader title={t("title")} />
 
       <OrderSettingsCard settings={settings} updateOrderSettings={actions.updateOrderSettings} />
       <BusinessSettingsCard settings={settings} isOwner={isOwner} updateBusinessSettings={actions.updateBusinessSettings} />

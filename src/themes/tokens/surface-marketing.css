@@ -16,6 +16,7 @@ html[data-surface="marketing"] {
   --surface-accent: var(--brand-600);
   --surface-accent-fg: oklch(1 0 0);
   --surface-tint: oklch(0.95 0.03 200); /* eyebrow çipi zemini */
+  --font-heading-family: var(--font-display);
 
   /* Yükseklik = gölge (2b'nin tersine). */
   --shadow-sm: 0 1px 2px oklch(0.2 0.02 240 / 0.06), 0 4px 12px oklch(0.2 0.02 240 / 0.05);

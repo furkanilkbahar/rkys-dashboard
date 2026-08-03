@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -55,7 +56,7 @@ export function TicketThread({
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center gap-3">
-        <h1 className="text-xl font-semibold">{thread.subject}</h1>
+        <AdminPageHeader title={thread.subject} />
         <Badge variant={thread.status === "resolved" ? "secondary" : "outline"}>{t(`status.${thread.status}`)}</Badge>
       </div>
 

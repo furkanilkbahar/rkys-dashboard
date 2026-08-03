@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -54,7 +55,7 @@ export function BillingManager({
 
   return (
     <div className="flex flex-col gap-6 p-4 lg:p-6">
-      <h1 className="text-xl font-semibold">{t("title")}</h1>
+      <AdminPageHeader title={t("title")} />
       <Card>
         <CardHeader>
           <CardTitle className="text-base">{t("statusTitle")}</CardTitle>

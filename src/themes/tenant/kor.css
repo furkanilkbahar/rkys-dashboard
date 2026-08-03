@@ -32,6 +32,7 @@
   --radius-img: var(--r-xs);
 
   --t-display: var(--font-display);
+  --font-heading-family: var(--t-display);
   --t-display-w: 800;
   --t-display-tr: -0.028em;
   --t-display-s: 1.95rem;

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { CloseDayButton } from "@/components/admin/close-day-button";
 import { ProductCostRow } from "@/components/admin/product-cost-row";
 import { can } from "@/lib/auth/can";
@@ -68,7 +69,7 @@ export default async function AdminReportsPage({
   if (!canViewRevenue) {
     return (
       <div className="flex flex-col gap-4">
-        <h1 className="text-xl font-semibold">{t("title")}</h1>
+        <AdminPageHeader title={t("title")} />
         <p className="text-sm text-destructive">{t("errors.forbidden")}</p>
       </div>
     );
@@ -116,7 +117,7 @@ export default async function AdminReportsPage({
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-xl font-semibold">{t("title")}</h1>
+        <AdminPageHeader title={t("title")} />
         <form className="flex items-end gap-2">
           <div className="flex flex-col gap-1">
             <label htmlFor="report-date" className="text-sm font-medium">

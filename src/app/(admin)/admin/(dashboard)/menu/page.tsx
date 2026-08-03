@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { Button } from "@/components/ui/button";
 import { requireAdminActor } from "@/lib/auth/adminGuard";
 import { getAdminCategories } from "@/lib/data/adminMenu";
@@ -15,7 +16,7 @@ export default async function AdminMenuPage() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">{t("title")}</h1>
+        <AdminPageHeader title={t("title")} />
         <Button nativeButton={false} render={<Link href="/admin/menu/new" />}>
           {t("addCategory")}
         </Button>

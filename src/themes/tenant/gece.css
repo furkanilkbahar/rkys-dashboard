@@ -39,6 +39,7 @@
   /* tipografi — display ailesi üç temada da Fraunces, karakter ağırlık/
      ölçek/tracking token'larıyla ayrışır */
   --t-display: var(--font-display);
+  --font-heading-family: var(--t-display);
   --t-display-w: 500;
   --t-display-tr: -0.015em;
   --t-display-s: 1.62rem;
