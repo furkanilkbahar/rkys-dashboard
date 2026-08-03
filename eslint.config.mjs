@@ -14,6 +14,10 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Bundled Claude Code tooling — not project source.
     ".claude/**",
+    // Vercel CLI build output (.gitignore'da var ama eslint'in varsayılan
+    // listesinde yok) — minified bundle'lar `pnpm lint`'i binlerce sahte
+    // uyarıyla kırıyordu.
+    ".vercel/**",
   ]),
 ]);
 
