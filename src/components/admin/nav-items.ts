@@ -1,5 +1,6 @@
 import {
   BarChart3,
+  ChartSpline,
   Boxes,
   CalendarClock,
   Clock,
@@ -62,6 +63,10 @@ export const ADMIN_NAV_ITEMS = [
   { href: "/admin/staff", labelKey: "staff", icon: Users, exact: false, moduleKey: null, group: "management" },
   { href: "/admin/scheduling", labelKey: "scheduling", icon: Clock, exact: false, moduleKey: "staff_scheduling" satisfies ModuleKey, group: "management" },
   { href: "/admin/reports", labelKey: "reports", icon: BarChart3, exact: false, moduleKey: null, group: "management" },
+  // Faz 21: /analytics (Faz 5, D55) hiçbir yerden linklenmiyordu — bütün
+  // Analitik Merkezi üründe erişilemezdi. Erişim yine `reports.revenue`
+  // izniyle sayfanın kendisinde korunuyor (RULES #41).
+  { href: "/analytics", labelKey: "analytics", icon: ChartSpline, exact: false, moduleKey: null, group: "management" },
   { href: "/admin/support", labelKey: "support", icon: LifeBuoy, exact: false, moduleKey: null, group: "management" },
   { href: "/admin/settings", labelKey: "settings", icon: Settings, exact: false, moduleKey: null, group: "management" },
 ] as const satisfies readonly {

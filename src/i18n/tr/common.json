@@ -169,7 +169,8 @@
         "channels": "Kanallar",
         "integration": "Entegrasyon",
         "management": "Yönetim"
-      }
+      },
+      "analytics": "Analitik"
     },
     "topbar": {
       "logout": "Çıkış yap"

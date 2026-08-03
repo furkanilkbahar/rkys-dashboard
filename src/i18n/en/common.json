@@ -169,7 +169,8 @@
         "channels": "Channels",
         "integration": "Integrations",
         "management": "Management"
-      }
+      },
+      "analytics": "Analytics"
     },
     "topbar": {
       "logout": "Sign out"

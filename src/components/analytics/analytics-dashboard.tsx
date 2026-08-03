@@ -157,13 +157,19 @@ export function AnalyticsDashboard({
     switch (widgetKey) {
       case "revenue_today":
         return revenueToday ? (
-          <p className="text-3xl font-semibold tabular-nums">{formatPrice(revenueToday.revenueMinor, currency)}</p>
+          <p className="text-[28px] font-bold tracking-[-0.02em] tabular-nums text-[var(--surface-fg)]">
+            {formatPrice(revenueToday.revenueMinor, currency)}
+          </p>
         ) : (
           <EmptyState label={t("empty")} />
         );
 
       case "order_count_today":
-        return <p className="text-3xl font-semibold tabular-nums">{orderCountToday}</p>;
+        return (
+          <p className="text-[28px] font-bold tracking-[-0.02em] tabular-nums text-[var(--surface-fg)]">
+            {orderCountToday}
+          </p>
+        );
 
       case "hourly_density":
         if (hourlyDensity.length === 0) return <EmptyState label={t("empty")} />;

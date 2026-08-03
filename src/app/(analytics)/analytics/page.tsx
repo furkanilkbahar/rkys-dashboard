@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { AnalyticsDashboard } from "@/components/analytics/analytics-dashboard";
 import { requireAdminActor } from "@/lib/auth/adminGuard";
 import { can } from "@/lib/auth/can";
@@ -34,7 +35,7 @@ export default async function AnalyticsHomePage() {
   if (!canView) {
     return (
       <div className="flex flex-col gap-4 p-6">
-        <h1 className="text-xl font-semibold">{t("title")}</h1>
+        <AdminPageHeader title={t("title")} />
         <p className="text-sm text-destructive">{t("forbidden")}</p>
       </div>
     );
@@ -64,7 +65,7 @@ export default async function AnalyticsHomePage() {
 
   return (
     <div className="flex flex-col gap-6 p-6">
-      <h1 className="text-xl font-semibold">{t("title")}</h1>
+      <AdminPageHeader title={t("title")} />
       <AnalyticsDashboard
         layout={layout}
         currency={currency}
