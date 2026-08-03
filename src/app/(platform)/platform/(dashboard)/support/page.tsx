@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 
+import { PlatformPageHeader } from "@/components/platform/platform-page-header";
 import { Badge } from "@/components/ui/badge";
 import { getPlatformSupportTickets } from "@/lib/data/platformSupportTickets";
 
@@ -10,7 +11,7 @@ export default async function PlatformSupportPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-xl font-semibold">{t("title")}</h1>
+      <PlatformPageHeader title={t("title")} />
       <div className="flex flex-col gap-2">
         {tickets.length === 0 && <p className="text-sm text-muted-foreground">{t("empty")}</p>}
         {tickets.map((ticket) => (

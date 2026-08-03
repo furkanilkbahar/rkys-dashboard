@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
+import { PlatformPageHeader } from "@/components/platform/platform-page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -57,7 +58,7 @@ export function IncidentsManager({
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-xl font-semibold">{t("title")}</h1>
+      <PlatformPageHeader title={t("title")} />
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex items-end gap-2 rounded-md border border-border p-4">
         <div className="flex flex-col gap-1">

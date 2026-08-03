@@ -1413,7 +1413,13 @@
       "settings": "Settings",
       "licenses": "Licenses",
       "support": "Support",
-      "incidents": "Incidents"
+      "incidents": "Incidents",
+      "groups": {
+        "tenants": "Tenants",
+        "commerce": "Plans & Licenses",
+        "support": "Support",
+        "system": "System"
+      }
     },
     "topbar": {
       "logout": "Log out"

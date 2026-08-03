@@ -1413,7 +1413,13 @@
       "settings": "Ayarlar",
       "licenses": "Lisanslar",
       "support": "Destek",
-      "incidents": "Olaylar"
+      "incidents": "Olaylar",
+      "groups": {
+        "tenants": "Kiracılar",
+        "commerce": "Plan & Lisans",
+        "support": "Destek",
+        "system": "Sistem"
+      }
     },
     "topbar": {
       "logout": "Çıkış yap"

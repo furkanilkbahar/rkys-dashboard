@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
+import { PlatformPageHeader } from "@/components/platform/platform-page-header";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getPlatformStats, getPlatformTenants } from "@/lib/data/platformTenants";
@@ -11,7 +12,7 @@ export default async function PlatformDashboardPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-xl font-semibold">{t("dashboard.title")}</h1>
+      <PlatformPageHeader title={t("dashboard.title")} />
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <Card>

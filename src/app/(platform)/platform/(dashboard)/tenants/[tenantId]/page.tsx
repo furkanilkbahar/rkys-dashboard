@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
+import { PlatformPageHeader } from "@/components/platform/platform-page-header";
 import { Badge } from "@/components/ui/badge";
 import { SuspendToggleButton } from "@/components/platform/suspend-toggle-button";
 import { PendingModuleRemovals } from "@/components/platform/pending-module-removals";
@@ -22,7 +23,7 @@ export default async function PlatformTenantDetailPage({ params }: { params: Pro
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center gap-3">
-        <h1 className="text-xl font-semibold">{tenant.name}</h1>
+        <PlatformPageHeader title={tenant.name} />
         <Badge variant={tenant.status === "active" ? "secondary" : "destructive"}>{t(`status.${tenant.status}`)}</Badge>
         {(tenant.status === "active" || tenant.status === "suspended") && (
           <SuspendToggleButton

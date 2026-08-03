@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { PlatformPageHeader } from "@/components/platform/platform-page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { PendingModuleRequest } from "@/lib/data/platformTenants";
@@ -60,7 +61,7 @@ export function ModuleRequestsManager({
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-xl font-semibold">{t("title")}</h1>
+      <PlatformPageHeader title={t("title")} />
 
       <Card>
         <CardHeader>
