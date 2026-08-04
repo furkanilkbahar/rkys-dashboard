@@ -40,3 +40,15 @@ Yükleme: `node scripts/seed-images.mjs` (seed SQL storage'a dosya yükleyemez;
 | 220 | 220.jpg | CC0 | Grilled Chicken | https://cdn.stocksnap.io/img-thumbs/960w/34LMASJHCT.jpg |
 | 221 | 221.jpg | CC0 | Kunefe | https://live.staticflickr.com/70/156039747_23214e8b0a_b.jpg |
 | 222 | 222.jpg | PDM | Lemon pudding | https://live.staticflickr.com/4078/4867070209_1146cce8d3_b.jpg |
+
+## Onboarding demo şablon görselleri (`_templates/`)
+
+48 görsel, üç demo menü şablonu için (kafe / restoran / pastane, D85).
+Bunlar **tenant'a ait değil**: "Demo veriyle keşfet" yolunu seçen her yeni
+işletmenin menüsü bu paylaşılan yollara işaret eder
+(`menuTemplateImagePath`, `src/lib/onboarding/menuTemplates.ts`).
+
+Production Storage'da zaten yüklüydüler (D85, 2026-07-28) ve oradan
+alındılar; repo'ya `supabase db reset` yerel Storage'ı sildiği için
+eklendiler — aksi halde yerelde demo menü kırık görsellerle açılıyordu.
+Kaynakları D85'te stok arama ile toplanmıştı.

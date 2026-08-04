@@ -13,7 +13,7 @@
  * YALNIZCA YEREL/DEMO içindir: service-role anahtarını doğrudan kullanır ve
  * yalnızca seed'in sabit ürün id'lerine dokunur. Prod'a karşı çalıştırmayın.
  */
-import { readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -42,6 +42,37 @@ function productIdFromFile(file) {
   if (!/^\d{3}$/.test(shortId)) return null;
   return `00000000-0000-4000-8000-000000000${shortId}`;
 }
+
+/**
+ * Onboarding demo şablonlarının görselleri (`_templates/<sablon>/<slug>.webp`).
+ * Bunlar TENANT'A AİT DEĞİL — "Demo veriyle keşfet" yolunu seçen HER yeni
+ * işletmenin menüsü bu paylaşılan yollara işaret eder
+ * (`menuTemplateImagePath`, onboarding/actions.ts). Production'da zaten
+ * yüklüydüler; `supabase db reset` yerel Storage'ı sildiği için burada da
+ * geri yüklenmeleri gerekiyordu, aksi halde yerelde demo menü kırık
+ * görsellerle açılıyordu.
+ */
+async function uploadTemplates() {
+  const root = join(IMAGES_DIR, "_templates");
+  if (!existsSync(root)) return 0;
+  let count = 0;
+  for (const templateKey of readdirSync(root)) {
+    const dir = join(root, templateKey);
+    for (const file of readdirSync(dir).filter((f) => f.toLowerCase().endsWith(".webp"))) {
+      const { error } = await supabase.storage
+        .from(BUCKET)
+        .upload(`_templates/${templateKey}/${file}`, readFileSync(join(dir, file)), {
+          contentType: "image/webp",
+          upsert: true,
+        });
+      if (error) console.error(`HATA: _templates/${templateKey}/${file} → ${error.message}`);
+      else count += 1;
+    }
+  }
+  return count;
+}
+
+const templateCount = await uploadTemplates();
 
 const files = readdirSync(IMAGES_DIR).filter((f) => f.toLowerCase().endsWith(".jpg"));
 let uploaded = 0;
@@ -91,4 +122,4 @@ for (const file of files) {
   uploaded += 1;
 }
 
-console.log(`Demo görselleri: ${uploaded} yüklendi, ${skipped} atlandı.`);
+console.log(`Demo görselleri: ${uploaded} ürün + ${templateCount} onboarding şablonu yüklendi, ${skipped} atlandı.`);
