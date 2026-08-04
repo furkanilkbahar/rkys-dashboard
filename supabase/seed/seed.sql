@@ -730,3 +730,14 @@ values
   ('00000000-0000-4000-8000-000000000002', 'product', '00000000-0000-4000-8000-000000000222', 'en', 'description', 'Traditional oven-baked rice pudding with cinnamon.'),
   ('00000000-0000-4000-8000-000000000003', 'product', '00000000-0000-4000-8000-000000000205', 'tr', 'description', 'Günlük demlenen filtre kahve.')
 on conflict (entity_type, entity_id, locale, field) do nothing;
+
+-- ── Ürün görselleri ────────────────────────────────────────────────────
+-- Görseller SQL ile yüklenemez (Storage'a dosya koymak gerekir). 21 demo
+-- ürünün fotoğrafı `supabase/seed/images/` altında repo'da duruyor; hepsi
+-- CC0 / Public Domain (kaynak ve lisans dökümü: images/CREDITS.md).
+--
+--   `supabase db reset` SONRASI:  node scripts/seed-images.mjs
+--
+-- Script dosyaları `menu-images` bucket'ına yükleyip products.image_url'ü
+-- doldurur. Çalıştırılmazsa menü fotoğrafsız (metin öncelikli) görünür —
+-- kırılmaz, yalnızca daha sade olur.
