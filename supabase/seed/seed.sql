@@ -731,6 +731,63 @@ values
   ('00000000-0000-4000-8000-000000000003', 'product', '00000000-0000-4000-8000-000000000205', 'tr', 'description', 'Günlük demlenen filtre kahve.')
 on conflict (entity_type, entity_id, locale, field) do nothing;
 
+-- ── Kapanmış gün geçmişi (Faz 23) ──────────────────────────────────────
+-- Pano'nun ciro trendi `daily_sales_summary`den okunur ve oraya YALNIZCA
+-- kapatılmış günler girer (0044). Seed'de hiç kapanış olmadığı için acme'nin
+-- panosunda trend çizgisi hiç çizilmiyordu — ölçüldü: tablodaki 6 satırın
+-- altısı da E2E'nin `test-s9-day-close-*` tenant'larına aitti.
+--
+-- Burada 14 günlük GEÇMİŞ kapanış üretiliyor. Kritik kısıt: **bugün asla
+-- kapatılmaz**. `is_business_date_closed` bugüne bakar; bugünü kapatmak hem
+-- raporlardaki "Günü Kapat" butonunu gizlerdi hem de o güne yeni ödeme
+-- kabul edilmemesine yol açardı.
+--
+-- Tarihler `current_date`e göreli üretilir, böylece `db reset` her
+-- koşuşunda geçmiş "son iki hafta" olarak taze kalır. Değerler haftalık
+-- ritmi taşır (hafta sonu yüksek) ve D90 kural 2 gereği hiçbiri diğerinin
+-- tekrarı değildir.
+insert into public.day_closures
+  (tenant_id, branch_id, business_date, revenue_minor, cash_minor, card_manual_minor,
+   online_minor, tips_minor, comps_minor, refunds_minor, cancelled_orders_count)
+select
+  '00000000-0000-4000-8000-000000000001',
+  '00000000-0000-4000-8000-000000000011',
+  current_date - d.offset_days,
+  d.revenue, d.cash, d.card, d.online, d.tips, d.comps, d.refunds, d.cancelled
+from (values
+  (14, 412500, 151000, 198500,  63000,  9400,  4500,      0, 0),
+  (13, 388000, 139500, 187000,  61500,  8700,      0,  6000, 1),
+  (12, 502750, 178000, 241250,  83500, 12300,  7500,      0, 0),
+  (11, 617400, 204500, 302900, 110000, 15600,  5000,  8500, 1),
+  (10, 594800, 197000, 291300, 106500, 14900,      0,      0, 0),
+  ( 9, 356200, 128500, 171700,  56000,  7800,  9000,      0, 2),
+  ( 8, 331900, 119000, 160400,  52500,  7100,      0,  4500, 0),
+  ( 7, 428600, 156500, 205600,  66500,  9900,  3000,      0, 0),
+  ( 6, 401300, 145000, 193800,  62500,  9100,      0,      0, 1),
+  ( 5, 533400, 186500, 258400,  88500, 13100,  6000,  5500, 0),
+  ( 4, 655100, 218000, 320600, 116500, 16800,      0,      0, 0),
+  ( 3, 628900, 209500, 308900, 110500, 15900,  4500,  7000, 1),
+  ( 2, 372600, 134000, 179100,  59500,  8300,      0,      0, 0),
+  ( 1, 345800, 124500, 166800,  54500,  7600,  7500,  3500, 1)
+) as d(offset_days, revenue, cash, card, online, tips, comps, refunds, cancelled)
+on conflict (tenant_id, branch_id, business_date) do nothing;
+
+-- 0044'ün backfill'i ile aynı yol: özet tablo kapanışlardan doldurulur.
+-- `order_count` burada orders'tan sayılamaz (bu günlerde gerçek sipariş
+-- satırı yok, yalnızca kapanış özeti var) — ortalama sepet ~85 TL kabul
+-- edilip cirodan türetiliyor, uydurma bir sabit yazılmıyor.
+insert into public.daily_sales_summary
+  (tenant_id, branch_id, business_date, revenue_minor, cash_minor, card_manual_minor,
+   online_minor, tips_minor, comps_minor, refunds_minor, order_count)
+select
+  dc.tenant_id, dc.branch_id, dc.business_date, dc.revenue_minor, dc.cash_minor,
+  dc.card_manual_minor, dc.online_minor, dc.tips_minor, dc.comps_minor, dc.refunds_minor,
+  greatest(1, round(dc.revenue_minor / 8500.0)::int)
+from public.day_closures dc
+where dc.tenant_id = '00000000-0000-4000-8000-000000000001'
+  and dc.business_date < current_date
+on conflict (tenant_id, branch_id, business_date) do nothing;
+
 -- ── Ürün görselleri ────────────────────────────────────────────────────
 -- Görseller SQL ile yüklenemez (Storage'a dosya koymak gerekir). 21 demo
 -- ürünün fotoğrafı `supabase/seed/images/` altında repo'da duruyor; hepsi

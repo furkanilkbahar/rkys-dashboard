@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { ReactNode } from "react";
 
 /**
@@ -44,6 +45,7 @@ export function StatCard({
   tone = "brand",
   series,
   footer,
+  href,
 }: {
   label: ReactNode;
   value: ReactNode;
@@ -51,12 +53,19 @@ export function StatCard({
   /** En az 2 nokta; yoksa sparkline hiç çizilmez (uydurma veri yok). */
   series?: readonly number[];
   footer?: ReactNode;
+  /**
+   * Faz 23: kart tıklanabilir olur ve rakamın DAYANDIĞI rapora gider. Bir
+   * istatistiği görüp "peki detayı nerede" diye aramak zorunda kalmak
+   * panonun en sık şikâyet edilen yanı; bağlantı yoksa kart yine düz bir
+   * kutu olarak kalır (tıklanabilir görünüp hiçbir şey yapmaz olmaz).
+   */
+  href?: string;
 }) {
   const color = TONE_VAR[tone];
   const points = series ? toPoints(series) : "";
 
-  return (
-    <div className="rounded-[var(--radius)] border border-[var(--surface-line)] bg-[var(--surface-panel)] p-2.5 px-3">
+  const body = (
+    <>
       <p className="flex items-center gap-1.5 text-[10.5px] text-[var(--surface-fg-muted)]">
         <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full" style={{ backgroundColor: color }} />
         {label}
@@ -77,7 +86,23 @@ export function StatCard({
       )}
 
       {footer && <p className="mt-1.5 text-[10px] text-[var(--surface-fg-faint)]">{footer}</p>}
-    </div>
+    </>
+  );
+
+  const base = "block rounded-[var(--radius)] border border-[var(--surface-line)] bg-[var(--surface-panel)] p-2.5 px-3";
+
+  // İki ayrı dönüş: `const Box = href ? Link : "div"` tip düzeyinde çalışmıyor
+  // (Link'in `href`'i zorunlu, birleşim `undefined`'ı kabul etmiyor) ve
+  // `as any` ile susturmak RULES #9'a aykırı olurdu.
+  return href ? (
+    <Link
+      href={href}
+      className={`${base} transition-colors duration-[var(--dur-fast)] hover:border-[var(--surface-line-strong)] hover:bg-[var(--surface-panel-2)]`}
+    >
+      {body}
+    </Link>
+  ) : (
+    <div className={base}>{body}</div>
   );
 }
 

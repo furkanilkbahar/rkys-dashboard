@@ -186,7 +186,56 @@
     "dashboard": {
       "welcome": "Hoş geldiniz, {tenantName}",
       "tenantLabel": "İşletme",
-      "roleLabel": "Rol"
+      "roleLabel": "Rol",
+      "kpi": {
+        "revenueToday": "Bugünkü ciro",
+        "ordersToday": "Bugünkü sipariş",
+        "averageTicket": "Ortalama sepet",
+        "averageTicketEmpty": "Bugün henüz sipariş yok",
+        "tips": "Bahşiş",
+        "trendFooter": "Son {days} kapanmış gün",
+        "noTrendYet": "Trend için gün kapanışı gerekir"
+      },
+      "now": {
+        "title": "Şu an",
+        "openKds": "Mutfak ekranı",
+        "occupiedTables": "dolu masa / {total}",
+        "activeTables": "aktif masa",
+        "openCalls": "bekleyen garson çağrısı",
+        "pendingApproval": "onay bekleyen sipariş",
+        "inKitchen": "mutfakta hazırlanan",
+        "readyToServe": "servise hazır"
+      },
+      "attention": {
+        "title": "Dikkat gerektirenler",
+        "allClear": "Şu an bekleyen bir iş yok.",
+        "calls": "{count} masa garson çağırıyor",
+        "pendingOrders": "{count} sipariş onay bekliyor",
+        "criticalStock": "{count} malzeme kritik seviyenin altında",
+        "openTickets": "{count} destek talebi yanıt bekliyor",
+        "upcomingReservations": "{count} yaklaşan rezervasyon"
+      },
+      "topProducts": {
+        "title": "Bugünün çok satanları",
+        "allReports": "Tüm raporlar",
+        "empty": "Bugün henüz satış yok.",
+        "product": "Ürün",
+        "quantity": "Adet",
+        "revenue": "Ciro"
+      },
+      "quickLinks": {
+        "title": "Hızlı işlemler",
+        "menu": "Menüyü düzenle",
+        "menuHint": "Ürün, kategori, fiyat",
+        "tables": "Masa ve QR yönet",
+        "tablesHint": "Bölge, masa, QR kod",
+        "staff": "Personeli yönet",
+        "staffHint": "Rol, PIN, izin bayrağı",
+        "reports": "Raporları aç",
+        "reportsHint": "Ciro, kâr, gün sonu",
+        "settings": "İşletme ayarları",
+        "settingsHint": "Modül, tema, dil"
+      }
     },
     "common": {
       "save": "Kaydet",

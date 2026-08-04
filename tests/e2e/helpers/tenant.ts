@@ -31,6 +31,20 @@ export async function loginAsAcmeManager(page: Page, baseURL: string) {
   await page.waitForURL(/\/admin$/);
 }
 
+/**
+ * Garson hesabıyla ADMIN paneline giriş. Garsonun kendi PIN oturumu (D87)
+ * ayrıdır; bu yol, izin bayrağı kapılarını (RULES #41) admin yüzeyinde
+ * doğrulamak için var — acme seed'inde garsonun `reports.revenue` izni yok,
+ * manager'ın var.
+ */
+export async function loginAsAcmeWaiter(page: Page, baseURL: string) {
+  await page.goto(acmeUrl(baseURL, "/admin/login"));
+  await page.getByLabel("E-posta").fill("waiter@acme.test");
+  await page.getByLabel("Şifre").fill("password123");
+  await page.getByRole("button", { name: "Giriş yap" }).click();
+  await page.waitForURL(/\/admin$/);
+}
+
 export async function loginAsBetaOwner(page: Page, baseURL: string) {
   await page.goto(betaUrl(baseURL, "/admin/login"));
   await page.getByLabel("E-posta").fill("owner@beta.test");

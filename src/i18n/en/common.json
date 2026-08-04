@@ -186,7 +186,56 @@
     "dashboard": {
       "welcome": "Welcome, {tenantName}",
       "tenantLabel": "Business",
-      "roleLabel": "Role"
+      "roleLabel": "Role",
+      "kpi": {
+        "revenueToday": "Revenue today",
+        "ordersToday": "Orders today",
+        "averageTicket": "Average ticket",
+        "averageTicketEmpty": "No orders yet today",
+        "tips": "Tips",
+        "trendFooter": "Last {days} closed days",
+        "noTrendYet": "Close a day to see the trend"
+      },
+      "now": {
+        "title": "Right now",
+        "openKds": "Kitchen display",
+        "occupiedTables": "tables occupied / {total}",
+        "activeTables": "active tables",
+        "openCalls": "waiter calls waiting",
+        "pendingApproval": "orders awaiting approval",
+        "inKitchen": "in preparation",
+        "readyToServe": "ready to serve"
+      },
+      "attention": {
+        "title": "Needs attention",
+        "allClear": "Nothing needs your attention right now.",
+        "calls": "{count} tables are calling a waiter",
+        "pendingOrders": "{count} orders awaiting approval",
+        "criticalStock": "{count} ingredients below critical level",
+        "openTickets": "{count} support tickets awaiting a reply",
+        "upcomingReservations": "{count} upcoming reservations"
+      },
+      "topProducts": {
+        "title": "Today's best sellers",
+        "allReports": "All reports",
+        "empty": "No sales yet today.",
+        "product": "Product",
+        "quantity": "Qty",
+        "revenue": "Revenue"
+      },
+      "quickLinks": {
+        "title": "Quick actions",
+        "menu": "Edit menu",
+        "menuHint": "Products, categories, prices",
+        "tables": "Manage tables and QR",
+        "tablesHint": "Zones, tables, QR codes",
+        "staff": "Manage staff",
+        "staffHint": "Roles, PINs, permissions",
+        "reports": "Open reports",
+        "reportsHint": "Revenue, profit, day close",
+        "settings": "Business settings",
+        "settingsHint": "Modules, theme, language"
+      }
     },
     "common": {
       "save": "Save",
