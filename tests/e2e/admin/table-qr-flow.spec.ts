@@ -9,6 +9,11 @@ test("owner masa oluşturup QR'ı gösterebilir, üretilen token misafir akış�
 }) => {
   await loginAsAcmeOwner(page, baseURL!);
   await page.goto(acmeUrl(baseURL!, "/admin/tables"));
+  // WebKit hidrasyon yarışı (PLAN.md Faz 21 takip maddesi 2): "+ Masa Ekle"
+  // react-hook-form + server action ile çalışıyor, hidrasyon bitmeden
+  // yapılan tıklama sessizce yutuluyor. Faz 23'te liste tabloya alınıp
+  // sayfa ağırlaşınca pencere büyüdü; `networkidle` chunk'ları bekletir.
+  await page.waitForLoadState("networkidle");
 
   const tableLabel = `Test Masa ${Date.now()}`;
   await page.getByLabel("Masa adı").fill(tableLabel);
@@ -42,6 +47,11 @@ test("owner masa oluşturup QR'ı gösterebilir, üretilen token misafir akış�
 test("bug-hunt 2026-08-01: owner masayı pasife alıp tekrar aktifleştirebilir (silme yerine arşivleme)", async ({ page, baseURL }) => {
   await loginAsAcmeOwner(page, baseURL!);
   await page.goto(acmeUrl(baseURL!, "/admin/tables"));
+  // WebKit hidrasyon yarışı (PLAN.md Faz 21 takip maddesi 2): "+ Masa Ekle"
+  // react-hook-form + server action ile çalışıyor, hidrasyon bitmeden
+  // yapılan tıklama sessizce yutuluyor. Faz 23'te liste tabloya alınıp
+  // sayfa ağırlaşınca pencere büyüdü; `networkidle` chunk'ları bekletir.
+  await page.waitForLoadState("networkidle");
 
   const tableLabel = `Arşiv Masa ${Date.now()}`;
   await page.getByLabel("Masa adı").fill(tableLabel);
@@ -63,6 +73,11 @@ test("bug-hunt 2026-08-01: owner masayı pasife alıp tekrar aktifleştirebilir 
 test("QR Göster mevcut QR'ı tekrar gösterir ve QR'ı Yenile'yi bozmaz", async ({ page, baseURL }) => {
   await loginAsAcmeOwner(page, baseURL!);
   await page.goto(acmeUrl(baseURL!, "/admin/tables"));
+  // WebKit hidrasyon yarışı (PLAN.md Faz 21 takip maddesi 2): "+ Masa Ekle"
+  // react-hook-form + server action ile çalışıyor, hidrasyon bitmeden
+  // yapılan tıklama sessizce yutuluyor. Faz 23'te liste tabloya alınıp
+  // sayfa ağırlaşınca pencere büyüdü; `networkidle` chunk'ları bekletir.
+  await page.waitForLoadState("networkidle");
 
   const tableLabel = `QR Goster Masa ${Date.now()}`;
   await page.getByLabel("Masa adı").fill(tableLabel);

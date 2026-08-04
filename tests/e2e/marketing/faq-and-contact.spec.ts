@@ -24,6 +24,10 @@ test("S58: iletişim formu gönderilir, platform admin talebi görüp kapatabili
 
   try {
     await page.goto(`${baseURL}/iletisim`);
+    // WebKit hidrasyon yarışı (PLAN.md Faz 21 takip maddesi 2): form
+    // react-hook-form + server action ile çalışıyor; hidrasyon bitmeden
+    // yapılan tıklama sessizce yutuluyor, native submit yok.
+    await page.waitForLoadState("networkidle");
     await page.getByLabel("Ad Soyad").fill("E2E İletişim Testi");
     await page.getByLabel("İşletme Adı (opsiyonel)").fill("E2E Test Kafe");
     await page.getByLabel("E-posta").fill(email);

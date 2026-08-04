@@ -35,7 +35,19 @@ test("acme ve beta subdomain'leri /api/health'te farklı tenant döner", async (
 
 test("seed owner ile giriş /admin'de tenant+rol bilgisini gösterir", async ({ page, baseURL }) => {
   await loginAs(page, baseURL!, SEED.acme.slug, SEED.acme.ownerEmail);
-  await expect(page.getByText(/Hoş geldin, owner/)).toBeVisible();
+
+  // GÜNCELLENDİ 2026-08-04: bu test Faz 19'dan beri kırıktı, `/Hoş geldin,
+  // owner/` bekliyordu. Faz 21'de kabuk değişti — başlık işletme ADINI
+  // yazıyor, ROL ise hesap açılır menüsünün içine taşındı (admin-shell.tsx).
+  // Testin niyeti ("tenant + rol bilgisi görünür") korundu, iki bilgi artık
+  // bulundukları yerde doğrulanıyor.
+  await expect(page.getByRole("heading", { name: /Hoş geldiniz, Acme Kafe/ })).toBeVisible();
+
+  // Rol açılır menüde ve İ18N EDİLMİŞ görünüyor ("owner" → "Sahip"). Eski
+  // test ham rol dizesini arıyordu; arayüzde hardcoded metin olmadığı için
+  // (RULES #11) doğru beklenti çevrilmiş etikettir.
+  await page.getByRole("button", { name: "Acme Kafe" }).click();
+  await expect(page.getByText("Sahip")).toBeVisible();
 });
 
 test("pos_cash açık tenant'ta kasa erişilebilir, kapalı tenant'ta 404 döner", async ({ page, baseURL }) => {

@@ -64,6 +64,10 @@ test("S34: admin malzeme+reçete tanımlar, siparişte reçeteden stok otomatik 
     await loginAsIsolatedOwner(page, baseURL!, subdomain, email);
 
     await page.goto(tenantUrl(baseURL!, subdomain, "/admin/ingredients"));
+    // WebKit hidrasyon yarışı (PLAN.md Faz 21 takip maddesi 2): formlar
+    // react-hook-form + server action ile çalışıyor, hidrasyon bitmeden
+    // yapılan tıklama sessizce yutuluyor (native submit yok).
+    await page.waitForLoadState("networkidle");
     await page.getByLabel("Ad", { exact: true }).fill("Süt");
     await page.getByRole("combobox", { name: "Birim" }).click();
     await page.getByRole("option", { name: "ml", exact: true }).click();

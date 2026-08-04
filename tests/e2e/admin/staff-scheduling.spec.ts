@@ -48,6 +48,10 @@ test("S47: admin cihaz+PIN oluşturur, cihaz kurulur, PIN ile giriş-çıkış y
     await page.waitForURL(/\/admin$/);
 
     await page.goto(tenantUrl(baseURL!, subdomain, "/admin/staff"));
+    // WebKit hidrasyon yarışı (PLAN.md Faz 21 takip maddesi 2): formlar
+    // react-hook-form + server action ile çalışıyor, hidrasyon bitmeden
+    // yapılan tıklama sessizce yutuluyor (native submit yok).
+    await page.waitForLoadState("networkidle");
     await page.getByLabel("Cihaz etiketi").fill("Vardiya Tableti");
     await page.getByRole("button", { name: "+ Cihaz Ekle" }).click();
     await expect(page.getByText("Cihaz Şifresi")).toBeVisible();
@@ -63,6 +67,7 @@ test("S47: admin cihaz+PIN oluşturur, cihaz kurulur, PIN ile giriş-çıkış y
     const deviceContext = await browser.newContext();
     const devicePage = await deviceContext.newPage();
     await devicePage.goto(tenantUrl(baseURL!, subdomain, "/vardiya/kurulum"));
+    await devicePage.waitForLoadState("networkidle");
     await devicePage.getByLabel("Cihaz Anahtarı").fill(deviceSecret!.trim());
     await devicePage.getByRole("button", { name: "Kaydet" }).click();
     await expect(devicePage).toHaveURL(/\/vardiya$/);
@@ -84,6 +89,10 @@ test("S47: admin cihaz+PIN oluşturur, cihaz kurulur, PIN ile giriş-çıkış y
     expect(entry?.clock_out_at).not.toBeNull();
 
     await page.goto(tenantUrl(baseURL!, subdomain, "/admin/scheduling"));
+    // WebKit hidrasyon yarışı (PLAN.md Faz 21 takip maddesi 2): formlar
+    // react-hook-form + server action ile çalışıyor, hidrasyon bitmeden
+    // yapılan tıklama sessizce yutuluyor (native submit yok).
+    await page.waitForLoadState("networkidle");
     await expect(page.getByText("OWN-1").first()).toBeVisible();
 
     const shiftDate = new Date(Date.now() + 2 * 86_400_000).toISOString().slice(0, 10);

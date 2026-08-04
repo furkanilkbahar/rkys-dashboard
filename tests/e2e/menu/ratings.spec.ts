@@ -27,6 +27,12 @@ test("S19: misafir oturum kapanınca değerlendirme ister; ≤3★ içeride kal�
 
   // Kendine ait, çakışmasız yeni bir masa oluşturulur (table-qr-flow.spec.ts deseni).
   await page.goto(acmeUrl(baseURL!, "/admin/tables"));
+  // WebKit hidrasyon yarışı (PLAN.md Faz 21 takip maddesi 2): form
+  // react-hook-form + server action ile çalışıyor, yani hidrasyon bitmeden
+  // yapılan tıklama SESSİZCE yutuluyor — native submit yok. Sayfa
+  // ağırlaştıkça (Faz 23'te masa listesi tabloya alındı) pencere büyüdü ve
+  // mobile-safari'de 4/4 kırıldı. `networkidle` chunk'ların inmesini bekler.
+  await page.waitForLoadState("networkidle");
   const tableLabel = `Rating Masa ${Date.now()}`;
   await page.getByLabel("Masa adı").fill(tableLabel);
   await page.getByRole("button", { name: "+ Masa Ekle" }).click();
