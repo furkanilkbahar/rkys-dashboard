@@ -5,8 +5,13 @@ import { ProductCard } from "./product-card";
 
 // D14: ürün düzeni kategori başına admin tarafından seçilir. Faz 21 bu
 // davranışı KORUR — yalnızca boşluklar yoğunluk token'ına bağlandı.
+// TELEFONDA HER DÜZEN TEK SÜTUN. D14 (kategori başına düzen seçimi) korunur
+// ama yalnızca `sm:`ten itibaren geçerlidir: 400px'lik bir ekranda iki sütun
+// hem yatay kaydırma üretiyordu hem de ekrana 2-3 üründen fazlası
+// sığmıyordu. Kartın kendisi de telefonda satır düzenine geçer
+// (product-card.tsx) — ikisi birlikte ekrana 6-7 ürün sığdırır.
 const LAYOUT_CLASSES: Record<MenuCategory["layout"], string> = {
-  grid: "grid grid-cols-2 sm:grid-cols-3",
+  grid: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
   list: "flex flex-col",
   showcase: "flex flex-col",
 };
@@ -45,12 +50,14 @@ export function CategorySection({
     >
       <h2
         id={`baslik-${category.id}`}
-        className="font-[family-name:var(--t-display)] leading-tight"
+        // Boyut telefonda SABİT, `sm:`ten itibaren tema token'ı: `--t-display-s`
+        // (32.8px) telefonda tek başına ekranın %7'sini yiyordu ve ürün
+        // sayısını 2 azaltıyordu. Tema kimliği başlıkta font + ağırlık +
+        // harf aralığıyla korunur, yalnızca ölçek küçülür.
+        className="mb-2 font-[family-name:var(--t-display)] text-[1.45rem] leading-tight sm:mb-[calc(11px*var(--dens))] sm:text-[length:var(--t-display-s)]"
         style={{
           fontWeight: "var(--t-display-w)",
           letterSpacing: "var(--t-display-tr)",
-          fontSize: "var(--t-display-s)",
-          marginBottom: "calc(11px * var(--dens))",
         }}
       >
         {category.name}

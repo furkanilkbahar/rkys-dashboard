@@ -92,7 +92,7 @@ export function AddToCart({ product, currency }: { product: MenuProduct; currenc
       </div>
 
       {open && hasDetails && (
-        <div className="mt-3 flex flex-col gap-3 border-t border-[var(--line)] pt-3 text-sm">
+        <div className="mt-3 w-full flex flex-col gap-3 border-t border-[var(--line)] pt-3 text-sm">
           {product.variants.length > 0 && (
             <fieldset className="flex flex-col gap-1.5">
               <legend className="sr-only">{t("variants")}</legend>

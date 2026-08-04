@@ -51,25 +51,35 @@ export async function ProductCard({
       // shadcn <Card> değil ama sözleşme korunuyor; keyfi değiştirilmez.
       data-slot="card"
       data-testid="product-card"
-      className="menu-card flex flex-col overflow-hidden rounded-[var(--radius)] border border-[var(--line)] bg-[var(--card)]"
+      // TELEFONDA SATIR, `sm:`TEN İTİBAREN KART.
+      // Telefonda iki sütunluk ızgara hem yatay kaydırma üretiyordu hem de
+      // ekrana 2-3 üründen fazlası sığmıyordu. Satır düzeni (solda küçük
+      // görsel, sağda metin) aynı ekrana 6-7 ürün sığdırır ve ürün adına
+      // tam genişlik verir. Duyarlı geçiş SALT CSS — bileşen Server
+      // Component kalır, hiçbir JS eklenmez.
+      className="menu-card flex overflow-hidden rounded-[var(--radius)] border border-[var(--line)] bg-[var(--card)] sm:flex-col"
     >
       {!textFirst && (
-        <div className="p-[7px] pb-0">
-          <ProductImage src={product.imageUrl} name={product.name} priority={priority} />
+        <div className="shrink-0 p-[7px] sm:pb-0">
+          <ProductImage
+            src={product.imageUrl}
+            name={product.name}
+            priority={priority}
+            boxClassName="size-[84px] sm:aspect-[4/3] sm:size-auto sm:w-full"
+          />
         </div>
       )}
 
       <div
-        className="flex flex-1 flex-col gap-1.5 px-3 pb-3 pt-2.5"
-        style={{ paddingBlock: "calc(10px * var(--dens))" }}
+        className={`flex min-w-0 flex-1 flex-col gap-1 py-2 pr-3 sm:gap-1.5 sm:px-3 sm:py-[calc(10px*var(--dens))] ${
+          textFirst ? "pl-3" : "pl-2 sm:pl-3"
+        }`}
       >
         <h3
-          className="font-[family-name:var(--t-display)] leading-tight"
-          style={{
-            fontWeight: "var(--t-card-w)",
-            letterSpacing: "var(--t-display-tr)",
-            fontSize: textFirst ? "1.16rem" : "1.04rem",
-          }}
+          className={`font-[family-name:var(--t-display)] leading-tight ${
+            textFirst ? "text-[1.05rem] sm:text-[1.16rem]" : "text-[0.98rem] sm:text-[1.04rem]"
+          }`}
+          style={{ fontWeight: "var(--t-card-w)", letterSpacing: "var(--t-display-tr)" }}
         >
           {product.name}
         </h3>
@@ -78,7 +88,9 @@ export async function ProductCard({
           <p className="text-[11.5px] leading-snug text-[var(--fg-faint)]">{hints.join(" · ")}</p>
         )}
 
-        <div className="mt-auto flex items-center justify-between gap-2 pt-2">
+        {/* `flex-wrap`: AddToCart açılınca seçenek paneli (w-full) kendi
+            satırına iner — fiyatın yanına sıkışmaz. */}
+        <div className="mt-auto flex flex-wrap items-center justify-between gap-x-2 gap-y-1 pt-1.5 sm:pt-2">
           <span
             className="min-w-0 flex-1 tabular-nums tracking-tight text-[var(--accent)]"
             style={{ fontWeight: "var(--t-price-w)", fontSize: "1rem" }}

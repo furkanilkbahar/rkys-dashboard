@@ -21,7 +21,7 @@ export default async function ReservationRequestPage() {
   const timezone = await getTenantTimezone(tenant.id);
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-md flex-col gap-6 p-4 sm:p-8">
+    <main className="mx-auto flex min-h-screen w-full max-w-md flex-col gap-6 p-4 sm:p-8">
       <h1 className="text-xl font-semibold">{t("pageTitle")}</h1>
       <ReservationRequestForm tenantId={tenant.id} timezone={timezone} createPublicReservation={createPublicReservation} />
     </main>

@@ -42,13 +42,18 @@ const SUPABASE_HOST_IS_PRIVATE = (() => {
 export function ProductImage({
   src,
   name,
-  ratio = "4/3",
-  sizes = "(max-width: 640px) 45vw, 220px",
+  /**
+   * Kutu ölçüsü + en-boy oranı SINIFLA verilir (inline style ile değil):
+   * telefonda kare küçük görsel, `sm:`ten itibaren 4/3 tam genişlik gibi
+   * DUYARLI bir kutu ancak sınıfla anlatılabilir.
+   */
+  boxClassName = "aspect-[4/3] w-full",
+  sizes = "(max-width: 639px) 84px, (max-width: 1024px) 45vw, 220px",
   priority = false,
 }: {
   src: string | null;
   name: string;
-  ratio?: "4/3" | "1/1" | "16/9";
+  boxClassName?: string;
   sizes?: string;
   priority?: boolean;
 }) {
@@ -56,8 +61,7 @@ export function ProductImage({
 
   return (
     <div
-      className="relative w-full overflow-hidden rounded-[var(--radius-img)] bg-[var(--placeholder)]"
-      style={{ aspectRatio: ratio }}
+      className={`relative shrink-0 overflow-hidden rounded-[var(--radius-img)] bg-[var(--placeholder)] ${boxClassName}`}
     >
       {src ? (
         <Image
@@ -72,7 +76,7 @@ export function ProductImage({
       ) : (
         <span
           aria-hidden="true"
-          className="absolute inset-0 flex items-center justify-center font-[family-name:var(--t-display)] text-[2rem] leading-none text-[var(--placeholder-fg)]"
+          className="absolute inset-0 flex items-center justify-center font-[family-name:var(--t-display)] text-[1.5rem] leading-none text-[var(--placeholder-fg)] sm:text-[2rem]"
           style={{ fontWeight: "var(--t-display-w)", letterSpacing: "var(--t-display-tr)" }}
         >
           {initial}

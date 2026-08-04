@@ -57,7 +57,7 @@ export default async function MenuPage() {
   const loyaltyBalance = sessionCustomerId ? await getSessionLoyaltyBalance(sessionCustomerId) : 0;
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-3xl flex-col gap-6 p-4 sm:p-8"
+    <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-4 p-4 sm:gap-6 sm:p-8"
       style={{ paddingBottom: "var(--cart-bar-space)" }}>
       <CartSessionSync tableSessionId={guest.tableSessionId} />
       <RatingPrompt
@@ -104,7 +104,7 @@ export default async function MenuPage() {
           <p className="max-w-[38ch] text-sm leading-relaxed text-[var(--fg-muted)]">{tEmpty("body")}</p>
         </div>
       ) : (
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-5 sm:gap-8">
           {categories.map((category, index) => (
             <CategorySection
               key={category.id}

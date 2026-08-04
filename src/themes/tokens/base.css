@@ -74,7 +74,10 @@
 
   /* Misafir menüsünde yüzen alt çubuğun rezerve ettiği dikey alan —
      içerik onun altında kalmasın (kart kaydırma payı + sayfa dolgusu). */
-  --cart-bar-space: 104px;
+  /* Yalnızca sepet çubuğu (64px) + kart kaydırma payı. "Sesi Aç" düğmesi
+     yüzer olmaktan çıkarılıp başlık satırına alındığı için (session-panel)
+     artık ek pay gerekmiyor. */
+  --cart-bar-space: 92px;
 }
 
 /* prefers-reduced-motion: süre ~0, mesafe 0. Opaklık geçişi KALIR —

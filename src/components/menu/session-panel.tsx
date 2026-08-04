@@ -287,12 +287,14 @@ export function SessionPanel({
         <button
           type="button"
           onClick={unlock}
-          // Faz 21: eskiden `fixed top-4 left-4` idi ve yeni bağlantı
-          // göstergesinin (D30, başlığın sol başı) tam üstüne biniyordu.
-          // Sepet çubuğunun hemen üstüne alındı — hem çakışma bitti hem de
-          // "sesi aç" çağrısı, sesin gerçekten gerektiği (sipariş/çağrı)
-          // eylemlerin yanında duruyor.
-          className="fixed bottom-[76px] left-3 z-20 min-h-9 rounded-full bg-[var(--card)]/90 px-3 text-xs text-[var(--fg-muted)] shadow-lg backdrop-blur"
+          // ARTIK YÜZER DEĞİL — akış içinde, "Oturumum" düğmesinin yanında.
+          // Geçmişi: önce `fixed top-4 left-4` idi ve bağlantı göstergesinin
+          // (D30) üstüne biniyordu; sonra `fixed bottom-[76px]`e alındı ve bu
+          // sefer menü kaydırılırken ürün fiyatlarının üstünü örttü —
+          // telefonda ölçüldü. Yüzen bir öğe içeriği örtmeden duramıyor,
+          // çünkü menü baştan sona kaydırılan tek bir uzun liste. Başlık
+          // satırına alındı: hiçbir şeyi örtmüyor, ilk dokunuşta kayboluyor.
+          className="min-h-9 rounded-full border border-[var(--line)] px-3 text-xs text-[var(--fg-muted)]"
         >
           {t("enableSound")}
         </button>

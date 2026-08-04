@@ -54,7 +54,7 @@ export default async function PickupPage() {
   const loyaltyBalance = sessionCustomerId ? await getSessionLoyaltyBalance(sessionCustomerId) : 0;
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-3xl flex-col gap-6 p-4 sm:p-8"
+    <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-6 p-4 sm:p-8"
       style={{ paddingBottom: "var(--cart-bar-space)" }}>
       <CartSessionSync tableSessionId={guest.tableSessionId} />
       <header className="flex items-center justify-between gap-4">
