@@ -1,12 +1,13 @@
 "use client";
 
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
+import { DataTable, DataTableActions } from "@/components/admin/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -223,8 +224,10 @@ function DeviceSection({
   revokeStaffDevice: (deviceId: string) => Promise<StaffActionResult>;
 }) {
   const t = useTranslations("admin.staff.devices");
+  const tGrid = useTranslations("admin.table");
   const tCommon = useTranslations("admin.common");
   const tErrors = useTranslations("admin.staff.errors");
+  const locale = useLocale();
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [revealedSecret, setRevealedSecret] = useState<string | null>(null);
@@ -256,22 +259,58 @@ function DeviceSection({
         <CardTitle className="text-base">{t("title")}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
-        {devices.length === 0 && <p className="text-sm text-muted-foreground">{t("empty")}</p>}
-        {devices.map((device) => (
-          <div key={device.id} className="flex items-center justify-between gap-2 text-sm">
-            <span>{device.label}</span>
-            <div className="flex items-center gap-2">
-              <Badge variant={device.isActive ? "secondary" : "destructive"}>
-                {device.isActive ? t("active") : t("revoked")}
-              </Badge>
-              {device.isActive && (
-                <Button type="button" size="sm" variant="outline" onClick={() => handleRevoke(device.id)}>
-                  {t("revoke")}
-                </Button>
-              )}
-            </div>
-          </div>
-        ))}
+        <DataTable
+          rows={devices}
+          rowKey={(device) => device.id}
+          empty={t("empty")}
+          initialSort={{ key: "label" }}
+          columns={[
+            {
+              key: "label",
+              header: t("label"),
+              primary: true,
+              value: (device) => device.label,
+              cell: (device) => device.label,
+            },
+            {
+              key: "lastSeen",
+              header: t("lastSeen"),
+              value: (device) => device.lastSeenAt,
+              cell: (device) =>
+                device.lastSeenAt ? (
+                  <span className="text-[var(--surface-fg-muted)] tabular-nums">
+                    {new Date(device.lastSeenAt).toLocaleString(locale)}
+                  </span>
+                ) : (
+                  "—"
+                ),
+            },
+            {
+              key: "status",
+              header: tGrid("status"),
+              value: (device) => (device.isActive ? 1 : 0),
+              cell: (device) => (
+                <Badge variant={device.isActive ? "secondary" : "destructive"}>
+                  {device.isActive ? t("active") : t("revoked")}
+                </Badge>
+              ),
+            },
+            {
+              key: "actions",
+              header: tGrid("actions"),
+              actions: true,
+              align: "end",
+              cell: (device) =>
+                device.isActive ? (
+                  <DataTableActions>
+                    <Button type="button" size="sm" variant="outline" onClick={() => handleRevoke(device.id)}>
+                      {t("revoke")}
+                    </Button>
+                  </DataTableActions>
+                ) : null,
+            },
+          ]}
+        />
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex items-end gap-2">
           <div className="flex flex-col gap-1">

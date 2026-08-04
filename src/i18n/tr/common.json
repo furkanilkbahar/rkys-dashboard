@@ -409,7 +409,8 @@
         "active": "Aktif",
         "revoked": "İptal edildi",
         "secretRevealTitle": "Cihaz Şifresi",
-        "secretWarning": "Bu şifre bir daha gösterilemez — cihaza şimdi kaydedin."
+        "secretWarning": "Bu şifre bir daha gösterilemez — cihaza şimdi kaydedin.",
+        "lastSeen": "Son görülme"
       },
       "permissions": {
         "title": "İzin Bayrakları",
@@ -916,7 +917,8 @@
         "forbidden": "Bu işlem için yetkiniz yok.",
         "not_enabled": "Stok modülü aktif değil.",
         "unknown": "Kaydedilemedi, tekrar deneyin."
-      }
+      },
+      "criticalLevelFor": "{name} kritik seviyesi"
     },
     "suppliers": {
       "pageTitle": "Tedarikçiler",

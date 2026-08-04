@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
+import { DataTable } from "@/components/admin/data-table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -49,13 +50,32 @@ export function SuppliersManager({
           <CardTitle className="text-base">{t("title")}</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
-          {suppliers.length === 0 && <p className="text-sm text-muted-foreground">{t("empty")}</p>}
-          {suppliers.map((supplier) => (
-            <div key={supplier.id} className="flex items-center justify-between gap-2 rounded-md border border-border p-2 text-sm">
-              <span className="font-medium">{supplier.name}</span>
-              {supplier.contactInfo && <span className="text-xs text-muted-foreground">{supplier.contactInfo}</span>}
-            </div>
-          ))}
+          <DataTable
+            rows={suppliers}
+            rowKey={(supplier) => supplier.id}
+            empty={t("empty")}
+            initialSort={{ key: "name" }}
+            columns={[
+              {
+                key: "name",
+                header: t("name"),
+                primary: true,
+                value: (supplier) => supplier.name,
+                cell: (supplier) => supplier.name,
+              },
+              {
+                key: "contact",
+                header: t("contactInfo"),
+                value: (supplier) => supplier.contactInfo,
+                cell: (supplier) =>
+                  supplier.contactInfo ? (
+                    <span className="text-[var(--surface-fg-muted)]">{supplier.contactInfo}</span>
+                  ) : (
+                    "—"
+                  ),
+              },
+            ]}
+          />
 
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-wrap items-end gap-2 border-t border-border pt-3">
             <div className="flex flex-col gap-1">

@@ -8,6 +8,7 @@ import { Controller, useForm } from "react-hook-form";
 import type { z } from "zod";
 
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
+import { DataTable, DataTableActions } from "@/components/admin/data-table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -47,9 +48,14 @@ export function IngredientsManager({
   recordCount: (input: unknown) => Promise<InventoryActionResult>;
 }) {
   const t = useTranslations("admin.ingredients");
+  const tGrid = useTranslations("admin.table");
   const tErrors = useTranslations("admin.ingredients.errors");
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
+  // Hangi satırın hangi paneli açık — durum SATIRIN İÇİNDE değil burada,
+  // çünkü satırları artık DataTable render ediyor ve aynı anda yalnızca bir
+  // panelin açık olması zaten istenen davranış.
+  const [openPanel, setOpenPanel] = useState<{ id: string; panel: Exclude<Panel, null> } | null>(null);
   const { register, control, handleSubmit, reset } = useForm({
     resolver: standardSchemaResolver(ingredientFormSchema),
     defaultValues: { name: "", unit: "g", criticalLevel: "0" },
@@ -81,18 +87,110 @@ export function IngredientsManager({
           <CardTitle className="text-base">{t("title")}</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
-          {ingredients.length === 0 && <p className="text-sm text-muted-foreground">{t("empty")}</p>}
-          {ingredients.map((ingredient) => (
-            <IngredientRow
-              key={ingredient.id}
-              ingredient={ingredient}
-              suppliers={suppliers}
-              updateIngredient={updateIngredient}
-              recordPurchase={recordPurchase}
-              recordWaste={recordWaste}
-              recordCount={recordCount}
-            />
-          ))}
+          <DataTable
+            rows={ingredients}
+            rowKey={(ingredient) => ingredient.id}
+            // Locator yüzeyi: stock-purchase-waste-count.spec.ts satırı
+            // eskiden `getByText("Un").locator("../../..")` ile DOM tırmanarak
+            // buluyordu — işaretleme değişince kırılan cinsten. Kararlı bir
+            // testid, tabloda da kart modunda da aynı satırı gösterir.
+            rowAttributes={(ingredient) => ({ "data-testid": `ingredient-row-${ingredient.id}` })}
+            empty={t("empty")}
+            searchable
+            initialSort={{ key: "name" }}
+            expandedRow={(ingredient) =>
+              openPanel?.id !== ingredient.id ? null : openPanel.panel === "purchase" ? (
+                <PurchaseForm
+                  ingredientId={ingredient.id}
+                  suppliers={suppliers}
+                  recordPurchase={recordPurchase}
+                  onDone={() => setOpenPanel(null)}
+                />
+              ) : openPanel.panel === "waste" ? (
+                <WasteForm ingredientId={ingredient.id} recordWaste={recordWaste} onDone={() => setOpenPanel(null)} />
+              ) : (
+                <CountForm
+                  ingredientId={ingredient.id}
+                  currentStock={ingredient.currentStock}
+                  recordCount={recordCount}
+                  onDone={() => setOpenPanel(null)}
+                />
+              )
+            }
+            columns={[
+              {
+                key: "name",
+                header: t("name"),
+                primary: true,
+                value: (ingredient) => ingredient.name,
+                cell: (ingredient) => (
+                  <span className="flex flex-wrap items-center gap-1.5">
+                    {/* Ad KENDİ öğesinde durmalı: ingredients-recipe.spec.ts
+                        `getByText("Süt", { exact: true })` ile arıyor ve
+                        `exact` öğenin TAM metnine bakar — adı birim/rozet ile
+                        aynı kutuya koymak eşleşmeyi bozuyordu. */}
+                    <span>{ingredient.name}</span>
+                    <span className="text-[11px] text-[var(--surface-fg-faint)]">({ingredient.unit})</span>
+                    {ingredient.currentStock <= ingredient.criticalLevel && (
+                      <span
+                        className="rounded px-1.5 py-0.5 text-[10.5px] font-medium"
+                        style={{
+                          color: "var(--sem-err-fg)",
+                          backgroundColor: "color-mix(in oklch, var(--sem-err) 12%, transparent)",
+                        }}
+                      >
+                        {t("criticalBadge")}
+                      </span>
+                    )}
+                  </span>
+                ),
+              },
+              {
+                key: "stock",
+                header: t("stock"),
+                align: "end",
+                value: (ingredient) => ingredient.currentStock,
+                cell: (ingredient) => <span className="tabular-nums">{ingredient.currentStock}</span>,
+              },
+              {
+                key: "critical",
+                header: t("criticalLevel"),
+                align: "end",
+                value: (ingredient) => ingredient.criticalLevel,
+                cell: (ingredient) => (
+                  <CriticalLevelCell ingredient={ingredient} updateIngredient={updateIngredient} />
+                ),
+              },
+              {
+                key: "actions",
+                header: tGrid("actions"),
+                actions: true,
+                align: "end",
+                cell: (ingredient) => (
+                  <DataTableActions>
+                    {(["purchase", "waste", "count"] as const).map((panel) => (
+                      <Button
+                        key={panel}
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        aria-expanded={openPanel?.id === ingredient.id && openPanel.panel === panel}
+                        onClick={() =>
+                          setOpenPanel((current) =>
+                            current?.id === ingredient.id && current.panel === panel
+                              ? null
+                              : { id: ingredient.id, panel },
+                          )
+                        }
+                      >
+                        {t(`${panel}.toggle`)}
+                      </Button>
+                    ))}
+                  </DataTableActions>
+                ),
+              },
+            ]}
+          />
 
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-wrap items-end gap-2 border-t border-border pt-3">
             <div className="flex flex-col gap-1">
@@ -137,82 +235,53 @@ export function IngredientsManager({
 
 type Panel = "purchase" | "waste" | "count" | null;
 
-function IngredientRow({
+/**
+ * Kritik seviye hücresi — düzenlenebilir tek alan, kendi taslak durumuyla.
+ *
+ * Ayrı bir bileşen olmak ZORUNDA: durumu `IngredientsManager` içinde tutmak
+ * her satır için ayrı bir state gerektirirdi. Kimliği `<tr key>` sabit
+ * olduğu için sıralama/filtre değiştiğinde yazılan değer kaybolmaz.
+ *
+ * Görünür `<Label>` yerine `aria-label`: tabloda kolon başlığı zaten
+ * "Kritik Seviye" yazıyor, satır başına bir etiket daha basmak hem görsel
+ * tekrar olurdu hem de `getByLabel("Kritik Seviye")`'yi N+1 öğeye düşürüp
+ * ekleme formundaki alanı bulunamaz hâle getirirdi. Malzeme adını içeren
+ * etiket aynı zamanda daha iyi bir ekran okuyucu deneyimi.
+ */
+function CriticalLevelCell({
   ingredient,
-  suppliers,
   updateIngredient,
-  recordPurchase,
-  recordWaste,
-  recordCount,
 }: {
   ingredient: AdminIngredient;
-  suppliers: AdminSupplier[];
   updateIngredient: (ingredientId: string, input: unknown) => Promise<InventoryActionResult>;
-  recordPurchase: (input: unknown) => Promise<InventoryActionResult>;
-  recordWaste: (input: unknown) => Promise<InventoryActionResult>;
-  recordCount: (input: unknown) => Promise<InventoryActionResult>;
 }) {
   const t = useTranslations("admin.ingredients");
   const router = useRouter();
   const [criticalLevel, setCriticalLevel] = useState(String(ingredient.criticalLevel));
-  const [panel, setPanel] = useState<Panel>(null);
-  const isCritical = ingredient.currentStock <= ingredient.criticalLevel;
+  const isDirty = criticalLevel !== String(ingredient.criticalLevel);
 
   async function handleSave() {
     await updateIngredient(ingredient.id, { name: ingredient.name, unit: ingredient.unit, criticalLevel });
     router.refresh();
   }
 
-  function togglePanel(next: Panel) {
-    setPanel((current) => (current === next ? null : next));
-  }
-
   return (
-    <div className="flex flex-col gap-2 rounded-md border border-border p-2 text-sm">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <span className="font-medium">{ingredient.name}</span>
-          <span className="text-xs text-muted-foreground">({ingredient.unit})</span>
-          {isCritical && (
-            <span className="rounded bg-destructive/10 px-1.5 py-0.5 text-xs font-medium text-destructive">{t("criticalBadge")}</span>
-          )}
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-muted-foreground">
-            {t("stock")}: {ingredient.currentStock}
-          </span>
-          <Label htmlFor={`critical-${ingredient.id}`} className="text-xs text-muted-foreground">
-            {t("criticalLevel")}
-          </Label>
-          <Input
-            id={`critical-${ingredient.id}`}
-            className="w-20"
-            inputMode="decimal"
-            value={criticalLevel}
-            onChange={(e) => setCriticalLevel(e.target.value)}
-          />
-          <Button type="button" size="sm" variant="secondary" onClick={handleSave}>
-            {t("save")}
-          </Button>
-          <Button type="button" size="sm" variant="outline" onClick={() => togglePanel("purchase")}>
-            {t("purchase.toggle")}
-          </Button>
-          <Button type="button" size="sm" variant="outline" onClick={() => togglePanel("waste")}>
-            {t("waste.toggle")}
-          </Button>
-          <Button type="button" size="sm" variant="outline" onClick={() => togglePanel("count")}>
-            {t("count.toggle")}
-          </Button>
-        </div>
-      </div>
-      {panel === "purchase" && (
-        <PurchaseForm ingredientId={ingredient.id} suppliers={suppliers} recordPurchase={recordPurchase} onDone={() => setPanel(null)} />
+    <span className="flex items-center justify-end gap-1.5">
+      <Input
+        aria-label={t("criticalLevelFor", { name: ingredient.name })}
+        className="w-20 text-right"
+        inputMode="decimal"
+        value={criticalLevel}
+        onChange={(event) => setCriticalLevel(event.target.value)}
+      />
+      {/* Kaydet yalnızca DEĞİŞİKLİK varken çıkar — 8 malzemede 8 boş
+          "Kaydet" butonu, tablodaki asıl işlemleri gölgeliyordu. */}
+      {isDirty && (
+        <Button type="button" size="sm" variant="secondary" onClick={handleSave}>
+          {t("save")}
+        </Button>
       )}
-      {panel === "waste" && <WasteForm ingredientId={ingredient.id} recordWaste={recordWaste} onDone={() => setPanel(null)} />}
-      {panel === "count" && (
-        <CountForm ingredientId={ingredient.id} currentStock={ingredient.currentStock} recordCount={recordCount} onDone={() => setPanel(null)} />
-      )}
-    </div>
+    </span>
   );
 }
 

@@ -67,7 +67,10 @@ test("S34: admin malzeme+reçete tanımlar, siparişte reçeteden stok otomatik 
     await page.getByLabel("Ad", { exact: true }).fill("Süt");
     await page.getByRole("combobox", { name: "Birim" }).click();
     await page.getByRole("option", { name: "ml", exact: true }).click();
-    await page.getByLabel("Kritik Seviye").fill("100");
+    // `exact` (2026-08-04): satır içi kritik seviye alanının erişilebilir adı
+    // artık malzemeyi de içeriyor ("Süt kritik seviyesi"); getByLabel alt
+    // dize eşler. Kastedilen ekleme formundaki alan.
+    await page.getByLabel("Kritik Seviye", { exact: true }).fill("100");
     await page.getByRole("button", { name: "+ Malzeme Ekle" }).click();
     await page.waitForLoadState("networkidle");
     await expect(page.getByText("Süt", { exact: true })).toBeVisible();

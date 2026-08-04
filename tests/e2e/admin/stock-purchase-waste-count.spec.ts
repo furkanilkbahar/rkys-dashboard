@@ -57,32 +57,39 @@ test("S35/S36: tedarikçi + alım girişi + fire/sayım, kritik stok özeti", as
 
     await page.goto(tenantUrl(baseURL!, subdomain, "/admin/ingredients"));
     await page.getByLabel("Ad", { exact: true }).fill("Un");
-    await page.getByLabel("Kritik Seviye").fill("500");
+    // `exact` (2026-08-04): satır içi kritik seviye alanının erişilebilir adı
+    // artık malzemeyi de içeriyor ("Un kritik seviyesi") ve getByLabel
+    // varsayılan olarak alt dize eşliyor. Kastedilen ekleme formundaki alan.
+    await page.getByLabel("Kritik Seviye", { exact: true }).fill("500");
     await page.getByRole("button", { name: "+ Malzeme Ekle" }).click();
     await page.waitForLoadState("networkidle");
 
-    const row = page.getByText("Un", { exact: true }).locator("../../..");
+    // Faz 23: liste tabloya alındı. Satır artık DOM tırmanışıyla değil
+    // kararlı bir testid ile bulunuyor; açılan panel (alım/fire/sayım)
+    // satırın KARDEŞİ olan bir <tr>'de yaşadığı için `row.locator("form")`
+    // ile kapsanamaz — aynı anda yalnızca bir panel açık olduğundan sayfa
+    // düzeyinde aramak zaten tekil.
+    const row = page.locator('[data-testid^="ingredient-row-"]').filter({ hasText: "Un" });
     await row.getByRole("button", { name: "Alım Gir" }).click();
-    const purchaseForm = row.locator("form");
-    await purchaseForm.getByLabel("Miktar").fill("1000");
-    await purchaseForm.getByLabel("Birim Maliyet (₺)").fill("2.50");
-    await purchaseForm.getByRole("combobox", { name: "Tedarikçi" }).click();
+    await page.getByLabel("Miktar").fill("1000");
+    await page.getByLabel("Birim Maliyet (₺)").fill("2.50");
+    await page.getByRole("combobox", { name: "Tedarikçi" }).click();
     await page.getByRole("option", { name: "Yerel Tedarikçi" }).click();
-    await purchaseForm.getByRole("button", { name: "Kaydet", exact: true }).click();
+    await page.getByRole("button", { name: "Kaydet", exact: true }).click();
     await page.waitForLoadState("networkidle");
-    await expect(row.getByText("Mevcut Stok: 1000")).toBeVisible();
+    // Stok değeri artık kendi hücresinde; "Mevcut Stok" etiketi kolon
+    // başlığında (kart modunda CSS ile üretilen içerikte) duruyor.
+    await expect(row.getByText("1000", { exact: true })).toBeVisible();
 
     await row.getByRole("button", { name: "Fire Kaydet" }).click();
-    const wasteForm = row.locator("form");
-    await wasteForm.getByLabel("Miktar").fill("50");
-    await wasteForm.getByRole("button", { name: "Kaydet", exact: true }).click();
+    await page.getByLabel("Miktar").fill("50");
+    await page.getByRole("button", { name: "Kaydet", exact: true }).click();
     await page.waitForLoadState("networkidle");
-    await expect(row.getByText("Mevcut Stok: 950")).toBeVisible();
+    await expect(row.getByText("950", { exact: true })).toBeVisible();
 
     await row.getByRole("button", { name: "Sayım Gir" }).click();
-    const countForm = row.locator("form");
-    await countForm.getByLabel("Sayılan Miktar").fill("400");
-    await countForm.getByRole("button", { name: "Kaydet", exact: true }).click();
+    await page.getByLabel("Sayılan Miktar").fill("400");
+    await page.getByRole("button", { name: "Kaydet", exact: true }).click();
     await page.waitForLoadState("networkidle");
     await expect(page.getByText("1 malzeme kritik seviyenin altında: Un")).toBeVisible();
 

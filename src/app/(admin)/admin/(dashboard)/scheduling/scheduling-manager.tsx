@@ -7,6 +7,7 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
+import { DataTable, DataTableActions } from "@/components/admin/data-table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -126,6 +127,7 @@ export function SchedulingManager({
   setStaffPerformanceGoal: (profileId: string, targetCallsResolved: number) => Promise<SchedulingActionResult>;
 }) {
   const t = useTranslations("admin.scheduling");
+  const tGrid = useTranslations("admin.table");
   const tErrors = useTranslations("admin.scheduling.errors");
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
@@ -158,17 +160,53 @@ export function SchedulingManager({
           <CardTitle className="text-base">{t("scheduleTitle")}</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
-          {shifts.length === 0 && <p className="text-sm text-muted-foreground">{t("scheduleEmpty")}</p>}
-          {shifts.map((shift) => (
-            <div key={shift.id} className="flex items-center justify-between gap-2 rounded-md border border-border p-2 text-sm">
-              <span>
-                {shift.badgeNo ?? "?"} · {shift.shiftDate} · {shift.startTime}–{shift.endTime}
-              </span>
-              <Button type="button" variant="ghost" size="sm" onClick={() => handleDelete(shift.id)}>
-                {t("delete")}
-              </Button>
-            </div>
-          ))}
+          <DataTable
+            rows={shifts}
+            rowKey={(shift) => shift.id}
+            empty={t("scheduleEmpty")}
+            searchable
+            initialSort={{ key: "date", dir: "desc" }}
+            columns={[
+              {
+                key: "staff",
+                header: t("staff"),
+                primary: true,
+                value: (shift) => shift.badgeNo,
+                cell: (shift) => shift.badgeNo ?? "?",
+              },
+              {
+                key: "date",
+                header: t("date"),
+                // ISO tarih (YYYY-MM-DD) alfabetik sıralandığında zaten
+                // kronolojik — ayrı bir Date dönüşümü gereksiz.
+                value: (shift) => shift.shiftDate,
+                cell: (shift) => <span className="tabular-nums">{shift.shiftDate}</span>,
+              },
+              {
+                key: "hours",
+                header: t("startTime"),
+                value: (shift) => shift.startTime,
+                cell: (shift) => (
+                  <span className="tabular-nums">
+                    {shift.startTime}–{shift.endTime}
+                  </span>
+                ),
+              },
+              {
+                key: "actions",
+                header: tGrid("actions"),
+                actions: true,
+                align: "end",
+                cell: (shift) => (
+                  <DataTableActions>
+                    <Button type="button" variant="ghost" size="sm" onClick={() => handleDelete(shift.id)}>
+                      {t("delete")}
+                    </Button>
+                  </DataTableActions>
+                ),
+              },
+            ]}
+          />
 
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-wrap items-end gap-2 border-t border-border pt-3">
             <div className="flex flex-col gap-1">
@@ -217,15 +255,37 @@ export function SchedulingManager({
           <CardTitle className="text-base">{t("hoursTitle")}</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
-          {hoursWorked.length === 0 && <p className="text-sm text-muted-foreground">{t("hoursEmpty")}</p>}
-          {hoursWorked.map((row) => (
-            <div key={row.profileId} className="flex items-center justify-between text-sm">
-              <span>{row.badgeNo ?? "?"}</span>
-              <span className="text-muted-foreground">
-                {t("hoursFormat", { hours: Math.floor(row.totalMinutes / 60), minutes: row.totalMinutes % 60 })}
-              </span>
-            </div>
-          ))}
+          <DataTable
+            rows={hoursWorked}
+            rowKey={(row) => row.profileId}
+            empty={t("hoursEmpty")}
+            initialSort={{ key: "minutes", dir: "desc" }}
+            columns={[
+              {
+                key: "staff",
+                header: t("staff"),
+                primary: true,
+                value: (row) => row.badgeNo,
+                cell: (row) => row.badgeNo ?? "?",
+              },
+              {
+                key: "minutes",
+                header: t("hoursTitle"),
+                align: "end",
+                // Sıralama HAM DAKİKA üzerinden — "12s 30dk" metnini
+                // sıralamak 9 saati 12 saatin üstüne çıkarırdı.
+                value: (row) => row.totalMinutes,
+                cell: (row) => (
+                  <span className="tabular-nums">
+                    {t("hoursFormat", {
+                      hours: Math.floor(row.totalMinutes / 60),
+                      minutes: row.totalMinutes % 60,
+                    })}
+                  </span>
+                ),
+              },
+            ]}
+          />
           <a href="/admin/scheduling/export" className="w-fit">
             <Button type="button" variant="outline" size="sm">
               {t("exportCsv")}

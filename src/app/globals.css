@@ -168,6 +168,10 @@
   .data-table tbody tr + tr {
     border-top: 1px solid var(--surface-line);
   }
+  /* Açılan panel satırı, açtığı satırın DEVAMIDIR — arada çizgi olmamalı. */
+  .data-table tbody tr[data-expansion] {
+    border-top: 0;
+  }
 
   @media (width >= 40rem) {
     .data-table thead th {
@@ -203,6 +207,21 @@
     .data-table tbody tr + tr {
       margin-top: 8px;
       border-top: 1px solid var(--surface-line);
+    }
+    /* Kart modunda açılan panel, açtığı kartın ALTINA yapışır — ayrı bir
+       kart gibi görünmesi "bu hangi malzemenin formu?" sorusunu doğururdu.
+       Üstteki kartın alt köşelerini `:has(+ ...)` ile düzleştiriyoruz;
+       CSS'te "önceki kardeş" seçilemediği için tek yol bu. */
+    .data-table tbody tr:has(+ tr[data-expansion]) {
+      border-bottom: 0;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+    .data-table tbody tr[data-expansion] {
+      margin-top: 0;
+      border-top: 0;
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
     }
     .data-table td[data-label] {
       display: grid;

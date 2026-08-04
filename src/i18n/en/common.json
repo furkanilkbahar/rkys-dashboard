@@ -409,7 +409,8 @@
         "active": "Active",
         "revoked": "Revoked",
         "secretRevealTitle": "Device Secret",
-        "secretWarning": "This secret cannot be shown again — save it to the device now."
+        "secretWarning": "This secret cannot be shown again — save it to the device now.",
+        "lastSeen": "Last seen"
       },
       "permissions": {
         "title": "Permission Flags",
@@ -916,7 +917,8 @@
         "forbidden": "You don't have permission for this action.",
         "not_enabled": "The inventory module is not active.",
         "unknown": "Could not save, please try again."
-      }
+      },
+      "criticalLevelFor": "{name} critical level"
     },
     "suppliers": {
       "pageTitle": "Suppliers",

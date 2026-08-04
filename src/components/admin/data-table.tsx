@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useDeferredValue, useId, useMemo, useState } from "react";
+import { Fragment, useDeferredValue, useId, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 
 /**
@@ -72,6 +72,7 @@ export function DataTable<T>({
   searchable = false,
   initialSort,
   footer,
+  expandedRow,
 }: {
   columns: DataTableColumn<T>[];
   rows: T[];
@@ -82,6 +83,13 @@ export function DataTable<T>({
   searchable?: boolean;
   initialSort?: { key: string; dir?: "asc" | "desc" };
   footer?: ReactNode;
+  /**
+   * Satırın ALTINA açılan panel (alım girişi, fire, sayım gibi satır içi
+   * formlar). `null` dönerse ikinci satır hiç basılmaz. Açık/kapalı durumu
+   * bilerek ÇAĞIRANDA tutulur — hangi satırın hangi panelinin açık olduğu
+   * sayfanın kendi meselesi, tablonun değil.
+   */
+  expandedRow?: (row: T) => ReactNode | null;
 }) {
   const t = useTranslations("admin.table");
   const searchId = useId();
@@ -188,8 +196,11 @@ export function DataTable<T>({
               </tr>
             </thead>
             <tbody>
-              {visibleRows.map((row) => (
-                <tr key={rowKey(row)} {...(rowAttributes?.(row) ?? {})}>
+              {visibleRows.map((row) => {
+                const expansion = expandedRow?.(row) ?? null;
+                return (
+                  <Fragment key={rowKey(row)}>
+                <tr {...(rowAttributes?.(row) ?? {})}>
                   {columns.map((column) => {
                     // `data-label` kart modunda `::before` ile yazılır. Birincil
                     // ve işlem hücrelerinde etiket İSTEMİYORUZ, o yüzden hiç
@@ -212,8 +223,20 @@ export function DataTable<T>({
                       </td>
                     );
                   })}
-                </tr>
-              ))}
+                    </tr>
+
+                    {expansion && (
+                      <tr data-expansion="">
+                        {/* `data-actions` kart modunda etiketsiz/tam genişlik
+                            demek — açılan panel için de doğru davranış. */}
+                        <td colSpan={columns.length} data-actions="" className="px-2 pb-2">
+                          {expansion}
+                        </td>
+                      </tr>
+                    )}
+                  </Fragment>
+                );
+              })}
             </tbody>
           </table>
 
