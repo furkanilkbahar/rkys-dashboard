@@ -290,7 +290,7 @@ function TablesStep({
       <CardHeader>
         <CardTitle>{t("tables.title")}</CardTitle>
       </CardHeader>
-      <CardContent className="flex items-end gap-2">
+      <CardContent className="flex flex-wrap items-end gap-2">
         <div className="flex flex-col gap-1">
           <Label htmlFor="onboarding-table-count">{t("tables.count")}</Label>
           <Input

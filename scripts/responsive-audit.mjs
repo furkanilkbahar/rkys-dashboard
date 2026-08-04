@@ -41,11 +41,28 @@ const probe = () =>
     const clipped = [];
     const small = [];
 
+    // YANLIŞ POZİTİF FİLTRESİ (2026-08-04'te ölçülerek belirlendi):
+    // `<Switch>` kökü `after:absolute after:-inset-x-3` ile GÖRÜNMEZ ve
+    // BİLİNÇLİ bir dokunma alanı büyütmesi taşıyor. Bu, switch'in ve onu
+    // saran hücrenin scrollWidth'ini ~12px şişiriyor ama ekranda hiçbir şey
+    // taşmıyor. Filtrelenmezse her switch'li sayfa sahte uyarı üretiyor ve
+    // gerçek kırpılmalar bu gürültünün içinde kayboluyor.
+    const isSwitchNoise = (el) =>
+      el.matches('[data-slot="switch"]') ||
+      (el.querySelector('[data-slot="switch"]') !== null && el.scrollWidth - el.clientWidth <= 14);
+
     for (const el of document.querySelectorAll("main *")) {
       const cs = getComputedStyle(el);
       if (cs.display === "none" || cs.visibility === "hidden") continue;
       const r = el.getBoundingClientRect();
       if (r.width === 0 || r.height === 0) continue;
+      if (isSwitchNoise(el)) continue;
+
+      // `<input>` DIŞARIDA: bir metin alanının içeriğinin kutusundan uzun
+      // olması tarayıcının normal davranışı (değer kutunun içinde kayar),
+      // düzen hatası değil. Ayrıca Base UI Select/Switch form gönderimi için
+      // 1px'lik gizli input'lar basıyor; onlar da hep "taşıyor" görünüyordu.
+      if (el.tagName === "INPUT") continue;
 
       if (el.scrollWidth > el.clientWidth + 1 && el.clientWidth > 0) {
         const ox = cs.overflowX;

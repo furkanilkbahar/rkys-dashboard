@@ -62,7 +62,7 @@ function ZoneForm({
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex items-end gap-2">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-wrap items-end gap-2">
       <div className="flex flex-col gap-1">
         <Label htmlFor="zone-name">{t("name")}</Label>
         <Input id="zone-name" {...register("name")} />
@@ -114,7 +114,7 @@ function TableForm({
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex items-end gap-2">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-wrap items-end gap-2">
       <div className="flex flex-col gap-1">
         <Label htmlFor="table-label">{t("label")}</Label>
         <Input id="table-label" {...register("label")} />
@@ -185,7 +185,7 @@ function GenericQrForm({
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex items-end gap-2">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-wrap items-end gap-2">
       <div className="flex flex-col gap-1">
         <Label htmlFor="generic-qr-label">{t("label")}</Label>
         <Input id="generic-qr-label" {...register("label")} />

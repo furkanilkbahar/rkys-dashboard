@@ -759,6 +759,20 @@
           "puzzle": "Puzzle — promote it more",
           "dog": "Dog — consider removing"
         }
+      },
+      "columns": {
+        "product": "Product",
+        "quantity": "Qty",
+        "revenue": "Revenue",
+        "cost": "Cost",
+        "margin": "Margin",
+        "status": "Status",
+        "source": "Source",
+        "reason": "Reason",
+        "amount": "Amount",
+        "campaign": "Campaign",
+        "discount": "Discount",
+        "category": "Category"
       }
     },
     "analytics": {

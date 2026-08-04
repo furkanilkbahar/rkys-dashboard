@@ -128,7 +128,7 @@ function StaffRow({
       </form>
 
       {showPinForm && (
-        <form onSubmit={pinForm.handleSubmit(onPinSubmit)} className="flex items-end gap-2">
+        <form onSubmit={pinForm.handleSubmit(onPinSubmit)} className="flex flex-wrap items-end gap-2">
           <div className="flex flex-col gap-1">
             <Label htmlFor={`new-pin-${member.id}`}>{t("member.newPin")}</Label>
             <Input id={`new-pin-${member.id}`} inputMode="numeric" {...pinForm.register("pin")} className="w-40" />
@@ -312,7 +312,7 @@ function DeviceSection({
           ]}
         />
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex items-end gap-2">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-wrap items-end gap-2">
           <div className="flex flex-col gap-1">
             <Label htmlFor="device-label">{t("label")}</Label>
             <Input id="device-label" {...register("label")} />

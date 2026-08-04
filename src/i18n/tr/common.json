@@ -759,6 +759,20 @@
           "puzzle": "Bilmece — tanıtımını artır",
           "dog": "Zayıf — menüden çıkarmayı düşün"
         }
+      },
+      "columns": {
+        "product": "Ürün",
+        "quantity": "Adet",
+        "revenue": "Ciro",
+        "cost": "Maliyet",
+        "margin": "Marj",
+        "status": "Durum",
+        "source": "Kaynak",
+        "reason": "Sebep",
+        "amount": "Tutar",
+        "campaign": "Kampanya",
+        "discount": "İndirim",
+        "category": "Kategori"
       }
     },
     "analytics": {

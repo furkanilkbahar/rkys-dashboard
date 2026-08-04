@@ -26,6 +26,15 @@ import {
 } from "@/lib/data/reports";
 import { formatPrice } from "@/lib/utils/currency";
 
+import {
+  CampaignPerformanceTable,
+  LossTable,
+  MarginTable,
+  MenuEngineeringTable,
+  ShiftsTable,
+  TopProductsTable,
+} from "./report-tables";
+
 // close_business_day/get_revenue_report "business_date"i tenant saat
 // diliminde hesaplar (0035, is_business_date_closed) — "bugün" burada da
 // aynı saat dilimiyle hesaplanmazsa (ör. sunucu UTC'siyle) tenant'ın
@@ -49,14 +58,6 @@ function daysBeforeIso(dateIso: string, days: number): string {
   const shifted = new Date(Date.UTC(year, month - 1, day - days));
   return shifted.toISOString().slice(0, 10);
 }
-
-// D47 menü mühendisliği kategorileri → anlam token'ları (RULES #13).
-const MENU_ENGINEERING_TONE: Record<string, string> = {
-  star: "var(--sem-ok)",
-  plowhorse: "var(--sem-warn)",
-  puzzle: "var(--sem-info)",
-  dog: "var(--sem-err)",
-};
 
 export default async function AdminReportsPage({
   searchParams,
@@ -126,7 +127,7 @@ export default async function AdminReportsPage({
     <div className="flex flex-col gap-8">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <AdminPageHeader title={t("title")} />
-        <form className="flex items-end gap-2">
+        <form className="flex flex-wrap items-end gap-2">
           <div className="flex flex-col gap-1">
             <label htmlFor="report-date" className="text-sm font-medium">
               {t("date")}
@@ -174,15 +175,7 @@ export default async function AdminReportsPage({
             {t("exportCsv")}
           </a>
         </div>
-        {topProducts.length === 0 && <p className="text-sm text-muted-foreground">{t("empty")}</p>}
-        {topProducts.map((row) => (
-          <div key={row.productName} className="flex items-center justify-between text-sm">
-            <span>{row.productName}</span>
-            <span>
-              {row.quantity} × — {formatPrice(row.revenueMinor, currency)}
-            </span>
-          </div>
-        ))}
+        <TopProductsTable rows={topProducts} currency={currency} empty={t("empty")} />
       </section>
 
       <section className="flex flex-col gap-3">
@@ -199,21 +192,12 @@ export default async function AdminReportsPage({
 
       <section className="flex flex-col gap-3">
         <h2 className="text-base font-semibold">{t("shiftsTitle")}</h2>
-        {shifts.length === 0 && <p className="text-sm text-muted-foreground">{t("empty")}</p>}
-        {shifts.map((shift) => (
-          <div key={shift.shiftId} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border p-2 text-sm">
-            <span>{t(`status.${shift.status}`)}</span>
-            <span>
-              {t("expected")}: {shift.expectedCashMinor !== null ? formatPrice(shift.expectedCashMinor, currency) : "—"}
-            </span>
-            <span>
-              {t("counted")}: {shift.countedCashMinor !== null ? formatPrice(shift.countedCashMinor, currency) : "—"}
-            </span>
-            <span>
-              {t("variance")}: {shift.varianceMinor !== null ? formatPrice(shift.varianceMinor, currency) : "—"}
-            </span>
-          </div>
-        ))}
+        <ShiftsTable
+          rows={shifts}
+          currency={currency}
+          empty={t("empty")}
+          statusLabel={{ open: t("status.open"), closed: t("status.closed") }}
+        />
       </section>
 
       {canViewProfit && (
@@ -224,15 +208,7 @@ export default async function AdminReportsPage({
               {t("exportCsv")}
             </a>
           </div>
-          {marginRows.length === 0 && <p className="text-sm text-muted-foreground">{t("empty")}</p>}
-          {marginRows.map((row) => (
-            <div key={row.productName} className="flex items-center justify-between text-sm">
-              <span>{row.productName}</span>
-              <span>
-                {formatPrice(row.revenueMinor, currency)} − {formatPrice(row.costMinor, currency)} = {formatPrice(row.marginMinor, currency)}
-              </span>
-            </div>
-          ))}
+          <MarginTable rows={marginRows} currency={currency} empty={t("empty")} />
 
           <h3 className="text-sm font-semibold">{t("costs.title")}</h3>
           {products.map((product) => (
@@ -305,20 +281,18 @@ export default async function AdminReportsPage({
         {canViewLoss && (
           <div className="flex flex-col gap-2">
             <h3 className="text-sm font-semibold">{t("period.lossTitle")}</h3>
-            {lossRows.length === 0 && <p className="text-sm text-muted-foreground">{t("period.lossEmpty")}</p>}
-            {lossRows.map((row, index) => (
-              <div
-                key={`${row.source}-${row.reasonCodeId ?? "none"}-${index}`}
-                className="flex items-center justify-between text-sm"
-              >
-                <span>
-                  {t(`period.source.${row.source}`)} — {row.reasonKey ?? t("period.noReason")}
-                </span>
-                <span>
-                  {formatPrice(row.amountMinor, currency)} ({row.itemCount} {t("period.count")})
-                </span>
-              </div>
-            ))}
+            <LossTable
+              rows={lossRows}
+              currency={currency}
+              empty={t("period.lossEmpty")}
+              sourceLabel={{
+                comp: t("period.source.comp"),
+                refund: t("period.source.refund"),
+                cancel: t("period.source.cancel"),
+              }}
+              noReasonLabel={t("period.noReason")}
+              countLabel={t("period.count")}
+            />
           </div>
         )}
 
@@ -332,49 +306,29 @@ export default async function AdminReportsPage({
               <p>{t("period.redemptionCount")}: {loyaltyPerformance.redemptionCount}</p>
             </div>
           )}
-          {campaignPerformance.length === 0 ? (
-            <p className="text-sm text-muted-foreground">{t("period.campaignEmpty")}</p>
-          ) : (
-            campaignPerformance.map((row) => (
-              <div key={row.campaignId} className="flex items-center justify-between text-sm">
-                <span>{row.campaignName}</span>
-                <span>
-                  {row.redemptionCount} {t("period.count")} — {formatPrice(row.totalDiscountMinor, currency)}
-                </span>
-              </div>
-            ))
-          )}
+          <CampaignPerformanceTable
+            rows={campaignPerformance}
+            currency={currency}
+            empty={t("period.campaignEmpty")}
+            countLabel={t("period.count")}
+          />
         </div>
 
         {canViewProfit && (
           <div className="flex flex-col gap-2">
             <h3 className="text-sm font-semibold">{t("period.menuEngineeringTitle")}</h3>
-            {menuEngineering.length === 0 ? (
-              <p className="text-sm text-muted-foreground">{t("period.menuEngineeringEmpty")}</p>
-            ) : (
-              menuEngineering.map((row) => (
-                <div key={row.productName} className="flex items-center justify-between gap-2 text-sm">
-                  <span className="flex items-center gap-2">
-                    {/* RULES #13: sabit palet sınıfları yerine ANLAM token'ları.
-                        Menü mühendisliği kategorileri (D47) semantik: star=iyi,
-                        plowhorse=dikkat, puzzle=bilgi, dog=sorunlu. */}
-                    <span
-                      className="rounded px-1.5 py-0.5 text-xs font-medium"
-                      style={{
-                        color: MENU_ENGINEERING_TONE[row.category],
-                        backgroundColor: `color-mix(in oklch, ${MENU_ENGINEERING_TONE[row.category]} 12%, transparent)`,
-                      }}
-                    >
-                      {t(`period.menuEngineering.${row.category}`)}
-                    </span>
-                    {row.productName}
-                  </span>
-                  <span>
-                    {row.quantity} × — {formatPrice(row.marginMinor, currency)} {t("period.menuEngineeringMargin")}
-                  </span>
-                </div>
-              ))
-            )}
+            <MenuEngineeringTable
+              rows={menuEngineering}
+              currency={currency}
+              empty={t("period.menuEngineeringEmpty")}
+              categoryLabel={{
+                star: t("period.menuEngineering.star"),
+                plowhorse: t("period.menuEngineering.plowhorse"),
+                puzzle: t("period.menuEngineering.puzzle"),
+                dog: t("period.menuEngineering.dog"),
+              }}
+              marginSuffix={t("period.menuEngineeringMargin")}
+            />
           </div>
         )}
       </section>
