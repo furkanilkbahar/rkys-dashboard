@@ -5,12 +5,19 @@ import { SEED, signInAsSeededOwner } from "../../helpers/testClients";
 describe("RLS: tables", () => {
   it("acme owner sadece kendi masalarını görür", async () => {
     const acme = await signInAsSeededOwner(SEED.acme.ownerEmail);
-    const { data, error } = await acme.from("tables").select("tenant_id");
+    const { data, error } = await acme.from("tables").select("tenant_id, is_active");
 
     expect(error).toBeNull();
     // Masa 1-7 + Bahçe 1-3 + Teras 1-2 + otomatik "Tezgâh" (Faz 3 Adım 0).
     // Faz 21 demo genişletmesiyle 6 → 13.
-    expect(data).toHaveLength(13);
+    //
+    // Sayım AKTİF masalar üzerinden (2026-08-04): E2E'nin ürettiği masalar
+    // silinemiyor — `table_sessions.table_id` FK'si ON DELETE RESTRICT ve
+    // sipariş geçmişi değişmez (RULES #36). Bu yüzden E2E teardown'ı onları
+    // arşivliyor (is_active=false) ve toplam satır sayısı zamanla kalıcı
+    // olarak artıyor. Seed'i koruyan asıl sayı aktif olanlar; sızıntı ucunu
+    // ise aşağıdaki `every(...)` koruyor (D90'da belgelenen ayrım).
+    expect(data?.filter((row) => row.is_active)).toHaveLength(13);
     expect(data?.every((row) => row.tenant_id === SEED.acme.tenantId)).toBe(true);
   });
 

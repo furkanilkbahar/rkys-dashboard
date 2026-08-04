@@ -115,8 +115,30 @@ export default async function globalTeardown() {
     if (error) console.warn(`E2E teardown: sipariş kapatılamadı — ${error.message}`);
   }
 
+  // 4) Sızmış tek kullanımlık tenant'lar. Spec'lerin çoğu kendi tenant'ını
+  //    `finally` içinde siliyor ama test kırılıp süreç düşerse o blok hiç
+  //    çalışmıyor — ölçüm: yerelde 23 artık tenant birikmişti ve
+  //    `schema-and-seed.integration.test.ts`'in "3 tenant yüklü"
+  //    beklentisini kırıyorlardı.
+  //
+  //    Ölçüt: slug `test-` ile başlıyor. Seed tenant'ları acme/beta/gamma;
+  //    gerçek bir işletmenin slug'ı bu önekle başlamaz (kayıt akışı da
+  //    üretmez). Silme `tenants`'tan cascade ile şube/masa/siparişe iner.
+  const { data: strayTenants } = await service.from("tenants").select("id, slug").like("slug", "test-%");
+  if ((strayTenants ?? []).length > 0) {
+    const { error } = await service
+      .from("tenants")
+      .delete()
+      .in(
+        "id",
+        (strayTenants ?? []).map((row) => row.id),
+      );
+    if (error) console.warn(`E2E teardown: artık tenant silinemedi — ${error.message}`);
+  }
+
   console.log(
     `E2E teardown: ${deleted} masa silindi, ${archived} masa arşivlendi, ` +
-      `${junkZoneIds.length} bölge silindi, ${(openOrders ?? []).length} açık sipariş kapatıldı.`,
+      `${junkZoneIds.length} bölge silindi, ${(openOrders ?? []).length} açık sipariş kapatıldı, ` +
+      `${(strayTenants ?? []).length} artık tenant silindi.`,
   );
 }
