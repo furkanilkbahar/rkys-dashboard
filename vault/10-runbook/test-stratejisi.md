@@ -61,6 +61,11 @@ Kurallar:
   servis erisilemezdi (olculdu: 15 sn'de HTTP 000) ve tek integration kirigi
   buydu. Yerel uca tasimak `pg_net`'in Postgres **container'i** icinden cagri
   yaptigini cozmeyi gerektiriyor (`host.docker.internal` tasinabilir degil).
+- **`networkidle` realtime abonelikli sayfalarda kullanilamaz** (olculdu
+  2026-08-04): `/cashier/order` Supabase realtime actigi icin ag hic bosa
+  dusmuyor, `waitForLoadState("networkidle")` test timeout'una kadar asili
+  kaliyor. Hidrasyon yarisi olan diger sayfalarda ise (form + server action)
+  bu bekleme dogru cozum: `ratings` webkit'te 0/4 → 3/3 oldu.
 - E2E paketi hala `pnpm dev`'e karsi kosuyor; prod build olcumu ve oneri
   [[PLAN]] Faz 21 takip maddesi 1'de, karar kullanicinin.
 

@@ -235,10 +235,26 @@ Kullanıcı talebi (2026-08-04): işletme admin hesabında taşma/sığmama var;
       4. `stock-purchase-waste-count` — satırı `getByText("Un").locator("../../..")` ile DOM tırmanarak buluyordu.
       5. `menu-reorder.integration` deseninin devamı: `table-zones.rls.test.ts` acme'ye eklediği "Salon"u hiç toplamıyordu.
 
+      **Faz 23 kapanış koşumu (2026-08-04):** `tsc --noEmit` temiz · `lint` temiz · **unit 47/47** · **integration 437/438** · **E2E 150 geçti / 5 kırık / 21 flaky / 1 atlandı / 2 koşmadı**.
+
+      | Katman | Sonuç |
+      |---|---|
+      | `tsc --noEmit` | temiz |
+      | `lint` | temiz |
+      | unit | **47/47** |
+      | integration | **437/438** (tek kırık: `httpbin.org` erişilemez, dış servis) |
+      | E2E | **150 geçti / 5 kırık** |
+      | duyarlılık denetimi | **0 kusur** (22 sayfa × 390/768px) |
+
+      **E2E kırıkları 14'ten 5'e indi ve chromium-desktop'ta HİÇ kırık kalmadı.** Kalan 5'in tamamı `mobile-safari` ve tamamı devreden bakım borcu: `tenant-suspend:23`, `app-boots:14`, `waiter-pin-login:39` (Faz 19), `kitchen-station-filter:71` ve `courier-live-location:43` (WebKit; kurye testi coğrafi konum izni istiyor).
+
+      **Yeşile dönenler:** `tenant-flows:36` (bayat locator), `ratings:8` (0/4 → 3/3), `faq-and-contact:22`, `staff-scheduling:39` (Faz 19'dan beri kırıktı), `ingredients-recipe:61`, `session-panel:49`, `registration-approval:45`, `table-qr-flow` ×3.
+
       **Faz 23 açık maddeleri (kapsam dışı, karar kullanıcının):**
       1. **Personel üye listesi tabloya alınamadı** — `profiles` tablosunda ad/e-posta kolonu yok (yalnızca rol, rozet no, PIN, durum) ve e-posta `auth.users`'ta, RLS altında okunamıyor. Bugün 8 personel yalnızca **rozet numarasıyla** ayırt ediliyor; rozetsiz bir personel hiç ayırt edilemiyor. Düzeltmek `profiles`'a `full_name` kolonu (migration) + personel ekleme akışında yeni alan gerektiriyor — ürün davranışını değiştirdiği için sorulmadan yapılmadı.
       2. `webhooks.integration.test.ts` hâlâ `httpbin.org`'a gerçek POST atıyor (Faz 21 takip maddesi 3). Bu koşumda servis erişilemezdi (ölçüldü: 15 sn'de HTTP 000) ve tek integration kırığı buydu. Yerel bir uca taşınması `pg_net`'in Postgres **container'ı** içinden çağrı yaptığı gerçeğini çözmeyi gerektiriyor (`host.docker.internal` taşınabilir değil).
       3. E2E paketi hâlâ `pnpm dev`'e karşı koşuyor (Faz 21 takip maddesi 1) — ölçümler ve öneri orada duruyor, karar kullanıcının.
+      4. **`networkidle` realtime abonelikli sayfalarda kullanılamaz** — ölçüldü: `/cashier/order` Supabase realtime açtığı için ağ hiç boşa düşmüyor, bekleme test timeout'una kadar asılı kalıyor (45sn'de de 90sn'de de kırıldı). Kalan WebKit yarışları (`kitchen-station-filter`, `courier-live-location`) tam olarak böyle sayfalarda; onlara başka bir bekleme sinyali gerekiyor.
 
 ---
 
