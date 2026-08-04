@@ -66,11 +66,19 @@ Kurallar:
   ubuntu-latest. **Not:** edge function'lari `supabase start` mount ediyor —
   yeni bir function eklendikten sonra yereldeki yigin bir kez yeniden
   baslatilmali (`supabase stop && supabase start`; veri korunur).
-- **`networkidle` realtime abonelikli sayfalarda kullanilamaz** (olculdu
-  2026-08-04): `/cashier/order` Supabase realtime actigi icin ag hic bosa
-  dusmuyor, `waitForLoadState("networkidle")` test timeout'una kadar asili
-  kaliyor. Hidrasyon yarisi olan diger sayfalarda ise (form + server action)
-  bu bekleme dogru cozum: `ratings` webkit'te 0/4 → 3/3 oldu.
+- **`networkidle` BEDAVA BIR BEKLEME DEGIL** (iki zarari da olculdu,
+  2026-08-04):
+  1. *Realtime abonelikli sayfalarda hic bitmiyor* — `/cashier/order`
+     Supabase realtime actigi icin ag bosa dusmuyor, bekleme test
+     timeout'una kadar asili kaliyor.
+  2. *Girisin hemen ardindaki sayfada davranisi degistiriyor* —
+     `waiter-pin-login`'e eklenince chromium'da 3/3 kirildi ve server action
+     `forbidden` donmeye basladi; bekleme sirasinda oturum durumu testin
+     altindan degisiyor. Kaldirilinca 3/3 gecti.
+
+  **Kural:** yalnizca form + server action olan STATIK sayfalarda kullan ve
+  ekledikten sonra HER IKI tarayicida dogrula. Dogru kullanildiginda etkili:
+  `ratings` webkit'te 0/4 → 3/3 oldu.
 - E2E paketi hala `pnpm dev`'e karsi kosuyor; prod build olcumu ve oneri
   [[PLAN]] Faz 21 takip maddesi 1'de, karar kullanicinin.
 
