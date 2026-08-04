@@ -841,7 +841,9 @@
       },
       "customers": {
         "title": "Loyalty Members",
-        "empty": "No members yet."
+        "empty": "No members yet.",
+        "phone": "Phone",
+        "balance": "Points"
       },
       "errors": {
         "invalid_input": "Please check the information you entered.",
@@ -862,7 +864,8 @@
         "duplicate_code": "This code is already in use.",
         "not_enabled": "The gift card module is not active.",
         "unknown": "Could not issue, please try again."
-      }
+      },
+      "balance": "Balance"
     },
     "ingredients": {
       "pageTitle": "Ingredients",

@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
+import { DataTable } from "@/components/admin/data-table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -52,13 +53,33 @@ export function GiftCardsManager({
           <CardTitle className="text-base">{t("title")}</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
-          {giftCards.length === 0 && <p className="text-sm text-muted-foreground">{t("empty")}</p>}
-          {giftCards.map((g) => (
-            <div key={g.id} className="flex items-center justify-between gap-2 rounded-md border border-border p-2 text-sm">
-              <span>{g.code}</span>
-              <span className="font-medium">{formatPrice(g.balanceMinor, currency)}</span>
-            </div>
-          ))}
+          <DataTable
+            rows={giftCards}
+            rowKey={(card) => card.id}
+            empty={t("empty")}
+            searchable
+            initialSort={{ key: "code" }}
+            columns={[
+              {
+                key: "code",
+                header: t("code"),
+                primary: true,
+                value: (card) => card.code,
+                cell: (card) => <span className="font-mono">{card.code}</span>,
+              },
+              {
+                key: "balance",
+                header: t("balance"),
+                align: "end",
+                // Sıralama kuruş cinsinden tam sayı üzerinden — biçimlenmiş
+                // "₺1.200,00" metnini sıralamak ₺90'ı ₺1.200'ün üstüne çıkarır.
+                value: (card) => card.balanceMinor,
+                cell: (card) => (
+                  <span className="font-medium tabular-nums">{formatPrice(card.balanceMinor, currency)}</span>
+                ),
+              },
+            ]}
+          />
 
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-wrap items-end gap-2">
             <div className="flex flex-col gap-1">

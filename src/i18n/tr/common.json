@@ -841,7 +841,9 @@
       },
       "customers": {
         "title": "Sadakat Üyeleri",
-        "empty": "Henüz üye yok."
+        "empty": "Henüz üye yok.",
+        "phone": "Telefon",
+        "balance": "Puan"
       },
       "errors": {
         "invalid_input": "Girdiğiniz bilgileri kontrol edin.",
@@ -862,7 +864,8 @@
         "duplicate_code": "Bu kod zaten kullanılıyor.",
         "not_enabled": "Hediye kartı modülü aktif değil.",
         "unknown": "Oluşturulamadı, tekrar deneyin."
-      }
+      },
+      "balance": "Bakiye"
     },
     "ingredients": {
       "pageTitle": "Malzemeler",

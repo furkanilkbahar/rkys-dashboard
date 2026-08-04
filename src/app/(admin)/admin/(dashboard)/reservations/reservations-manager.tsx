@@ -1,13 +1,14 @@
 "use client";
 
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import type { z } from "zod";
 
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
+import { DataTable, DataTableActions } from "@/components/admin/data-table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -32,99 +33,6 @@ type ReservationActions = {
   cancelWaitlistEntry: (entryId: string) => Promise<ReservationActionResult>;
 };
 
-function ReservationRow({ reservation, tables, actions }: { reservation: AdminReservation; tables: AdminTable[]; actions: ReservationActions }) {
-  const t = useTranslations("admin.reservations");
-  const router = useRouter();
-  const [tableId, setTableId] = useState(reservation.tableId ?? "");
-
-  async function run(fn: () => Promise<ReservationActionResult>) {
-    await fn();
-    router.refresh();
-  }
-
-  const canAct = reservation.status === "pending" || reservation.status === "confirmed";
-
-  return (
-    <div className="flex flex-col gap-2 rounded-md border border-border p-2 text-sm">
-      <div className="flex items-center justify-between gap-2">
-        <span>
-          <span className="font-medium">{reservation.customerName}</span> · {reservation.customerPhone} · {t("partySizeLabel", { count: reservation.partySize })}
-        </span>
-        <span className="text-xs text-muted-foreground">{t(`status.${reservation.status}`)}</span>
-      </div>
-      <span className="text-xs text-muted-foreground">{new Date(reservation.reservedAt).toLocaleString("tr-TR")}</span>
-      {reservation.note && <span className="text-xs text-muted-foreground">{reservation.note}</span>}
-      {canAct && (
-        <div className="flex flex-wrap items-center gap-2">
-          <Select value={tableId} onValueChange={(v) => setTableId(v ?? "")}>
-            <SelectTrigger className="w-40" aria-label={t("table")}>
-              <SelectValue placeholder={t("tablePlaceholder")} />
-            </SelectTrigger>
-            <SelectContent>
-              {tables.map((table) => (
-                <SelectItem key={table.id} value={table.id}>
-                  {table.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Button type="button" size="sm" onClick={() => run(() => actions.confirmReservation(reservation.id, tableId || null))}>
-            {t("confirm")}
-          </Button>
-          {reservation.status === "confirmed" && (
-            <>
-              <Button type="button" size="sm" variant="secondary" onClick={() => run(() => actions.seatReservation(reservation.id))}>
-                {t("seat")}
-              </Button>
-              <Button type="button" size="sm" variant="ghost" onClick={() => run(() => actions.markReservationNoShow(reservation.id))}>
-                {t("noShow")}
-              </Button>
-            </>
-          )}
-          <Button type="button" size="sm" variant="ghost" onClick={() => run(() => actions.cancelReservation(reservation.id))}>
-            {t("cancel")}
-          </Button>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function WaitlistRow({ entry, actions }: { entry: AdminWaitlistEntry; actions: ReservationActions }) {
-  const t = useTranslations("admin.reservations.waitlist");
-  const router = useRouter();
-
-  async function run(fn: () => Promise<ReservationActionResult>) {
-    await fn();
-    router.refresh();
-  }
-
-  return (
-    <div className="flex items-center justify-between gap-2 rounded-md border border-border p-2 text-sm">
-      <span>
-        <span className="font-medium">{entry.customerName}</span>
-        {entry.customerPhone && <> · {entry.customerPhone}</>} · {t("partySizeLabel", { count: entry.partySize })}
-      </span>
-      <div className="flex items-center gap-2">
-        <span className="text-xs text-muted-foreground">{t(`status.${entry.status}`)}</span>
-        {entry.status === "waiting" && (
-          <Button type="button" size="sm" onClick={() => run(() => actions.callFromWaitlist(entry.id))}>
-            {t("call")}
-          </Button>
-        )}
-        {entry.status === "called" && (
-          <Button type="button" size="sm" variant="secondary" onClick={() => run(() => actions.seatFromWaitlist(entry.id))}>
-            {t("seat")}
-          </Button>
-        )}
-        <Button type="button" size="sm" variant="ghost" onClick={() => run(() => actions.cancelWaitlistEntry(entry.id))}>
-          {t("cancel")}
-        </Button>
-      </div>
-    </div>
-  );
-}
-
 export function ReservationsManager({
   branchId,
   reservations,
@@ -141,7 +49,17 @@ export function ReservationsManager({
   const t = useTranslations("admin.reservations");
   const tErrors = useTranslations("admin.reservations.errors");
   const tWaitlist = useTranslations("admin.reservations.waitlist");
+  const tGrid = useTranslations("admin.table");
+  const locale = useLocale();
   const router = useRouter();
+  // Satır içi masa seçimi artık satır bileşeninde değil burada: seçilen masa
+  // hem "Masa" kutusunun hem "Onayla" butonunun işi ve ikisi ayrı hücrede.
+  const [tableSelections, setTableSelections] = useState<Record<string, string>>({});
+
+  async function run(fn: () => Promise<ReservationActionResult>) {
+    await fn();
+    router.refresh();
+  }
   const [reservationError, setReservationError] = useState<string | null>(null);
   const [waitlistError, setWaitlistError] = useState<string | null>(null);
 
@@ -188,10 +106,124 @@ export function ReservationsManager({
           <CardTitle className="text-base">{t("title")}</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
-          {reservations.length === 0 && <p className="text-sm text-muted-foreground">{t("empty")}</p>}
-          {reservations.map((reservation) => (
-            <ReservationRow key={reservation.id} reservation={reservation} tables={tables} actions={actions} />
-          ))}
+          <DataTable
+            rows={reservations}
+            rowKey={(reservation) => reservation.id}
+            empty={t("empty")}
+            searchable
+            initialSort={{ key: "reservedAt" }}
+            columns={[
+              {
+                key: "customer",
+                header: t("customerName"),
+                primary: true,
+                value: (reservation) => reservation.customerName,
+                cell: (reservation) => reservation.customerName,
+              },
+              {
+                key: "phone",
+                header: t("customerPhone"),
+                value: (reservation) => reservation.customerPhone,
+                cell: (reservation) => (
+                  <span className="text-[var(--surface-fg-muted)] tabular-nums">{reservation.customerPhone}</span>
+                ),
+              },
+              {
+                key: "reservedAt",
+                header: t("reservedAt"),
+                // ISO dizesi üzerinden sıralanıyor: yerelleştirilmiş metni
+                // ("15.01.2027 19:30") sıralamak gün/ay/yıl sırası yüzünden
+                // yanlış sonuç verirdi.
+                value: (reservation) => reservation.reservedAt,
+                cell: (reservation) => (
+                  <span className="tabular-nums">{new Date(reservation.reservedAt).toLocaleString(locale)}</span>
+                ),
+              },
+              {
+                key: "partySize",
+                header: t("partySize"),
+                align: "end",
+                value: (reservation) => reservation.partySize,
+                cell: (reservation) => <span className="tabular-nums">{reservation.partySize}</span>,
+              },
+              {
+                key: "status",
+                header: tGrid("status"),
+                value: (reservation) => reservation.status,
+                cell: (reservation) => (
+                  <span className="text-[var(--surface-fg-muted)]">{t(`status.${reservation.status}`)}</span>
+                ),
+              },
+              {
+                key: "actions",
+                header: tGrid("actions"),
+                actions: true,
+                align: "end",
+                cell: (reservation) => {
+                  const canAct = reservation.status === "pending" || reservation.status === "confirmed";
+                  if (!canAct) return null;
+                  const selectedTableId = tableSelections[reservation.id] ?? reservation.tableId ?? "";
+
+                  return (
+                    <DataTableActions>
+                      <Select
+                        value={selectedTableId}
+                        onValueChange={(value) =>
+                          setTableSelections((current) => ({ ...current, [reservation.id]: value ?? "" }))
+                        }
+                      >
+                        <SelectTrigger className="w-36" aria-label={t("table")}>
+                          <SelectValue placeholder={t("tablePlaceholder")} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {tables.map((table) => (
+                            <SelectItem key={table.id} value={table.id}>
+                              {table.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Button
+                        type="button"
+                        size="sm"
+                        onClick={() => run(() => actions.confirmReservation(reservation.id, selectedTableId || null))}
+                      >
+                        {t("confirm")}
+                      </Button>
+                      {reservation.status === "confirmed" && (
+                        <>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="secondary"
+                            onClick={() => run(() => actions.seatReservation(reservation.id))}
+                          >
+                            {t("seat")}
+                          </Button>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => run(() => actions.markReservationNoShow(reservation.id))}
+                          >
+                            {t("noShow")}
+                          </Button>
+                        </>
+                      )}
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => run(() => actions.cancelReservation(reservation.id))}
+                      >
+                        {t("cancel")}
+                      </Button>
+                    </DataTableActions>
+                  );
+                },
+              },
+            ]}
+          />
 
           <form onSubmit={reservationForm.handleSubmit(onCreateReservation)} className="flex flex-wrap items-end gap-2 border-t border-border pt-3">
             <div className="flex flex-col gap-1">
@@ -252,10 +284,79 @@ export function ReservationsManager({
           <CardTitle className="text-base">{tWaitlist("title")}</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
-          {waitlist.length === 0 && <p className="text-sm text-muted-foreground">{tWaitlist("empty")}</p>}
-          {waitlist.map((entry) => (
-            <WaitlistRow key={entry.id} entry={entry} actions={actions} />
-          ))}
+          <DataTable
+            rows={waitlist}
+            rowKey={(entry) => entry.id}
+            empty={tWaitlist("empty")}
+            columns={[
+              {
+                key: "customer",
+                header: t("customerName"),
+                primary: true,
+                value: (entry) => entry.customerName,
+                cell: (entry) => entry.customerName,
+              },
+              {
+                key: "phone",
+                header: t("customerPhone"),
+                value: (entry) => entry.customerPhone,
+                cell: (entry) =>
+                  entry.customerPhone ? (
+                    <span className="text-[var(--surface-fg-muted)] tabular-nums">{entry.customerPhone}</span>
+                  ) : (
+                    "—"
+                  ),
+              },
+              {
+                key: "partySize",
+                header: t("partySize"),
+                align: "end",
+                value: (entry) => entry.partySize,
+                cell: (entry) => <span className="tabular-nums">{entry.partySize}</span>,
+              },
+              {
+                key: "status",
+                header: tGrid("status"),
+                value: (entry) => entry.status,
+                cell: (entry) => (
+                  <span className="text-[var(--surface-fg-muted)]">{tWaitlist(`status.${entry.status}`)}</span>
+                ),
+              },
+              {
+                key: "actions",
+                header: tGrid("actions"),
+                actions: true,
+                align: "end",
+                cell: (entry) => (
+                  <DataTableActions>
+                    {entry.status === "waiting" && (
+                      <Button type="button" size="sm" onClick={() => run(() => actions.callFromWaitlist(entry.id))}>
+                        {tWaitlist("call")}
+                      </Button>
+                    )}
+                    {entry.status === "called" && (
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="secondary"
+                        onClick={() => run(() => actions.seatFromWaitlist(entry.id))}
+                      >
+                        {tWaitlist("seat")}
+                      </Button>
+                    )}
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => run(() => actions.cancelWaitlistEntry(entry.id))}
+                    >
+                      {tWaitlist("cancel")}
+                    </Button>
+                  </DataTableActions>
+                ),
+              },
+            ]}
+          />
 
           <form onSubmit={waitlistForm.handleSubmit(onAddToWaitlist)} className="flex flex-wrap items-end gap-2 border-t border-border pt-3">
             <div className="flex flex-col gap-1">

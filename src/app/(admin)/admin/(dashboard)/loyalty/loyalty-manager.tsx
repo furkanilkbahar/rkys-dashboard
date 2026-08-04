@@ -7,6 +7,7 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
+import { DataTable } from "@/components/admin/data-table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -145,13 +146,29 @@ function CustomersCard({ customers }: { customers: AdminLoyaltyCustomer[] }) {
         <CardTitle className="text-base">{t("title")}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-2">
-        {customers.length === 0 && <p className="text-sm text-muted-foreground">{t("empty")}</p>}
-        {customers.map((c) => (
-          <div key={c.id} className="flex items-center justify-between gap-2 rounded-md border border-border p-2 text-sm">
-            <span>{c.maskedPhone}</span>
-            <span className="font-medium">{c.balance}</span>
-          </div>
-        ))}
+        <DataTable
+          rows={customers}
+          rowKey={(customer) => customer.id}
+          empty={t("empty")}
+          searchable
+          initialSort={{ key: "balance", dir: "desc" }}
+          columns={[
+            {
+              key: "phone",
+              header: t("phone"),
+              primary: true,
+              value: (customer) => customer.maskedPhone,
+              cell: (customer) => <span className="font-mono">{customer.maskedPhone}</span>,
+            },
+            {
+              key: "balance",
+              header: t("balance"),
+              align: "end",
+              value: (customer) => customer.balance,
+              cell: (customer) => <span className="font-medium tabular-nums">{customer.balance}</span>,
+            },
+          ]}
+        />
       </CardContent>
     </Card>
   );

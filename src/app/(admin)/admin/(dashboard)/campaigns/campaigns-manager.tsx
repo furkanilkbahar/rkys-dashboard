@@ -7,6 +7,7 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
+import { DataTable, DataTableActions } from "@/components/admin/data-table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -51,6 +52,7 @@ function CampaignsCard({
   deleteCampaign: Actions["deleteCampaign"];
 }) {
   const t = useTranslations("admin.campaigns");
+  const tGrid = useTranslations("admin.table");
   const tErrors = useTranslations("admin.campaigns.errors");
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
@@ -91,20 +93,55 @@ function CampaignsCard({
         <CardTitle className="text-base">{t("title")}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
-        {campaigns.length === 0 && <p className="text-sm text-muted-foreground">{t("empty")}</p>}
-        {campaigns.map((c) => (
-          <div key={c.id} className="flex items-center justify-between gap-2 rounded-md border border-border p-2 text-sm">
-            <span>
-              {c.name} — {t(`ruleType.${c.ruleType}`)}
-            </span>
-            <div className="flex items-center gap-2">
-              <Switch checked={c.isActive} onCheckedChange={(checked) => handleToggle(c.id, checked)} />
-              <Button type="button" variant="ghost" size="sm" onClick={() => handleDelete(c.id)}>
-                {t("delete")}
-              </Button>
-            </div>
-          </div>
-        ))}
+        <DataTable
+          rows={campaigns}
+          rowKey={(campaign) => campaign.id}
+          empty={t("empty")}
+          searchable
+          initialSort={{ key: "name" }}
+          columns={[
+            {
+              key: "name",
+              header: t("name"),
+              primary: true,
+              value: (campaign) => campaign.name,
+              cell: (campaign) => campaign.name,
+            },
+            {
+              key: "ruleType",
+              header: t("ruleTypeLabel"),
+              value: (campaign) => t(`ruleType.${campaign.ruleType}`),
+              cell: (campaign) => (
+                <span className="text-[var(--surface-fg-muted)]">{t(`ruleType.${campaign.ruleType}`)}</span>
+              ),
+            },
+            {
+              key: "active",
+              header: tGrid("status"),
+              value: (campaign) => (campaign.isActive ? 1 : 0),
+              cell: (campaign) => (
+                <Switch
+                  checked={campaign.isActive}
+                  aria-label={campaign.name}
+                  onCheckedChange={(checked) => handleToggle(campaign.id, checked)}
+                />
+              ),
+            },
+            {
+              key: "actions",
+              header: tGrid("actions"),
+              actions: true,
+              align: "end",
+              cell: (campaign) => (
+                <DataTableActions>
+                  <Button type="button" variant="ghost" size="sm" onClick={() => handleDelete(campaign.id)}>
+                    {t("delete")}
+                  </Button>
+                </DataTableActions>
+              ),
+            },
+          ]}
+        />
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
           <div className="flex flex-wrap items-end gap-2">
@@ -233,6 +270,7 @@ function CouponsCard({
   deleteCoupon: Actions["deleteCoupon"];
 }) {
   const t = useTranslations("admin.campaigns.coupons");
+  const tGrid = useTranslations("admin.table");
   const tErrors = useTranslations("admin.campaigns.errors");
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
@@ -268,20 +306,67 @@ function CouponsCard({
         <CardTitle className="text-base">{t("title")}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
-        {coupons.length === 0 && <p className="text-sm text-muted-foreground">{t("empty")}</p>}
-        {coupons.map((c) => (
-          <div key={c.id} className="flex items-center justify-between gap-2 rounded-md border border-border p-2 text-sm">
-            <span>
-              {c.code} — {c.campaignName} — {c.usedCount}/{c.usageLimit ?? "∞"}
-            </span>
-            <div className="flex items-center gap-2">
-              <Switch checked={c.isActive} onCheckedChange={(checked) => handleToggle(c.id, checked)} />
-              <Button type="button" variant="ghost" size="sm" onClick={() => handleDelete(c.id)}>
-                {t("delete")}
-              </Button>
-            </div>
-          </div>
-        ))}
+        <DataTable
+          rows={coupons}
+          rowKey={(coupon) => coupon.id}
+          empty={t("empty")}
+          searchable
+          initialSort={{ key: "code" }}
+          columns={[
+            {
+              key: "code",
+              header: t("code"),
+              primary: true,
+              value: (coupon) => coupon.code,
+              cell: (coupon) => <span className="font-mono">{coupon.code}</span>,
+            },
+            {
+              key: "campaign",
+              header: t("campaign"),
+              value: (coupon) => coupon.campaignName,
+              cell: (coupon) => <span className="text-[var(--surface-fg-muted)]">{coupon.campaignName}</span>,
+            },
+            {
+              key: "usage",
+              header: t("usageLimit"),
+              align: "end",
+              // Kullanım ORANINA göre sıralanıyor: limitsiz kuponlar
+              // (usageLimit null) hiç dolmadığı için 0 kabul edilir, aksi
+              // halde sonsuz payda listeyi anlamsızca üste taşırdı.
+              value: (coupon) => (coupon.usageLimit ? coupon.usedCount / coupon.usageLimit : 0),
+              cell: (coupon) => (
+                <span className="tabular-nums">
+                  {coupon.usedCount}/{coupon.usageLimit ?? "∞"}
+                </span>
+              ),
+            },
+            {
+              key: "active",
+              header: tGrid("status"),
+              value: (coupon) => (coupon.isActive ? 1 : 0),
+              cell: (coupon) => (
+                <Switch
+                  checked={coupon.isActive}
+                  aria-label={coupon.code}
+                  onCheckedChange={(checked) => handleToggle(coupon.id, checked)}
+                />
+              ),
+            },
+            {
+              key: "actions",
+              header: tGrid("actions"),
+              actions: true,
+              align: "end",
+              cell: (coupon) => (
+                <DataTableActions>
+                  <Button type="button" variant="ghost" size="sm" onClick={() => handleDelete(coupon.id)}>
+                    {t("delete")}
+                  </Button>
+                </DataTableActions>
+              ),
+            },
+          ]}
+        />
 
         {campaigns.length === 0 ? (
           <p className="text-xs text-muted-foreground">{t("needCampaign")}</p>
