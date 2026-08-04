@@ -32,11 +32,16 @@ test("S14: Süper Admin — tenant askıya al → tenant yüzeyleri kilitlenir, 
 
   const adminLoginResponse = await page.goto(tenantUrl(baseURL!, "gamma", "/admin/login"));
   expect(adminLoginResponse?.ok()).toBe(true);
-  await expect(page.getByText("Tenant bulunamadı.")).toBeVisible();
+  // GÜNCELLENDİ 2026-08-04: beklenen metin "Tenant bulunamadı." idi ama
+  // sayfa "İşletme bulunamadı." yazıyor — i18n dizesi misafire dönük
+  // Türkçeye çevrilirken değişmiş, spec eskimişti (RULES #11: metin
+  // i18n'den gelir). Doğrulanan davranış aynı: bilinmeyen/askıya alınmış
+  // tenant için "bulunamadı" sayfası.
+  await expect(page.getByText("İşletme bulunamadı.")).toBeVisible();
 
   const guestMenuResponse = await page.goto(tenantUrl(baseURL!, "gamma", "/masa/t/demo-gamma-table-1"));
   expect(guestMenuResponse?.ok()).toBe(true);
-  await expect(page.getByText("Tenant bulunamadı.")).toBeVisible();
+  await expect(page.getByText("İşletme bulunamadı.")).toBeVisible();
 
   await page.goto(`${baseURL}/platform/tenants/${GAMMA_TENANT_ID}`);
   await page.getByRole("button", { name: "Tekrar aktifleştir" }).click();

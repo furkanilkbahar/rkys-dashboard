@@ -19,6 +19,10 @@ test("S20: kayıt — pazarlama sitesinden self-servis kayıt → kök domainde 
 
   try {
     await page.goto(`${baseURL}/kayit`);
+    // WebKit hidrasyon yarışı (PLAN.md Faz 21 takip maddesi 2): kayıt formu
+    // react-hook-form + server action; hidrasyon bitmeden yapılan tıklama
+    // sessizce yutuluyor ve sayfa /kayit'ta kalıyor.
+    await page.waitForLoadState("networkidle");
     await page.getByLabel("İşletme Adı").fill("E2E Test İşletmesi");
     await page.getByLabel("Alt Alan Adı").fill(slug);
     await page.getByLabel("E-posta").fill(email);
@@ -65,6 +69,10 @@ test("S20: aynı alt alan adıyla ikinci kayıt reddedilir", async ({ page, base
 
   try {
     await page.goto(`${baseURL}/kayit`);
+    // WebKit hidrasyon yarışı (PLAN.md Faz 21 takip maddesi 2): kayıt formu
+    // react-hook-form + server action; hidrasyon bitmeden yapılan tıklama
+    // sessizce yutuluyor, hata mesajı da hiç çıkmıyor.
+    await page.waitForLoadState("networkidle");
     await page.getByLabel("İşletme Adı").fill("Yeni Deneme");
     await page.getByLabel("Alt Alan Adı").fill(slug);
     await page.getByLabel("E-posta").fill(`owner-e2e-dup-${suffix}@test-throwaway.test`);

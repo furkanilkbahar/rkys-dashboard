@@ -15,7 +15,12 @@ test("bilinmeyen subdomain tenant-not-found sayfasına düşer", async ({ page, 
   const url = new URL(baseURL!);
   url.hostname = `ghost.${url.hostname}`;
   await page.goto(url.toString());
-  await expect(page.getByText("Tenant bulunamadı.")).toBeVisible();
+  // GÜNCELLENDİ 2026-08-04: beklenen metin "Tenant bulunamadı." idi ama
+  // sayfa "İşletme bulunamadı." yazıyor — i18n dizesi misafire dönük
+  // Türkçeye çevrilirken değişmiş, spec eskimişti (RULES #11: metin
+  // i18n'den gelir). Doğrulanan davranış aynı: bilinmeyen/askıya alınmış
+  // tenant için "bulunamadı" sayfası.
+  await expect(page.getByText("İşletme bulunamadı.")).toBeVisible();
 });
 
 test("/api/health 200 döner", async ({ request }) => {

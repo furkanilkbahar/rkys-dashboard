@@ -31,6 +31,11 @@ async function cleanupTenant(slug: string, email: string) {
 
 async function registerAndPay(page: import("@playwright/test").Page, baseURL: string, businessName: string, slug: string, email: string) {
   await page.goto(`${baseURL}/kayit`);
+  // WebKit hidrasyon yarışı (PLAN.md Faz 21 takip maddesi 2): kayıt formu
+  // react-hook-form + server action; hidrasyon bitmeden yapılan tıklama
+  // sessizce yutuluyor ve sayfa /kayit'ta kalıyor. Mekanizma Faz 21'de
+  // kanıtlanmıştı: 0 ms bekleyince 0 POST, 3000 ms bekleyince akış tamam.
+  await page.waitForLoadState("networkidle");
   await page.getByLabel("İşletme Adı").fill(businessName);
   await page.getByLabel("Alt Alan Adı").fill(slug);
   await page.getByLabel("E-posta").fill(email);
@@ -57,7 +62,12 @@ test("S52: auto-approve KAPALI — ödeme tek başına yetmez, platform admin on
     // tarafından tamamen kapalı (admin/login dahil).
     const blockedLoginResponse = await page.goto(tenantUrl(baseURL!, slug, "/admin/login"));
     expect(blockedLoginResponse?.ok()).toBe(true);
-    await expect(page.getByText("Tenant bulunamadı.")).toBeVisible();
+    // GÜNCELLENDİ 2026-08-04: beklenen metin "Tenant bulunamadı." idi ama
+    // sayfa "İşletme bulunamadı." yazıyor — i18n dizesi misafire dönük
+    // Türkçeye çevrilirken değişmiş, spec eskimişti (RULES #11: metin
+    // i18n'den gelir). Doğrulanan davranış aynı: bilinmeyen/askıya alınmış
+    // tenant için "bulunamadı" sayfası.
+    await expect(page.getByText("İşletme bulunamadı.")).toBeVisible();
 
     await loginAsPlatformAdmin(page, baseURL!);
     await page.goto(`${baseURL}/platform/pending-tenants`);
