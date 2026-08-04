@@ -970,7 +970,8 @@
         "forbidden": "Bu işlem için yetkiniz yok.",
         "not_enabled": "API erişimi modülü aktif değil.",
         "unknown": "Kaydedilemedi, tekrar deneyin."
-      }
+      },
+      "prefix": "Önek"
     },
     "webhooks": {
       "pageTitle": "Webhook'lar",
@@ -995,7 +996,8 @@
         "forbidden": "Bu işlem için yetkiniz yok.",
         "not_enabled": "API erişimi modülü aktif değil.",
         "unknown": "Kaydedilemedi, tekrar deneyin."
-      }
+      },
+      "secret": "Gizli Anahtar"
     },
     "marketplace": {
       "pageTitle": "Pazar Yeri",
@@ -1028,7 +1030,9 @@
         "not_enabled": "Muhasebe entegrasyonu modülü aktif değil.",
         "already_synced": "Bu sipariş zaten gönderildi.",
         "unknown": "Gönderilemedi, tekrar deneyin."
-      }
+      },
+      "amount": "Tutar",
+      "channel": "Kanal"
     },
     "reservations": {
       "pageTitle": "Rezervasyonlar",
@@ -1091,7 +1095,8 @@
         "forbidden": "Bu işlem için yetkiniz yok.",
         "not_enabled": "Kiosk modülü aktif değil.",
         "unknown": "Kaydedilemedi, tekrar deneyin."
-      }
+      },
+      "pairingCode": "Eşleştirme Kodu"
     },
     "scheduling": {
       "pageTitle": "Vardiya & Puantaj",

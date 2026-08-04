@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
+import { DataTable, DataTableActions } from "@/components/admin/data-table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { AccountingActionResult } from "@/lib/accounting/schemas";
@@ -23,6 +24,7 @@ export function AccountingManager({
   syncOrderToAccounting: (orderId: string) => Promise<AccountingActionResult>;
 }) {
   const t = useTranslations("admin.accounting");
+  const tGrid = useTranslations("admin.table");
   const router = useRouter();
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -47,19 +49,42 @@ export function AccountingManager({
           <CardTitle className="text-base">{t("syncableTitle")}</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-2">
-          {syncableOrders.length === 0 && <p className="text-sm text-muted-foreground">{t("syncableEmpty")}</p>}
-          {syncableOrders.map((order) => (
-            <div key={order.id} className="flex items-center justify-between gap-2 rounded-md border border-border p-2 text-sm">
-              <span>
-                <span className="font-medium">{formatPrice(order.subtotalMinor, currency)}</span>
-                {" · "}
-                <span className="text-xs text-muted-foreground">{order.channel}</span>
-              </span>
-              <Button type="button" size="sm" disabled={pendingId === order.id} onClick={() => handleSync(order.id)}>
-                {t("send")}
-              </Button>
-            </div>
-          ))}
+          <DataTable
+            rows={syncableOrders}
+            rowKey={(order) => order.id}
+            empty={t("syncableEmpty")}
+            initialSort={{ key: "amount", dir: "desc" }}
+            columns={[
+              {
+                key: "amount",
+                header: t("amount"),
+                primary: true,
+                value: (order) => order.subtotalMinor,
+                cell: (order) => (
+                  <span className="tabular-nums">{formatPrice(order.subtotalMinor, currency)}</span>
+                ),
+              },
+              {
+                key: "channel",
+                header: t("channel"),
+                value: (order) => order.channel,
+                cell: (order) => <span className="text-[var(--surface-fg-muted)]">{order.channel}</span>,
+              },
+              {
+                key: "actions",
+                header: tGrid("actions"),
+                actions: true,
+                align: "end",
+                cell: (order) => (
+                  <DataTableActions>
+                    <Button type="button" size="sm" disabled={pendingId === order.id} onClick={() => handleSync(order.id)}>
+                      {t("send")}
+                    </Button>
+                  </DataTableActions>
+                ),
+              },
+            ]}
+          />
           {error && <p className="text-xs text-destructive">{error}</p>}
         </CardContent>
       </Card>
@@ -68,12 +93,23 @@ export function AccountingManager({
           <CardTitle className="text-base">{t("logTitle")}</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-2">
-          {syncLog.length === 0 && <p className="text-sm text-muted-foreground">{t("logEmpty")}</p>}
-          {syncLog.map((entry) => (
-            <div key={entry.id} className="flex items-center justify-between text-xs text-muted-foreground">
-              <span>{entry.status === "success" ? t("statusSuccess", { ref: entry.externalRef ?? "" }) : t("statusFailed", { message: entry.errorMessage ?? "" })}</span>
-            </div>
-          ))}
+          <DataTable
+            rows={syncLog}
+            rowKey={(entry) => entry.id}
+            empty={t("logEmpty")}
+            columns={[
+              {
+                key: "status",
+                header: tGrid("status"),
+                primary: true,
+                value: (entry) => entry.status,
+                cell: (entry) =>
+                  entry.status === "success"
+                    ? t("statusSuccess", { ref: entry.externalRef ?? "" })
+                    : t("statusFailed", { message: entry.errorMessage ?? "" }),
+              },
+            ]}
+          />
         </CardContent>
       </Card>
     </div>

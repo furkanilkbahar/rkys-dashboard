@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
+import { DataTable, DataTableActions } from "@/components/admin/data-table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -25,6 +26,7 @@ export function ApiKeysManager({
   revokeKey: (keyId: string) => Promise<RevokeApiKeyResult>;
 }) {
   const t = useTranslations("admin.apiKeys");
+  const tGrid = useTranslations("admin.table");
   const tErrors = useTranslations("admin.apiKeys.errors");
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
@@ -66,22 +68,55 @@ export function ApiKeysManager({
           <CardTitle className="text-base">{t("title")}</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
-          {keys.length === 0 && <p className="text-sm text-muted-foreground">{t("empty")}</p>}
-          {keys.map((key) => (
-            <div key={key.id} className="flex items-center justify-between gap-2 rounded-md border border-border p-2 text-sm">
-              <div className="flex flex-col">
-                <span className="font-medium">{key.name}</span>
-                <span className="text-xs text-muted-foreground">
-                  •••• {key.keyPrefix} — {key.isActive ? t("active") : t("revoked")}
-                </span>
-              </div>
-              {key.isActive && (
-                <Button type="button" size="sm" variant="destructive" onClick={() => handleRevoke(key.id)}>
-                  {t("revoke")}
-                </Button>
-              )}
-            </div>
-          ))}
+          <DataTable
+            rows={keys}
+            rowKey={(key) => key.id}
+            empty={t("empty")}
+            initialSort={{ key: "name" }}
+            columns={[
+              {
+                key: "name",
+                header: t("name"),
+                primary: true,
+                value: (key) => key.name,
+                cell: (key) => key.name,
+              },
+              {
+                key: "prefix",
+                header: t("prefix"),
+                value: (key) => key.keyPrefix,
+                // `<code>` DEĞİL: bu sayfada yeni oluşturulan ham anahtar
+                // tek `<code>` öğesi ve api-keys/marketplace spec'leri onu
+                // `page.locator("code")` ile okuyor. Önek hücresini de
+                // `<code>` yapmak o locator'ı iki öğeye düşürüyordu.
+                cell: (key) => (
+                  <span className="font-mono text-[11.5px] text-[var(--surface-fg-muted)]">•••• {key.keyPrefix}</span>
+                ),
+              },
+              {
+                key: "status",
+                header: tGrid("status"),
+                value: (key) => (key.isActive ? 1 : 0),
+                cell: (key) => (
+                  <span className="text-[var(--surface-fg-muted)]">{key.isActive ? t("active") : t("revoked")}</span>
+                ),
+              },
+              {
+                key: "actions",
+                header: tGrid("actions"),
+                actions: true,
+                align: "end",
+                cell: (key) =>
+                  key.isActive ? (
+                    <DataTableActions>
+                      <Button type="button" size="sm" variant="destructive" onClick={() => handleRevoke(key.id)}>
+                        {t("revoke")}
+                      </Button>
+                    </DataTableActions>
+                  ) : null,
+              },
+            ]}
+          />
 
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-wrap items-end gap-2 border-t border-border pt-3">
             <div className="flex flex-col gap-1">

@@ -7,6 +7,7 @@ import { useState, useSyncExternalStore } from "react";
 import { useForm } from "react-hook-form";
 
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
+import { DataTable } from "@/components/admin/data-table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -25,6 +26,7 @@ export function KioskManager({
   toggleKioskDevice: (deviceId: string, isActive: boolean) => Promise<KioskActionResult>;
 }) {
   const t = useTranslations("admin.kiosk");
+  const tGrid = useTranslations("admin.table");
   const tErrors = useTranslations("admin.kiosk.errors");
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
@@ -66,25 +68,53 @@ export function KioskManager({
           <CardTitle className="text-base">{t("title")}</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
-          {devices.length === 0 && <p className="text-sm text-muted-foreground">{t("empty")}</p>}
-          {devices.map((device) => (
-            <div key={device.id} className="flex items-center justify-between gap-2 rounded-md border border-border p-2 text-sm">
-              <div className="flex flex-col">
-                <span className="font-medium">{device.deviceName}</span>
-                {/* Kısmi bir path yerine tam URL: personel bunu manuel domain
-                    tahmin etmeden doğrudan tablete kopyalayabilsin (tables/
-                    qr-reveal-card.tsx ile aynı fikir; origin SSR güvenliği
-                    için mount sonrası dolduruluyor). */}
-                {origin && (
-                  <span className="text-xs break-all text-muted-foreground">
-                    {t("pairingUrlHint", { url: `${origin}/kiosk/${device.pairingCode}/baslat` })}
+          <DataTable
+            rows={devices}
+            rowKey={(device) => device.id}
+            empty={t("empty")}
+            initialSort={{ key: "name" }}
+            columns={[
+              {
+                key: "name",
+                header: t("deviceName"),
+                primary: true,
+                value: (device) => device.deviceName,
+                cell: (device) => device.deviceName,
+              },
+              {
+                key: "pairing",
+                header: t("pairingCode"),
+                value: (device) => device.pairingCode,
+                cell: (device) => (
+                  <span className="flex flex-col gap-0.5">
+                    <code className="text-[11.5px] text-[var(--surface-fg-muted)]">{device.pairingCode}</code>
+                    {/* Kısmi bir path yerine tam URL: personel bunu manuel domain
+                        tahmin etmeden doğrudan tablete kopyalayabilsin (tables/
+                        qr-reveal-card.tsx ile aynı fikir; origin SSR güvenliği
+                        için mount sonrası dolduruluyor). */}
+                    {origin && (
+                      <span className="text-[11px] break-all text-[var(--surface-fg-faint)]">
+                        {t("pairingUrlHint", { url: `${origin}/kiosk/${device.pairingCode}/baslat` })}
+                      </span>
+                    )}
                   </span>
-                )}
-                <code className="text-xs text-muted-foreground">{device.pairingCode}</code>
-              </div>
-              <Switch checked={device.isActive} onCheckedChange={(checked) => handleToggle(device.id, checked)} />
-            </div>
-          ))}
+                ),
+              },
+              {
+                key: "active",
+                header: tGrid("status"),
+                align: "end",
+                value: (device) => (device.isActive ? 1 : 0),
+                cell: (device) => (
+                  <Switch
+                    checked={device.isActive}
+                    aria-label={device.deviceName}
+                    onCheckedChange={(checked) => handleToggle(device.id, checked)}
+                  />
+                ),
+              },
+            ]}
+          />
 
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-wrap items-end gap-2 border-t border-border pt-3">
             <div className="flex flex-col gap-1">

@@ -8,6 +8,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
+import { DataTable } from "@/components/admin/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,6 +25,7 @@ export function SupportTicketsManager({
   createTicket: (input: unknown) => Promise<CreateTicketResult>;
 }) {
   const t = useTranslations("admin.support");
+  const tGrid = useTranslations("admin.table");
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const {
@@ -64,19 +66,39 @@ export function SupportTicketsManager({
         {error && <p className="text-xs text-destructive">{error}</p>}
       </form>
 
-      <div className="flex flex-col gap-2">
-        {tickets.length === 0 && <p className="text-sm text-muted-foreground">{t("empty")}</p>}
-        {tickets.map((ticket) => (
-          <Link
-            key={ticket.id}
-            href={`/admin/support/${ticket.id}`}
-            className="flex items-center justify-between rounded-md border border-border p-3 text-sm hover:bg-accent/50"
-          >
-            <span>{ticket.subject}</span>
-            <Badge variant={ticket.status === "resolved" ? "secondary" : "outline"}>{t(`status.${ticket.status}`)}</Badge>
-          </Link>
-        ))}
-      </div>
+      <DataTable
+        rows={tickets}
+        rowKey={(ticket) => ticket.id}
+        empty={t("empty")}
+        searchable
+        columns={[
+          {
+            key: "subject",
+            header: t("subject"),
+            primary: true,
+            value: (ticket) => ticket.subject,
+            // Satırın TAMAMI değil konu bağlantı: `<tr>` içine `<a>` sarmak
+            // geçerli HTML değil, hücre içine sarmak ise satırın geri kalanını
+            // tıklanamaz bırakırdı. Konu zaten satırın kimliği.
+            cell: (ticket) => (
+              <Link href={`/admin/support/${ticket.id}`} className="hover:underline">
+                {ticket.subject}
+              </Link>
+            ),
+          },
+          {
+            key: "status",
+            header: tGrid("status"),
+            align: "end",
+            value: (ticket) => ticket.status,
+            cell: (ticket) => (
+              <Badge variant={ticket.status === "resolved" ? "secondary" : "outline"}>
+                {t(`status.${ticket.status}`)}
+              </Badge>
+            ),
+          },
+        ]}
+      />
     </div>
   );
 }

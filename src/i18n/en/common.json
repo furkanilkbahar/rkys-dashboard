@@ -970,7 +970,8 @@
         "forbidden": "You don't have permission for this action.",
         "not_enabled": "The API access module is not active.",
         "unknown": "Could not save, please try again."
-      }
+      },
+      "prefix": "Prefix"
     },
     "webhooks": {
       "pageTitle": "Webhooks",
@@ -995,7 +996,8 @@
         "forbidden": "You don't have permission for this action.",
         "not_enabled": "The API access module is not active.",
         "unknown": "Could not save, please try again."
-      }
+      },
+      "secret": "Secret"
     },
     "marketplace": {
       "pageTitle": "Marketplace",
@@ -1028,7 +1030,9 @@
         "not_enabled": "The accounting integration module is not active.",
         "already_synced": "This order was already sent.",
         "unknown": "Could not send, please try again."
-      }
+      },
+      "amount": "Amount",
+      "channel": "Channel"
     },
     "reservations": {
       "pageTitle": "Reservations",
@@ -1091,7 +1095,8 @@
         "forbidden": "You don't have permission for this action.",
         "not_enabled": "The kiosk module is not active.",
         "unknown": "Could not save, please try again."
-      }
+      },
+      "pairingCode": "Pairing code"
     },
     "scheduling": {
       "pageTitle": "Scheduling & Timeclock",

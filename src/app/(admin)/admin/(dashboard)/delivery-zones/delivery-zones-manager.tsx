@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
+import { DataTable } from "@/components/admin/data-table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -60,23 +61,49 @@ export function DeliveryZonesManager({
           <CardTitle className="text-base">{t("title")}</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
-          {zones.length === 0 && <p className="text-sm text-muted-foreground">{t("empty")}</p>}
-          {zones.map((zone) => (
-            <div key={zone.id} className="flex items-center justify-between gap-2 rounded-md border border-border p-2 text-sm">
-              <div className="flex items-center gap-2">
-                <span className="font-medium">{zone.name}</span>
-                <span className="text-xs text-muted-foreground">
-                  {t("feeLabel")}: {formatPrice(zone.feeMinor, currency)} · {t("minBasketLabel")}: {formatPrice(zone.minBasketMinor, currency)}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Label htmlFor={`zone-active-${zone.id}`} className="text-xs text-muted-foreground">
-                  {t("active")}
-                </Label>
-                <Switch id={`zone-active-${zone.id}`} checked={zone.isActive} onCheckedChange={(checked) => handleToggle(zone.id, checked)} />
-              </div>
-            </div>
-          ))}
+          <DataTable
+            rows={zones}
+            rowKey={(zone) => zone.id}
+            empty={t("empty")}
+            initialSort={{ key: "name" }}
+            columns={[
+              {
+                key: "name",
+                header: t("name"),
+                primary: true,
+                value: (zone) => zone.name,
+                cell: (zone) => zone.name,
+              },
+              {
+                key: "fee",
+                header: t("feeLabel"),
+                align: "end",
+                value: (zone) => zone.feeMinor,
+                cell: (zone) => <span className="tabular-nums">{formatPrice(zone.feeMinor, currency)}</span>,
+              },
+              {
+                key: "minBasket",
+                header: t("minBasketLabel"),
+                align: "end",
+                value: (zone) => zone.minBasketMinor,
+                cell: (zone) => <span className="tabular-nums">{formatPrice(zone.minBasketMinor, currency)}</span>,
+              },
+              {
+                key: "active",
+                header: t("active"),
+                align: "end",
+                value: (zone) => (zone.isActive ? 1 : 0),
+                cell: (zone) => (
+                  <Switch
+                    id={`zone-active-${zone.id}`}
+                    aria-label={zone.name}
+                    checked={zone.isActive}
+                    onCheckedChange={(checked) => handleToggle(zone.id, checked)}
+                  />
+                ),
+              },
+            ]}
+          />
 
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-wrap items-end gap-2 border-t border-border pt-3">
             <div className="flex flex-col gap-1">

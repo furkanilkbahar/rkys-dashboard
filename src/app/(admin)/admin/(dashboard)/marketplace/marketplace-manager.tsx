@@ -7,6 +7,7 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
+import { DataTable, DataTableActions } from "@/components/admin/data-table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -27,6 +28,7 @@ export function MarketplaceManager({
   deleteMapping: (mappingId: string) => Promise<MarketplaceActionResult>;
 }) {
   const t = useTranslations("admin.marketplace");
+  const tGrid = useTranslations("admin.table");
   const tErrors = useTranslations("admin.marketplace.errors");
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
@@ -59,21 +61,47 @@ export function MarketplaceManager({
           <CardTitle className="text-base">{t("title")}</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
-          {mappings.length === 0 && <p className="text-sm text-muted-foreground">{t("empty")}</p>}
-          {mappings.map((mapping) => (
-            <div key={mapping.id} className="flex items-center justify-between gap-2 rounded-md border border-border p-2 text-sm">
-              <span>
-                <span className="font-medium">{mapping.provider}</span>
-                {" · "}
-                <code className="text-xs">{mapping.externalSku}</code>
-                {" → "}
-                <span>{mapping.productName}</span>
-              </span>
-              <Button type="button" variant="ghost" size="sm" onClick={() => handleDelete(mapping.id)}>
-                {t("remove")}
-              </Button>
-            </div>
-          ))}
+          <DataTable
+            rows={mappings}
+            rowKey={(mapping) => mapping.id}
+            empty={t("empty")}
+            searchable
+            initialSort={{ key: "provider" }}
+            columns={[
+              {
+                key: "provider",
+                header: t("provider"),
+                primary: true,
+                value: (mapping) => mapping.provider,
+                cell: (mapping) => mapping.provider,
+              },
+              {
+                key: "sku",
+                header: t("externalSku"),
+                value: (mapping) => mapping.externalSku,
+                cell: (mapping) => <code className="text-[11.5px]">{mapping.externalSku}</code>,
+              },
+              {
+                key: "product",
+                header: t("product"),
+                value: (mapping) => mapping.productName,
+                cell: (mapping) => mapping.productName,
+              },
+              {
+                key: "actions",
+                header: tGrid("actions"),
+                actions: true,
+                align: "end",
+                cell: (mapping) => (
+                  <DataTableActions>
+                    <Button type="button" variant="ghost" size="sm" onClick={() => handleDelete(mapping.id)}>
+                      {t("remove")}
+                    </Button>
+                  </DataTableActions>
+                ),
+              },
+            ]}
+          />
 
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-wrap items-end gap-2 border-t border-border pt-3">
             <div className="flex flex-col gap-1">
