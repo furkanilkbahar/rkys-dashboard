@@ -1,12 +1,12 @@
 ---
 tags: [index]
 ozet: "Proje beyni giris noktasi — Bilgi Erisim Protokolu geregi once burasi okunur."
-guncelleme: 2026-08-01
+guncelleme: 2026-08-04
 ---
 
 # Index
 
-> Kok dizindeki yasayan/tek-dogru-kaynak dosyalar (degismedi, buradan linklenir): [[PLAN]] (faz/adim takibi), [[RULES]] (46 kesin kural), [[DECISIONS]] (D1-D87 karar gunlugu). Asagidaki vault notlari bunlarin senteziyoruz + PRD/ARCHITECTURE/OPERATIONS/TESTING'in tasindigi yerdir.
+> Kok dizindeki yasayan/tek-dogru-kaynak dosyalar (degismedi, buradan linklenir): [[PLAN]] (faz/adim takibi), [[RULES]] (46 kesin kural), [[DECISIONS]] (D1-D93 karar gunlugu). Asagidaki vault notlari bunlarin senteziyoruz + PRD/ARCHITECTURE/OPERATIONS/TESTING'in tasindigi yerdir.
 
 ## Mimari (vault/20-mimari)
 - [[qr-menu-siparis]] — cekirdek QR menu + siparis durum makinesi
@@ -18,6 +18,7 @@ guncelleme: 2026-08-01
 - [[stok-recete-maliyet]] — hibrit stok, recete dusumu, karlilik
 - [[crm-sadakat-kampanya]] — musteri kimligi, sadakat, kampanya, hediye karti
 - [[analitik-merkezi]] — widget dashboard, hedef/anomali, zamanlanmis rapor
+- [[admin-tablolari-ve-pano]] — DataTable primitifi, duyarlilik modeli, Pano veri kurallari (D91/D92)
 - [[siparis-kanallari]] — gel-al/paket/kurye/pazar yeri
 - [[saas-platform-katmani]] — Super Admin, plan/abonelik, lisans, destek
 - [[ek-moduller]] — rezervasyon, kiosk, vardiya planlama

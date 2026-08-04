@@ -211,10 +211,34 @@ Kullanıcı talebi (2026-08-04): işletme admin hesabında taşma/sığmama var;
 
 **Kabul kriterleri:** ölçüm aracı 22 sayfada temiz · kırpılan içerik sıfır · dokunma hedefi kaba işaretçide ≥40px · panodaki her sayı gerçek sorgudan (uydurma yok, veri yoksa açık boş durum) · kapalı modülün istatistiği çizilmez, izin yoksa gösterilmez · E2E locator sözleşmeleri korunur, test silinmez/skip'lenmez (RULES #44).
 
-- [ ] **Adım 1 — `DataTable` primitifi.** Gerçek `<table>` + sıralama + filtre + yapışkan başlık; `sm` altında **aynı DOM** CSS ile etiketli karta dönüşür (`td::before { content: attr(data-label) }`). Yeni bağımlılık yok. Yanına kaba işaretçide (`pointer: coarse`) dokunma hedefini ≥40px'e sabitleyen kural — masaüstü yoğunluğu DESIGN.md'deki gibi kalır.
-- [ ] **Adım 2 — Pano.** ① bugünün KPI şeridi (her kart ilgili rapora tarih parametresiyle gider) ② "şu an" paneli (dolu masa/toplam, bekleyen çağrı, mutfaktaki sipariş) ③ dikkat gerektirenler listesi ④ günün çok satanları ⑤ hızlı işlemler.
-- [ ] **Adım 3 — Tablo dönüşümü.** tables, ingredients, suppliers, staff, reservations, scheduling, gift-cards, campaigns, loyalty, delivery-zones, api-keys, webhooks, accounting, support + reports'un 6 sözde-satır bloğu. **Tabloya alınmaz:** settings (form), menu (sürükle-bırak sıralı liste — tablo dnd ile kavga eder), onboarding/billing.
-- [ ] **Adım 4 — E2E kirliliğini kaynağında temizle + tam paket.** Faz 21 takip maddesi 5'in kalanı: `session-panel`/`pos-order` gibi spec'ler acme'de açık sipariş, `table-qr-flow`/`ratings` gibi spec'ler masa/bölge bırakıyor.
+- [x] **Adım 1 — `DataTable` primitifi.** Gerçek `<table>` + sıralama + filtre + yapışkan başlık; `sm` altında **aynı DOM** CSS ile etiketli karta dönüşür (`td::before { content: attr(data-label) }`). Yeni bağımlılık yok. Yanına kaba işaretçide (`pointer: coarse`) dokunma hedefini ≥40px'e sabitleyen kural — masaüstü yoğunluğu DESIGN.md'deki gibi kalır. **Sonradan eklendi:** `expandedRow` (satır altı açılan panel) — malzeme alım/fire/sayım formları ve webhook teslimatları bunu kullanıyor.
+- [x] **Adım 2 — Pano.** ① bugünün KPI şeridi (her kart ilgili rapora tarih parametresiyle gider) ② "şu an" paneli (dolu masa/toplam, bekleyen çağrı, mutfaktaki sipariş) ③ dikkat gerektirenler listesi ④ günün çok satanları ⑤ hızlı işlemler. Ayrıntı ve iki ölçüm tuzağı: D92.
+- [x] **Adım 3 — Tablo dönüşümü.** tables (3 liste), ingredients, suppliers, staff cihazları, scheduling (2), reservations (2), campaigns (2), loyalty, gift-cards, delivery-zones, kiosk, marketplace, api-keys, webhooks, accounting (2), support + reports'un 6 sözde-satır bloğu — toplam **26 liste**. **Tabloya alınmadı (bilinçli):** settings (form), menu (sürükle-bırak sıralı liste), onboarding/billing, **personel üye listesi** (aşağıdaki açık maddeye bakın).
+- [x] **Adım 4 — E2E kirliliğini kaynağında temizle + tam paket.** Tek bir global teardown (D93); Faz 21 takip maddesi 5 kapandı.
+
+      **Kapanış notu (2026-08-04).** Üç istek gibi görünen talep tek kök nedene indi: admin listeleri `flex justify-between` ile masaüstü için yazılmıştı. `DataTable` üçünü birden çözdü — kırpılma bitti, tablolar geldi, işlevsellik (sıralama/filtre/sayaç) tabloyla birlikte geldi.
+
+      **Ölçüm, önce ve sonra** (`scripts/responsive-audit.mjs`, 22 sayfa × 390/768px):
+
+      | | Önce | Sonra |
+      |---|---|---|
+      | Kırpılan/erişilemeyen içerik | `/admin/ingredients` 308→508px, `/admin/tables` 324→455px | **0** |
+      | Belge düzeyi yatay taşma | 0 (zaten yoktu) | 0 |
+      | Bindirme | 0 | 0 |
+
+      En somut kullanıcı etkisi: telefonda bir masanın QR'ını yenilemek **imkânsızdı** — buton hiç çizilmiyordu ve ata `overflow-hidden` olduğu için kaydırılamıyordu da.
+
+      **Bu Adım'larda bulunan ve düzeltilen beş bayat/eksik nokta:**
+      1. `table-qr-flow:5` — Faz 22'de ürün açıklamaları eklenince `getByText("Filtre Kahve")` iki öğeye düştü (ad + "…günlük demlenen filtre kahve." açıklaması). Açıklamanın ürün adını tekrar etmesi doğal içerik; düzeltilen locator'dı.
+      2. `table-qr-flow:56` — Faz 19'dan beri kırıktı: `QR_TOKEN_ENCRYPTION_KEY` ayarlı **değilken** çıkan hata metnini bekliyordu, anahtar D86 ile eklendi.
+      3. `admin-nav` ×3 — `getByRole` erişilebilir adı **alt dize** eşler; panonun hızlı işlem bağlantıları sidebar nav'ıyla çakıştı (`exact: true`). Ayrıca üst bardaki hesap düğmesi Faz 21'de rol yerine işletme adını yazar olmuştu, test 45 sn boyunca var olmayan bir düğmeyi bekliyordu.
+      4. `stock-purchase-waste-count` — satırı `getByText("Un").locator("../../..")` ile DOM tırmanarak buluyordu.
+      5. `menu-reorder.integration` deseninin devamı: `table-zones.rls.test.ts` acme'ye eklediği "Salon"u hiç toplamıyordu.
+
+      **Faz 23 açık maddeleri (kapsam dışı, karar kullanıcının):**
+      1. **Personel üye listesi tabloya alınamadı** — `profiles` tablosunda ad/e-posta kolonu yok (yalnızca rol, rozet no, PIN, durum) ve e-posta `auth.users`'ta, RLS altında okunamıyor. Bugün 8 personel yalnızca **rozet numarasıyla** ayırt ediliyor; rozetsiz bir personel hiç ayırt edilemiyor. Düzeltmek `profiles`'a `full_name` kolonu (migration) + personel ekleme akışında yeni alan gerektiriyor — ürün davranışını değiştirdiği için sorulmadan yapılmadı.
+      2. `webhooks.integration.test.ts` hâlâ `httpbin.org`'a gerçek POST atıyor (Faz 21 takip maddesi 3). Bu koşumda servis erişilemezdi (ölçüldü: 15 sn'de HTTP 000) ve tek integration kırığı buydu. Yerel bir uca taşınması `pg_net`'in Postgres **container'ı** içinden çağrı yaptığı gerçeğini çözmeyi gerektiriyor (`host.docker.internal` taşınabilir değil).
+      3. E2E paketi hâlâ `pnpm dev`'e karşı koşuyor (Faz 21 takip maddesi 1) — ölçümler ve öneri orada duruyor, karar kullanıcının.
 
 ---
 

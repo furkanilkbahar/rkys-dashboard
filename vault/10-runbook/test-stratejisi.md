@@ -1,7 +1,7 @@
 ---
 tags: [runbook, test, e2e, rls, ci]
 ozet: "Katmanlar (Vitest/Playwright), faz kapanis kriteri, RLS test sablonu, bilinen test aciklari."
-guncelleme: 2026-08-01
+guncelleme: 2026-08-04
 ---
 
 # Test Stratejisi
@@ -30,9 +30,39 @@ Her yeni tablo icin: (1) A tenant'i B'nin satirini SELECT/UPDATE/DELETE edemez, 
 ## Kapsam Disi (bilincli)
 %100 kapsama hedefi yok; hedef kritik akislarin korunmasi. Gorsel piksel-regresyon + yuk testi -> Faz 12 havuzu.
 
-## Bilinen Test Aciklari (2026-08-01 itibariyle)
+## Test Verisi Hijyeni (D93, 2026-08-04)
+E2E paketi acme'nin **gercek demo verisine** yaziyor. Artiklarin somut zarari
+olculdu: `menu-reorder` ve `session-panel` birikme yuzunden kiriliyordu,
+`schema-and-seed` integration testinin dort beklentisi birden dusuyordu, pano
+"60 aktif masa" gibi anlamsiz sayilar gosteriyordu.
+
+Temizlik **tek noktada**: `tests/e2e/global-teardown.ts` (playwright.config
+`globalTeardown`). Spec basina `afterAll` dagitmak yeni spec eklenince
+unutulur; kendi verisini yaratan spec'ler (`menu-crud`) kendi temizligini
+korur.
+
+Kurallar:
+- **Silme olcutu dar tutulur:** masa etiketinde 13 haneli `Date.now()`, tenant
+  slug'inda `test-` oneki. Seed etiketleri ve seed tenant'lari (acme/beta/
+  gamma) bu desenlerle asla eslesmez.
+- **Yerel olmayan Supabase'e karsi teardown hic calismaz.**
+- **Silinemeyen kayit arsivlenir:** `table_sessions.table_id` FK'si
+  `ON DELETE RESTRICT` (siparis gecmisi degismez, RULES #36) — bir kez oturum
+  acilmis masa silinemez, `is_active=false` yapilir.
+- **Her cagrinin hatasi okunur.** Ilk surum bunu yapmadigi icin "47 masa
+  silindi" diye rapor ederken hicbirini silememisti.
+- Arsiv birikmesi kalici oldugu icin sayim tabanli assertion'lar **aktif**
+  satirlara bakar (`tables.rls.test.ts`); sizinti ucunu `every(...)` korur
+  (D90'daki ayrim).
+
+## Bilinen Test Aciklari (2026-08-04 itibariyle)
 - `admin/ingredients-recipe.spec.ts` (S34, yalniz mobile-safari): ara sira gecikme, kok neden netlesmedi.
-- Webhook entegrasyon testleri gercek `httpbin.org`'a bagimli, dis servis kirilganligi (uygulama kodu degil).
+- Webhook entegrasyon testleri gercek `httpbin.org`'a bagimli. 2026-08-04'te
+  servis erisilemezdi (olculdu: 15 sn'de HTTP 000) ve tek integration kirigi
+  buydu. Yerel uca tasimak `pg_net`'in Postgres **container'i** icinden cagri
+  yaptigini cozmeyi gerektiriyor (`host.docker.internal` tasinabilir degil).
+- E2E paketi hala `pnpm dev`'e karsi kosuyor; prod build olcumu ve oneri
+  [[PLAN]] Faz 21 takip maddesi 1'de, karar kullanicinin.
 
 ## Baglantili notlar
-[[faz-kapanis-ve-onay-akisi]] · [[kesin-kurallar-indeksi]]
+[[faz-kapanis-ve-onay-akisi]] · [[kesin-kurallar-indeksi]] · [[admin-tablolari-ve-pano]]
