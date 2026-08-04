@@ -2,12 +2,20 @@ import { afterAll, describe, expect, it } from "vitest";
 
 import { createThrowawayTenant, serviceRoleClient, signInAsSeededOwner } from "../../helpers/testClients";
 
-// "Webhook teslimatı" describe'undaki iki test gerçek httpbin.org'a POST
-// atar (pg_net asenkron olduğu için gerçek bir HTTP cevabı olmadan retry
-// mantığını doğrulamak mümkün değil, bkz. 0065 migration yorumu) — bu
-// yüzden dış ağ bağlantısına bağımlıdır. Ağ yoksa/httpbin erişilemezse bu
-// iki test kırılgan olabilir; enqueue/filtreleme testleri (üstteki describe)
-// tamamen lokaldir ve bu bağımlılığı taşımaz.
+// "Webhook teslimatı" describe'undaki iki test GERÇEK bir HTTP POST'a ihtiyaç
+// duyar: pg_net asenkron olduğu için gerçek bir cevap olmadan retry mantığı
+// doğrulanamaz (bkz. 0065 migration yorumu).
+//
+// Hedef 2026-08-04'e kadar dış bir servisti (httpbin.org) ve o servis
+// düştüğünde test ürün hatası yokken kırılıyordu (ölçüldü: 15 sn'de HTTP
+// 000). Artık hedef, aynı Docker ağındaki bir edge function:
+// supabase/functions/webhook-test-sink.
+//
+// NEDEN host.docker.internal DEĞİL: isteği pg_net atıyor, yani POSTGRES
+// CONTAINER'ının içinden çıkıyor. `host.docker.internal` yalnızca Docker
+// Desktop'ta çözülür; CI ubuntu-latest üzerinde koşuyor (.github/workflows/
+// ci.yml) ve orada çözülmez. Kong servis adı iki ortamda da çalışır.
+const WEBHOOK_SINK = "http://kong:8000/functions/v1/webhook-test-sink";
 
 const cleanupTenantIds = new Set<string>();
 
@@ -137,7 +145,7 @@ describe("Webhook kaydı: olay yakalama (Faz 10 Adım 1, S42)", () => {
 // pg_net gerçek bir dış HTTP isteği attığı için yanıt süresi ağ koşullarına
 // göre değişir — sabit bir bekleme yerine, yanıt gelene kadar (veya deneme
 // hakkı bitene kadar) reconcile_webhook_deliveries'i tekrar tekrar çağırıp
-// polling yaparız (bkz. TESTING.md §7 — sabit 2sn bekleme geçmişte httpbin
+// polling yaparız (bkz. TESTING.md §7 — sabit 2sn bekleme geçmişte uzak uç
 // gecikme varyansına karşı kırılgan çıktı).
 async function pollUntilSettled(
   service: ReturnType<typeof serviceRoleClient>,
@@ -161,7 +169,7 @@ describe("Webhook teslimatı: imzalama + retry (Faz 10 Adım 1, S42)", () => {
   it("dispatch_webhook_deliveries HMAC imzalı gerçek bir HTTP POST atar, 2xx cevap 'delivered' olur", async () => {
     const { tenantId } = await setupTenant("webhook-dispatch-success");
     const service = serviceRoleClient();
-    await registerWebhook(tenantId, "https://httpbin.org/post", ["order.created"]);
+    await registerWebhook(tenantId, WEBHOOK_SINK, ["order.created"]);
     await service.rpc("enqueue_webhook_event", { p_tenant_id: tenantId, p_event_type: "order.created", p_payload: { order_id: "x" } });
 
     await service.rpc("dispatch_webhook_deliveries");
@@ -177,7 +185,7 @@ describe("Webhook teslimatı: imzalama + retry (Faz 10 Adım 1, S42)", () => {
   it("başarısız (5xx) teslimat üstel geri çekilmeyle 'pending'e döner, denemeleri artırır", async () => {
     const { tenantId } = await setupTenant("webhook-dispatch-retry");
     const service = serviceRoleClient();
-    await registerWebhook(tenantId, "https://httpbin.org/status/500", ["order.created"]);
+    await registerWebhook(tenantId, `${WEBHOOK_SINK}?status=500`, ["order.created"]);
     await service.rpc("enqueue_webhook_event", { p_tenant_id: tenantId, p_event_type: "order.created", p_payload: { order_id: "x" } });
 
     await service.rpc("dispatch_webhook_deliveries");

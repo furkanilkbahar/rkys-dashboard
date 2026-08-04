@@ -57,10 +57,15 @@ Kurallar:
 
 ## Bilinen Test Aciklari (2026-08-04 itibariyle)
 - `admin/ingredients-recipe.spec.ts` (S34, yalniz mobile-safari): ara sira gecikme, kok neden netlesmedi.
-- Webhook entegrasyon testleri gercek `httpbin.org`'a bagimli. 2026-08-04'te
-  servis erisilemezdi (olculdu: 15 sn'de HTTP 000) ve tek integration kirigi
-  buydu. Yerel uca tasimak `pg_net`'in Postgres **container'i** icinden cagri
-  yaptigini cozmeyi gerektiriyor (`host.docker.internal` tasinabilir degil).
+- ~~Webhook entegrasyon testleri `httpbin.org`'a bagimli~~ — **cozuldu**
+  (2026-08-04): hedef, ayni Docker aginda calisan bir edge function oldu
+  (`supabase/functions/webhook-test-sink`, Kong uzerinden
+  `http://kong:8000/functions/v1/webhook-test-sink`, `?status=` ile HTTP kodu
+  secilir). `host.docker.internal` KULLANILAMAZ: istegi pg_net Postgres
+  container'indan atiyor ve o ad yalnizca Docker Desktop'ta cozulur, CI ise
+  ubuntu-latest. **Not:** edge function'lari `supabase start` mount ediyor —
+  yeni bir function eklendikten sonra yereldeki yigin bir kez yeniden
+  baslatilmali (`supabase stop && supabase start`; veri korunur).
 - **`networkidle` realtime abonelikli sayfalarda kullanilamaz** (olculdu
   2026-08-04): `/cashier/order` Supabase realtime actigi icin ag hic bosa
   dusmuyor, `waitForLoadState("networkidle")` test timeout'una kadar asili

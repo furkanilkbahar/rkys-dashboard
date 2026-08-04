@@ -414,3 +414,10 @@ enabled = true
 # declarative_schema_path = "./database"
 # JSON string passed through to pg-delta SQL formatting.
 # format_options = "{\"keywordCase\":\"upper\",\"indent\":2,\"maxWidth\":80,\"commaStyle\":\"trailing\"}"
+
+# TEST ALTYAPISI (Faz 23): webhook teslimat testinin hedef ucu. JWT
+# doğrulaması kapalı, çünkü isteği `pg_net` Postgres container'ından atıyor ve
+# imza başlığı dışında bir kimlik taşımıyor. Ürün yüzeyi değildir; bkz.
+# supabase/functions/webhook-test-sink/index.ts
+[functions.webhook-test-sink]
+verify_jwt = false

@@ -242,7 +242,7 @@ Kullanıcı talebi (2026-08-04): işletme admin hesabında taşma/sığmama var;
       | `tsc --noEmit` | temiz |
       | `lint` | temiz |
       | unit | **47/47** |
-      | integration | **437/438** (tek kırık: `httpbin.org` erişilemez, dış servis) |
+      | integration | **437/438** (tek kırık `httpbin.org` erişilemezliğiydi; kapanış sonrası dış bağımlılık kaldırıldı → **438/438**) |
       | E2E | **150 geçti / 5 kırık** |
       | duyarlılık denetimi | **0 kusur** (22 sayfa × 390/768px) |
 
