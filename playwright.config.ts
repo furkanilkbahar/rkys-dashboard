@@ -17,6 +17,10 @@ export default defineConfig({
   timeout: 45_000,
   expect: { timeout: 10_000 },
   reporter: [["list"]],
+  // Paket acme'nin gerçek demo verisine yazıyor ve spec'lerin çoğu
+  // bıraktığını toplamıyordu; artıklar hem demo kalitesini hem başka
+  // spec'leri bozuyordu (ölçüm ve gerekçe: tests/e2e/global-teardown.ts).
+  globalTeardown: "./tests/e2e/global-teardown.ts",
   use: {
     baseURL: "http://localhost:3000",
     trace: "on-first-retry",
