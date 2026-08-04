@@ -677,3 +677,56 @@ values
   ('00000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-0000000009a4', '00000000-0000-4000-8000-000000000976', 0.15),
   ('00000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-0000000009a4', '00000000-0000-4000-8000-000000000977', 0.015)
 on conflict (recipe_id, ingredient_id) do nothing;
+
+-- ── Ürün açıklamaları (Faz 22) ─────────────────────────────────────────
+-- Açıklama zaten desteklenen bir alandı (content_translations.field =
+-- 'description'; admin menü formu yazıyor, onboarding şablonları seed'liyor)
+-- ama BU seed'in kendi kataloğunda hiç yoktu ve misafir tarafı da onu
+-- okumuyordu. İkisi birden kapatıldı; demo menüde artık her ürünün
+-- "içinde ne var" bilgisi var.
+insert into public.content_translations (tenant_id, entity_type, entity_id, locale, field, value)
+values
+  ('00000000-0000-4000-8000-000000000001', 'product', '00000000-0000-4000-8000-000000000201', 'tr', 'description', 'Orta kavrulmuş çekirdekten, günlük demlenen filtre kahve.'),
+  ('00000000-0000-4000-8000-000000000001', 'product', '00000000-0000-4000-8000-000000000201', 'en', 'description', 'Freshly brewed daily from medium-roast beans.'),
+  ('00000000-0000-4000-8000-000000000001', 'product', '00000000-0000-4000-8000-000000000202', 'tr', 'description', 'Çift shot espresso ve buharlanmış süt; küçük veya büyük boy.'),
+  ('00000000-0000-4000-8000-000000000001', 'product', '00000000-0000-4000-8000-000000000202', 'en', 'description', 'Double espresso with steamed milk; small or large.'),
+  ('00000000-0000-4000-8000-000000000001', 'product', '00000000-0000-4000-8000-000000000203', 'tr', 'description', 'Fırında pişmiş klasik cheesecake, bisküvi tabanı üzerinde.'),
+  ('00000000-0000-4000-8000-000000000001', 'product', '00000000-0000-4000-8000-000000000203', 'en', 'description', 'Classic baked cheesecake on a biscuit base.'),
+  ('00000000-0000-4000-8000-000000000001', 'product', '00000000-0000-4000-8000-000000000206', 'tr', 'description', 'Bakır cezvede pişirilen geleneksel Türk kahvesi, lokum ile.'),
+  ('00000000-0000-4000-8000-000000000001', 'product', '00000000-0000-4000-8000-000000000206', 'en', 'description', 'Traditional Turkish coffee brewed in a copper pot, served with lokum.'),
+  ('00000000-0000-4000-8000-000000000001', 'product', '00000000-0000-4000-8000-000000000207', 'tr', 'description', 'On iki saat soğuk demlenmiş, düşük asiditeli kahve.'),
+  ('00000000-0000-4000-8000-000000000001', 'product', '00000000-0000-4000-8000-000000000207', 'en', 'description', 'Steeped cold for twelve hours; smooth and low in acidity.'),
+  ('00000000-0000-4000-8000-000000000001', 'product', '00000000-0000-4000-8000-000000000208', 'tr', 'description', 'İki kişilik; peynir çeşitleri, zeytin, reçel, tereyağı, bal ve sınırsız çay.'),
+  ('00000000-0000-4000-8000-000000000001', 'product', '00000000-0000-4000-8000-000000000208', 'en', 'description', 'Serves two; cheeses, olives, jam, butter, honey and unlimited tea.'),
+  ('00000000-0000-4000-8000-000000000001', 'product', '00000000-0000-4000-8000-000000000209', 'tr', 'description', 'Domates, yeşil biber ve yumurta; tereyağında pişirilir.'),
+  ('00000000-0000-4000-8000-000000000001', 'product', '00000000-0000-4000-8000-000000000209', 'en', 'description', 'Tomato, green pepper and egg, cooked in butter.'),
+  ('00000000-0000-4000-8000-000000000001', 'product', '00000000-0000-4000-8000-000000000210', 'tr', 'description', 'Tam buğday ekmekte kaşar peyniri; sucuk veya domates eklenebilir.'),
+  ('00000000-0000-4000-8000-000000000001', 'product', '00000000-0000-4000-8000-000000000210', 'en', 'description', 'Melted cheese on wholewheat bread; add sujuk or tomato.'),
+  ('00000000-0000-4000-8000-000000000001', 'product', '00000000-0000-4000-8000-000000000211', 'tr', 'description', 'Izgara tavuk, marul, domates ve patates kızartması ile.'),
+  ('00000000-0000-4000-8000-000000000001', 'product', '00000000-0000-4000-8000-000000000211', 'en', 'description', 'Grilled chicken, lettuce and tomato, served with fries.'),
+  ('00000000-0000-4000-8000-000000000001', 'product', '00000000-0000-4000-8000-000000000212', 'tr', 'description', 'Marul, parmesan, kruton ve ev yapımı sezar sos.'),
+  ('00000000-0000-4000-8000-000000000001', 'product', '00000000-0000-4000-8000-000000000212', 'en', 'description', 'Romaine, parmesan, croutons and house Caesar dressing.'),
+  ('00000000-0000-4000-8000-000000000001', 'product', '00000000-0000-4000-8000-000000000213', 'tr', 'description', 'Mevsim yeşillikleri, beyaz peynir, zeytin ve zeytinyağı sos.'),
+  ('00000000-0000-4000-8000-000000000001', 'product', '00000000-0000-4000-8000-000000000213', 'en', 'description', 'Seasonal greens, white cheese, olives and olive-oil dressing.'),
+  ('00000000-0000-4000-8000-000000000001', 'product', '00000000-0000-4000-8000-000000000214', 'tr', 'description', 'Kurutulmuş ıhlamur çiçeğinden demlenir; kafeinsiz.'),
+  ('00000000-0000-4000-8000-000000000001', 'product', '00000000-0000-4000-8000-000000000214', 'en', 'description', 'Brewed from dried linden blossom; caffeine free.'),
+  ('00000000-0000-4000-8000-000000000001', 'product', '00000000-0000-4000-8000-000000000215', 'tr', 'description', 'Taze nane yaprağı ve dilim limon; kafeinsiz.'),
+  ('00000000-0000-4000-8000-000000000001', 'product', '00000000-0000-4000-8000-000000000215', 'en', 'description', 'Fresh mint leaves with lemon slices; caffeine free.'),
+  ('00000000-0000-4000-8000-000000000001', 'product', '00000000-0000-4000-8000-000000000216', 'tr', 'description', 'Uzak Doğu yeşil çayı, hafif ve ferahlatıcı.'),
+  ('00000000-0000-4000-8000-000000000001', 'product', '00000000-0000-4000-8000-000000000216', 'en', 'description', 'Light and refreshing Far Eastern green tea.'),
+  ('00000000-0000-4000-8000-000000000001', 'product', '00000000-0000-4000-8000-000000000217', 'tr', 'description', 'Üstü karamelize, içi akışkan Bask usulü cheesecake.'),
+  ('00000000-0000-4000-8000-000000000001', 'product', '00000000-0000-4000-8000-000000000217', 'en', 'description', 'Basque-style tart, caramelised on top and soft in the middle.'),
+  ('00000000-0000-4000-8000-000000000001', 'product', '00000000-0000-4000-8000-000000000218', 'tr', 'description', 'Bitter çikolatalı ıslak brownie, cevizli.'),
+  ('00000000-0000-4000-8000-000000000001', 'product', '00000000-0000-4000-8000-000000000218', 'en', 'description', 'Fudgy dark-chocolate brownie with walnuts.'),
+  ('00000000-0000-4000-8000-000000000002', 'product', '00000000-0000-4000-8000-000000000204', 'tr', 'description', '180 gr dana köfte, cheddar ve ev yapımı burger sosu.'),
+  ('00000000-0000-4000-8000-000000000002', 'product', '00000000-0000-4000-8000-000000000204', 'en', 'description', '180 g beef patty with cheddar and house burger sauce.'),
+  ('00000000-0000-4000-8000-000000000002', 'product', '00000000-0000-4000-8000-000000000219', 'tr', 'description', 'Odun ateşinde pişmiş kuzu şiş, pilav ve közlenmiş sebze ile.'),
+  ('00000000-0000-4000-8000-000000000002', 'product', '00000000-0000-4000-8000-000000000219', 'en', 'description', 'Wood-fired lamb skewer with rice and grilled vegetables.'),
+  ('00000000-0000-4000-8000-000000000002', 'product', '00000000-0000-4000-8000-000000000220', 'tr', 'description', 'Marine edilmiş tavuk göğsü, ızgara sebze eşliğinde.'),
+  ('00000000-0000-4000-8000-000000000002', 'product', '00000000-0000-4000-8000-000000000220', 'en', 'description', 'Marinated chicken breast served with grilled vegetables.'),
+  ('00000000-0000-4000-8000-000000000002', 'product', '00000000-0000-4000-8000-000000000221', 'tr', 'description', 'Tel kadayıf arasında peynir, kaymak ve şerbet ile.'),
+  ('00000000-0000-4000-8000-000000000002', 'product', '00000000-0000-4000-8000-000000000221', 'en', 'description', 'Shredded pastry with cheese, clotted cream and syrup.'),
+  ('00000000-0000-4000-8000-000000000002', 'product', '00000000-0000-4000-8000-000000000222', 'tr', 'description', 'Fırında pişmiş geleneksel sütlaç, tarçın ile.'),
+  ('00000000-0000-4000-8000-000000000002', 'product', '00000000-0000-4000-8000-000000000222', 'en', 'description', 'Traditional oven-baked rice pudding with cinnamon.'),
+  ('00000000-0000-4000-8000-000000000003', 'product', '00000000-0000-4000-8000-000000000205', 'tr', 'description', 'Günlük demlenen filtre kahve.')
+on conflict (entity_type, entity_id, locale, field) do nothing;

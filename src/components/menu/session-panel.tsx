@@ -66,7 +66,7 @@ export function SessionPanel({
   const [redeemSubmitting, setRedeemSubmitting] = useState(false);
   const [redeemError, setRedeemError] = useState<string | null>(null);
   const [redeemSuccess, setRedeemSuccess] = useState<number | null>(null);
-  const { unlocked, unlock } = useSoundUnlock();
+  const { unlocked } = useSoundUnlock();
   const unlockedRef = useRef(unlocked);
   useEffect(() => {
     unlockedRef.current = unlocked;
@@ -282,22 +282,6 @@ export function SessionPanel({
         <div className="fixed top-4 left-1/2 z-30 -translate-x-1/2 rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground shadow-lg">
           {t("orderReady")}
         </div>
-      )}
-      {!unlocked && (
-        <button
-          type="button"
-          onClick={unlock}
-          // ARTIK YÜZER DEĞİL — akış içinde, "Oturumum" düğmesinin yanında.
-          // Geçmişi: önce `fixed top-4 left-4` idi ve bağlantı göstergesinin
-          // (D30) üstüne biniyordu; sonra `fixed bottom-[76px]`e alındı ve bu
-          // sefer menü kaydırılırken ürün fiyatlarının üstünü örttü —
-          // telefonda ölçüldü. Yüzen bir öğe içeriği örtmeden duramıyor,
-          // çünkü menü baştan sona kaydırılan tek bir uzun liste. Başlık
-          // satırına alındı: hiçbir şeyi örtmüyor, ilk dokunuşta kayboluyor.
-          className="min-h-9 rounded-full border border-[var(--line)] px-3 text-xs text-[var(--fg-muted)]"
-        >
-          {t("enableSound")}
-        </button>
       )}
 
       <Button type="button" variant="outline" size="sm" onClick={() => setOpen((v) => !v)}>

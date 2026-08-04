@@ -150,6 +150,15 @@
     animation: ops-pulse 1.4s var(--ease-in-out) infinite;
   }
 
+  /* Faz 22 — detay katmanı ve "Eklendi" onayı. Girişleri token'lı; global
+     prefers-reduced-motion kuralı ikisini de sadeleştirir. */
+  .menu-sheet {
+    animation: menu-sheet-in var(--dur-base) var(--ease-out);
+  }
+  .ops-fade-in {
+    animation: ops-fade-in var(--dur-base) var(--ease-out);
+  }
+
   .menu-card {
     animation: menu-card-in var(--dur-slow) var(--ease-out) backwards;
     /* Yüzen sepet çubuğu (fixed, ~64px + güvenli alan) son satırı örtüyordu;
@@ -178,6 +187,28 @@
 @keyframes ops-pulse {
   50% {
     opacity: 0.3;
+  }
+}
+
+@keyframes menu-sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--move-md));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes ops-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--move-sm) * -0.5));
+  }
+  to {
+    opacity: 1;
+    transform: none;
   }
 }
 

@@ -19,6 +19,14 @@ export type MenuExtra = {
 export type MenuProduct = {
   id: string;
   name: string;
+  /**
+   * Faz 22: açıklama ZATEN vardı — `content_translations`'ta `field:
+   * "description"` olarak saklanıyor, admin menü formu yazıyor, onboarding
+   * şablonları seed'liyor. Eksik olan tek şey misafir tarafının onu hiç
+   * okumamasıydı: müşteri "bu ürünün içinde ne var" sorusunun cevabını
+   * göremiyordu. Şema değişikliği gerekmedi.
+   */
+  description: string | null;
   priceMinor: number;
   isOrderable: boolean;
   imageUrl: string | null;
@@ -84,9 +92,9 @@ export async function getEffectiveMenu(
       .eq("branch_id", branchId),
     supabase
       .from("content_translations")
-      .select("entity_type, entity_id, locale, value")
+      .select("entity_type, entity_id, locale, field, value")
       .eq("tenant_id", tenantId)
-      .eq("field", "name")
+      .in("field", ["name", "description"])
       .in("locale", locales),
   ]);
 
@@ -102,10 +110,16 @@ export async function getEffectiveMenu(
   // Önce fallback locale, sonra istenen locale yazılır — istenen locale'de
   // çeviri varsa üzerine yazıp kazanır; yoksa fallback değeri kalır.
   const nameMap = new Map<string, string>();
+  const descriptionMap = new Map<string, string>();
   for (const wantedLocale of [fallbackLocale, locale]) {
     for (const row of translationsRes.data ?? []) {
-      if (row.locale === wantedLocale) {
-        nameMap.set(`${row.entity_type}:${row.entity_id}`, row.value);
+      if (row.locale !== wantedLocale) continue;
+      const key = `${row.entity_type}:${row.entity_id}`;
+      if (row.field === "description") {
+        // Boş dize "çeviri yok" demektir; fallback değerini ezmemeli.
+        if (row.value.trim() !== "") descriptionMap.set(key, row.value);
+      } else {
+        nameMap.set(key, row.value);
       }
     }
   }
@@ -140,6 +154,7 @@ export async function getEffectiveMenu(
     const menuProduct: MenuProduct = {
       id: product.id,
       name: nameMap.get(`product:${product.id}`) ?? "",
+      description: descriptionMap.get(`product:${product.id}`) ?? null,
       priceMinor: variants.length > 0 ? variants[0].priceMinor : (productEffective?.priceMinor ?? product.base_price_minor),
       isOrderable:
         variants.length > 0 ? variants.some((v) => v.isOrderable) : (productEffective?.isOrderable ?? false),

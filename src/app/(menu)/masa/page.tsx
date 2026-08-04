@@ -3,6 +3,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { CartBar } from "@/components/menu/cart-bar";
 import { CartSessionSync } from "@/components/menu/cart-session-sync";
 import { CategorySection } from "@/components/menu/category-section";
+import { MenuSearch } from "@/components/menu/menu-search";
 import { CategoryStrip } from "@/components/menu/category-strip";
 import { ConnectionIndicator } from "@/components/menu/connection-indicator";
 import { LanguageSwitcher } from "@/components/menu/language-switcher";
@@ -87,6 +88,21 @@ export default async function MenuPage() {
         </div>
       </header>
       <CategoryStrip categories={categories.map((c) => ({ id: c.id, name: c.name }))} />
+
+      {/* Arama indeksi sunucuda kurulur: ad + açıklama + kategori adı birlikte
+          taranır, böylece "sütlü" yazınca Latte de gelir. */}
+      {categories.length > 0 && (
+        <MenuSearch
+          items={categories.flatMap((category) =>
+            category.products.map((product) => ({
+              productId: product.id,
+              categoryId: category.id,
+              text: `${product.name} ${product.description ?? ""} ${category.name}`,
+              soldOut: !product.isOrderable,
+            })),
+          )}
+        />
+      )}
 
       {categories.length === 0 ? (
         /* Adım 0 kabul kriteri 3 — boş menü tasarımsız kalmaz. */

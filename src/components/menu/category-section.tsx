@@ -45,6 +45,7 @@ export function CategorySection({
   return (
     <section
       id={`kategori-${category.id}`}
+      data-category-id={category.id}
       className="scroll-mt-28"
       aria-labelledby={`baslik-${category.id}`}
     >

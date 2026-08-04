@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 
 // Tarayıcı autoplay politikası yüzünden AudioContext yalnızca bir kullanıcı
 // etkileşiminden sonra başlatılabilir — bkz. useSoundUnlock.
@@ -14,18 +14,60 @@ function getAudioContext(): AudioContext | null {
   return audioContext;
 }
 
-export function useSoundUnlock() {
-  const [unlocked, setUnlocked] = useState(false);
+/* ── Otomatik ses açma (Faz 22) ────────────────────────────────────────
+   Tarayıcıların autoplay politikası AudioContext'i yalnızca bir kullanıcı
+   JESTİNDEN sonra başlatmaya izin veriyor — bu atlatılamaz. Ama jestin
+   ÖZEL bir "Sesi Aç" düğmesine yapılması gerekmiyor: sayfadaki ilk
+   dokunuş/tuş (kategori çipi, ürün kartı, "+") da bir jesttir. Bu yüzden
+   ilk etkileşimde kendiliğinden açılıyor; misafirin ayrı bir düğmeye
+   basmasına gerek kalmadı.
 
-  function unlock() {
-    const ctx = getAudioContext();
-    if (ctx?.state === "suspended") {
-      void ctx.resume();
-    }
-    setUnlocked(true);
+   React dışında yaşayan bir durum olduğu için useSyncExternalStore ile
+   okunur — efekt içinde setState zinciri kurulmaz.
+   ─────────────────────────────────────────────────────────────────── */
+let isUnlocked = false;
+let armed = false;
+const unlockListeners = new Set<() => void>();
+
+function doUnlock() {
+  const ctx = getAudioContext();
+  if (ctx?.state === "suspended") {
+    void ctx.resume();
   }
+  if (isUnlocked) return;
+  isUnlocked = true;
+  for (const listener of unlockListeners) listener();
+}
 
-  return { unlocked, unlock };
+function armAutoUnlock() {
+  if (armed || typeof window === "undefined") return;
+  armed = true;
+  const handler = () => {
+    doUnlock();
+    window.removeEventListener("pointerdown", handler);
+    window.removeEventListener("keydown", handler);
+    window.removeEventListener("touchend", handler);
+  };
+  window.addEventListener("pointerdown", handler);
+  window.addEventListener("keydown", handler);
+  window.addEventListener("touchend", handler);
+}
+
+function subscribeUnlock(onStoreChange: () => void) {
+  armAutoUnlock();
+  unlockListeners.add(onStoreChange);
+  return () => {
+    unlockListeners.delete(onStoreChange);
+  };
+}
+
+const getUnlockSnapshot = () => isUnlocked;
+// SSR'da ses hiçbir zaman açık değildir; hidrasyondan sonra gerçek durum okunur.
+const getUnlockServerSnapshot = () => false;
+
+export function useSoundUnlock() {
+  const unlocked = useSyncExternalStore(subscribeUnlock, getUnlockSnapshot, getUnlockServerSnapshot);
+  return { unlocked, unlock: doUnlock };
 }
 
 export function playBeep() {

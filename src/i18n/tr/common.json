@@ -1262,7 +1262,14 @@
       "variants": "Seçenekler",
       "extras": "Ekstralar",
       "variantCount": "{count} seçenek",
-      "extraCount": "{count} ekstra"
+      "extraCount": "{count} ekstra",
+      "openDetail": "{name} — detayları gör",
+      "close": "Kapat",
+      "decrease": "Bir azalt",
+      "increase": "Bir artır",
+      "quantity": "Adet",
+      "addWithTotal": "Sepete Ekle · {total}",
+      "noDescription": "Bu ürün için açıklama girilmemiş."
     },
     "cart": {
       "itemCount": "{count} ürün",
@@ -1403,6 +1410,15 @@
       "reconnecting": "Yeniden bağlanılıyor…",
       "offline": "Bağlantı yok",
       "offlineHint": "Sepetiniz korunuyor, bağlantı gelince gönderilecek."
+    },
+    "search": {
+      "label": "Menüde ara",
+      "placeholder": "Ürün ara…",
+      "clear": "Aramayı temizle",
+      "noResults": "\"{query}\" için sonuç yok.",
+      "noResultsHint": "Farklı bir kelime deneyin ya da aramayı temizleyin.",
+      "resultCount": "{count} ürün bulundu",
+      "availableOnly": "Yalnızca stokta olanlar"
     }
   },
   "platform": {
