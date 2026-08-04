@@ -1070,6 +1070,15 @@
         "not_enabled": "Vardiya modülü aktif değil.",
         "unknown": "Kaydedilemedi, tekrar deneyin."
       }
+    },
+    "table": {
+      "filterLabel": "Tabloda ara",
+      "filterPlaceholder": "Ara…",
+      "count": "{total} kayıt",
+      "countFiltered": "{total} kayıttan {shown} tanesi",
+      "noMatch": "“{query}” ile eşleşen kayıt yok.",
+      "status": "Durum",
+      "actions": "İşlemler"
     }
   },
   "waiter": {

@@ -193,6 +193,29 @@ Gerçek GİB sertifikasyonu bu kapsamda alınamaz — iyzico/e-posta ile aynı m
       4. `themes` tablosunun asimetrik GRANT'i (0052): `service_role` yazabiliyor ama okuyamıyor.
       5. ~~`menu-crud` E2E'si acme'de kategori/ürün bırakıyor~~ — **düzeltildi** (2026-08-04): `afterAll` temizliği eklendi, koşum sonrası acme kategori sayısı seed'deki 6'ya dönüyor. Kalan benzer risk: `session-panel`/`pos-order` gibi spec'ler acme'de **açık sipariş** bırakıyor; KDS panosu zamanla doluyor.
 
+## Faz 22 — QR Menü Kullanılabilirliği ✅
+*Geriye dönük kayıt (2026-08-04): bu iş 2026-08-03/04'te yapıldı ve kodda `Faz 22` olarak etiketlendi (`menu-search.tsx`, `product-interactive.tsx`, `globals.css:153`, `seed.sql:681`), ancak PLAN.md'ye hiç yazılmamıştı. Tek doğru kaynak PLAN.md olduğu için buraya alındı.*
+
+Faz 21 menüyü görsel olarak yeniledi ama kullanılabilirliğini değil. Kullanıcı geri bildirimi: "arayüz güzel ama kullanıcı dostu bir arayüz haline henüz gelmemiş." Ölçülen altı eksik ve kapanışları:
+- [x] **Telefonda iki sütun + yatay kaydırma** — `scrollWidth 641` / viewport `412`. Kök neden: `body` kolon-flex; `main`'in `mx-auto`'su çapraz eksende `stretch`'i iptal edip genişliği `fit-content`'e düşürüyordu, kategori şeridinin `max-content`'i de genişliği belirliyordu (`overflow-x-auto` bu yüzden hiç devreye girmiyordu). Dört `(menu)` sayfasında `main`'e `w-full` eklendi. Ürün kartı telefonda **satır**, `sm:`ten itibaren kart — geçiş salt CSS, Server Component korundu.
+- [x] **Ürün açıklaması hiç gösterilmiyordu** — veri zaten vardı (`content_translations.field='description'`), sorgu yalnızca `name` çekiyordu. `.in("field",["name","description"])`'a çevrildi; seed'e 43 açıklama satırı eklendi.
+- [x] **Arama + "yalnızca stokta olanlar" filtresi** — sunucuya gitmez, kartları client'a taşımaz: eşleşme hesabı saf, DOM'a dokunmak tek `useEffect`. `useDeferredValue` ile INP korundu.
+- [x] **Kart üstünde adet stepper'ı** (`− 2 +`) ve **fotoğrafa dokununca ürün detay katmanı** (büyük görsel, açıklama, varyant/ekstra, canlı toplam).
+- [x] **Ses kilidi otomatik açılıyor** — "Sesi Aç" butonu kaldırıldı. Tarayıcı politikası bir kullanıcı hareketi ister ama **belirli bir buton** istemez; ilk `pointerdown`/`keydown`/`touchend`'de modül düzeyinde açılıyor. Buton hem yer kaplıyor hem içeriğin üstüne biniyordu.
+- [x] **Gerçek ürün fotoğrafları** — 21 adet CC0/PDM görsel internetten seçildi (AI üretimi değil, logosuz); Playwright ile kontakt sayfası render edilip görsel olarak elenerek. Kaynak künyesi `supabase/seed/images/CREDITS.md`, yükleme `scripts/seed-images.mjs`.
+
+## Faz 23 — Admin Paneli: Duyarlılık, Pano ve Tablolar
+Kullanıcı talebi (2026-08-04): işletme admin hesabında taşma/sığmama var; pano boş; uygun yerlerde işlevsel tablo yok.
+
+**Ölçüm (2026-08-04, `scripts/responsive-audit.mjs`, 22 sayfa × 390/768px):** belge düzeyinde yatay taşma **hiçbir sayfada yok** — kusur satır içi **kırpılma**. `/admin/ingredients` 308px kutuda 508px içerik, `/admin/tables` 324px kutuda 455px, `/admin/settings` 286px input'ta 1073px değer. Ata `overflow-hidden` olduğu için kaydırma da yok: telefonda bir masanın QR'ını yenilemek **imkânsız**, buton çizilmiyor. `/admin/tables`'ta 40px altında 157 dokunma hedefi. Gerçek bindirme (`overlap`) çıkmadı. Kök neden tek: satırlar `flex justify-between` ile masaüstü için yazılmış, `flex-wrap`/`min-w-0` yok.
+
+**Kabul kriterleri:** ölçüm aracı 22 sayfada temiz · kırpılan içerik sıfır · dokunma hedefi kaba işaretçide ≥40px · panodaki her sayı gerçek sorgudan (uydurma yok, veri yoksa açık boş durum) · kapalı modülün istatistiği çizilmez, izin yoksa gösterilmez · E2E locator sözleşmeleri korunur, test silinmez/skip'lenmez (RULES #44).
+
+- [ ] **Adım 1 — `DataTable` primitifi.** Gerçek `<table>` + sıralama + filtre + yapışkan başlık; `sm` altında **aynı DOM** CSS ile etiketli karta dönüşür (`td::before { content: attr(data-label) }`). Yeni bağımlılık yok. Yanına kaba işaretçide (`pointer: coarse`) dokunma hedefini ≥40px'e sabitleyen kural — masaüstü yoğunluğu DESIGN.md'deki gibi kalır.
+- [ ] **Adım 2 — Pano.** ① bugünün KPI şeridi (her kart ilgili rapora tarih parametresiyle gider) ② "şu an" paneli (dolu masa/toplam, bekleyen çağrı, mutfaktaki sipariş) ③ dikkat gerektirenler listesi ④ günün çok satanları ⑤ hızlı işlemler.
+- [ ] **Adım 3 — Tablo dönüşümü.** tables, ingredients, suppliers, staff, reservations, scheduling, gift-cards, campaigns, loyalty, delivery-zones, api-keys, webhooks, accounting, support + reports'un 6 sözde-satır bloğu. **Tabloya alınmaz:** settings (form), menu (sürükle-bırak sıralı liste — tablo dnd ile kavga eder), onboarding/billing.
+- [ ] **Adım 4 — E2E kirliliğini kaynağında temizle + tam paket.** Faz 21 takip maddesi 5'in kalanı: `session-panel`/`pos-order` gibi spec'ler acme'de açık sipariş, `table-qr-flow`/`ratings` gibi spec'ler masa/bölge bırakıyor.
+
 ---
 
 ## Çalışma Prensipleri

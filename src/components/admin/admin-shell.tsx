@@ -56,7 +56,10 @@ export function AdminShell({
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   return (
-    <div className="flex min-h-dvh flex-col bg-[var(--surface-bg)] text-[var(--surface-fg)] lg:flex-row">
+    // `admin-surface`: kaba işaretçide (dokunmatik) hedefleri ≥40px'e
+    // sabitler (globals.css). Masaüstü yoğunluğu değişmez — DESIGN.md'nin
+    // bilinçli tercihi orası.
+    <div className="admin-surface flex min-h-dvh flex-col bg-[var(--surface-bg)] text-[var(--surface-fg)] lg:flex-row">
       <aside className="hidden w-[194px] shrink-0 flex-col border-r border-[var(--surface-line)] bg-[var(--surface-sunken)] py-2.5 lg:flex">
         <div className="flex items-center gap-2 px-3.5 pt-1 pb-2.5 text-[12.5px] font-semibold">
           <span aria-hidden="true" className="size-[17px] shrink-0 rounded-[5px] bg-[var(--surface-accent)]" />

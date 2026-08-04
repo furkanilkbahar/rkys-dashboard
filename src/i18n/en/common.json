@@ -1070,6 +1070,15 @@
         "not_enabled": "The staff scheduling module is not active.",
         "unknown": "Could not save, please try again."
       }
+    },
+    "table": {
+      "filterLabel": "Search table",
+      "filterPlaceholder": "Search…",
+      "count": "{total} records",
+      "countFiltered": "{shown} of {total} records",
+      "noMatch": "No records match “{query}”.",
+      "status": "Status",
+      "actions": "Actions"
     }
   },
   "waiter": {

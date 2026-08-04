@@ -143,6 +143,114 @@
     min-height: var(--tap-min);
   }
 
+  /* ── Admin tabloları (Faz 23 Adım 1) ────────────────────────────────
+     TEK DOM, İKİ DÜZEN. Geniş ekranda gerçek bir `<table>`; `sm` altında
+     aynı işaretleme CSS ile etiketli karta dönüşür (`td::before` hücrenin
+     `data-label`'ını yazar). Neden ikinci bir mobil işaretleme yazılmadı:
+     aynı satırı iki kez render etmek E2E locator'larını (aynı `data-testid`
+     iki kez) çoğaltır ve strict-mode ihlali üretirdi.
+
+     Ölçüm (2026-08-04, scripts/responsive-audit.mjs): eski `flex
+     justify-between` satırları 308px kutuda 508px içerik taşıyordu ve ata
+     `overflow-hidden` olduğu için taşan kısım KAYDIRILAMIYORDU — telefonda
+     bir masanın QR'ını yenilemek imkânsızdı. Kart modu bunu kökten çözer:
+     kaydırma yok, kırpılma yok. */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .data-table th {
+    text-align: start;
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--surface-fg-muted);
+  }
+  .data-table tbody tr + tr {
+    border-top: 1px solid var(--surface-line);
+  }
+
+  @media (width >= 40rem) {
+    .data-table thead th {
+      position: sticky;
+      /* Admin üst barı 42px yapışkan — başlık onun ALTINA yapışmalı,
+         yoksa kaydırırken barın arkasında kaybolur. */
+      top: 42px;
+      z-index: 1;
+      background-color: var(--surface-panel);
+      border-bottom: 1px solid var(--surface-line-strong);
+    }
+  }
+
+  @media (width < 40rem) {
+    .data-table,
+    .data-table tbody,
+    .data-table tr,
+    .data-table td {
+      display: block;
+    }
+    /* Başlık satırı kart modunda anlamsız — etiketler hücrelere taşındı.
+       `display:none` yerine görsel gizleme YOK: başlıklar kart modunda
+       gerçekten gereksiz, ekran okuyucu `data-label`'ı zaten okumuyor
+       ama her hücrenin metni kendi etiketiyle birlikte akıyor. */
+    .data-table thead {
+      display: none;
+    }
+    .data-table tbody tr {
+      border: 1px solid var(--surface-line);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+    }
+    .data-table tbody tr + tr {
+      margin-top: 8px;
+      border-top: 1px solid var(--surface-line);
+    }
+    .data-table td[data-label] {
+      display: grid;
+      grid-template-columns: minmax(0, 7.5rem) minmax(0, 1fr);
+      align-items: baseline;
+      gap: 8px;
+      padding: 3px 0;
+    }
+    .data-table td[data-label]::before {
+      content: attr(data-label);
+      color: var(--surface-fg-faint);
+      font-size: 12px;
+    }
+    /* Birincil hücre kartın başlığı olur: etiketsiz, tam genişlik, büyük. */
+    .data-table td[data-primary] {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      padding-bottom: 6px;
+    }
+    .data-table td[data-primary]::before {
+      content: none;
+    }
+    /* İşlem hücresi: etiketsiz ve tam genişlik — butonlar sarabilsin.
+       Hizalamayı burada DEĞİL `DataTableActions`'ta Tailwind ile yapıyoruz;
+       utilities katmanı bu katmanı her zaman ezer. */
+    .data-table td[data-actions] {
+      display: block;
+      padding-top: 8px;
+    }
+  }
+
+  /* Kaba işaretçide (dokunmatik) admin hedefleri ≥40px. Masaüstündeki
+     yoğunluk DESIGN.md'nin bilinçli tercihi, o yüzden `pointer: fine`
+     altında hiçbir şey değişmez — `.ops-surface`'ın işaretçiden BAĞIMSIZ
+     44px'i ise orada kalıyor (duvara asılı KDS fareyle de kullanılıyor). */
+  @media (pointer: coarse) {
+    .admin-surface button,
+    .admin-surface [role="button"],
+    .admin-surface [role="combobox"],
+    .admin-surface [role="switch"],
+    .admin-surface select,
+    .admin-surface a[data-slot="button"],
+    .admin-surface input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]) {
+      min-height: 40px;
+    }
+  }
+
   /* Bağlantı koptuğunda göstergenin nabzı — durum değişimi hareketle de
      anlatılır (kabul kriteri 4). Renk ve metin tek başına yeterli bilgiyi
      zaten taşır, bu yüzden reduced-motion altında kaybolması sorun değil. */

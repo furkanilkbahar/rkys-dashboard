@@ -7,6 +7,7 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
+import { DataTable, DataTableActions } from "@/components/admin/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -222,6 +223,9 @@ export function TablesManager({
 }) {
   const t = useTranslations("admin.tables");
   const tTable = useTranslations("admin.tables.table");
+  // Tablo-genel kolon başlıkları ("Durum", "İşlemler") tek yerde — 14 ayrı
+  // ad alanına aynı iki dizeyi kopyalamak yerine `admin.table` paylaşılıyor.
+  const tGrid = useTranslations("admin.table");
   const tZones = useTranslations("admin.tables.zones");
   const tGeneric = useTranslations("admin.tables.genericQr");
   const tErrors = useTranslations("admin.tables.errors");
@@ -296,20 +300,44 @@ export function TablesManager({
           <CardTitle className="text-base">{tZones("title")}</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
-          {zones.length === 0 && <p className="text-sm text-muted-foreground">{tZones("empty")}</p>}
-          {zones.map((zone) => (
-            <div key={zone.id} className="flex items-center justify-between gap-2 text-sm">
-              <div className="flex items-center gap-2">
-                <span>{zone.name}</span>
-                <Badge variant={zone.isActive ? "secondary" : "destructive"}>
-                  {zone.isActive ? tTable("active") : "—"}
-                </Badge>
-              </div>
-              <Button type="button" size="sm" variant="outline" onClick={() => handleToggleZone(zone)}>
-                {zone.isActive ? tZones("archive") : tZones("activate")}
-              </Button>
-            </div>
-          ))}
+          <DataTable
+            rows={zones}
+            rowKey={(zone) => zone.id}
+            empty={tZones("empty")}
+            initialSort={{ key: "name" }}
+            columns={[
+              {
+                key: "name",
+                header: tZones("name"),
+                primary: true,
+                value: (zone) => zone.name,
+                cell: (zone) => zone.name,
+              },
+              {
+                key: "status",
+                header: tGrid("status"),
+                value: (zone) => (zone.isActive ? 1 : 0),
+                cell: (zone) => (
+                  <Badge variant={zone.isActive ? "secondary" : "destructive"}>
+                    {zone.isActive ? tTable("active") : "—"}
+                  </Badge>
+                ),
+              },
+              {
+                key: "actions",
+                header: tGrid("actions"),
+                actions: true,
+                align: "end",
+                cell: (zone) => (
+                  <DataTableActions>
+                    <Button type="button" size="sm" variant="outline" onClick={() => handleToggleZone(zone)}>
+                      {zone.isActive ? tZones("archive") : tZones("activate")}
+                    </Button>
+                  </DataTableActions>
+                ),
+              },
+            ]}
+          />
           <ZoneForm branchId={branchId} createZone={actions.createZone} />
         </CardContent>
       </Card>
@@ -319,38 +347,76 @@ export function TablesManager({
           <CardTitle className="text-base">{tTable("title")}</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
-          {tables.length === 0 && <p className="text-sm text-muted-foreground">{tTable("empty")}</p>}
-          {tables.map((table) => (
-            <div
-              key={table.id}
-              data-testid={`table-row-${table.id}`}
-              className="flex items-center justify-between gap-2 rounded-md border border-border p-2 text-sm"
-            >
-              <div className="flex items-center gap-2">
-                <span className="font-medium">{table.label}</span>
-                {table.zoneName && <span className="text-xs text-muted-foreground">({table.zoneName})</span>}
-                <Badge variant={table.isActive ? "secondary" : "destructive"}>
-                  {table.isActive ? tTable("active") : "—"}
-                </Badge>
-              </div>
-              <div className="flex items-center gap-2">
-                <Button type="button" size="sm" variant="outline" onClick={() => handleToggleTable(table)}>
-                  {table.isActive ? tTable("archive") : tTable("activate")}
-                </Button>
-                <Button type="button" size="sm" variant="outline" onClick={() => handleRevealTable(table.id, table.label)}>
-                  {tTable("showQr")}
-                </Button>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  onClick={() => handleRegenerateTable(table.id, table.label)}
-                >
-                  {tTable("regenerateQr")}
-                </Button>
-              </div>
-            </div>
-          ))}
+          <DataTable
+            rows={tables}
+            rowKey={(table) => table.id}
+            // E2E sözleşmesi: table-qr-flow.spec.ts satırı
+            // `[data-testid^="table-row-"]` ile buluyor (§5). Kart/tablo
+            // düzeni değişti, locator yüzeyi DEĞİŞMEDİ.
+            rowAttributes={(table) => ({ "data-testid": `table-row-${table.id}` })}
+            empty={tTable("empty")}
+            searchable
+            initialSort={{ key: "label" }}
+            columns={[
+              {
+                key: "label",
+                header: tTable("label"),
+                primary: true,
+                value: (table) => table.label,
+                cell: (table) => table.label,
+              },
+              {
+                key: "zone",
+                header: tTable("zone"),
+                value: (table) => table.zoneName,
+                cell: (table) =>
+                  table.zoneName ? (
+                    <span className="text-[var(--surface-fg-muted)]">{table.zoneName}</span>
+                  ) : (
+                    "—"
+                  ),
+              },
+              {
+                key: "status",
+                header: tGrid("status"),
+                value: (table) => (table.isActive ? 1 : 0),
+                cell: (table) => (
+                  <Badge variant={table.isActive ? "secondary" : "destructive"}>
+                    {table.isActive ? tTable("active") : "—"}
+                  </Badge>
+                ),
+              },
+              {
+                key: "actions",
+                header: tGrid("actions"),
+                actions: true,
+                align: "end",
+                cell: (table) => (
+                  <DataTableActions>
+                    <Button type="button" size="sm" variant="outline" onClick={() => handleToggleTable(table)}>
+                      {table.isActive ? tTable("archive") : tTable("activate")}
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleRevealTable(table.id, table.label)}
+                    >
+                      {tTable("showQr")}
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleRegenerateTable(table.id, table.label)}
+                    >
+                      {tTable("regenerateQr")}
+                    </Button>
+                  </DataTableActions>
+                ),
+              },
+            ]}
+          />
           <TableForm branchId={branchId} zones={zones} createTable={actions.createTable} onRevealed={setReveal} />
           {revealError && <p className="text-xs text-destructive">{revealError}</p>}
         </CardContent>
@@ -361,25 +427,42 @@ export function TablesManager({
           <CardTitle className="text-base">{tGeneric("title")}</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
-          {genericQrCodes.length === 0 && <p className="text-sm text-muted-foreground">{tGeneric("empty")}</p>}
-          {genericQrCodes.map((qr) => (
-            <div key={qr.id} className="flex items-center justify-between gap-2 rounded-md border border-border p-2 text-sm">
-              <span className="font-medium">{qr.label}</span>
-              <div className="flex items-center gap-2">
-                <Button type="button" size="sm" variant="outline" onClick={() => handleRevealGeneric(qr.id, qr.label)}>
-                  {tTable("showQr")}
-                </Button>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  onClick={() => handleRegenerateGeneric(qr.id, qr.label)}
-                >
-                  {tTable("regenerateQr")}
-                </Button>
-              </div>
-            </div>
-          ))}
+          <DataTable
+            rows={genericQrCodes}
+            rowKey={(qr) => qr.id}
+            empty={tGeneric("empty")}
+            initialSort={{ key: "label" }}
+            columns={[
+              {
+                key: "label",
+                header: tGeneric("label"),
+                primary: true,
+                value: (qr) => qr.label,
+                cell: (qr) => qr.label,
+              },
+              {
+                key: "actions",
+                header: tGrid("actions"),
+                actions: true,
+                align: "end",
+                cell: (qr) => (
+                  <DataTableActions>
+                    <Button type="button" size="sm" variant="outline" onClick={() => handleRevealGeneric(qr.id, qr.label)}>
+                      {tTable("showQr")}
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleRegenerateGeneric(qr.id, qr.label)}
+                    >
+                      {tTable("regenerateQr")}
+                    </Button>
+                  </DataTableActions>
+                ),
+              },
+            ]}
+          />
           <GenericQrForm branchId={branchId} createGenericQr={actions.createGenericQr} onRevealed={setReveal} />
           {revealError && <p className="text-xs text-destructive">{revealError}</p>}
         </CardContent>
