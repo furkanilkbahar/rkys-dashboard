@@ -393,7 +393,11 @@
         "resetPin": "Reset PIN",
         "newPin": "New PIN (4-8 digits)",
         "pinSet": "PIN set",
-        "pinNotSet": "No PIN"
+        "pinNotSet": "No PIN",
+        "fullName": "Full name",
+        "edit": "Edit",
+        "inactive": "Inactive",
+        "pin": "PIN"
       },
       "create": {
         "title": "Add Staff",
@@ -432,7 +436,8 @@
         "last_owner": "The last owner cannot be demoted or deactivated.",
         "unknown": "Could not save, please try again.",
         "invalid_pin": "PIN must be 4-8 digits."
-      }
+      },
+      "empty": "No staff yet."
     },
     "settings": {
       "title": "Settings",

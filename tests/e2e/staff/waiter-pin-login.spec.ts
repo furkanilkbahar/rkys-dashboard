@@ -47,6 +47,14 @@ test("bug-hunt 2026-08-01 (D87): garson kendi PIN'iyle bağımsız giriş yapar,
     await page.waitForURL(/\/admin$/);
 
     await page.goto(tenantUrl(baseURL!, subdomain, "/admin/staff"));
+    // WebKit hidrasyon yarışı (PLAN.md Faz 21 takip maddesi 2): form
+    // react-hook-form + server action ile çalışıyor, hidrasyon bitmeden
+    // yapılan tıklama sessizce yutuluyor.
+    await page.waitForLoadState("networkidle");
+    // Ad Soyad 0091/D94 ile ZORUNLU alan oldu: adsız açılan personel listede
+    // yalnızca rozetle ayırt edilebiliyordu, rozet de opsiyonel — aynı açığı
+    // tekrar üretmemek için ad girişte isteniyor.
+    await page.locator("#create-full-name").fill("Deniz Aydın");
     await page.locator("#create-badge-no").fill("G1");
     await page.locator("#create-pin").fill("1234");
     await page.getByRole("button", { name: "+ Personel Ekle" }).click();

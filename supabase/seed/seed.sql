@@ -318,14 +318,17 @@ values
   )
 on conflict (provider_id, provider) do nothing;
 
-insert into public.profiles (id, tenant_id, role, is_active)
+-- Ad/soyad Faz 23'te eklendi (0091): personel listesi tabloya alınabilsin
+-- diye satırın bir KİMLİK kolonu gerekiyordu. D90 kural 2 gereği hiçbir ad
+-- tekrar etmiyor.
+insert into public.profiles (id, tenant_id, role, is_active, full_name)
 values
-  ('00000000-0000-4000-8000-0000000000a1', '00000000-0000-4000-8000-000000000001', 'owner', true),
-  ('00000000-0000-4000-8000-0000000000a2', '00000000-0000-4000-8000-000000000001', 'manager', true),
-  ('00000000-0000-4000-8000-0000000000a3', '00000000-0000-4000-8000-000000000001', 'waiter', true),
-  ('00000000-0000-4000-8000-0000000000b1', '00000000-0000-4000-8000-000000000002', 'owner', true),
-  ('00000000-0000-4000-8000-0000000000c1', '00000000-0000-4000-8000-000000000003', 'owner', true)
-on conflict (id) do nothing;
+  ('00000000-0000-4000-8000-0000000000a1', '00000000-0000-4000-8000-000000000001', 'owner', true, 'Tolga Acar'),
+  ('00000000-0000-4000-8000-0000000000a2', '00000000-0000-4000-8000-000000000001', 'manager', true, 'Elif Demir'),
+  ('00000000-0000-4000-8000-0000000000a3', '00000000-0000-4000-8000-000000000001', 'waiter', true, 'Kerem Yıldız'),
+  ('00000000-0000-4000-8000-0000000000b1', '00000000-0000-4000-8000-000000000002', 'owner', true, 'Selin Kaya'),
+  ('00000000-0000-4000-8000-0000000000c1', '00000000-0000-4000-8000-000000000003', 'owner', true, 'Murat Şahin')
+on conflict (id) do update set full_name = excluded.full_name;
 
 insert into public.platform_admins (id, is_active)
 values ('00000000-0000-4000-8000-0000000000d1', true)

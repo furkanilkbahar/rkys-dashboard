@@ -59,9 +59,15 @@ test("S47: admin cihaz+PIN oluşturur, cihaz kurulur, PIN ile giriş-çıkış y
     expect(deviceSecret).toBeTruthy();
     await page.getByRole("button", { name: "Onayla" }).click();
 
-    await page.getByRole("button", { name: "PIN Sıfırla" }).first().click();
-    await page.getByLabel("Yeni PIN (4-8 hane)").fill("1234");
-    await page.getByRole("button", { name: "PIN Sıfırla" }).last().click();
+    // GÜNCELLENDİ 2026-08-04 (D94): personel listesi tabloya alındı, satır
+    // düzenleyicisi (PIN Sıfırla dahil) artık "Düzenle" ile satırın altına
+    // açılıyor. Doğrulanan davranış aynı: owner'ın PIN'i 1234 yapılıyor.
+    const ownerRow = page.locator('[data-testid^="staff-row-"]').first();
+    await ownerRow.getByRole("button", { name: "Düzenle" }).click();
+    const editor = page.locator("tr[data-expansion]");
+    await editor.getByRole("button", { name: "PIN Sıfırla" }).click();
+    await editor.getByLabel("Yeni PIN (4-8 hane)").fill("1234");
+    await editor.getByRole("button", { name: "PIN Sıfırla" }).last().click();
     await page.waitForLoadState("networkidle");
 
     const deviceContext = await browser.newContext();

@@ -393,7 +393,11 @@
         "resetPin": "PIN Sıfırla",
         "newPin": "Yeni PIN (4-8 hane)",
         "pinSet": "PIN tanımlı",
-        "pinNotSet": "PIN yok"
+        "pinNotSet": "PIN yok",
+        "fullName": "Ad Soyad",
+        "edit": "Düzenle",
+        "inactive": "Pasif",
+        "pin": "PIN"
       },
       "create": {
         "title": "Personel Ekle",
@@ -432,7 +436,8 @@
         "last_owner": "Son sahip düşürülemez veya pasif yapılamaz.",
         "unknown": "Kaydedilemedi, tekrar deneyin.",
         "invalid_pin": "PIN 4-8 haneli rakam olmalı."
-      }
+      },
+      "empty": "Henüz personel yok."
     },
     "settings": {
       "title": "Ayarlar",

@@ -54,7 +54,12 @@ function StaffRow({
 
   const { register, control, handleSubmit } = useForm({
     resolver: standardSchemaResolver(staffUpdateFormSchema),
-    defaultValues: { role: member.role, badgeNo: member.badgeNo ?? "", isActive: member.isActive },
+    defaultValues: {
+      fullName: member.fullName ?? "",
+      role: member.role,
+      badgeNo: member.badgeNo ?? "",
+      isActive: member.isActive,
+    },
   });
 
   const pinForm = useForm({
@@ -62,7 +67,7 @@ function StaffRow({
     defaultValues: { pin: "" },
   });
 
-  async function onSubmit(values: { role: StaffRole; badgeNo: string; isActive: boolean }) {
+  async function onSubmit(values: { fullName: string; role: StaffRole; badgeNo: string; isActive: boolean }) {
     setError(null);
     const result = await updateStaffMember(member.id, values);
     if (!result.ok) {
@@ -85,14 +90,18 @@ function StaffRow({
   }
 
   return (
-    <div className="flex flex-col gap-2 rounded-md border border-border p-3">
+    <div className="flex flex-col gap-2">
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-wrap items-end gap-3">
+        <div className="flex flex-col gap-1">
+          <Label htmlFor={`full-name-${member.id}`}>{t("member.fullName")}</Label>
+          <Input id={`full-name-${member.id}`} {...register("fullName")} className="w-44" />
+        </div>
         <Controller
           control={control}
           name="role"
           render={({ field }) => (
             <Select value={field.value} onValueChange={field.onChange}>
-              <SelectTrigger className="w-36">
+              <SelectTrigger className="w-36" aria-label={t("member.role")}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -143,6 +152,115 @@ function StaffRow({
   );
 }
 
+/**
+ * Faz 23 (D94) — personel listesi.
+ *
+ * Önceden 8 personel yan yana 8 AÇIK FORM olarak çiziliyordu ve satırların
+ * kimlik kolonu yoktu: kim kim belli değildi (`profiles`'ta ad kolonu hiç
+ * yoktu, e-posta `auth.users`'ta ve RLS altında okunamıyor). 0091 ile
+ * `full_name` eklendi; liste artık tablo, düzenleyici ise satırın altına
+ * açılıyor — böylece varsayılan görünüm okunabilir kalıyor.
+ */
+function StaffTable({
+  staff,
+  actions,
+}: {
+  staff: AdminStaffMember[];
+  actions: {
+    updateStaffMember: (profileId: string, input: unknown) => Promise<StaffActionResult>;
+    resetStaffPin: (profileId: string, input: unknown) => Promise<StaffActionResult>;
+  };
+}) {
+  const t = useTranslations("admin.staff");
+  const tRole = useTranslations("admin.staff.role");
+  const tGrid = useTranslations("admin.table");
+  const [editingId, setEditingId] = useState<string | null>(null);
+
+  return (
+    <DataTable
+      rows={staff}
+      rowKey={(member) => member.id}
+      rowAttributes={(member) => ({ "data-testid": `staff-row-${member.id}` })}
+      empty={t("empty")}
+      searchable
+      expandedRow={(member) =>
+        editingId !== member.id ? null : (
+          <StaffRow
+            member={member}
+            updateStaffMember={actions.updateStaffMember}
+            resetStaffPin={actions.resetStaffPin}
+          />
+        )
+      }
+      columns={[
+        {
+          key: "name",
+          header: t("member.fullName"),
+          primary: true,
+          value: (member) => member.fullName,
+          // Ad yoksa UYDURULMAZ: rozete, o da yoksa role düşülür ve bunun
+          // türetilmiş bir etiket olduğu soluk renkle belli edilir.
+          cell: (member) =>
+            member.fullName ?? (
+              <span className="text-[var(--surface-fg-muted)]">{member.badgeNo ?? tRole(member.role)}</span>
+            ),
+        },
+        {
+          key: "role",
+          header: t("member.role"),
+          value: (member) => tRole(member.role),
+          cell: (member) => <span className="text-[var(--surface-fg-muted)]">{tRole(member.role)}</span>,
+        },
+        {
+          key: "badge",
+          header: t("member.badgeNo"),
+          value: (member) => member.badgeNo,
+          cell: (member) => <span className="tabular-nums">{member.badgeNo ?? "—"}</span>,
+        },
+        {
+          key: "pin",
+          header: t("member.pin"),
+          value: (member) => (member.hasPin ? 1 : 0),
+          cell: (member) => (
+            <Badge variant={member.hasPin ? "secondary" : "destructive"}>
+              {member.hasPin ? t("member.pinSet") : t("member.pinNotSet")}
+            </Badge>
+          ),
+        },
+        {
+          key: "status",
+          header: tGrid("status"),
+          value: (member) => (member.isActive ? 1 : 0),
+          cell: (member) => (
+            <Badge variant={member.isActive ? "secondary" : "destructive"}>
+              {member.isActive ? t("member.active") : t("member.inactive")}
+            </Badge>
+          ),
+        },
+        {
+          key: "actions",
+          header: tGrid("actions"),
+          actions: true,
+          align: "end",
+          cell: (member) => (
+            <DataTableActions>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                aria-expanded={editingId === member.id}
+                onClick={() => setEditingId((current) => (current === member.id ? null : member.id))}
+              >
+                {t("member.edit")}
+              </Button>
+            </DataTableActions>
+          ),
+        },
+      ]}
+    />
+  );
+}
+
 function CreateStaffForm({
   createStaffMember,
 }: {
@@ -155,17 +273,17 @@ function CreateStaffForm({
   const [error, setError] = useState<string | null>(null);
   const { register, control, handleSubmit, reset } = useForm({
     resolver: standardSchemaResolver(createStaffMemberFormSchema),
-    defaultValues: { role: "waiter" as StaffRole, badgeNo: "", pin: "" },
+    defaultValues: { fullName: "", role: "waiter" as StaffRole, badgeNo: "", pin: "" },
   });
 
-  async function onSubmit(values: { role: StaffRole; badgeNo: string; pin: string }) {
+  async function onSubmit(values: { fullName: string; role: StaffRole; badgeNo: string; pin: string }) {
     setError(null);
     const result = await createStaffMember(values);
     if (!result.ok) {
       setError(tErrors(result.error));
       return;
     }
-    reset({ role: "waiter", badgeNo: "", pin: "" });
+    reset({ fullName: "", role: "waiter", badgeNo: "", pin: "" });
     router.refresh();
   }
 
@@ -176,6 +294,10 @@ function CreateStaffForm({
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-wrap items-end gap-3">
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="create-full-name">{t("member.fullName")}</Label>
+            <Input id="create-full-name" {...register("fullName")} className="w-44" />
+          </div>
           <Controller
             control={control}
             name="role"
@@ -420,16 +542,7 @@ export function StaffManager({
     <div className="flex flex-col gap-8">
       <AdminPageHeader title={t("title")} />
 
-      <div className="flex flex-col gap-3">
-        {staff.map((member) => (
-          <StaffRow
-            key={member.id}
-            member={member}
-            updateStaffMember={actions.updateStaffMember}
-            resetStaffPin={actions.resetStaffPin}
-          />
-        ))}
-      </div>
+      <StaffTable staff={staff} actions={actions} />
 
       <CreateStaffForm createStaffMember={actions.createStaffMember} />
 

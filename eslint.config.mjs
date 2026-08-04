@@ -18,6 +18,14 @@ const eslintConfig = defineConfig([
     // listesinde yok) — minified bundle'lar `pnpm lint`'i binlerce sahte
     // uyarıyla kırıyordu.
     ".vercel/**",
+    // Supabase CLI'ın ürettiği geçici dosyalar (.gitignore'da var ama
+    // eslint'in varsayılan listesinde yok). `supabase start` edge runtime
+    // için minified bir bootstrap yazıyor ve o dosya tek başına 150+ sahte
+    // hata üretiyordu.
+    "supabase/.temp/**",
+    // Edge function'lar Deno runtime'ında koşuyor — Node/Next kurallarıyla
+    // denetlenmeleri anlamsız (tsconfig'te de exclude edildiler).
+    "supabase/functions/**",
   ]),
 ]);
 

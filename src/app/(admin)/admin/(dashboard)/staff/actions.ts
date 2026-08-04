@@ -62,6 +62,7 @@ export async function createStaffMember(input: unknown): Promise<StaffActionResu
     id: authUser.user.id,
     tenant_id: actor.tenantId,
     role: parsed.data.role,
+    full_name: parsed.data.fullName,
     badge_no: parsed.data.badgeNo || null,
     is_active: true,
   });
@@ -97,6 +98,7 @@ export async function updateStaffMember(profileId: string, input: unknown): Prom
     p_role: parsed.data.role,
     p_badge_no: parsed.data.badgeNo,
     p_is_active: parsed.data.isActive,
+    p_full_name: parsed.data.fullName,
   });
   if (error) return { ok: false, error: mapRpcError(error.message) };
 

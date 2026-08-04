@@ -2954,6 +2954,7 @@ export type Database = {
         Row: {
           badge_no: string | null
           created_at: string
+          full_name: string | null
           id: string
           is_active: boolean
           photo_url: string | null
@@ -2964,6 +2965,7 @@ export type Database = {
         Insert: {
           badge_no?: string | null
           created_at?: string
+          full_name?: string | null
           id: string
           is_active?: boolean
           photo_url?: string | null
@@ -2974,6 +2976,7 @@ export type Database = {
         Update: {
           badge_no?: string | null
           created_at?: string
+          full_name?: string | null
           id?: string
           is_active?: boolean
           photo_url?: string | null
@@ -5780,15 +5783,26 @@ export type Database = {
         }
         Returns: undefined
       }
-      update_staff_member: {
-        Args: {
-          p_badge_no: string
-          p_is_active: boolean
-          p_profile_id: string
-          p_role: string
-        }
-        Returns: undefined
-      }
+      update_staff_member:
+        | {
+            Args: {
+              p_badge_no: string
+              p_is_active: boolean
+              p_profile_id: string
+              p_role: string
+            }
+            Returns: undefined
+          }
+        | {
+            Args: {
+              p_badge_no: string
+              p_full_name: string
+              p_is_active: boolean
+              p_profile_id: string
+              p_role: string
+            }
+            Returns: undefined
+          }
       update_tenant_business_settings: {
         Args: { p_currency: string; p_timezone: string }
         Returns: undefined

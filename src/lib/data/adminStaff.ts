@@ -9,6 +9,12 @@ export { STAFF_MANAGEABLE_ROLES, type StaffRole };
 export type AdminStaffMember = {
   id: string;
   role: StaffRole;
+  /**
+   * Faz 23 (0091). NULL olabilir: D87 ile açılmış mevcut personelin adı yok
+   * ve migration onları geçersiz kılmıyor. UI ada düşemezse rozete, o da
+   * yoksa role düşer — eksik veri sahte bir değerle doldurulmaz.
+   */
+  fullName: string | null;
   badgeNo: string | null;
   photoUrl: string | null;
   isActive: boolean;
@@ -26,13 +32,16 @@ export async function getAdminStaff(tenantId: string): Promise<AdminStaffMember[
   const supabase = await createClient();
   const { data } = await supabase
     .from("profiles")
-    .select("id, role, badge_no, photo_url, is_active, pin_hash")
+    .select("id, role, full_name, badge_no, photo_url, is_active, pin_hash")
     .eq("tenant_id", tenantId)
+    // Ada göre sırala; adı olmayanlar sona (nullsFirst: false).
+    .order("full_name", { nullsFirst: false })
     .order("role");
 
   return (data ?? []).map((p) => ({
     id: p.id,
     role: p.role as StaffRole,
+    fullName: p.full_name,
     badgeNo: p.badge_no,
     photoUrl: p.photo_url,
     isActive: p.is_active,
