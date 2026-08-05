@@ -2,6 +2,15 @@
 -- Idempotent: `supabase db reset` her koşumda tabloları sıfırdan kurduğu için
 -- on conflict koruması sadece manuel tekrar-koşum için güvenlik.
 
+-- Vitrin dışı plan (D96). 0038 üç halka açık planı kuruyor; bu satır dördüncü
+-- bir örnek olarak `is_public = false` yolunu LOKALDE de var ediyor, çünkü
+-- aksi halde "Demo planı kayıt formunda görünür ama ana sayfada görünmez"
+-- davranışının testi yazılamaz — üretimde bu planı Süper Admin açmıştı,
+-- lokalde hiç yoktu ve regresyon sessizce geri gelebilirdi.
+insert into public.plans (key, name, price_minor, table_limit, included_branch_count, extra_branch_price_minor, is_public)
+values ('demo', 'Demo', 0, 5, 1, 0, false)
+on conflict (key) do update set is_public = excluded.is_public;
+
 -- gamma: Faz 2 Adım 7 (onboarding) için onboarding_completed_at = null taze
 -- tenant — "Demo veriyle keşfet" yolunun göstereceği minimal demo katalog +
 -- "Sıfırdan kur" yolunun clear_demo_data() ile temizleyeceği veri burada.

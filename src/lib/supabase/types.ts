@@ -2587,6 +2587,7 @@ export type Database = {
           extra_branch_price_minor: number
           id: string
           included_branch_count: number
+          is_public: boolean
           key: string
           name: string
           price_minor: number
@@ -2597,6 +2598,7 @@ export type Database = {
           extra_branch_price_minor?: number
           id?: string
           included_branch_count?: number
+          is_public?: boolean
           key: string
           name: string
           price_minor?: number
@@ -2607,6 +2609,7 @@ export type Database = {
           extra_branch_price_minor?: number
           id?: string
           included_branch_count?: number
+          is_public?: boolean
           key?: string
           name?: string
           price_minor?: number
@@ -5284,17 +5287,30 @@ export type Database = {
         }
         Returns: string
       }
-      create_plan: {
-        Args: {
-          p_extra_branch_price_minor: number
-          p_included_branch_count: number
-          p_key: string
-          p_name: string
-          p_price_minor: number
-          p_table_limit: number
-        }
-        Returns: string
-      }
+      create_plan:
+        | {
+            Args: {
+              p_extra_branch_price_minor: number
+              p_included_branch_count: number
+              p_key: string
+              p_name: string
+              p_price_minor: number
+              p_table_limit: number
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              p_extra_branch_price_minor: number
+              p_included_branch_count: number
+              p_is_public: boolean
+              p_key: string
+              p_name: string
+              p_price_minor: number
+              p_table_limit: number
+            }
+            Returns: string
+          }
       create_staff_device: {
         Args: { p_branch_id: string; p_label: string }
         Returns: string
@@ -5772,17 +5788,30 @@ export type Database = {
         Args: { p_latitude: number; p_longitude: number }
         Returns: undefined
       }
-      update_plan: {
-        Args: {
-          p_extra_branch_price_minor: number
-          p_included_branch_count: number
-          p_name: string
-          p_plan_id: string
-          p_price_minor: number
-          p_table_limit: number
-        }
-        Returns: undefined
-      }
+      update_plan:
+        | {
+            Args: {
+              p_extra_branch_price_minor: number
+              p_included_branch_count: number
+              p_name: string
+              p_plan_id: string
+              p_price_minor: number
+              p_table_limit: number
+            }
+            Returns: undefined
+          }
+        | {
+            Args: {
+              p_extra_branch_price_minor: number
+              p_included_branch_count: number
+              p_is_public: boolean
+              p_name: string
+              p_plan_id: string
+              p_price_minor: number
+              p_table_limit: number
+            }
+            Returns: undefined
+          }
       update_staff_member:
         | {
             Args: {
