@@ -13,19 +13,17 @@ test("S56/S57: ana sayfa gerçek fiyat, modül vitrini ve entegrasyon şeridini 
   await expect(page.getByText("Zaten kullandığınız araçlarla çalışır")).toBeVisible();
   await expect(page.getByText("Yemeksepeti").first()).toBeVisible();
 
-  // Faz 23: entegrasyonlar artık düz bir isim şeridi değil, türüne göre
-  // gruplu. Grup başlıkları hangi ismin ne olduğunu taşıyor.
-  const integrations = page.locator("#entegrasyonlar");
-  await expect(integrations.getByRole("heading", { name: "Pazar yerleri" })).toBeVisible();
-  await expect(integrations.getByRole("heading", { name: "Muhasebe" })).toBeVisible();
-
-  // Bölüm SIRASI da sözleşmenin parçası: entegrasyonlar hero'nun hemen
-  // altındaydı, ürün anlatılmadan marka adı gösteriyordu. Artık modül
-  // vitrininin ALTINDA. DOM sırası okuma sırasıdır.
+  // Bölüm SIRASI sözleşmenin parçası: entegrasyon şeridi hero'nun hemen
+  // altında, modül vitrininin ÜSTÜNDE (kullanıcı kararı, Faz 24). DOM sırası
+  // okuma sırasıdır.
   const sectionOrder = await page.evaluate(() =>
     [...document.querySelectorAll("main section[id], main div[id]")].map((el) => el.id),
   );
-  expect(sectionOrder.indexOf("entegrasyonlar")).toBeGreaterThan(sectionOrder.indexOf("moduller"));
+  expect(sectionOrder.indexOf("entegrasyonlar")).toBeLessThan(sectionOrder.indexOf("moduller"));
+
+  // Yedi marka adı da tek tek görünür — şerit sessizce kısalmasın.
+  const integrations = page.locator("#entegrasyonlar");
+  await expect(integrations.locator("li")).toHaveCount(7);
 
   // Faz 21 Adım 2: §2.4'ün bölüm iskeleti uygulandı ve "Neden RKYS Dashboard"
   // güven bölümü kaldırıldı — içerdiği gerçek iddialar (tenant izolasyonu,
@@ -65,6 +63,13 @@ test("D96: 'Demo' planı ana sayfada görünmez ama kayıt formunda seçilebilir
   const pricing = page.locator("#fiyatlandirma");
   await expect(pricing.getByText("Demo", { exact: true })).toHaveCount(0);
   await expect(pricing.getByText("Başlangıç", { exact: true })).toBeVisible();
+
+  // FİYAT TABLOSU ASLA BOŞ OLMAMALI (D99). 2026-08-06'da üretimde tam olarak
+  // bu oldu: `is_public` filtresi kolon henüz yokken hata verdi, hata
+  // okunmadığı için liste sessizce boşaldı ve ana sayfada TEK BİR PLAN
+  // KARTI KALMADI. Bir vitrin filtresinin başarısızlığı fiyatların
+  // kaybolmasına dönüşmemeli.
+  await expect(pricing.getByRole("link", { name: "Ücretsiz Deneyin" })).not.toHaveCount(0);
 
   // Kayıt formunda var: "seçilebilirlik" ile "vitrinde olma" ayrı sorular.
   await page.goto(`${baseURL}/kayit`);

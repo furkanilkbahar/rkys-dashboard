@@ -44,16 +44,30 @@ export type MarketingPlan = Plan & {
 // düşmez. Filtre SORGUDA, çağıranda değil — ana sayfa dışında bir yerin de
 // vitrin listesine ihtiyacı olursa (ör. fiyat karşılaştırma sayfası) kuralı
 // tekrar yazmak zorunda kalmasın.
+//
+// GERİ DÜŞÜŞ (D99, üretimde ölçülerek eklendi): migration ile uygulama
+// dağıtımı arasındaki pencerede `is_public` kolonu HENÜZ YOKTUR; o anda
+// PostgREST filtreyi reddediyor ve `data` null dönüyordu. Hata okunmadığı
+// için sonuç sessizce boş liste oluyordu ve ANA SAYFANIN FİYAT TABLOSU
+// TAMAMEN BOŞALIYORDU — 2026-08-06'da üretimde tam olarak bu oldu. Bir
+// vitrin filtresinin başarısızlığı, ürünün fiyatlarının kaybolmasına
+// dönüşmemeli: filtre uygulanamıyorsa filtresiz liste gösterilir (fazla
+// plan göstermek, hiç plan göstermemekten iyidir) ve durum log'lanır.
 export async function getMarketingPlans(): Promise<MarketingPlan[]> {
   const supabase = await createClient();
-  const [{ data: plans }, { data: planModules }] = await Promise.all([
-    supabase
-      .from("plans")
-      .select("id, key, name, price_minor, table_limit, included_branch_count, extra_branch_price_minor")
-      .eq("is_public", true)
-      .order("price_minor"),
+  const columns = "id, key, name, price_minor, table_limit, included_branch_count, extra_branch_price_minor";
+
+  const [visible, { data: planModules }] = await Promise.all([
+    supabase.from("plans").select(columns).eq("is_public", true).order("price_minor"),
     supabase.from("plan_modules").select("plan_id, module_key"),
   ]);
+
+  let plans = visible.data;
+  if (visible.error) {
+    console.error("getMarketingPlans: is_public filtresi uygulanamadı, filtresiz listeye düşülüyor", visible.error);
+    const { data: allPlans } = await supabase.from("plans").select(columns).order("price_minor");
+    plans = allPlans;
+  }
 
   const moduleKeysByPlan = new Map<string, ModuleKey[]>();
   for (const row of planModules ?? []) {

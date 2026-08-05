@@ -1796,13 +1796,7 @@
       }
     },
     "integrations": {
-      "title": "Zaten kullandığınız araçlarla çalışır",
-      "subtitle": "Aşağıdaki bağlantılar ilgili modül açıkken kullanılabilir.",
-      "groups": {
-        "marketplace": "Pazar yerleri",
-        "payment": "Ödeme",
-        "accounting": "Muhasebe"
-      }
+      "title": "Zaten kullandığınız araçlarla çalışır"
     },
     "features": {
       "qrMenu": {

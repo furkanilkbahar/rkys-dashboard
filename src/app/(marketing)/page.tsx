@@ -9,16 +9,16 @@ import { MODULE_KEYS, type ModuleKey } from "@/lib/modules/keys";
 /**
  * Faz 21 Adım 2 (§2.4) — pazarlama ana sayfası.
  *
- * Bölüm iskeleti: hero → modül vitrini → bölünmüş içerik ×3 → kimler
- * kullanıyor → entegrasyonlar → fiyatlandırma → lisans modeli → kapanış CTA.
+ * Bölüm iskeleti: hero → entegrasyon şeridi → modül vitrini → bölünmüş içerik
+ * ×3 → kimler kullanıyor → fiyatlandırma → lisans modeli → kapanış CTA.
  * (Nav ve footer layout'ta.)
  *
- * ENTEGRASYON ŞERİDİ AŞAĞI ALINDI (Faz 23): eskiden hero'nun hemen altındaydı
- * ve sayfanın ilk kaydırmasını yedi. Ziyaretçi henüz ürünün ne olduğunu
- * bilmeden marka adları görüyordu; entegrasyon "bu ürünü alır mıyım" değil
- * "aldıktan sonra neye bağlanır" sorusunun cevabı, o yüzden ürün anlatıldıktan
- * sonraki yerine taşındı. `id="entegrasyonlar"` korundu — nav'daki
- * `/#entegrasyonlar` bağlantısı ve varsa dış bağlantılar kırılmadı.
+ * ENTEGRASYON ŞERİDİNİN YERİ: hero'nun hemen altında — sayfadaki KONUMU
+ * doğru. (Faz 24'te bir ara aşağı alındı, kullanıcı geri istedi: şeridin
+ * sayfadaki yeri sorun değildi, KUTUNUN İÇİ sorundu.) Düzeltme kutunun
+ * içinde: marka adları başlıkla aynı satırda yarışmak yerine kendi
+ * satırında ve biraz aşağıda duruyor; dar ekranda `flex-wrap`'in ürettiği
+ * kayma yerine eşit hücreli bir ızgaraya düşüyor.
  *
  * UYDURMA İDDİA YOK (§4, DESIGN.md): istatistik şeridi, müşteri logosu ve
  * referans/testimonial bölümü sayfada HİÇ yer almıyor — boş state olarak bile
@@ -32,14 +32,7 @@ import { MODULE_KEYS, type ModuleKey } from "@/lib/modules/keys";
  * sınıflarıyla saf CSS (bkz. D97).
  */
 
-// Düz bir 7'li isim listesi mobilde düzensiz sarıyordu ve hepsi aynı türden
-// şeymiş gibi duruyordu. Gruplama hem düzeni hem de bilgiyi düzeltiyor:
-// hangi ismin ne işe yaradığı artık okunuyor.
-const INTEGRATION_GROUPS = [
-  { key: "marketplace", names: ["Yemeksepeti", "Getir", "Trendyol"] },
-  { key: "payment", names: ["iyzico"] },
-  { key: "accounting", names: ["Logo", "Mikro", "Paraşüt"] },
-] as const;
+const INTEGRATION_NAMES = ["Yemeksepeti", "Getir", "Trendyol", "iyzico", "Logo", "Mikro", "Paraşüt"] as const;
 
 const AUDIENCE_TYPES = ["coffee", "fineDining", "bakery", "bistro", "bar", "chain"] as const;
 
@@ -135,7 +128,38 @@ export default async function MarketingHomePage() {
         </div>
       </section>
 
-      {/* ── 2. MODÜL VİTRİNİ ────────────────────────────────────────── */}
+      {/* ── 2. ENTEGRASYON ŞERİDİ ───────────────────────────────────── */}
+      <section
+        id="entegrasyonlar"
+        className="border-y border-[var(--surface-line)] scroll-mt-20"
+        aria-labelledby="entegrasyonlar-baslik"
+      >
+        <div className="mx-auto max-w-6xl px-5 py-7">
+          {/* §2.4: "Entegrasyonlar" olarak etiketlenir, "müşterilerimiz" olarak DEĞİL. */}
+          <p className="text-[11px] font-semibold tracking-[0.13em] text-[var(--surface-fg-faint)] uppercase">
+            {t("nav.integrations")}
+          </p>
+          <h2 id="entegrasyonlar-baslik" className="mt-0.5 text-[14px] font-semibold text-[var(--surface-fg)]">
+            {t("integrations.title")}
+          </h2>
+
+          {/* Marka adları eskiden başlıkla AYNI flex satırındaydı: 390px'te
+              yedi isim düzensiz sarıyor, satır başları hizasız kalıyordu
+              ("kayma"). Artık kendi satırlarında ve başlığın biraz altında.
+              Dar ekranda eşit hücreli ızgara — sarma kararını tarayıcıya
+              bırakmak yerine sütun sayısını biz veriyoruz, böylece her isim
+              aynı genişlikte bir hücrede ve hizada duruyor. */}
+          <ul className="mt-4 grid grid-cols-2 gap-x-6 gap-y-2.5 sm:flex sm:flex-wrap sm:items-center sm:gap-x-8">
+            {INTEGRATION_NAMES.map((name) => (
+              <li key={name} className="text-[14px] font-semibold text-[var(--surface-fg-muted)] opacity-70">
+                {name}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* ── 3. MODÜL VİTRİNİ ────────────────────────────────────────── */}
       <section id="moduller" className="mx-auto max-w-6xl scroll-mt-20 px-5 py-16 lg:py-20">
         <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
           <div className="marketing-reveal">
@@ -183,7 +207,7 @@ export default async function MarketingHomePage() {
         </div>
       </section>
 
-      {/* ── 3. BÖLÜNMÜŞ İÇERİK ×3 ───────────────────────────────────── */}
+      {/* ── 4. BÖLÜNMÜŞ İÇERİK ×3 ───────────────────────────────────── */}
       <div id="nasil-calisir" className="scroll-mt-20">
         {SPLIT_SECTIONS.map((section, index) => (
           <section
@@ -226,7 +250,7 @@ export default async function MarketingHomePage() {
         ))}
       </div>
 
-      {/* ── 4. KİMLER KULLANIYOR (işletme TİPLERİ) ──────────────────── */}
+      {/* ── 5. KİMLER KULLANIYOR (işletme TİPLERİ) ──────────────────── */}
       {/* Bu bölüm bir REFERANS/müşteri bölümü DEĞİLDİR ve öyle görünmemelidir:
           hizmet verilen işletme türlerini anlatır. Uydurma bir marka adı,
           logo, sayı ya da testimonial buraya EKLENMEZ (DESIGN.md). Gerçek
@@ -263,54 +287,6 @@ export default async function MarketingHomePage() {
                 <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--surface-fg-muted)]">
                   {t(`audience.types.${type}.body`)}
                 </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── 5. ENTEGRASYONLAR ───────────────────────────────────────── */}
-      <section
-        id="entegrasyonlar"
-        className="border-t border-[var(--surface-line)] bg-[var(--muted)] scroll-mt-20"
-        aria-labelledby="entegrasyonlar-baslik"
-      >
-        <div className="mx-auto max-w-6xl px-5 py-14 lg:py-16">
-          {/* §2.4: "Entegrasyonlar" olarak etiketlenir, "müşterilerimiz" olarak DEĞİL. */}
-          <div className="marketing-reveal">
-            <p className="text-[11px] font-semibold tracking-[0.13em] text-[var(--surface-fg-faint)] uppercase">
-              {t("nav.integrations")}
-            </p>
-            <h2
-              id="entegrasyonlar-baslik"
-              className="mt-2 font-[family-name:var(--font-display)] text-[clamp(1.5rem,2.8vw,1.9rem)] leading-tight font-semibold tracking-[-0.02em]"
-            >
-              {t("integrations.title")}
-            </h2>
-            <p className="mt-2 max-w-[52ch] text-[13.5px] text-[var(--surface-fg-muted)]">
-              {t("integrations.subtitle")}
-            </p>
-          </div>
-
-          {/* Eskiden tek `flex-wrap` sırasıydı: 7 isim 390px'te düzensiz
-              sarıyordu ve hangisinin ne olduğu okunmuyordu. Artık gruplar
-              kendi sütunlarında; her isim eşit yükseklikte bir rozet. */}
-          <div className="marketing-reveal mt-8 grid gap-4 sm:grid-cols-3">
-            {INTEGRATION_GROUPS.map((group) => (
-              <div key={group.key}>
-                <h3 className="text-[11px] font-semibold tracking-[0.12em] text-[var(--surface-fg-faint)] uppercase">
-                  {t(`integrations.groups.${group.key}`)}
-                </h3>
-                <ul className="mt-2.5 flex flex-wrap gap-2">
-                  {group.names.map((name) => (
-                    <li
-                      key={name}
-                      className="marketing-lift rounded-full border border-[var(--surface-line)] bg-[var(--surface-panel)] px-3.5 py-2 text-[13px] font-semibold text-[var(--surface-fg-muted)] shadow-[var(--shadow-sm)]"
-                    >
-                      {name}
-                    </li>
-                  ))}
-                </ul>
               </div>
             ))}
           </div>

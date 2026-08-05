@@ -1796,13 +1796,7 @@
       }
     },
     "integrations": {
-      "title": "Works with the tools you already use",
-      "subtitle": "The connections below are available while the relevant module is enabled.",
-      "groups": {
-        "marketplace": "Marketplaces",
-        "payment": "Payments",
-        "accounting": "Accounting"
-      }
+      "title": "Works with the tools you already use"
     },
     "features": {
       "qrMenu": {
