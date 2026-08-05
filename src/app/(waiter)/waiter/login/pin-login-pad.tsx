@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { useSoundUnlock } from "@/lib/sound/insistentAlert";
 
 import type { WaiterLoginResult } from "./actions";
 
@@ -12,11 +13,18 @@ export function PinLoginPad({ loginWithPin }: { loginWithPin: (input: unknown) =
   const t = useTranslations("waiterLogin");
   const tErrors = useTranslations("waiterLogin.errors");
   const router = useRouter();
+  // Ses kilidi burada, PIN tuşlanırken açılır: autoplay politikası bir
+  // kullanıcı jesti şart koşuyor ve tuş dokunuşu zaten bir jest. Girişten
+  // sonra /waiter'a geçiş client-side olduğu için (aşağıdaki router.push)
+  // doküman aynı kalır, AudioContext açık taşınır — garson panelde
+  // "Sesi Aç" düğmesini hiç görmez.
+  const { unlock } = useSoundUnlock();
   const [pin, setPin] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
   function press(digit: string) {
+    unlock();
     setError(null);
     if (pin.length < 8) {
       setPin((prev) => prev + digit);
