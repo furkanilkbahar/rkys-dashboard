@@ -12,6 +12,13 @@ import { chromium } from "@playwright/test";
 const BASE = "http://acme.localhost:3000";
 const WIDTHS = [390, 768];
 
+// Pazarlama yüzeyi (Faz 23): giriş GEREKTİRMEZ ve kök alan adından servis
+// edilir, o yüzden ayrı bir taban adres + ayrı liste. Denetim buraya da
+// bakıyor çünkü "ana sayfada taşma var mı" sorusu admin panelininki kadar
+// gerçek — ve ziyaretçinin gördüğü ilk ekran orası.
+const PUBLIC_BASE = "http://localhost:3000";
+const PUBLIC_PATHS = ["/", "/kayit", "/iletisim", "/sss", "/donanim", "/gelistirici", "/blog"];
+
 const PATHS = [
   "/admin", "/admin/menu", "/admin/tables", "/admin/ratings", "/admin/reservations",
   "/admin/campaigns", "/admin/loyalty", "/admin/gift-cards", "/admin/ingredients",
@@ -21,7 +28,13 @@ const PATHS = [
 ];
 
 const browser = await chromium.launch();
-const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+// `hasTouch` ŞART: dokunma hedefi kurallarının tamamı (`globals.css`'teki
+// `@media (pointer: coarse)` blokları) yalnızca kaba işaretçide devreye
+// giriyor. Bu bayrak olmadan denetim masaüstü işaretçisiyle ölçüyordu ve
+// kural uygulanmadığı için ekranda 40px olan her düğmeyi "28px, çok küçük"
+// diye raporluyordu — 390/768 genişliğinde koşan bir denetim için yanlış
+// varsayım, ve ürettiği gürültü gerçek kusurları gizliyordu.
+const page = await browser.newPage({ viewport: { width: 390, height: 844 }, hasTouch: true });
 
 await page.goto(`${BASE}/admin/login`);
 await page.getByLabel("E-posta").fill("owner@acme.test");
@@ -86,7 +99,16 @@ const probe = () =>
         }
       }
 
-      if (el.matches("button, a, input, select, [role=button], [role=switch], [role=combobox]") && r.height < 40) {
+      // Denetlenen küme, `globals.css`'teki dokunma hedefi kuralının
+      // KAPSADIĞI küme ile birebir aynı tutuluyor. Çıplak `a` bilinçli olarak
+      // DIŞARIDA: kural da onu listelemiyor ("satır içi metin bağlantıları
+      // kapsam dışı — paragraf içinde 44px yükseklik metni bozar"). Denetim
+      // kuralı aşan bir küme ararsa, tasarımın bilerek izin verdiği şeyleri
+      // kusur diye raporlar ve çıktı "0 = temiz" olma özelliğini kaybeder.
+      // Buton gibi davranan bağlantılar `a[data-slot="button"]` ile yakalanır.
+      const TARGET_SELECTOR =
+        'button, input:not([type=hidden]), select, [role=button], [role=switch], [role=combobox], [role=option], [role=menuitem], [role=tab], a[data-slot="button"]';
+      if (el.matches(TARGET_SELECTOR) && r.height < 40) {
         small.push({ d: desc(el), h: Math.round(r.height) });
       }
     }
@@ -112,23 +134,44 @@ const probe = () =>
     return { innerScroll, clipped, small: small.length, smallSample: small.slice(0, 3), overlaps: overlaps.slice(0, 4) };
   });
 
-for (const path of PATHS) {
-  for (const width of WIDTHS) {
-    await page.setViewportSize({ width, height: 844 });
-    try {
-      await page.goto(`${BASE}${path}`, { waitUntil: "networkidle", timeout: 45000 });
-    } catch {
-      console.log(`\n### ${path} @${width} — YÜKLENEMEDİ`);
-      continue;
+async function sweep(base, paths) {
+  let defects = 0;
+  for (const path of paths) {
+    for (const width of WIDTHS) {
+      await page.setViewportSize({ width, height: 844 });
+      try {
+        await page.goto(`${base}${path}`, { waitUntil: "networkidle", timeout: 45000 });
+      } catch {
+        console.log(`\n### ${path} @${width} — YÜKLENEMEDİ`);
+        defects++;
+        continue;
+      }
+      const r = await probe();
+      if (!r.innerScroll.length && !r.clipped.length && !r.overlaps.length && r.small === 0) continue;
+      // `overflow-x: auto` YAZARIN KARARIDIR (kod bloğu, geniş tablo) — kusur
+      // sayısına girmez, ama görünür kalsın diye yazdırılır.
+      const isDefect =
+        r.innerScroll.some((s) => s.kind !== "kaydırılabilir") ||
+        r.clipped.length > 0 ||
+        r.overlaps.length > 0 ||
+        r.small > 0;
+      if (isDefect) defects++;
+      console.log(`\n### ${path} @${width}`);
+      for (const s of r.innerScroll) console.log(`  [${s.kind}] ${s.client}→${s.scroll}px overflow-x:${s.overflowX} · ${s.d}`);
+      for (const c of r.clipped) console.log(`  [KIRPIK] ${c.elRight} > ${c.parentRight} · ${c.d}`);
+      for (const o of r.overlaps) console.log(`  [BİNDİRME] ${o.ox}×${o.oy}px · ${o.a} ⟂ ${o.b}`);
+      if (r.small) console.log(`  [KÜÇÜK HEDEF] ${r.small} adet <40px: ${r.smallSample.map((s) => `${s.d}(${s.h}px)`).join(", ")}`);
     }
-    const r = await probe();
-    if (!r.innerScroll.length && !r.clipped.length && !r.overlaps.length && r.small === 0) continue;
-    console.log(`\n### ${path} @${width}`);
-    for (const s of r.innerScroll) console.log(`  [${s.kind}] ${s.client}→${s.scroll}px overflow-x:${s.overflowX} · ${s.d}`);
-    for (const c of r.clipped) console.log(`  [KIRPIK] ${c.elRight} > ${c.parentRight} · ${c.d}`);
-    for (const o of r.overlaps) console.log(`  [BİNDİRME] ${o.ox}×${o.oy}px · ${o.a} ⟂ ${o.b}`);
-    if (r.small) console.log(`  [KÜÇÜK HEDEF] ${r.small} adet <40px: ${r.smallSample.map((s) => `${s.d}(${s.h}px)`).join(", ")}`);
   }
+  return defects;
 }
+
+const publicDefects = await sweep(PUBLIC_BASE, PUBLIC_PATHS);
+const adminDefects = await sweep(BASE, PATHS);
+
+console.log(
+  `\n=== ÖZET === pazarlama: ${PUBLIC_PATHS.length} sayfa × ${WIDTHS.length} genişlik → ${publicDefects} kusurlu koşum · ` +
+    `admin: ${PATHS.length} sayfa × ${WIDTHS.length} genişlik → ${adminDefects} kusurlu koşum`,
+);
 
 await browser.close();

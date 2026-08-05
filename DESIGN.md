@@ -117,6 +117,8 @@ Token'lı: `--dur-fast 120ms` · `--dur-base 200ms` · `--dur-slow 340ms` · `--
 
 Kütüphane politikası: `framer-motion` v12 kurulu, **yeni animasyon kütüphanesi eklenmez** (RULES #21). Menü ızgarasının giriş/stagger animasyonu **CSS** (`@starting-style` / keyframes) — 0 KB JS. framer-motion yalnızca gerçekten etkileşimli yaprakta (sepet çubuğu, ürün detay sheet'i). **Menü ızgarasında `layout` animasyonu yasak.**
 
+**Kaydırmaya bağlı belirme (D97):** pazarlama sayfası `animation-timeline: view()` kullanır (`.marketing-reveal`), böylece Server Component kalır. Bu animasyon `fill-mode: both` ile çalışır, yani öğe aralıktan önce `opacity: 0` — bu yüzden blok **her zaman `@supports (animation-timeline: view())` içine yazılır**. Guard olmadan, özelliği desteklemeyen bir tarayıcıda içerik sonsuza kadar görünmez kalır; bir animasyon hatası sayfanın boş görünmesine dönüşür. `prefers-reduced-motion` bu animasyon türünde süre token'ıyla karşılanamaz (ilerlemeyi kaydırma belirler, süre okunmaz) — `@supports` bloğunun İÇİNE ayrıca `animation: none` yazılır.
+
 ## Performans Bütçesi (QR menü, `/masa`)
 
 Ölçüm tabanı 2026-08-03: `/masa` **488 KB gzip** first-load JS; en hafif rota 238 KB (ortak taban). Sentry `@sentry/nextjs` ortak tabanda **129 KB gzip** — kullanıcı kararıyla her yüzeyde kalıyor, bütçe ona göre çizildi.
@@ -144,6 +146,7 @@ Tenant fotoğrafları telefonla çekilmiş, kötü ışıklı, farklı oranlı o
 ## Yasaklar (tasarım tarafı)
 
 - **Uydurma sosyal kanıt yasak** — müşteri sayısı, uptime yüzdesi, puan, müşteri logosu, testimonial. Bunlar pazarlama sayfasında **boş state olarak bile yer almaz**; bölüm kaldırılır, uydurulmaz. Bir sayı veya marka adı yazılacaksa kaynağı sorulur.
+  - **Kabul edilen çözüm deseni (D98):** sosyal kanıt hissi veren bir bölüm gerekiyorsa müşteri değil **işletme TİPİ** anlatılır (ana sayfadaki "Kimler kullanıyor"). Uydurma isim gerektirmez, gerçek müşteriler geldiğinde bölüm yerinde kalıp altına logo şeridi eklenebilir. Bu bölümün referans/testimonial'a kaymasını bir E2E testi engelliyor.
 - Hardcoded kullanıcı metni yok (RULES #11) — her metin next-intl'den.
 - Hardcoded renk/stil yok (RULES #13) — her şey CSS-variable token'ından.
 - Dekoratif avatar yığını yok; avatar yalnızca gerçek personel ataması olan yerlerde (garson, kurye, vardiya).

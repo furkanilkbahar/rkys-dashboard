@@ -12,6 +12,12 @@ export type Plan = {
 
 // plans herkese açık okunur (marketing fiyatlandırma tablosu, Adım 6) —
 // request-scoped client burada da yeterli, service-role'e gerek yok.
+//
+// BİLEREK FİLTRESİZ (D96): burası kayıt formunun ve plan atamasının kaynağı,
+// yani "hangi planlar SEÇİLEBİLİR" sorusunun cevabı. `is_public` yalnızca
+// "hangi planlar VİTRİNDE" sorusunu cevaplar ve orada — getMarketingPlans —
+// uygulanır. Demo planının kayıt formunda kalıp ana sayfada görünmemesi tam
+// olarak bu ayrımdan geliyor.
 export async function getPlans(): Promise<Plan[]> {
   const supabase = await createClient();
   const { data } = await supabase
@@ -33,12 +39,18 @@ export type MarketingPlan = Plan & {
 // plan_modules ikisi de herkese açık okunur (0038/0073), listPlatformPlans
 // (src/lib/data/platformPlans.ts) ile aynı join deseninin service-role
 // gerektirmeyen halka-açık hali.
+//
+// `is_public` filtresi (D96): Süper Admin'den açılan demo/iç planlar vitrine
+// düşmez. Filtre SORGUDA, çağıranda değil — ana sayfa dışında bir yerin de
+// vitrin listesine ihtiyacı olursa (ör. fiyat karşılaştırma sayfası) kuralı
+// tekrar yazmak zorunda kalmasın.
 export async function getMarketingPlans(): Promise<MarketingPlan[]> {
   const supabase = await createClient();
   const [{ data: plans }, { data: planModules }] = await Promise.all([
     supabase
       .from("plans")
       .select("id, key, name, price_minor, table_limit, included_branch_count, extra_branch_price_minor")
+      .eq("is_public", true)
       .order("price_minor"),
     supabase.from("plan_modules").select("plan_id, module_key"),
   ]);

@@ -21,10 +21,14 @@ export async function createPlan(input: unknown): Promise<PlatformActionResult> 
     p_table_limit: (parsed.data.tableLimit === "" ? null : parsed.data.tableLimit) as number,
     p_included_branch_count: parsed.data.includedBranchCount,
     p_extra_branch_price_minor: parsed.data.extraBranchPriceMinor,
+    p_is_public: parsed.data.isPublic,
   });
   if (error) return { ok: false, error: "unknown" };
 
   revalidatePath("/platform/plans");
+  // D96: vitrin bayrağı ana sayfanın fiyat tablosunu belirliyor — orası da
+  // tazelenmezse plan kaydedilir ama ziyaretçi eski listeyi görmeye devam eder.
+  revalidatePath("/");
   return { ok: true };
 }
 
@@ -43,10 +47,12 @@ export async function updatePlan(planId: string, input: unknown): Promise<Platfo
     p_table_limit: (parsed.data.tableLimit === "" ? null : parsed.data.tableLimit) as number,
     p_included_branch_count: parsed.data.includedBranchCount,
     p_extra_branch_price_minor: parsed.data.extraBranchPriceMinor,
+    p_is_public: parsed.data.isPublic,
   });
   if (error) return { ok: false, error: "unknown" };
 
   revalidatePath("/platform/plans");
+  revalidatePath("/");
   return { ok: true };
 }
 

@@ -258,6 +258,36 @@ Kullanıcı talebi (2026-08-04): işletme admin hesabında taşma/sığmama var;
 
 ---
 
+## Faz 24 — Pazarlama Ana Sayfası: Bölüm Sırası, Plan Vitrini ve Hareket
+Kullanıcı talebi (2026-08-06): entegrasyon şeridi düzensiz ve çok yukarıda; "referanslar" bölümü yok; ana sayfada "Demo" planı görünüyor; sayfa animasyonsuz.
+
+**Kabul kriterleri:** duyarlılık denetimi pazarlama sayfalarında temiz · uydurma iddia yok (marka/logo/sayı/testimonial) · vitrin ile satın alınabilirlik ayrı · hareket `prefers-reduced-motion`'a uyar ve desteklenmeyen tarayıcıda içeriği GİZLEMEZ · E2E locator sözleşmeleri korunur (RULES #44).
+
+- [x] **Adım 1 — Entegrasyonlar aşağı alındı ve gruplandı.** Hero'nun hemen altındaydı: ziyaretçi ürünün ne olduğunu bilmeden marka adı görüyordu. Artık modül vitrini + bölünmüş içerikten SONRA. Düz 7'li `flex-wrap` listesi türüne göre üç gruba ayrıldı (Pazar yerleri / Ödeme / Muhasebe) — hem 390px'teki düzensiz sarma bitti hem hangi ismin ne olduğu okunur oldu. `id="entegrasyonlar"` korundu (nav bağlantısı kırılmadı); bölüm sırası E2E'de DOM sırasıyla doğrulanıyor.
+- [x] **Adım 2 — "Kimler kullanıyor" bölümü.** Kullanıcı uydurma kafe/restoran markalarıyla bir "Referanslar" bölümü istedi; bu DESIGN.md'nin "uydurma iddia yasak" kuralıyla çakışıyordu ve seçenekler sunuldu. **Kullanıcı işletme TİPLERİ biçimini seçti** — altı tip (üçüncü nesil kahveci, fine-dining, pastane, bistro, bar, şubeli zincir), sıfır uydurma isim, kural değişmedi. Bir E2E testi bölümün sonradan referans/testimonial'a dönüşmesini engelliyor.
+- [x] **Adım 3 — "Demo" planı vitrinden çekildi (D96).** `plans.is_public` (migration 0092). Ana sayfa yalnızca `is_public` planları gösterir, kayıt formu ve plan ataması TÜMÜNÜ gösterir. Süper Admin `/platform/plans`'ta plan başına anahtar + "Ana sayfada gizli" rozeti. Fiyat ızgarasının sabit `sm:grid-cols-3`'ü de kaldırıldı — plan sayısından türetiliyor (bir plan gizlenince ortada boşluk kalıyordu).
+- [x] **Adım 4 — Hareket (D97).** Hero'da açılış animasyonu (`--enter-index` ile kademeli), bölümlerde kaydırmaya bağlı belirme, kart/CTA'larda hover yükselmesi. **Saf CSS, 0 KB JS** — sayfa Server Component kalsın diye IntersectionObserver sarmalayıcısı eklenmedi (DESIGN.md hareket politikası).
+
+      **Bu Adım'larda ölçümle bulunan ve düzeltilen üç kusur:**
+      1. **Hero maketi 8px taşıyordu** (`-right-2`): 390px'te sayfanın kenar boşluğunu yiyordu. Denetim 350→358px olarak yakaladı. Üst üste binme tasarımın kendisi, taşma değil.
+      2. **Başlıktaki iki CTA satır ortasından kırılıyordu** ("Giriş Yap", "Ücretsiz Deneyin" iki satıra düşüp başlığı iki katına çıkarıyordu). `whitespace-nowrap` + giriş bağlantısı 640px altında gizlendi; bağlantı **kaybolmadı**, footer'ın "Kurumsal" sütununa eklendi.
+      3. **Denetim aracının kendisi yanlış ölçüyordu.** `scripts/responsive-audit.mjs` masaüstü işaretçisiyle koşuyordu, oysa `min-height: 40px` kuralı `@media (pointer: coarse)` altında — araç ekranda 40px olan düğmeleri "28px" diye raporluyor, bu gürültü gerçek kusurları gizliyordu. `hasTouch: true` eklendi ve denetlenen küme CSS kuralının kapsadığı kümeyle **birebir** hizalandı (çıplak `a` dışarıda — kural da onu listelemiyor). Ayrıca yazarın bilinçli `overflow-x: auto`'su (kod blokları) kusur sayılmıyor. Sonuç: admin **26 → 0**, pazarlama **8 → 0** kusurlu koşum. Araç artık pazarlama sayfalarını da tarıyor (7 sayfa).
+
+      **Faz 24 koşumu (2026-08-06):**
+
+      | Katman | Sonuç |
+      |---|---|
+      | `tsc --noEmit` | temiz |
+      | `lint` | temiz |
+      | unit | **47/47** |
+      | integration | **438/438** |
+      | E2E (pazarlama) | **18/18** (mobile-safari'de 4 flaky — hepsi ilk denemede `page.goto` zaman aşımı, retry'da geçti) |
+      | duyarlılık denetimi | **0 kusur** (7 pazarlama + 22 admin sayfası × 390/768px, dokunma emülasyonuyla) |
+
+      **Faz 24 açık maddesi:** kayıt formunda plan sırası `table_limit` artan — "Demo" en düşük limite sahip olduğu için form ona **varsayılan** açılıyor. Ürün kararı; kullanıcıya bildirildi, değiştirilmedi.
+
+---
+
 ## Çalışma Prensipleri
 1. Faz başında plan sun → onay → uygula; faz sonunda migration+seed güncel, akış elle test edilmiş.
 2. RLS izolasyon testi her yeni tabloyla; izin bayrağı ve modül-kapama testleri her yeni modülle.

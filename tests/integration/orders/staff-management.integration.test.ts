@@ -101,6 +101,41 @@ describe("RPC: personel yönetimi", () => {
     expect(updated?.pin_hash).toBeTruthy();
   });
 
+  // 0071: iki personelin aynı PIN'i taşıması clock_in_or_out'u yanlış
+  // personele yazdırabiliyordu. Kural yalnızca RPC'de yaşıyor — testi de
+  // burada: "Personel Ekle" akışının üçüncü adımı tam olarak bu çağrı.
+  it("reset_staff_pin tenant içinde zaten kullanılan bir PIN'i ikinci personele vermez", async () => {
+    const owner = await signInAsSeededOwner(SEED.acme.ownerEmail);
+    const service = serviceRoleClient();
+    const { data: waiterProfile } = await service
+      .from("profiles")
+      .select("id")
+      .eq("tenant_id", SEED.acme.tenantId)
+      .eq("role", "waiter")
+      .single();
+    await owner.rpc("reset_staff_pin", { p_profile_id: waiterProfile!.id, p_new_pin: "1234" });
+
+    const { data: authUser } = await service.auth.admin.createUser({
+      email: `staff-${crypto.randomUUID()}@internal.rkys.local`,
+      password: crypto.randomUUID(),
+      email_confirm: true,
+    });
+    await service.from("profiles").insert({
+      id: authUser!.user!.id,
+      tenant_id: SEED.acme.tenantId,
+      role: "kitchen",
+      full_name: "PIN Çakışma Testi",
+      is_active: true,
+    });
+
+    const { error } = await owner.rpc("reset_staff_pin", { p_profile_id: authUser!.user!.id, p_new_pin: "1234" });
+    expect(error?.message).toContain("PIN_ALREADY_IN_USE");
+
+    // profiles satırı auth.users cascade'iyle gider — seed tenant'ında
+    // artık kalıntı personel bırakmıyoruz.
+    await service.auth.admin.deleteUser(authUser!.user!.id);
+  });
+
   it("create_staff_device ham secret'ı yalnızca dönüş değerinde verir, hash'i saklar", async () => {
     const owner = await signInAsSeededOwner(SEED.acme.ownerEmail);
     const { data: rawSecret, error } = await owner.rpc("create_staff_device", {

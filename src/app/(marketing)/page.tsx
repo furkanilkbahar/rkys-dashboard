@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
+import type { CSSProperties } from "react";
 
 import { AdminMockup, MenuMockup } from "@/components/marketing/product-mockup";
 import { getMarketingPlans } from "@/lib/data/plans";
@@ -8,18 +9,39 @@ import { MODULE_KEYS, type ModuleKey } from "@/lib/modules/keys";
 /**
  * Faz 21 Adım 2 (§2.4) — pazarlama ana sayfası.
  *
- * Bölüm iskeleti: hero → entegrasyon şeridi → modül vitrini → bölünmüş içerik
- * ×3 → fiyatlandırma → lisans modeli → kapanış CTA. (Nav ve footer layout'ta.)
+ * Bölüm iskeleti: hero → modül vitrini → bölünmüş içerik ×3 → kimler
+ * kullanıyor → entegrasyonlar → fiyatlandırma → lisans modeli → kapanış CTA.
+ * (Nav ve footer layout'ta.)
  *
- * UYDURMA İDDİA YOK (§4, RULES #45): istatistik şeridi, müşteri logosu ve
+ * ENTEGRASYON ŞERİDİ AŞAĞI ALINDI (Faz 23): eskiden hero'nun hemen altındaydı
+ * ve sayfanın ilk kaydırmasını yedi. Ziyaretçi henüz ürünün ne olduğunu
+ * bilmeden marka adları görüyordu; entegrasyon "bu ürünü alır mıyım" değil
+ * "aldıktan sonra neye bağlanır" sorusunun cevabı, o yüzden ürün anlatıldıktan
+ * sonraki yerine taşındı. `id="entegrasyonlar"` korundu — nav'daki
+ * `/#entegrasyonlar` bağlantısı ve varsa dış bağlantılar kırılmadı.
+ *
+ * UYDURMA İDDİA YOK (§4, DESIGN.md): istatistik şeridi, müşteri logosu ve
  * referans/testimonial bölümü sayfada HİÇ yer almıyor — boş state olarak bile
- * değil. Modül sayısı `MODULE_KEYS.length`'ten, fiyatlar `plans`/`plan_modules`
+ * değil. "Kimler kullanıyor" bölümü, İŞLETME TİPLERİNİ anlatır (bir kafe
+ * türü); müşteri iddiası değildir, bu yüzden uydurma bir isim içermez. Modül
+ * sayısı `MODULE_KEYS.length`'ten, fiyatlar `plans`/`plan_modules`
  * tablolarından geliyor; hiçbiri HTML'e gömülü değil.
  *
- * Server Component — sıfır client JS.
+ * Server Component — sıfır client JS. Hareket de öyle: giriş/kaydırma
+ * animasyonları `globals.css`'teki `.marketing-enter` / `.marketing-reveal`
+ * sınıflarıyla saf CSS (bkz. D97).
  */
 
-const INTEGRATION_NAMES = ["Yemeksepeti", "Getir", "Trendyol", "iyzico", "Logo", "Mikro", "Paraşüt"] as const;
+// Düz bir 7'li isim listesi mobilde düzensiz sarıyordu ve hepsi aynı türden
+// şeymiş gibi duruyordu. Gruplama hem düzeni hem de bilgiyi düzeltiyor:
+// hangi ismin ne işe yaradığı artık okunuyor.
+const INTEGRATION_GROUPS = [
+  { key: "marketplace", names: ["Yemeksepeti", "Getir", "Trendyol"] },
+  { key: "payment", names: ["iyzico"] },
+  { key: "accounting", names: ["Logo", "Mikro", "Paraşüt"] },
+] as const;
+
+const AUDIENCE_TYPES = ["coffee", "fineDining", "bakery", "bistro", "bar", "chain"] as const;
 
 // Modül vitrini 16 kartta gürültüye dönmesin diye anlam gruplarına ayrıldı
 // (§2.4: "kart başına farklı pastel tint 15 kartta gürültüye döner; ölçekle").
@@ -50,12 +72,22 @@ export default async function MarketingHomePage() {
     <main>
       {/* ── 1. HERO ─────────────────────────────────────────────────── */}
       <section className="mx-auto grid max-w-6xl items-center gap-12 px-5 py-16 lg:grid-cols-[1.05fr_0.95fr] lg:py-24">
+        {/* Hero kaydırma gerektirmeden görünür, bu yüzden `.marketing-reveal`
+            (kaydırmaya bağlı) değil `.marketing-enter` (sayfa açılışında)
+            kullanılıyor. `--enter-index` sırayı belirliyor: rozet → başlık →
+            metin → butonlar. */}
         <div>
-          <span className="inline-flex items-center gap-2 rounded-full bg-[var(--surface-tint)] px-3.5 py-1.5 text-[11.5px] font-semibold text-[var(--brand-700)]">
+          <span
+            style={{ "--enter-index": 0 } as CSSProperties}
+            className="marketing-enter inline-flex items-center gap-2 rounded-full bg-[var(--surface-tint)] px-3.5 py-1.5 text-[11.5px] font-semibold text-[var(--brand-700)]"
+          >
             {t("hero.badge", { count: moduleCount })}
           </span>
 
-          <h1 className="mt-5 font-[family-name:var(--font-display)] text-[clamp(2.4rem,5.5vw,3.4rem)] leading-[1.04] font-semibold tracking-[-0.025em]">
+          <h1
+            style={{ "--enter-index": 1 } as CSSProperties}
+            className="marketing-enter mt-5 font-[family-name:var(--font-display)] text-[clamp(2.4rem,5.5vw,3.4rem)] leading-[1.04] font-semibold tracking-[-0.025em]"
+          >
             {t("hero.titleLine1")}
             <br />
             <span className="bg-gradient-to-r from-[var(--brand-600)] to-[var(--brand-300)] bg-clip-text text-transparent">
@@ -63,62 +95,50 @@ export default async function MarketingHomePage() {
             </span>
           </h1>
 
-          <p className="mt-5 max-w-[46ch] text-[16px] leading-relaxed text-[var(--surface-fg-muted)]">
+          <p
+            style={{ "--enter-index": 2 } as CSSProperties}
+            className="marketing-enter mt-5 max-w-[46ch] text-[16px] leading-relaxed text-[var(--surface-fg-muted)]"
+          >
             {t("hero.lead")}
           </p>
 
-          <div className="mt-7 flex flex-wrap gap-3">
+          <div style={{ "--enter-index": 3 } as CSSProperties} className="marketing-enter mt-7 flex flex-wrap gap-3">
             <Link
               href="/kayit"
-              className="rounded-full bg-[var(--surface-accent)] px-6 py-3.5 text-[14.5px] font-semibold text-[var(--surface-accent-fg)] no-underline"
+              className="marketing-lift rounded-full bg-[var(--surface-accent)] px-6 py-3.5 text-[14.5px] font-semibold text-[var(--surface-accent-fg)] no-underline"
             >
               {t("hero.cta")}
             </Link>
             <Link
               href="#nasil-calisir"
-              className="rounded-full border border-[var(--surface-line)] bg-[var(--surface-panel)] px-6 py-3.5 text-[14.5px] font-semibold text-[var(--surface-fg)] no-underline shadow-[var(--shadow-sm)]"
+              className="marketing-lift rounded-full border border-[var(--surface-line)] bg-[var(--surface-panel)] px-6 py-3.5 text-[14.5px] font-semibold text-[var(--surface-fg)] no-underline shadow-[var(--shadow-sm)]"
             >
               {t("hero.secondaryCta")}
             </Link>
           </div>
 
-          <p className="mt-4 text-[12.5px] text-[var(--surface-fg-faint)]">{t("hero.trialNote")}</p>
+          <p
+            style={{ "--enter-index": 4 } as CSSProperties}
+            className="marketing-enter mt-4 text-[12.5px] text-[var(--surface-fg-faint)]"
+          >
+            {t("hero.trialNote")}
+          </p>
         </div>
 
-        <div className="relative">
+        <div style={{ "--enter-index": 2 } as CSSProperties} className="marketing-enter relative">
           <AdminMockup />
-          <MenuMockup className="absolute -right-2 -bottom-8 w-[136px] sm:w-[150px]" />
+          {/* `-right-2` idi: telefon maketi sarmalayıcının sağ kenarından 8px
+              dışarı taşıyordu ve 390px'te sayfanın kenar boşluğunu yiyordu
+              (duyarlılık denetimi 350→358px olarak yakaladı). Üst üste binme
+              tasarımın kendisi, taşma değil — maket artık kutunun içinde. */}
+          <MenuMockup className="absolute right-0 -bottom-8 w-[136px] sm:w-[150px]" />
         </div>
       </section>
 
-      {/* ── 2. ENTEGRASYON ŞERİDİ ───────────────────────────────────── */}
-      <section
-        id="entegrasyonlar"
-        className="border-y border-[var(--surface-line)] scroll-mt-20"
-        aria-labelledby="entegrasyonlar-baslik"
-      >
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-8 gap-y-3 px-5 py-7">
-          {/* §2.4: "Entegrasyonlar" olarak etiketlenir, "müşterilerimiz" olarak DEĞİL. */}
-          <div>
-            <p className="text-[11px] font-semibold tracking-[0.13em] text-[var(--surface-fg-faint)] uppercase">
-              {t("nav.integrations")}
-            </p>
-            <h2 id="entegrasyonlar-baslik" className="mt-0.5 text-[14px] font-semibold text-[var(--surface-fg)]">
-              {t("integrations.title")}
-            </h2>
-          </div>
-          {INTEGRATION_NAMES.map((name) => (
-            <span key={name} className="text-[14px] font-semibold text-[var(--surface-fg-muted)] opacity-70">
-              {name}
-            </span>
-          ))}
-        </div>
-      </section>
-
-      {/* ── 3. MODÜL VİTRİNİ ────────────────────────────────────────── */}
+      {/* ── 2. MODÜL VİTRİNİ ────────────────────────────────────────── */}
       <section id="moduller" className="mx-auto max-w-6xl scroll-mt-20 px-5 py-16 lg:py-20">
         <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
-          <div>
+          <div className="marketing-reveal">
             <span className="inline-flex rounded-full bg-[var(--surface-tint)] px-3 py-1.5 text-[11px] font-semibold tracking-[0.1em] text-[var(--brand-700)] uppercase">
               {t("moduleShowcase.eyebrow")}
             </span>
@@ -130,7 +150,7 @@ export default async function MarketingHomePage() {
             </p>
             <Link
               href="#fiyatlandirma"
-              className="mt-6 inline-flex rounded-full border border-[var(--surface-line)] bg-[var(--surface-panel)] px-5 py-3 text-[13.5px] font-semibold text-[var(--surface-fg)] no-underline shadow-[var(--shadow-sm)]"
+              className="marketing-lift mt-6 inline-flex rounded-full border border-[var(--surface-line)] bg-[var(--surface-panel)] px-5 py-3 text-[13.5px] font-semibold text-[var(--surface-fg)] no-underline shadow-[var(--shadow-sm)]"
             >
               {t("moduleShowcase.cta")}
             </Link>
@@ -138,7 +158,9 @@ export default async function MarketingHomePage() {
 
           <div className="flex flex-col gap-6">
             {MODULE_GROUPS.map((group) => (
-              <div key={group.key}>
+              // Reveal GRUP düzeyinde: 16 kartın her biri ayrı ayrı belirseydi
+              // sayfa kaydırırken sürekli kıpırdayan bir yüzeye dönerdi.
+              <div key={group.key} className="marketing-reveal">
                 <h3 className="text-[11px] font-semibold tracking-[0.12em] text-[var(--surface-fg-faint)] uppercase">
                   {t(`moduleShowcase.groups.${group.key}`)}
                 </h3>
@@ -146,7 +168,7 @@ export default async function MarketingHomePage() {
                   {group.modules.map((key) => (
                     <div
                       key={key}
-                      className="rounded-[var(--r-lg)] bg-[var(--surface-panel)] p-3.5 shadow-[var(--shadow-sm)]"
+                      className="marketing-lift rounded-[var(--r-lg)] bg-[var(--surface-panel)] p-3.5 shadow-[var(--shadow-sm)]"
                     >
                       <p className="text-[13.5px] font-semibold">{tModules(key)}</p>
                       <p className="mt-1 text-[12.5px] leading-snug text-[var(--surface-fg-muted)]">
@@ -161,7 +183,7 @@ export default async function MarketingHomePage() {
         </div>
       </section>
 
-      {/* ── 4. BÖLÜNMÜŞ İÇERİK ×3 ───────────────────────────────────── */}
+      {/* ── 3. BÖLÜNMÜŞ İÇERİK ×3 ───────────────────────────────────── */}
       <div id="nasil-calisir" className="scroll-mt-20">
         {SPLIT_SECTIONS.map((section, index) => (
           <section
@@ -173,7 +195,7 @@ export default async function MarketingHomePage() {
                 index % 2 === 1 ? "lg:[&>*:first-child]:order-2" : ""
               }`}
             >
-              <div>
+              <div className="marketing-reveal">
                 <span className="inline-flex rounded-full bg-[var(--surface-tint)] px-3 py-1.5 text-[11px] font-semibold tracking-[0.1em] text-[var(--brand-700)] uppercase">
                   {t(`split.${section}.eyebrow`)}
                 </span>
@@ -192,7 +214,7 @@ export default async function MarketingHomePage() {
                 </ul>
               </div>
 
-              <div className="relative">
+              <div className="marketing-reveal relative">
                 {section === "guest" ? (
                   <MenuMockup className="mx-auto w-[240px]" />
                 ) : (
@@ -204,28 +226,128 @@ export default async function MarketingHomePage() {
         ))}
       </div>
 
-      {/* ── 5. FİYATLANDIRMA (gerçek ₺, plans/plan_modules'tan) ─────── */}
+      {/* ── 4. KİMLER KULLANIYOR (işletme TİPLERİ) ──────────────────── */}
+      {/* Bu bölüm bir REFERANS/müşteri bölümü DEĞİLDİR ve öyle görünmemelidir:
+          hizmet verilen işletme türlerini anlatır. Uydurma bir marka adı,
+          logo, sayı ya da testimonial buraya EKLENMEZ (DESIGN.md). Gerçek
+          müşteriler olduğunda logo şeridi bunun ALTINA ayrı bir bölüm olarak
+          gelir — bu bölümün içeriği o zaman da geçerli kalır. */}
+      <section
+        id="kimler-icin"
+        className="border-t border-[var(--surface-line)] scroll-mt-20"
+        aria-labelledby="kimler-icin-baslik"
+      >
+        <div className="mx-auto max-w-6xl px-5 py-16 lg:py-20">
+          <div className="marketing-reveal">
+            <span className="inline-flex rounded-full bg-[var(--surface-tint)] px-3 py-1.5 text-[11px] font-semibold tracking-[0.1em] text-[var(--brand-700)] uppercase">
+              {t("audience.eyebrow")}
+            </span>
+            <h2
+              id="kimler-icin-baslik"
+              className="mt-4 max-w-[20ch] font-[family-name:var(--font-display)] text-[clamp(1.9rem,3.6vw,2.4rem)] leading-tight font-semibold tracking-[-0.02em]"
+            >
+              {t("audience.title")}
+            </h2>
+            <p className="mt-3 max-w-[56ch] text-[14.5px] leading-relaxed text-[var(--surface-fg-muted)]">
+              {t("audience.subtitle")}
+            </p>
+          </div>
+
+          <div className="marketing-reveal mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {AUDIENCE_TYPES.map((type) => (
+              <div
+                key={type}
+                className="marketing-lift rounded-[var(--radius)] border border-[var(--surface-line)] bg-[var(--surface-panel)] p-5 shadow-[var(--shadow-sm)]"
+              >
+                <h3 className="text-[15px] font-semibold">{t(`audience.types.${type}.title`)}</h3>
+                <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--surface-fg-muted)]">
+                  {t(`audience.types.${type}.body`)}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── 5. ENTEGRASYONLAR ───────────────────────────────────────── */}
+      <section
+        id="entegrasyonlar"
+        className="border-t border-[var(--surface-line)] bg-[var(--muted)] scroll-mt-20"
+        aria-labelledby="entegrasyonlar-baslik"
+      >
+        <div className="mx-auto max-w-6xl px-5 py-14 lg:py-16">
+          {/* §2.4: "Entegrasyonlar" olarak etiketlenir, "müşterilerimiz" olarak DEĞİL. */}
+          <div className="marketing-reveal">
+            <p className="text-[11px] font-semibold tracking-[0.13em] text-[var(--surface-fg-faint)] uppercase">
+              {t("nav.integrations")}
+            </p>
+            <h2
+              id="entegrasyonlar-baslik"
+              className="mt-2 font-[family-name:var(--font-display)] text-[clamp(1.5rem,2.8vw,1.9rem)] leading-tight font-semibold tracking-[-0.02em]"
+            >
+              {t("integrations.title")}
+            </h2>
+            <p className="mt-2 max-w-[52ch] text-[13.5px] text-[var(--surface-fg-muted)]">
+              {t("integrations.subtitle")}
+            </p>
+          </div>
+
+          {/* Eskiden tek `flex-wrap` sırasıydı: 7 isim 390px'te düzensiz
+              sarıyordu ve hangisinin ne olduğu okunmuyordu. Artık gruplar
+              kendi sütunlarında; her isim eşit yükseklikte bir rozet. */}
+          <div className="marketing-reveal mt-8 grid gap-4 sm:grid-cols-3">
+            {INTEGRATION_GROUPS.map((group) => (
+              <div key={group.key}>
+                <h3 className="text-[11px] font-semibold tracking-[0.12em] text-[var(--surface-fg-faint)] uppercase">
+                  {t(`integrations.groups.${group.key}`)}
+                </h3>
+                <ul className="mt-2.5 flex flex-wrap gap-2">
+                  {group.names.map((name) => (
+                    <li
+                      key={name}
+                      className="marketing-lift rounded-full border border-[var(--surface-line)] bg-[var(--surface-panel)] px-3.5 py-2 text-[13px] font-semibold text-[var(--surface-fg-muted)] shadow-[var(--shadow-sm)]"
+                    >
+                      {name}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── 6. FİYATLANDIRMA (gerçek ₺, plans/plan_modules'tan) ─────── */}
       <section
         id="fiyatlandirma"
         className="border-t border-[var(--surface-line)] scroll-mt-20"
         aria-labelledby="fiyat-baslik"
       >
         <div className="mx-auto max-w-6xl px-5 py-16 lg:py-20">
-          <h2
-            id="fiyat-baslik"
-            className="text-center font-[family-name:var(--font-display)] text-[clamp(1.9rem,3.6vw,2.4rem)] font-semibold tracking-[-0.02em]"
-          >
-            {t("pricing.title")}
-          </h2>
-          <p className="mx-auto mt-3 max-w-[52ch] text-center text-[14.5px] text-[var(--surface-fg-muted)]">
-            {t("pricing.subtitle")}
-          </p>
+          <div className="marketing-reveal">
+            <h2
+              id="fiyat-baslik"
+              className="text-center font-[family-name:var(--font-display)] text-[clamp(1.9rem,3.6vw,2.4rem)] font-semibold tracking-[-0.02em]"
+            >
+              {t("pricing.title")}
+            </h2>
+            <p className="mx-auto mt-3 max-w-[52ch] text-center text-[14.5px] text-[var(--surface-fg-muted)]">
+              {t("pricing.subtitle")}
+            </p>
+          </div>
 
-          <div className="mt-10 grid gap-5 sm:grid-cols-3">
+          {/* Sütun sayısı plan sayısından türetiliyor. Sabit `sm:grid-cols-3`
+              idi: Süper Admin dördüncü bir plan açar açmaz düzen bozuluyordu
+              ve bir plan gizlenince (D96) ortada iki kart bir boşlukla
+              kalıyordu. */}
+          <div
+            className="marketing-reveal mt-10 grid gap-5 sm:grid-cols-2 lg:[grid-template-columns:repeat(var(--plan-count),minmax(0,1fr))]"
+            style={{ "--plan-count": Math.min(plans.length, 4) } as CSSProperties}
+          >
             {plans.map((plan) => (
               <div
                 key={plan.id}
-                className="flex flex-col rounded-[var(--radius)] bg-[var(--surface-panel)] p-6 shadow-[var(--shadow-md)]"
+                className="marketing-lift flex flex-col rounded-[var(--radius)] bg-[var(--surface-panel)] p-6 shadow-[var(--shadow-md)]"
               >
                 <p className="text-[15px] font-bold">{plan.name}</p>
                 <p className="mt-2 text-[30px] font-bold tracking-[-0.03em] tabular-nums">
@@ -261,7 +383,7 @@ export default async function MarketingHomePage() {
                 <div className="mt-auto pt-6">
                   <Link
                     href="/kayit"
-                    className="block rounded-full bg-[var(--surface-accent)] px-5 py-3 text-center text-[13.5px] font-semibold text-[var(--surface-accent-fg)] no-underline"
+                    className="marketing-lift block rounded-full bg-[var(--surface-accent)] px-5 py-3 text-center text-[13.5px] font-semibold text-[var(--surface-accent-fg)] no-underline"
                   >
                     {t("hero.cta")}
                   </Link>
@@ -270,8 +392,8 @@ export default async function MarketingHomePage() {
             ))}
           </div>
 
-          {/* ── 6. İKİNCİ SATIŞ MODELİ — dipnota gömülmüyor (§2.4) ──── */}
-          <div className="mt-8 grid gap-8 rounded-[var(--radius)] border border-[var(--surface-line)] bg-[var(--surface-panel)] p-7 lg:grid-cols-[1.3fr_0.7fr] lg:items-center">
+          {/* ── 7. İKİNCİ SATIŞ MODELİ — dipnota gömülmüyor (§2.4) ──── */}
+          <div className="marketing-reveal mt-8 grid gap-8 rounded-[var(--radius)] border border-[var(--surface-line)] bg-[var(--surface-panel)] p-7 lg:grid-cols-[1.3fr_0.7fr] lg:items-center">
             <div>
               <span className="inline-flex rounded-full bg-[var(--surface-tint)] px-3 py-1.5 text-[11px] font-semibold tracking-[0.1em] text-[var(--brand-700)] uppercase">
                 {t("license.eyebrow")}
@@ -286,7 +408,7 @@ export default async function MarketingHomePage() {
             </div>
             <Link
               href="/iletisim"
-              className="justify-self-start rounded-full border border-[var(--surface-line)] px-6 py-3.5 text-[14px] font-semibold text-[var(--surface-fg)] no-underline lg:justify-self-end"
+              className="marketing-lift justify-self-start rounded-full border border-[var(--surface-line)] px-6 py-3.5 text-[14px] font-semibold text-[var(--surface-fg)] no-underline lg:justify-self-end"
             >
               {t("license.cta")}
             </Link>
@@ -294,16 +416,16 @@ export default async function MarketingHomePage() {
         </div>
       </section>
 
-      {/* ── 7. KAPANIŞ CTA ──────────────────────────────────────────── */}
+      {/* ── 8. KAPANIŞ CTA ──────────────────────────────────────────── */}
       <section className="px-5 pb-20">
-        <div className="mx-auto max-w-6xl rounded-[var(--r-2xl)] bg-gradient-to-br from-[var(--brand-700)] to-[var(--brand-500)] px-8 py-14 text-center">
+        <div className="marketing-reveal mx-auto max-w-6xl rounded-[var(--r-2xl)] bg-gradient-to-br from-[var(--brand-700)] to-[var(--brand-500)] px-8 py-14 text-center">
           <h2 className="font-[family-name:var(--font-display)] text-[clamp(1.9rem,4vw,2.6rem)] font-semibold tracking-[-0.02em] text-white">
             {t("closing.title")}
           </h2>
           <p className="mx-auto mt-3 max-w-[46ch] text-[15px] leading-relaxed text-white/80">{t("closing.body")}</p>
           <Link
             href="/kayit"
-            className="mt-7 inline-flex rounded-full bg-white px-7 py-3.5 text-[14.5px] font-bold text-[var(--brand-700)] no-underline"
+            className="marketing-lift mt-7 inline-flex rounded-full bg-white px-7 py-3.5 text-[14.5px] font-bold text-[var(--brand-700)] no-underline"
           >
             {t("closing.cta")}
           </Link>

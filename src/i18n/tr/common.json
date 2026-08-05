@@ -434,6 +434,7 @@
         "forbidden": "Bu işlem için yetkiniz yok.",
         "not_found": "Kayıt bulunamadı.",
         "last_owner": "Son sahip düşürülemez veya pasif yapılamaz.",
+        "pin_in_use": "Bu PIN başka bir personelde kullanılıyor. Farklı bir PIN girin.",
         "unknown": "Kaydedilemedi, tekrar deneyin.",
         "invalid_pin": "PIN 4-8 haneli rakam olmalı."
       },
@@ -1619,6 +1620,9 @@
       "unlimited": "Sınırsız",
       "includedBranchCountLabel": "Dahil şube sayısı",
       "extraBranchPriceLabel": "Ek şube ücreti",
+      "isPublicLabel": "Ana sayfada göster",
+      "isPublicHint": "Kapalıyken plan yalnızca kayıt formunda ve plan atamasında seçilebilir; pazarlama sayfasındaki fiyat tablosunda görünmez.",
+      "hiddenBadge": "Ana sayfada gizli",
       "modulesTitle": "Dahil Modüller",
       "edit": "Düzenle",
       "save": "Kaydet",
@@ -1760,8 +1764,45 @@
         "ops": "Operasyon & Entegrasyon"
       }
     },
+    "audience": {
+      "eyebrow": "Kimler kullanıyor",
+      "title": "Tek bir kafeden şubeli zincire",
+      "subtitle": "Modüller açılıp kapandığı için sistem işletmenizin biçimine uyar; siz işletmenizi sisteme uydurmazsınız.",
+      "types": {
+        "coffee": {
+          "title": "Üçüncü nesil kahveci",
+          "body": "Hızlı tezgâh akışı, demleme yöntemine göre varyantlar ve damga bazlı sadakat."
+        },
+        "fineDining": {
+          "title": "Fine-dining restoran",
+          "body": "Masa planı, rezervasyon, kurs bazlı servis ve hesap bölme."
+        },
+        "bakery": {
+          "title": "Pastane & fırın",
+          "body": "Reçeteden otomatik stok düşümü, gel-al siparişi ve gün sonu fire takibi."
+        },
+        "bistro": {
+          "title": "Bistro & lokanta",
+          "body": "QR menüden mutfak ekranına düşen sipariş, garson çağrısı ve kasa."
+        },
+        "bar": {
+          "title": "Bar & kokteyl",
+          "body": "Yoğun saatlerde ayrı bar istasyonu, ikram/iade izni ve vardiya kasası."
+        },
+        "chain": {
+          "title": "Şubeli zincir",
+          "body": "Şube bazlı yetki, birleşik ciro raporu ve tek panelden menü yönetimi."
+        }
+      }
+    },
     "integrations": {
-      "title": "Zaten kullandığınız araçlarla çalışır"
+      "title": "Zaten kullandığınız araçlarla çalışır",
+      "subtitle": "Aşağıdaki bağlantılar ilgili modül açıkken kullanılabilir.",
+      "groups": {
+        "marketplace": "Pazar yerleri",
+        "payment": "Ödeme",
+        "accounting": "Muhasebe"
+      }
     },
     "features": {
       "qrMenu": {

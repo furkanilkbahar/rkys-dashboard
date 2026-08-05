@@ -293,6 +293,60 @@
        yerleştirebiliyordu. Kaydırma payı bunu kesin çözer. */
     scroll-margin-bottom: var(--cart-bar-space);
   }
+  /* ── Pazarlama sayfası hareketi (Faz 23, D97) ───────────────────────
+     DESIGN.md hareket politikası: framer-motion yalnızca gerçekten
+     etkileşimli yaprakta; giriş/stagger CSS ile ve 0 KB JS. Pazarlama
+     ana sayfası bütünüyle Server Component — bir IntersectionObserver
+     sarmalayıcısı eklemek sayfaya "use client" sokardı. Bunun yerine
+     kaydırmaya bağlı (scroll-driven) CSS animasyonu kullanılıyor.
+
+     `@supports` KASITLI: bu özelliği desteklemeyen bir tarayıcıda blok
+     hiç uygulanmaz, yani öğeler `opacity: 1` ile olduğu gibi görünür.
+     Guard olmasaydı desteklemeyen tarayıcıda içerik SONSUZA KADAR
+     görünmez kalırdı — animasyonun bozulması, sayfanın boş görünmesine
+     dönüşürdü. */
+  .marketing-enter {
+    animation: marketing-enter var(--dur-slow) var(--ease-out) backwards;
+    animation-delay: calc(var(--enter-index, 0) * 70ms);
+  }
+
+  @supports (animation-timeline: view()) {
+    .marketing-reveal {
+      animation: marketing-enter linear both;
+      animation-timeline: view();
+      /* `entry 4%` → öğe görünür alana girer girmez değil, biraz sonra
+         başlasın; `cover 24%` → ekranın alt çeyreğine geldiğinde bitsin.
+         Aksi halde animasyon kullanıcı öğeye BAKARKEN sürüyor olurdu. */
+      animation-range: entry 4% cover 24%;
+    }
+
+    /* Hareket azaltma: süre token'ı (--dur-*) kaydırmaya bağlı
+       animasyonda okunmaz — ilerlemeyi kaydırma konumu belirler. Bu
+       yüzden kural burada AYRICA kesiliyor; base katmanındaki genel
+       `animation-duration: .01ms` bu animasyon türünü durdurmaz. */
+    @media (prefers-reduced-motion: reduce) {
+      .marketing-reveal {
+        animation: none;
+      }
+    }
+  }
+
+  /* Kart/rozet yüzeylerinde işaretçi geri bildirimi. `transform` +
+     `box-shadow` bilinçli: ikisi de compositor'da çalışır, düzen
+     hesabı tetiklemez (DESIGN.md performans bütçesi). */
+  .marketing-lift {
+    transition:
+      transform var(--dur-base) var(--ease-out),
+      box-shadow var(--dur-base) var(--ease-out),
+      border-color var(--dur-base) var(--ease-out);
+  }
+  @media (hover: hover) {
+    .marketing-lift:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+  }
+
   /* Kademeli giriş — ilk 6 kart. Sonrası zaten kıvrımın altında. */
   .menu-card:nth-child(2) {
     animation-delay: 40ms;
@@ -340,6 +394,20 @@
 }
 
 @keyframes menu-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--move-md));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Pazarlama girişi (D97). Mesafe `--move-md` token'ından geliyor; token
+   prefers-reduced-motion altında zaten 0px'e düşüyor, yani hareket azaltma
+   isteyen kullanıcıda geriye yalnızca opaklık geçişi kalır. */
+@keyframes marketing-enter {
   from {
     opacity: 0;
     transform: translateY(var(--move-md));

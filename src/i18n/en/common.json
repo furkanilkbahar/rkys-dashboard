@@ -434,6 +434,7 @@
         "forbidden": "You don't have permission for this action.",
         "not_found": "Record not found.",
         "last_owner": "The last owner cannot be demoted or deactivated.",
+        "pin_in_use": "This PIN is already used by another staff member. Enter a different PIN.",
         "unknown": "Could not save, please try again.",
         "invalid_pin": "PIN must be 4-8 digits."
       },
@@ -1619,6 +1620,9 @@
       "unlimited": "Unlimited",
       "includedBranchCountLabel": "Included branch count",
       "extraBranchPriceLabel": "Extra branch fee",
+      "isPublicLabel": "Show on home page",
+      "isPublicHint": "When off, the plan stays selectable in the registration form and plan assignment, but does not appear in the marketing pricing table.",
+      "hiddenBadge": "Hidden on home page",
       "modulesTitle": "Included Modules",
       "edit": "Edit",
       "save": "Save",
@@ -1760,8 +1764,45 @@
         "ops": "Operations & Integrations"
       }
     },
+    "audience": {
+      "eyebrow": "Who it is for",
+      "title": "From a single café to a multi-branch chain",
+      "subtitle": "Because modules switch on and off, the system adapts to the shape of your business — not the other way around.",
+      "types": {
+        "coffee": {
+          "title": "Speciality coffee shop",
+          "body": "Fast counter flow, variants per brewing method, and stamp-based loyalty."
+        },
+        "fineDining": {
+          "title": "Fine-dining restaurant",
+          "body": "Table plan, reservations, course-based service, and bill splitting."
+        },
+        "bakery": {
+          "title": "Bakery & patisserie",
+          "body": "Recipe-driven stock deduction, pickup orders, and end-of-day waste tracking."
+        },
+        "bistro": {
+          "title": "Bistro & casual dining",
+          "body": "Orders flowing from the QR menu to the kitchen display, waiter calls, and the till."
+        },
+        "bar": {
+          "title": "Bar & cocktails",
+          "body": "A separate bar station for peak hours, comp/refund permissions, and shift tills."
+        },
+        "chain": {
+          "title": "Multi-branch chain",
+          "body": "Per-branch permissions, combined revenue reporting, and menu management from one panel."
+        }
+      }
+    },
     "integrations": {
-      "title": "Works with the tools you already use"
+      "title": "Works with the tools you already use",
+      "subtitle": "The connections below are available while the relevant module is enabled.",
+      "groups": {
+        "marketplace": "Marketplaces",
+        "payment": "Payments",
+        "accounting": "Accounting"
+      }
     },
     "features": {
       "qrMenu": {

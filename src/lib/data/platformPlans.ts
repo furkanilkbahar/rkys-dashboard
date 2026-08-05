@@ -11,6 +11,7 @@ export type PlatformPlanDetail = {
   tableLimit: number | null;
   includedBranchCount: number;
   extraBranchPriceMinor: number;
+  isPublic: boolean;
   moduleKeys: ModuleKey[];
 };
 
@@ -22,7 +23,7 @@ export async function listPlatformPlans(): Promise<PlatformPlanDetail[]> {
   const [{ data: plans }, { data: planModules }] = await Promise.all([
     service
       .from("plans")
-      .select("id, key, name, price_minor, table_limit, included_branch_count, extra_branch_price_minor")
+      .select("id, key, name, price_minor, table_limit, included_branch_count, extra_branch_price_minor, is_public")
       .order("price_minor"),
     service.from("plan_modules").select("plan_id, module_key"),
   ]);
@@ -42,6 +43,7 @@ export async function listPlatformPlans(): Promise<PlatformPlanDetail[]> {
     tableLimit: p.table_limit,
     includedBranchCount: p.included_branch_count,
     extraBranchPriceMinor: p.extra_branch_price_minor,
+    isPublic: p.is_public,
     moduleKeys: moduleKeysByPlan.get(p.id) ?? [],
   }));
 }

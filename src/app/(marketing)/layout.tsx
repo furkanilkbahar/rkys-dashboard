@@ -39,6 +39,9 @@ export default async function MarketingLayout({ children }: { children: React.Re
       links: [
         { href: "/iletisim", label: t("nav.contact") },
         { href: "/kayit", label: t("nav.register") },
+        // Başlıktaki giriş bağlantısı dar ekranda gizlendiği için buradan
+        // erişiliyor (bkz. header'daki not).
+        { href: "/admin/login", label: t("nav.login") },
       ],
     },
     {
@@ -65,8 +68,8 @@ export default async function MarketingLayout({ children }: { children: React.Re
       <header className="sticky top-0 z-30 border-b border-[var(--surface-line)] bg-[var(--surface-bg)]/90 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center gap-6 px-5 py-3.5">
           <Link href="/" className="flex shrink-0 items-center gap-2 no-underline">
-            <span aria-hidden="true" className="size-5 rounded-[6px] bg-[var(--surface-accent)]" />
-            <span className="text-[15px] font-bold text-[var(--surface-fg)]">RKYS Dashboard</span>
+            <span aria-hidden="true" className="size-5 shrink-0 rounded-[6px] bg-[var(--surface-accent)]" />
+            <span className="text-[15px] font-bold whitespace-nowrap text-[var(--surface-fg)]">RKYS Dashboard</span>
           </Link>
 
           <nav aria-label={t("nav.modules")} className="hidden items-center gap-5 md:flex">
@@ -81,16 +84,24 @@ export default async function MarketingLayout({ children }: { children: React.Re
             ))}
           </nav>
 
-          <div className="ml-auto flex items-center gap-2">
+          {/* `whitespace-nowrap`: iki bağlantı da iki kelimeli ("Giriş Yap",
+              "Ücretsiz Deneyin") ve dar ekranda satır ortasından kırılıp
+              başlığı iki katına çıkarıyordu.
+
+              Giriş bağlantısı 640px ALTINDA gizli: logo + iki buton 390px'e
+              sığmıyordu (ölçüldü: ~378px içerik, 350px alan) ve logo kırpılmaya
+              başlıyordu. Bağlantı KAYBOLMUYOR — footer'ın "Kurumsal" sütununa
+              eklendi, yani mobilde de erişilebilir. */}
+          <div className="ml-auto flex shrink-0 items-center gap-2">
             <Link
               href="/admin/login"
-              className="rounded-full px-3 py-2 text-[13px] text-[var(--surface-fg-muted)] no-underline hover:text-[var(--surface-fg)]"
+              className="hidden rounded-full px-3 py-2 text-[13px] whitespace-nowrap text-[var(--surface-fg-muted)] no-underline hover:text-[var(--surface-fg)] sm:inline-flex"
             >
               {t("nav.login")}
             </Link>
             <Link
               href="/kayit"
-              className="rounded-full bg-[var(--surface-accent)] px-4 py-2 text-[13px] font-semibold text-[var(--surface-accent-fg)] no-underline"
+              className="marketing-lift rounded-full bg-[var(--surface-accent)] px-4 py-2 text-[13px] font-semibold whitespace-nowrap text-[var(--surface-accent-fg)] no-underline"
             >
               {t("hero.cta")}
             </Link>

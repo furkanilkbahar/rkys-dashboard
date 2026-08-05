@@ -4,7 +4,7 @@ import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import type { z } from "zod";
 
 import { PlatformPageHeader } from "@/components/platform/platform-page-header";
@@ -55,11 +55,39 @@ function PlanModulesGrid({ planId, moduleKeys }: { planId: string; moduleKeys: P
   );
 }
 
+/**
+ * D96 — planın pazarlama ana sayfasındaki fiyat tablosunda görünüp
+ * görünmeyeceği. "Satın alınabilir mi?" ile aynı şey DEĞİL: kapalıyken plan
+ * kayıt formunda seçilebilir olmayı sürdürür, yalnızca vitrinden çekilir.
+ */
+function PublicVisibilityField({
+  id,
+  checked,
+  onChange,
+}: {
+  id: string;
+  checked: boolean;
+  onChange: (value: boolean) => void;
+}) {
+  const t = useTranslations("platform.plans");
+
+  return (
+    <div className="flex items-start justify-between gap-3 rounded-md border border-border p-3">
+      <div className="flex flex-col gap-0.5">
+        <Label htmlFor={id}>{t("isPublicLabel")}</Label>
+        <p className="text-xs text-muted-foreground">{t("isPublicHint")}</p>
+      </div>
+      <Switch id={id} checked={checked} onCheckedChange={onChange} />
+    </div>
+  );
+}
+
 function PlanEditForm({ plan, onDone }: { plan: PlatformPlanDetail; onDone: () => void }) {
   const t = useTranslations("platform.plans");
   const router = useRouter();
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm({
@@ -70,6 +98,7 @@ function PlanEditForm({ plan, onDone }: { plan: PlatformPlanDetail; onDone: () =
       tableLimit: plan.tableLimit ?? "",
       includedBranchCount: plan.includedBranchCount,
       extraBranchPriceMinor: plan.extraBranchPriceMinor,
+      isPublic: plan.isPublic,
     },
   });
 
@@ -106,6 +135,17 @@ function PlanEditForm({ plan, onDone }: { plan: PlatformPlanDetail; onDone: () =
           <Input id={`extra-branch-price-${plan.id}`} type="number" {...register("extraBranchPriceMinor")} />
         </div>
       </div>
+      <Controller
+        control={control}
+        name="isPublic"
+        render={({ field }) => (
+          <PublicVisibilityField
+            id={`is-public-${plan.id}`}
+            checked={field.value ?? true}
+            onChange={field.onChange}
+          />
+        )}
+      />
       <div className="flex gap-2">
         <Button type="submit" disabled={isSubmitting} size="sm">
           {t("save")}
@@ -125,9 +165,12 @@ function PlanCard({ plan }: { plan: PlatformPlanDetail }) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <CardTitle className="text-base">{plan.name}</CardTitle>
           <Badge variant="outline">{plan.key}</Badge>
+          {/* Gizli plan listede sessizce durmasın: vitrinde OLMAYAN plan
+              istisnadır, rozet yalnızca o durumda çıkar. */}
+          {!plan.isPublic && <Badge variant="secondary">{t("hiddenBadge")}</Badge>}
         </div>
         {!isEditing && (
           <Button variant="ghost" size="sm" onClick={() => setIsEditing(true)}>
@@ -173,6 +216,7 @@ function CreatePlanForm() {
   const router = useRouter();
   const {
     register,
+    control,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
@@ -185,6 +229,7 @@ function CreatePlanForm() {
       tableLimit: "",
       includedBranchCount: 1,
       extraBranchPriceMinor: 0,
+      isPublic: true,
     },
   });
 
@@ -231,6 +276,17 @@ function CreatePlanForm() {
               <Input id="new-plan-extra-branch-price" type="number" {...register("extraBranchPriceMinor")} />
             </div>
           </div>
+          <Controller
+            control={control}
+            name="isPublic"
+            render={({ field }) => (
+              <PublicVisibilityField
+                id="new-plan-is-public"
+                checked={field.value ?? true}
+                onChange={field.onChange}
+              />
+            )}
+          />
           <Button type="submit" disabled={isSubmitting} className="self-start">
             {t("create")}
           </Button>

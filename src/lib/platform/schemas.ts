@@ -46,6 +46,14 @@ export const planFormSchema = z.object({
   tableLimit: z.union([z.literal(""), z.coerce.number().int().min(1)]),
   includedBranchCount: z.coerce.number().int().min(1),
   extraBranchPriceMinor: z.coerce.number().int().min(0),
+  // D96: planın pazarlama ana sayfasındaki fiyat tablosunda görünüp
+  // görünmeyeceği. Varsayılan true — yeni bir plan açan admin'in ayrıca
+  // "vitrine koy" demesi gerekmesin; gizlemek bilinçli bir hareket olsun.
+  //
+  // `coerce` DEĞİL: değer bir <Switch>'ten geldiği için zaten boolean. Üstelik
+  // `z.coerce.boolean()` "false" dizesini `true`'ya çevirir (boş olmayan her
+  // dize truthy'dir) — yani gizlenmiş bir planı sessizce vitrine geri koyardı.
+  isPublic: z.boolean().default(true),
 });
 export type PlanFormInput = z.infer<typeof planFormSchema>;
 
