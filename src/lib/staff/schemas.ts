@@ -33,7 +33,10 @@ export type DeviceFormInput = z.infer<typeof deviceFormSchema>;
 
 export type StaffActionResult =
   | { ok: true }
-  | { ok: false; error: "invalid_input" | "forbidden" | "not_found" | "last_owner" | "unknown" };
+  // pin_in_use: reset_staff_pin (0071) aynı tenant'ta iki aktif personelin
+  // aynı PIN'i taşımasını reddeder — kullanıcının düzeltebileceği bir durum,
+  // bu yüzden genel "unknown"dan ayrı bir kod.
+  | { ok: false; error: "invalid_input" | "forbidden" | "not_found" | "last_owner" | "pin_in_use" | "unknown" };
 
 export type DeviceActionResult =
   | { ok: true; rawSecret: string }

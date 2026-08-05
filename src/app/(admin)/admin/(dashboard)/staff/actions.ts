@@ -20,6 +20,10 @@ function mapRpcError(message: string | undefined): Extract<StaffActionResult, { 
   if (message.includes("last owner")) return "last_owner";
   if (message.includes("permission denied") || message.includes("only an owner")) return "forbidden";
   if (message.includes("not found")) return "not_found";
+  // 0071: aynı tenant'ta iki aktif personelin aynı PIN'i taşıması reddedilir
+  // (clock_in_or_out yanlış personele yazabiliyordu). Kullanıcı PIN'i
+  // değiştirerek çözebilir — "tekrar deneyin" demek yerine bunu söylüyoruz.
+  if (message.includes("PIN_ALREADY_IN_USE")) return "pin_in_use";
   return "unknown";
 }
 
@@ -55,6 +59,10 @@ export async function createStaffMember(input: unknown): Promise<StaffActionResu
     email_confirm: true,
   });
   if (authError || !authUser.user) {
+    // Teknik detay log'a, kullanıcıya anlaşılır mesaj (CLAUDE.md — hata
+    // yönetimi). Bu üç adım sessizce "unknown"a düşünce sahadaki bir hata
+    // hiçbir izle bırakmıyordu.
+    console.error("createStaffMember: auth user creation failed", authError);
     return { ok: false, error: "unknown" };
   }
 
@@ -67,6 +75,7 @@ export async function createStaffMember(input: unknown): Promise<StaffActionResu
     is_active: true,
   });
   if (profileError) {
+    console.error("createStaffMember: profile insert failed", profileError);
     await service.auth.admin.deleteUser(authUser.user.id);
     return { ok: false, error: "unknown" };
   }
@@ -77,8 +86,12 @@ export async function createStaffMember(input: unknown): Promise<StaffActionResu
     p_new_pin: parsed.data.pin,
   });
   if (pinError) {
+    console.error("createStaffMember: reset_staff_pin failed", pinError);
+    // auth.users + profiles satırı geri alınır (PIN'siz personel giriş
+    // yapamaz, yarım kayıt bırakmıyoruz); hata KODU korunur — PIN çakışması
+    // "bilgileri kontrol edin" değil, "bu PIN kullanımda" demeli.
     await service.auth.admin.deleteUser(authUser.user.id);
-    return { ok: false, error: "invalid_input" };
+    return { ok: false, error: mapRpcError(pinError.message) };
   }
 
   revalidatePath("/admin/staff");
