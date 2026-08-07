@@ -16,7 +16,9 @@ test("S58: SSS akordiyonu sorulara tıklanınca cevabı açar", async ({ page, b
   await expect(page.getByRole("heading", { name: "Sıkça Sorulan Sorular" })).toBeVisible();
 
   await page.getByText("Kayıt olduktan sonra hemen kullanabilir miyim?").click();
-  await expect(page.getByText("Ödemeniz onaylandıktan sonra")).toBeVisible();
+  // D101: cevap artık "Ödemeniz onaylandıktan sonra" ile başlamıyor — kayıtta
+  // ödeme alınmıyor, 14 günlük kartsız deneme hemen başlıyor.
+  await expect(page.getByText("Kayıt sırasında kart bilgisi istemiyoruz")).toBeVisible();
 });
 
 test("S58: iletişim formu gönderilir, platform admin talebi görüp kapatabilir", async ({ page, baseURL }) => {

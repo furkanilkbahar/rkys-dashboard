@@ -5730,7 +5730,6 @@ export type Database = {
       resolve_tenant_by_domain: {
         Args: { p_domain: string }
         Returns: {
-          subscription_active: boolean
           tenant_currency: string
           tenant_id: string
           tenant_name: string

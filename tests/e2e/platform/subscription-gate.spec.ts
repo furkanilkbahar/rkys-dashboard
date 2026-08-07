@@ -1,16 +1,20 @@
+import { createHash } from "crypto";
+
 import { createClient } from "@supabase/supabase-js";
 import { expect, test } from "@playwright/test";
 
-import { loginAsPlatformAdmin, tenantUrl } from "../helpers/tenant";
+import { loginAsPlatformAdmin } from "../helpers/tenant";
 
 /**
- * S56 (D101): trial dolduğunda tenant pasife düşer ve giriş denemesi ödeme
- * yoluna çıkar. Bu senaryo `beta` tenant'ının abonelik satırını oynattığı
- * için seri çalışır — paralel bir spec aynı anda beta'yı kullanırsa onu da
- * kapıya çarptırır.
+ * S56 (D101): süper admin havale/EFT tahsilatını "Ödemesi alındı" ile
+ * işaretler ve trial'ı dolmuş tenant aynı anda pasiflikten çıkar.
+ *
+ * S13 (trial-subscription.spec.ts) trial bitişinin ERİŞİM davranışını zaten
+ * kapsıyor — burada test edilen, sağlayıcı checkout'undan geçmeyen ödemenin
+ * yolu. trial-subscription.spec.ts'deki gerekçenin aynısıyla her koşum kendi
+ * tek kullanımlık tenant'ını kurar: paylaşılan bir tenant'ın abonelik
+ * durumunu mutasyona uğratmak iki proje paralel koşarken yarışa girer.
  */
-test.describe.configure({ mode: "serial" });
-
 function serviceClient() {
   return createClient(
     "http://127.0.0.1:54321",
@@ -18,78 +22,82 @@ function serviceClient() {
   );
 }
 
-async function betaTenantId() {
-  const { data } = await serviceClient().from("tenants").select("id").eq("slug", "beta").single();
-  return data!.id as string;
+async function createExpiredTrialTenant() {
+  const service = serviceClient();
+  const suffix = crypto.randomUUID().slice(0, 8);
+  const tenantId = crypto.randomUUID();
+  const branchId = crypto.randomUUID();
+  const subdomain = `test-markpaid-${suffix}`;
+  const email = `owner-markpaid-${suffix}@test-throwaway.test`;
+  const rawToken = `demo-markpaid-${suffix}`;
+
+  const { data: starterPlan } = await service.from("plans").select("id").eq("key", "starter").single();
+
+  await service.from("tenants").insert({
+    id: tenantId,
+    slug: subdomain,
+    name: "Mark Paid Test",
+    status: "active",
+    plan_id: starterPlan!.id,
+    timezone: "Europe/Istanbul",
+    currency: "TRY",
+    onboarding_completed_at: new Date().toISOString(),
+  });
+  await service.from("branches").insert({ id: branchId, tenant_id: tenantId, name: "Şube", is_default: true });
+  await service
+    .from("tenant_domains")
+    .insert({ tenant_id: tenantId, domain: `${subdomain}.localhost:3000`, is_primary: true });
+  await service.from("tables").insert({
+    tenant_id: tenantId,
+    branch_id: branchId,
+    label: "Masa 1",
+    qr_token_hash: createHash("sha256").update(rawToken).digest("hex"),
+  });
+
+  const { data: authUser } = await service.auth.admin.createUser({ email, password: "password123", email_confirm: true });
+  await service.from("profiles").insert({ id: authUser!.user!.id, tenant_id: tenantId, role: "owner", is_active: true });
+
+  // Trial'ı bitmiş kabul et.
+  await service
+    .from("subscriptions")
+    .update({ trial_ends_at: new Date(Date.now() - 60 * 60 * 1000).toISOString() })
+    .eq("tenant_id", tenantId);
+
+  return { tenantId, subdomain, email };
 }
 
-test.afterEach(async () => {
-  // Aboneliği seed'deki hâline (süren trial) geri al.
-  await serviceClient()
-    .from("subscriptions")
-    .update({
-      status: "trialing",
-      trial_ends_at: new Date(Date.now() + 14 * 86_400_000).toISOString(),
-      provider: null,
-      provider_ref: null,
-      current_period_end: null,
-    })
-    .eq("tenant_id", await betaTenantId());
-});
-
-test("S56: trial dolan tenant pasife düşer — panel ve QR menü kapanır, giriş ödeme sayfasına çıkar", async ({
+test("S56: süper admin 'ödemesi alındı' der, trial'ı dolmuş tenant aynı anda serbest kalır", async ({
   page,
   baseURL,
 }) => {
-  const service = serviceClient();
-  await service
-    .from("subscriptions")
-    .update({ status: "trialing", trial_ends_at: new Date(Date.now() - 60_000).toISOString() })
-    .eq("tenant_id", await betaTenantId());
+  const { tenantId, subdomain, email } = await createExpiredTrialTenant();
+  const base = new URL(baseURL!);
+  base.hostname = `${subdomain}.${base.hostname}`;
 
-  // Personel paneli kapanır.
-  await page.goto(tenantUrl(baseURL!, "beta", "/admin"));
-  await expect(page.getByText("Deneme süreniz doldu")).toBeVisible();
+  try {
+    // Trial dolu: giriş personeli panele değil ödeme sayfasına düşürür (S13).
+    await page.goto(`${base.origin}/admin/login`);
+    await page.getByLabel("E-posta").fill(email);
+    await page.getByLabel("Şifre").fill("password123");
+    await page.getByRole("button", { name: "Giriş yap" }).click();
+    await page.waitForURL(/\/admin\/billing$/);
 
-  // Misafir QR menüsü de kapanır — ödemeyen işletme servis vermez.
-  await page.goto(tenantUrl(baseURL!, "beta", "/masa/herhangi"));
-  await expect(page.getByText("Deneme süreniz doldu")).toBeVisible();
+    // Havale/EFT yolu: tahsilat sağlayıcı checkout'undan geçmiyor, süper
+    // admin elle işaretliyor.
+    await loginAsPlatformAdmin(page, baseURL!);
+    await page.goto(`${baseURL}/platform/tenants/${tenantId}`);
+    await page.getByRole("button", { name: "Ödemesi alındı olarak işaretle" }).click();
+    // Buton aktif abonelikte gizli — kaybolması işlemin tuttuğunun kanıtı.
+    await expect(page.getByRole("button", { name: "Ödemesi alındı olarak işaretle" })).not.toBeVisible();
+    await expect(page.getByText("Yenileme:")).toBeVisible();
 
-  // Ama giriş ve ödeme yolu AÇIK kalır, yoksa kilidi açmanın yolu olmazdı.
-  await page.goto(tenantUrl(baseURL!, "beta", "/admin/login"));
-  await expect(page.getByLabel("E-posta")).toBeVisible();
-
-  await page.getByLabel("E-posta").fill("owner@beta.test");
-  await page.getByLabel("Şifre").fill("password123");
-  await page.getByRole("button", { name: "Giriş yap" }).click();
-
-  // Giriş sonrası panele değil, ödeme kapısına düşer.
-  await expect(page.getByText("Deneme süreniz doldu")).toBeVisible({ timeout: 15_000 });
-  await page.getByRole("link", { name: "Plan seçip ödeme yap" }).click();
-  await page.waitForURL(/\/admin\/billing/, { timeout: 15_000 });
-  await expect(page.getByRole("button", { name: "Ödeme Yap" })).toBeVisible();
-});
-
-test("S56: süper admin 'ödemesi alındı' der ve tenant aynı anda geri açılır", async ({ page, baseURL }) => {
-  const service = serviceClient();
-  const tenantId = await betaTenantId();
-  await service
-    .from("subscriptions")
-    .update({ status: "trialing", trial_ends_at: new Date(Date.now() - 60_000).toISOString() })
-    .eq("tenant_id", tenantId);
-
-  await page.goto(tenantUrl(baseURL!, "beta", "/admin"));
-  await expect(page.getByText("Deneme süreniz doldu")).toBeVisible();
-
-  // Havale/EFT yolu: tahsilat sağlayıcı checkout'undan geçmiyor, süper admin
-  // elle işaretliyor.
-  await loginAsPlatformAdmin(page, baseURL!);
-  await page.goto(`${baseURL}/platform/tenants/${tenantId}`);
-  await page.getByRole("button", { name: "Ödemesi alındı olarak işaretle" }).click();
-  await expect(page.getByRole("button", { name: "Ödemesi alındı olarak işaretle" })).not.toBeVisible();
-
-  // Hiçbir zamanlanmış görev beklenmeden kapı açılır.
-  await page.goto(tenantUrl(baseURL!, "beta", "/admin/login"));
-  await expect(page.getByLabel("E-posta")).toBeVisible();
-  await expect(page.getByText("Deneme süreniz doldu")).not.toBeVisible();
+    // Hiçbir zamanlanmış görev beklenmeden panel geri açılır.
+    await page.goto(`${base.origin}/admin/login`);
+    await page.getByLabel("E-posta").fill(email);
+    await page.getByLabel("Şifre").fill("password123");
+    await page.getByRole("button", { name: "Giriş yap" }).click();
+    await page.waitForURL(/\/admin$/);
+  } finally {
+    await serviceClient().from("tenants").delete().eq("id", tenantId);
+  }
 });

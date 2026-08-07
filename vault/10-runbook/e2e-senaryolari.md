@@ -59,7 +59,7 @@ guncelleme: 2026-08-07
 | S47 | Vardiya+puantaj: cihaz secret + PIN in/out; yanlis PIN/iptal cihaz reddedilir; CSV export | 11 |
 | S48 | Garson — masa tasima: `session.move` izinli tasir, audit kaydi; izinsizde bolum hic gorunmez | genel |
 | S49-S55 | Faz 4 revizyonu (plan_modules RLS, plan yonetimi, onay kuyrugu, kapali kapi kayit, elle modul, dusurme incelemesi, Talep Et) | Faz 4 rev. |
-| S56 | Abonelik kapisi (D101): trial dolan tenant'ta panel + QR menu kapanir, giris ve `/admin/billing` acik kalir; super admin "Odemesi alindi" ile aninda geri acar | 24 |
+| S56 | Elle odeme (D101): super admin "Odemesi alindi" der, trial'i dolmus tenant aninda serbest kalir (havale/EFT — saglayici checkout'undan gecmeyen tahsilat) | 24 |
 
 ## Baglantili notlar
 [[test-stratejisi]] · [[faz-kapanis-ve-onay-akisi]]

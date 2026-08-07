@@ -9,10 +9,15 @@ import {
 } from "../../helpers/testClients";
 
 /**
- * D101: kayıtta ödeme kalktı, karşılığında trial'ın BİTİŞİ bir sonuç doğurmaya
- * başladı. Bu dosya o kapının iki ucunu doğrular:
- *   - resolve_tenant_by_domain'in subscription_active'i (proxy'nin okuduğu alan)
- *   - mark_subscription_paid / approve_tenant_on_registration
+ * D101: kayıtta ödeme kalktı. Bu dosya, ödemenin taşındığı iki yolu doğrular:
+ *   - mark_subscription_paid (süper admin, havale/EFT)
+ *   - approve_tenant_on_registration (otomatik onay artık kayıt anında)
+ *
+ * Trial bitişinin ERİŞİM davranışı burada DEĞİL: o kapı yüzey bazında
+ * (isSubscriptionActive → /admin/billing) zaten vardı ve S13
+ * (tests/e2e/platform/trial-subscription.spec.ts) tarafından kapsanıyor.
+ * Kapının doğru okuduğu kaynak `is_subscription_active()`, aşağıda her
+ * senaryodan sonra o doğrulanıyor.
  */
 const createdTenantIds = new Set<string>();
 const createdUserIds = new Set<string>();
@@ -28,19 +33,10 @@ afterAll(async () => {
   await service.from("platform_settings").update({ auto_approve_registrations: false }).eq("id", true);
 });
 
-async function domainOf(tenantId: string) {
-  const { data } = await serviceRoleClient()
-    .from("tenant_domains")
-    .select("domain")
-    .eq("tenant_id", tenantId)
-    .eq("is_primary", true)
-    .single();
-  return data!.domain as string;
-}
-
-async function resolveByDomain(domain: string) {
-  const { data } = await anonClient().rpc("resolve_tenant_by_domain", { p_domain: domain });
-  return data?.[0];
+/** Yüzey kapılarının (isSubscriptionActive) okuduğu kaynak. */
+async function isSubscriptionActive(tenantId: string) {
+  const { data } = await anonClient().rpc("is_subscription_active", { p_tenant_id: tenantId });
+  return data;
 }
 
 async function expireTrial(tenantId: string) {
@@ -50,49 +46,31 @@ async function expireTrial(tenantId: string) {
     .eq("tenant_id", tenantId);
 }
 
-describe("abonelik kapısı — resolve_tenant_by_domain.subscription_active (D101)", () => {
-  it("trial sürerken subscription_active true döner (proxy tenant'ı açar)", async () => {
-    const throwaway = await createThrowawayTenant("gate-trialing");
-    createdTenantIds.add(throwaway.tenantId);
-
-    const resolved = await resolveByDomain(await domainOf(throwaway.tenantId));
-    expect(resolved?.tenant_status).toBe("active");
-    expect(resolved?.subscription_active).toBe(true);
-  });
-
-  it("trial dolduğunda subscription_active false döner — ZAMANLANMIŞ GÖREV OLMADAN", async () => {
+describe("is_subscription_active — yüzey kapılarının okuduğu kaynak", () => {
+  it("trial dolduğunda false döner ama tenant.status'a DOKUNULMAZ", async () => {
     const throwaway = await createThrowawayTenant("gate-expired");
     createdTenantIds.add(throwaway.tenantId);
+    expect(await isSubscriptionActive(throwaway.tenantId)).toBe(true);
+
     await expireTrial(throwaway.tenantId);
 
-    const resolved = await resolveByDomain(await domainOf(throwaway.tenantId));
-    // tenant.status'a DOKUNULMADI: pasiflik türetiliyor, saklanmıyor. Kapının
-    // kapanması için hiçbir job'ın çalışmış olması gerekmiyor.
-    expect(resolved?.tenant_status).toBe("active");
-    expect(resolved?.subscription_active).toBe(false);
+    // Pasiflik türetiliyor, saklanmıyor: kapının kapanması için hiçbir
+    // zamanlanmış görevin çalışmış olması gerekmiyor.
+    expect(await isSubscriptionActive(throwaway.tenantId)).toBe(false);
+    const { data: tenant } = await serviceRoleClient()
+      .from("tenants")
+      .select("status")
+      .eq("id", throwaway.tenantId)
+      .single();
+    expect(tenant?.status).toBe("active");
   });
 
-  it("abonelik iptal edildiğinde de kapı kapanır", async () => {
+  it("abonelik iptal edildiğinde de kapanır", async () => {
     const throwaway = await createThrowawayTenant("gate-canceled");
     createdTenantIds.add(throwaway.tenantId);
     await serviceRoleClient().from("subscriptions").update({ status: "canceled" }).eq("tenant_id", throwaway.tenantId);
 
-    const resolved = await resolveByDomain(await domainOf(throwaway.tenantId));
-    expect(resolved?.subscription_active).toBe(false);
-  });
-
-  it("ödeme yapıldığı anda kapı yeniden açılır (job beklenmez)", async () => {
-    const throwaway = await createThrowawayTenant("gate-reopen");
-    createdTenantIds.add(throwaway.tenantId);
-    await expireTrial(throwaway.tenantId);
-    expect((await resolveByDomain(await domainOf(throwaway.tenantId)))?.subscription_active).toBe(false);
-
-    await serviceRoleClient()
-      .from("subscriptions")
-      .update({ status: "active", current_period_end: new Date(Date.now() + 30 * 86_400_000).toISOString() })
-      .eq("tenant_id", throwaway.tenantId);
-
-    expect((await resolveByDomain(await domainOf(throwaway.tenantId)))?.subscription_active).toBe(true);
+    expect(await isSubscriptionActive(throwaway.tenantId)).toBe(false);
   });
 });
 
@@ -123,7 +101,7 @@ describe("mark_subscription_paid (D101)", () => {
     const daysLeft = Math.round((new Date(subscription!.current_period_end!).getTime() - Date.now()) / 86_400_000);
     expect(daysLeft).toBe(30);
 
-    expect((await resolveByDomain(await domainOf(throwaway.tenantId)))?.subscription_active).toBe(true);
+    expect(await isSubscriptionActive(throwaway.tenantId)).toBe(true);
   });
 
   it("onay bekleyen tenant'ı aynı anda açar ve planının modüllerini seed eder", async () => {
@@ -188,7 +166,7 @@ describe("mark_subscription_paid (D101)", () => {
       .eq("tenant_id", throwaway.tenantId)
       .single();
     expect(subscription?.status).toBe("trialing");
-    expect((await resolveByDomain(await domainOf(throwaway.tenantId)))?.subscription_active).toBe(false);
+    expect(await isSubscriptionActive(throwaway.tenantId)).toBe(false);
   });
 });
 

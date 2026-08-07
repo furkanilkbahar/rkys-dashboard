@@ -9,11 +9,6 @@
   "tenantNotFound": {
     "title": "İşletme bulunamadı."
   },
-  "subscriptionRequired": {
-    "title": "Deneme süreniz doldu",
-    "body": "14 günlük ücretsiz deneme süreniz sona erdiği için hesabınız duraklatıldı. Verileriniz duruyor — bir plan seçip ödemenizi tamamladığınız anda paneliniz, QR menünüz ve tüm ekranlarınız kaldığı yerden açılır.",
-    "cta": "Plan seçip ödeme yap"
-  },
   "cashier": {
     "title": "Kasa",
     "nav": {
