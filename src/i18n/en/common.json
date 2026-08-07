@@ -9,6 +9,11 @@
   "tenantNotFound": {
     "title": "Tenant not found."
   },
+  "subscriptionRequired": {
+    "title": "Your trial has ended",
+    "body": "Your 14-day free trial has ended, so your account is paused. Your data is safe — the moment you pick a plan and complete payment, your dashboard, QR menu and all your screens pick up right where they left off.",
+    "cta": "Choose a plan and pay"
+  },
   "cashier": {
     "title": "Cashier",
     "nav": {
@@ -397,7 +402,11 @@
         "fullName": "Full name",
         "edit": "Edit",
         "inactive": "Inactive",
-        "pin": "PIN"
+        "pin": "PIN",
+        "showPin": "Show PIN",
+        "generatePin": "Generate PIN",
+        "pinRevealTitle": "Staff PIN",
+        "pinRevealWarning": "Share the PIN with the staff member; it disappears when you close this box."
       },
       "create": {
         "title": "Add Staff",
@@ -436,7 +445,8 @@
         "last_owner": "The last owner cannot be demoted or deactivated.",
         "pin_in_use": "This PIN is already used by another staff member. Enter a different PIN.",
         "unknown": "Could not save, please try again.",
-        "invalid_pin": "PIN must be 4-8 digits."
+        "invalid_pin": "PIN must be 4-8 digits.",
+        "pin_not_revealable": "This PIN cannot be shown (no encrypted copy). Use \"Generate PIN\" to renew it."
       },
       "empty": "No staff yet."
     },
@@ -1648,7 +1658,7 @@
       "enforce2faLabel": "Enforce 2FA",
       "enforce2faDescription": "When enabled, two-factor authentication becomes mandatory for all staff.",
       "autoApproveRegistrationsLabel": "Auto-approve registrations",
-      "autoApproveRegistrationsDescription": "When enabled, a tenant activates automatically once payment is confirmed, without manual approval; when disabled, a platform admin must approve each registration from Pending Approvals."
+      "autoApproveRegistrationsDescription": "When enabled, a tenant activates as soon as it completes registration — no manual approval — and starts its 14-day trial; when disabled, a platform admin must approve each registration from Pending Approvals."
     },
     "licenses": {
       "title": "Licenses",
@@ -1998,7 +2008,7 @@
     },
     "complete": {
       "title": "Registration Received",
-      "body": "Your payment has been received. You'll be able to log in to your dashboard once our platform team approves your account. You can track the approval status via your email address."
+      "body": "Your 14-day free trial has started — no card required. You'll be able to log in to your dashboard once our platform team approves your account, and you can track the approval status via your email address. During the trial you can purchase your plan at any time from the Subscription page in your dashboard."
     }
   },
   "contact": {
@@ -2026,7 +2036,7 @@
         "items": [
           {
             "q": "Can I start using it right after signing up?",
-            "a": "Once your payment is confirmed, our platform team reviews and approves your account (in some periods this step may be automatic). Your dashboard opens once approved."
+            "a": "We don't ask for card details at sign-up; your 14-day free trial starts immediately. Your dashboard opens once our platform team reviews and approves your account (in some periods this step may be automatic). When the trial ends the account is paused, and it resumes right where it left off once you complete payment."
           },
           {
             "q": "Can I try it without paying?",

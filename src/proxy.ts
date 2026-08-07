@@ -17,6 +17,21 @@ const ROOT_DOMAINS = new Set(
     .filter(Boolean),
 );
 
+/**
+ * Abonelik kapısının açık bıraktığı yollar (D101) — "ödeyip geri dön"
+ * yolculuğunun tamamı ve sağlayıcı webhook'ları.
+ *
+ * `/api/webhooks` bilerek dar tutuldu: `/api` tümüyle muaf olsaydı, ödemeyen
+ * bir tenant'ın API anahtarları (Tenant API) çalışmaya devam ederdi.
+ */
+const SUBSCRIPTION_GATE_EXEMPT_PREFIXES = ["/admin/login", "/admin/billing", "/api/webhooks"] as const;
+
+function isSubscriptionGateExempt(pathname: string): boolean {
+  return SUBSCRIPTION_GATE_EXEMPT_PREFIXES.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+  );
+}
+
 export async function proxy(request: NextRequest) {
   const host = request.headers.get("host") ?? "";
 
@@ -39,6 +54,21 @@ export async function proxy(request: NextRequest) {
   if (error || !tenant || tenant.tenant_status !== "active") {
     const url = request.nextUrl.clone();
     url.pathname = "/tenant-not-found";
+    return NextResponse.rewrite(url);
+  }
+
+  // D101: abonelik kapısı. is_subscription_active() (0039) beri "trial sürüyor
+  // ya da ödendi" demek; bugüne kadar tanımlıydı ama hiçbir kapıya bağlı
+  // değildi, yani 14 günü dolan tenant sonsuza kadar çalışıyordu.
+  //
+  // Kapı, tenant_status kapısının AKSİNE tamamen kapatmaz: ödeyip geri dönüş
+  // yolu açık kalmalı, yoksa kullanıcı borcunu ödeyebileceği ekrana da
+  // ulaşamaz. Bu yüzden /admin/login (giriş) ve /admin/billing (ödeme) geçer.
+  // Webhook'lar da geçer — sağlayıcı "ödeme başarılı" diyemezse tenant
+  // kilitte kalırdı.
+  if (!tenant.subscription_active && !isSubscriptionGateExempt(request.nextUrl.pathname)) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/abonelik-gerekli";
     return NextResponse.rewrite(url);
   }
 

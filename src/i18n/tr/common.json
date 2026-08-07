@@ -9,6 +9,11 @@
   "tenantNotFound": {
     "title": "İşletme bulunamadı."
   },
+  "subscriptionRequired": {
+    "title": "Deneme süreniz doldu",
+    "body": "14 günlük ücretsiz deneme süreniz sona erdiği için hesabınız duraklatıldı. Verileriniz duruyor — bir plan seçip ödemenizi tamamladığınız anda paneliniz, QR menünüz ve tüm ekranlarınız kaldığı yerden açılır.",
+    "cta": "Plan seçip ödeme yap"
+  },
   "cashier": {
     "title": "Kasa",
     "nav": {
@@ -397,7 +402,11 @@
         "fullName": "Ad Soyad",
         "edit": "Düzenle",
         "inactive": "Pasif",
-        "pin": "PIN"
+        "pin": "PIN",
+        "showPin": "PIN Göster",
+        "generatePin": "Yeni PIN Üret",
+        "pinRevealTitle": "Personel PIN'i",
+        "pinRevealWarning": "PIN'i personele iletin; bu kutuyu kapattığınızda ekrandan kalkar."
       },
       "create": {
         "title": "Personel Ekle",
@@ -436,7 +445,8 @@
         "last_owner": "Son sahip düşürülemez veya pasif yapılamaz.",
         "pin_in_use": "Bu PIN başka bir personelde kullanılıyor. Farklı bir PIN girin.",
         "unknown": "Kaydedilemedi, tekrar deneyin.",
-        "invalid_pin": "PIN 4-8 haneli rakam olmalı."
+        "invalid_pin": "PIN 4-8 haneli rakam olmalı.",
+        "pin_not_revealable": "Bu PIN gösterilemiyor (şifreli kopyası yok). \"Yeni PIN Üret\" ile yenileyin."
       },
       "empty": "Henüz personel yok."
     },
@@ -1648,7 +1658,7 @@
       "enforce2faLabel": "2FA zorunluluğu",
       "enforce2faDescription": "Açılırsa tüm personel için iki faktörlü doğrulama zorunlu olur.",
       "autoApproveRegistrationsLabel": "Kayıtları otomatik onayla",
-      "autoApproveRegistrationsDescription": "Açılırsa ödeme onaylandığında işletme elle onay beklemeden aktifleşir; kapalıysa platform admin her kaydı Bekleyen Onaylar'dan elle onaylar."
+      "autoApproveRegistrationsDescription": "Açılırsa işletme kaydı tamamlar tamamlamaz elle onay beklemeden aktifleşir ve 14 günlük denemesine başlar; kapalıysa platform admin her kaydı Bekleyen Onaylar'dan elle onaylar."
     },
     "licenses": {
       "title": "Lisanslar",
@@ -1998,7 +2008,7 @@
     },
     "complete": {
       "title": "Kaydınız Alındı",
-      "body": "Ödemeniz alındı. Hesabınız platform ekibimiz tarafından onaylandıktan sonra panelinize giriş yapabileceksiniz. Onay durumunu e-posta adresinizden takip edebilirsiniz."
+      "body": "14 günlük ücretsiz denemeniz başladı — kart bilgisi istemiyoruz. Hesabınız platform ekibimiz tarafından onaylandıktan sonra panelinize giriş yapabileceksiniz; onay durumunu e-posta adresinizden takip edebilirsiniz. Deneme süresi boyunca dilediğiniz zaman panelinizdeki Abonelik sayfasından planınızı satın alabilirsiniz."
     }
   },
   "contact": {
@@ -2026,7 +2036,7 @@
         "items": [
           {
             "q": "Kayıt olduktan sonra hemen kullanabilir miyim?",
-            "a": "Ödemeniz onaylandıktan sonra hesabınız platform ekibimiz tarafından incelenir ve onaylanır (bazı dönemlerde bu adım otomatik da işleyebilir). Onaylanınca panelinize giriş açılır."
+            "a": "Kayıt sırasında kart bilgisi istemiyoruz; 14 günlük ücretsiz denemeniz hemen başlar. Hesabınız platform ekibimiz tarafından incelenip onaylandığında (bazı dönemlerde bu adım otomatik da işleyebilir) panelinize giriş açılır. Deneme süresi dolduğunda hesap duraklatılır, ödemenizi tamamlayınca kaldığı yerden devam eder."
           },
           {
             "q": "Ödeme yapmadan deneyebilir miyim?",
