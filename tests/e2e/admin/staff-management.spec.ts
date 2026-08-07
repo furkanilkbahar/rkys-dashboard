@@ -41,3 +41,35 @@ test("owner personel rolünü günceller, cihaz ekler ve izin bayrağını deği
   const after = await permissionSwitches.first().getAttribute("aria-checked");
   expect(after).not.toBe(before);
 });
+
+/**
+ * D102: "Yeni PIN Üret" çakışmayan bir PIN atar ve gösterir; "PIN Göster" aynı
+ * PIN'i sıfırlamadan tekrar verir. Buradaki asıl iddia ikinci kısım — şifreli
+ * kopya olmasaydı göstermenin tek yolu PIN'i yenilemek olurdu (D86'daki QR
+ * ile birebir aynı sorun).
+ */
+test("owner PIN üretir ve aynı PIN'i sıfırlamadan tekrar görebilir", async ({ page, baseURL }) => {
+  await loginAsAcmeOwner(page, baseURL!);
+  await page.goto(acmeUrl(baseURL!, "/admin/staff"));
+
+  const waiterRow = page.locator('[data-testid^="staff-row-"]').filter({ hasText: "Kerem Yıldız" });
+  await waiterRow.getByRole("button", { name: "Düzenle" }).click();
+
+  const editor = page.locator("tr[data-expansion]");
+  await editor.getByRole("button", { name: "Yeni PIN Üret" }).click();
+
+  const revealBox = editor.locator('[data-testid^="revealed-pin-"]');
+  await expect(revealBox).toBeVisible();
+  const generatedPin = (await revealBox.locator("p.font-mono").innerText()).trim();
+  expect(generatedPin).toMatch(/^[0-9]{4}$/);
+
+  // Sıfırlamadan tekrar göster: aynı PIN gelmeli. (İlk sürümde üretimden
+  // hemen sonra router.refresh() çağrılıyordu; satır yeniden çizilince kutu
+  // kapanıyor ve kullanıcı yeni PIN'i göremeden kaybediyordu — bu test onu
+  // yakaladı, kod tazelemeyi kutunun kapanışına taşıdı.)
+  await editor.getByRole("button", { name: "PIN Göster" }).click();
+  await expect(revealBox.locator("p.font-mono")).toHaveText(generatedPin);
+
+  await revealBox.getByRole("button", { name: "Onayla" }).click();
+  await expect(revealBox).toBeHidden();
+});

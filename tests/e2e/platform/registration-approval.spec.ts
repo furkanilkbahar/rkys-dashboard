@@ -29,7 +29,8 @@ async function cleanupTenant(slug: string, email: string) {
   }
 }
 
-async function registerAndPay(page: import("@playwright/test").Page, baseURL: string, businessName: string, slug: string, email: string) {
+/** D101: ödeme adımı kalktı — kayıt tek başına trial'ı başlatıyor. */
+async function register(page: import("@playwright/test").Page, baseURL: string, businessName: string, slug: string, email: string) {
   await page.goto(`${baseURL}/kayit`);
   // WebKit hidrasyon yarışı (PLAN.md Faz 21 takip maddesi 2): kayıt formu
   // react-hook-form + server action; hidrasyon bitmeden yapılan tıklama
@@ -42,12 +43,10 @@ async function registerAndPay(page: import("@playwright/test").Page, baseURL: st
   await page.getByLabel("Şifre").fill("password123");
   await page.getByRole("button", { name: "Kayıt Ol" }).click();
 
-  await page.waitForURL(/\/kayit\/odeme\//, { timeout: 15_000 });
-  await page.getByRole("button", { name: "Ödemeyi Onayla" }).click();
   await page.waitForURL(/\/kayit\/tamamlandi/, { timeout: 15_000 });
 }
 
-test("S52: auto-approve KAPALI — ödeme tek başına yetmez, platform admin onaylayınca giriş açılır", async ({ page, baseURL }) => {
+test("S52: auto-approve KAPALI — kayıt tek başına yetmez, platform admin onaylayınca giriş açılır", async ({ page, baseURL }) => {
   // slug 32 karakterle sınırlı (registerSchema) — kısa base36 zaman damgası
   // kullanılıyor, ISO milisaniye string'i sığmaz.
   const suffix = Date.now().toString(36);
@@ -56,9 +55,9 @@ test("S52: auto-approve KAPALI — ödeme tek başına yetmez, platform admin on
   const email = `owner-e2e-appr-${suffix}@test-throwaway.test`;
 
   try {
-    await registerAndPay(page, baseURL!, businessName, slug, email);
+    await register(page, baseURL!, businessName, slug, email);
 
-    // Ödeme tamamlandı ama tenant hâlâ pending_approval — alt-domain proxy
+    // Kayıt tamamlandı ama tenant hâlâ pending_approval — alt-domain proxy
     // tarafından tamamen kapalı (admin/login dahil).
     const blockedLoginResponse = await page.goto(tenantUrl(baseURL!, slug, "/admin/login"));
     expect(blockedLoginResponse?.ok()).toBe(true);
@@ -86,7 +85,7 @@ test("S52: auto-approve KAPALI — ödeme tek başına yetmez, platform admin on
   }
 });
 
-test("S52: auto-approve AÇIK — ödeme sonrası tenant anında aktif olur, onay beklemeden giriş açılır", async ({ page, baseURL }) => {
+test("S52: auto-approve AÇIK — kayıt biter bitmez tenant aktif olur, onay beklemeden giriş açılır", async ({ page, baseURL }) => {
   const suffix = Date.now().toString(36);
   const slug = `test-e2e-auto-appr-${suffix}`;
   const businessName = `E2E Otomatik Onay ${suffix}`;
@@ -96,7 +95,7 @@ test("S52: auto-approve AÇIK — ödeme sonrası tenant anında aktif olur, ona
   await service.from("platform_settings").update({ auto_approve_registrations: true }).eq("id", true);
 
   try {
-    await registerAndPay(page, baseURL!, businessName, slug, email);
+    await register(page, baseURL!, businessName, slug, email);
 
     await page.goto(tenantUrl(baseURL!, slug, "/admin/login"));
     await page.getByLabel("E-posta").fill(email);

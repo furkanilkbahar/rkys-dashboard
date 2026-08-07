@@ -26,7 +26,7 @@ const ROOT_DOMAINS = new Set(
  */
 const SUBSCRIPTION_GATE_EXEMPT_PREFIXES = ["/admin/login", "/admin/billing", "/api/webhooks"] as const;
 
-function isSubscriptionGateExempt(pathname: string): boolean {
+export function isSubscriptionGateExempt(pathname: string): boolean {
   return SUBSCRIPTION_GATE_EXEMPT_PREFIXES.some(
     (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
   );

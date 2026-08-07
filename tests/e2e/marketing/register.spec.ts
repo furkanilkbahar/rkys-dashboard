@@ -9,7 +9,7 @@ function serviceClient() {
   );
 }
 
-test("S20: kayıt — pazarlama sitesinden self-servis kayıt → kök domainde ödeme → kaydınız alındı sayfası (D80: kapalı kapı, onay bekliyor)", async ({
+test("S20: kayıt — pazarlama sitesinden self-servis kayıt → ödeme İSTENMEDEN kaydınız alındı sayfası (D80 kapalı kapı + D101 kartsız trial)", async ({
   page,
   baseURL,
 }) => {
@@ -29,14 +29,23 @@ test("S20: kayıt — pazarlama sitesinden self-servis kayıt → kök domainde 
     await page.getByLabel("Şifre").fill("password123");
     await page.getByRole("button", { name: "Kayıt Ol" }).click();
 
-    // Ödeme kök domainde ayrı bir rotada (/kayit/odeme) — tenant henüz
-    // pending_approval olduğundan kendi alt-domaini proxy tarafından
-    // tamamen kapalı, bu yüzden ödeme adımı alt-domaine düşemez.
-    await page.waitForURL(/\/kayit\/odeme\//, { timeout: 15_000 });
-    await page.getByRole("button", { name: "Ödemeyi Onayla" }).click();
-
+    // D101: ana sayfa "14 gün kartsız deneme" diyor, akış da artık öyle —
+    // arada checkout YOK, doğrudan tamamlandı sayfası.
     await page.waitForURL(/\/kayit\/tamamlandi/, { timeout: 15_000 });
     await expect(page.getByText("Kaydınız Alındı")).toBeVisible();
+    expect(page.url()).not.toContain("/odeme");
+
+    // Varsayılan plan Demo DEĞİL: seçici hiç açılmadan gönderilen bu formun
+    // ₺0'lık iç plana değil, vitrindeki ilk plana kaydolması gerekiyor.
+    const service = serviceClient();
+    const { data: registered } = await service.from("tenants").select("plan_id").eq("slug", slug).single();
+    const { data: chosenPlan } = await service
+      .from("plans")
+      .select("key, is_public")
+      .eq("id", registered!.plan_id)
+      .single();
+    expect(chosenPlan?.is_public).toBe(true);
+    expect(chosenPlan?.key).not.toBe("demo");
   } finally {
     const service = serviceClient();
     const { data: tenant } = await service.from("tenants").select("id").eq("slug", slug).maybeSingle();

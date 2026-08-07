@@ -25,8 +25,8 @@ async function starterPlanId() {
   return data!.id as string;
 }
 
-describe("registerTenant (Faz 4 revizyonu Adım 3, S52 — D80 kapalı kapı kayıt)", () => {
-  it("yeni tenant pending_approval olarak oluşur, planı atanır, checkout ödeme sayfasına yönlendirir", async () => {
+describe("registerTenant (D80 kapalı kapı kayıt + D101 kartsız trial)", () => {
+  it("yeni tenant pending_approval olarak oluşur, planı atanır, ödeme İSTENMEDEN 14 günlük trial başlar", async () => {
     const suffix = crypto.randomUUID().slice(0, 8);
     const slug = `test-register-${suffix}`;
     const email = `owner-register-${suffix}@test-throwaway.test`;
@@ -42,7 +42,9 @@ describe("registerTenant (Faz 4 revizyonu Adım 3, S52 — D80 kapalı kapı kay
 
     expect(result.ok).toBe(true);
     if (!result.ok) return;
-    expect(result.redirectUrl).toContain("/kayit/odeme/");
+    // D101: kayıt artık checkout'a değil doğrudan "tamamlandı"ya gider.
+    expect(result.redirectUrl).toContain("/kayit/tamamlandi");
+    expect(result.redirectUrl).not.toContain("/odeme");
 
     const service = serviceRoleClient();
     const { data: tenant } = await service
@@ -73,15 +75,23 @@ describe("registerTenant (Faz 4 revizyonu Adım 3, S52 — D80 kapalı kapı kay
     expect(profile?.is_active).toBe(true);
     createdUserIds.add(profile!.id);
 
+    // D101: kayıt hiçbir sağlayıcıya dokunmaz — abonelik satırı yalnızca
+    // trg_tenants_create_subscription'ın açtığı 14 günlük trial'dır. provider
+    // ve provider_ref'in BOŞ kalması ödeme adımının gerçekten kalktığının
+    // kanıtı: eskiden burada 'mock' ve bir checkout referansı yazılıydı.
     const { data: subscription } = await service
       .from("subscriptions")
       .select("status, trial_ends_at, provider, provider_ref")
       .eq("tenant_id", tenant!.id)
       .single();
     expect(subscription?.status).toBe("trialing");
-    expect(subscription?.trial_ends_at).not.toBeNull();
-    expect(subscription?.provider).toBe("mock");
-    expect(subscription?.provider_ref).toBeTruthy();
+    expect(subscription?.provider).toBeNull();
+    expect(subscription?.provider_ref).toBeNull();
+
+    const trialDaysLeft = Math.round(
+      (new Date(subscription!.trial_ends_at!).getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+    );
+    expect(trialDaysLeft).toBe(14);
 
     // bug-hunt 2026-08-01: yeni tenant'lar 'water'/'check'/'assistance'
     // sistem call_types'ları olmadan oluşuyordu — call_waiter RPC'si sabit
