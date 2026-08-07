@@ -1584,7 +1584,10 @@
       },
       "trialEndsAt": "Trial ends: {date}",
       "currentPeriodEnd": "Renews: {date}",
-      "noSubscription": "No subscription record."
+      "noSubscription": "No subscription record.",
+      "markPaid": "Mark as paid",
+      "markPaidHint": "For payments collected by bank transfer. Activates the subscription for 30 days and, if the tenant is awaiting approval, opens it at the same time.",
+      "markPaidError": "Could not mark as paid, please try again."
     },
     "pendingTenants": {
       "title": "Pending Approvals",

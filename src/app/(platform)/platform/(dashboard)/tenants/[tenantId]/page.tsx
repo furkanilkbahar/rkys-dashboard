@@ -4,12 +4,20 @@ import { getTranslations } from "next-intl/server";
 import { PlatformPageHeader } from "@/components/platform/platform-page-header";
 import { Badge } from "@/components/ui/badge";
 import { SuspendToggleButton } from "@/components/platform/suspend-toggle-button";
+import { MarkPaidButton } from "@/components/platform/mark-paid-button";
 import { PendingModuleRemovals } from "@/components/platform/pending-module-removals";
 import { PlanSelect } from "@/components/platform/plan-select";
 import { TenantModulesManager } from "@/components/platform/tenant-modules-manager";
 import { getPlatformPlans, getPlatformTenantDetail } from "@/lib/data/platformTenants";
 
-import { assignTenantPlan, reactivateTenant, resolvePendingModuleRemoval, setTenantModule, suspendTenant } from "../actions";
+import {
+  assignTenantPlan,
+  markSubscriptionPaid,
+  reactivateTenant,
+  resolvePendingModuleRemoval,
+  setTenantModule,
+  suspendTenant,
+} from "../actions";
 
 export default async function PlatformTenantDetailPage({ params }: { params: Promise<{ tenantId: string }> }) {
   const { tenantId } = await params;
@@ -63,6 +71,12 @@ export default async function PlatformTenantDetailPage({ params }: { params: Pro
           </div>
         ) : (
           <p className="text-sm text-muted-foreground">{t("tenantDetail.noSubscription")}</p>
+        )}
+        {/* D101: aboneliği zaten aktif olan tenant'ta gizli — o durumda
+            "ödemesi alındı" demek yalnızca dönemi 30 gün ileri iter ve
+            yanlışlıkla basılması sessiz bir bedava uzatmaya dönüşür. */}
+        {tenant.subscription && tenant.subscription.status !== "active" && (
+          <MarkPaidButton tenantId={tenant.id} markSubscriptionPaid={markSubscriptionPaid} />
         )}
       </div>
 

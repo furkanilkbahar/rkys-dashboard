@@ -1584,7 +1584,10 @@
       },
       "trialEndsAt": "Deneme sonu: {date}",
       "currentPeriodEnd": "Yenileme: {date}",
-      "noSubscription": "Abonelik kaydı yok."
+      "noSubscription": "Abonelik kaydı yok.",
+      "markPaid": "Ödemesi alındı olarak işaretle",
+      "markPaidHint": "Havale/EFT ile tahsil edilen ödemeler için. Abonelik 30 gün aktifleşir, işletme onay bekliyorsa aynı anda açılır.",
+      "markPaidError": "İşaretlenemedi, tekrar deneyin."
     },
     "pendingTenants": {
       "title": "Bekleyen Onaylar",

@@ -32,6 +32,27 @@ export async function reactivateTenant(tenantId: string): Promise<PlatformAction
   return { ok: true };
 }
 
+/**
+ * D101: havale/EFT ile tahsil edilen ödemenin elle işaretlenmesi. Trial'ı
+ * dolduğu için proxy'nin abonelik kapısına takılan tenant'ı, sağlayıcı
+ * checkout'undan geçmeden pasiflikten çıkarmanın yolu.
+ */
+export async function markSubscriptionPaid(tenantId: string): Promise<PlatformActionResult> {
+  const admin = await getCurrentPlatformAdmin();
+  if (!admin) return { ok: false, error: "forbidden" };
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("mark_subscription_paid", {
+    p_tenant_id: tenantId,
+    p_period_days: 30,
+  });
+  if (error) return { ok: false, error: "unknown" };
+
+  revalidatePath(`/platform/tenants/${tenantId}`);
+  revalidatePath("/platform");
+  return { ok: true };
+}
+
 export async function assignTenantPlan(tenantId: string, planId: string | null): Promise<PlatformActionResult> {
   const admin = await getCurrentPlatformAdmin();
   if (!admin) return { ok: false, error: "forbidden" };
