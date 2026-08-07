@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { registerSchema, type RegisterInput } from "@/lib/auth/schemas";
 import type { Plan } from "@/lib/data/plans";
+import { defaultSelectablePlanId } from "@/lib/utils/defaultPlan";
 
 import type { RegisterResult } from "./actions";
 
@@ -36,7 +37,7 @@ export function RegisterForm({
     formState: { errors, isSubmitting },
   } = useForm<RegisterInput>({
     resolver: standardSchemaResolver(registerSchema),
-    defaultValues: { businessName: "", slug: "", email: "", password: "", planId: plans[0]?.id ?? "" },
+    defaultValues: { businessName: "", slug: "", email: "", password: "", planId: defaultSelectablePlanId(plans) },
   });
 
   async function onSubmit(values: RegisterInput) {

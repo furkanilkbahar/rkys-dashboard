@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { Plan } from "@/lib/data/plans";
 import type { AdminSubscription } from "@/lib/data/subscription";
+import { defaultSelectablePlanId } from "@/lib/utils/defaultPlan";
 
 import type { BillingActionResult } from "./actions";
 
@@ -29,7 +30,7 @@ export function BillingManager({
   cancelSubscription: () => Promise<BillingActionResult>;
 }) {
   const t = useTranslations("admin.billing");
-  const [selectedPlanId, setSelectedPlanId] = useState(plans[0]?.id ?? "");
+  const [selectedPlanId, setSelectedPlanId] = useState(defaultSelectablePlanId(plans));
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

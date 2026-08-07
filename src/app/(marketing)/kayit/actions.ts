@@ -1,7 +1,6 @@
 "use server";
 
 import { registerSchema } from "@/lib/auth/schemas";
-import { getDefaultSubscriptionProvider } from "@/lib/subscriptions";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 
 export type RegisterResult =
@@ -15,12 +14,12 @@ const ROOT_DOMAIN = process.env.NEXT_PUBLIC_ROOT_DOMAIN!;
  * ile aynı iskelet (tenant+branch+tenant_domains+auth user+profile) ama
  * tenant `pending_approval` ile açılır — proxy.ts'nin `tenant_status !==
  * 'active'` kapısı (0002) admin/login dahil HER isteği kapattığı için ayrıca
- * bir gate mantığı yazmaya gerek yok. Onay öncesi tenant'ın alt-domaini
- * tamamen erişilemez olduğundan, ödeme adımı KÖK domainde (/kayit/odeme)
- * kurulur; providerRef checkout başlamadan önce subscriptions satırına
- * (trg_tenants_create_subscription'ın açtığı trialing satır) service-role
- * bağlamında düz `.update()` ile yazılır — set_subscription_checkout_ref
- * RPC'si is_staff() gerektirir, bu noktada henüz oturum yok.
+ * bir gate mantığı yazmaya gerek yok.
+ *
+ * D101: D80'in ödeme adımı BURADAN KALDIRILDI. Ana sayfa "14 gün kartsız
+ * deneme" vaat ediyor (D18) ama akış kullanıcıyı checkout'a gönderiyordu —
+ * üstelik kayıt formunun varsayılanı ₺0'lık Demo planı olduğu için pratikte
+ * "₺0 ödeyin" sayfası çıkıyordu. Ödeme /admin/billing'e taşındı.
  */
 export async function registerTenant(input: unknown): Promise<RegisterResult> {
   const parsed = registerSchema.safeParse(input);
@@ -84,27 +83,21 @@ export async function registerTenant(input: unknown): Promise<RegisterResult> {
     console.error("ensure_system_call_types failed for new tenant", tenantId, callTypesError);
   }
 
-  const provider = getDefaultSubscriptionProvider();
-
-  let checkout;
-  try {
-    checkout = await provider.createSubscriptionCheckout({
-      tenantId,
-      planId,
-      returnUrl: `http://${ROOT_DOMAIN}/kayit/tamamlandi`,
-      checkoutBasePath: "/kayit/odeme",
-    });
-  } catch {
-    await service.from("tenants").delete().eq("id", tenantId);
-    await service.auth.admin.deleteUser(authUser.user.id);
-    return { ok: false, error: "unknown" };
+  // D101: burada ÖDEME ALINMAZ. trg_tenants_create_subscription (0039)
+  // tenant'a zaten 14 günlük `trialing` satırı açtı, yani hesap bu andan
+  // itibaren kartsız olarak tam çalışır durumda (D18). Ödeme /admin/billing'e
+  // taşındı; trial dolduğunda proxy'nin abonelik kapısı devreye girer.
+  //
+  // Otomatik onay artık burada: 0076 bunu ödeme webhook'unun içine koymuştu,
+  // ödeme adımı kalkınca auto_approve_registrations açık olsa bile hiçbir
+  // kayıt otomatik onaylanmazdı. Kayıt akışını bloklamaz — başarısız olursa
+  // tenant onay kuyruğunda bekler, ki ayarın kapalı hâlindeki davranış da bu.
+  const { error: autoApproveError } = await service.rpc("approve_tenant_on_registration", {
+    p_tenant_id: tenantId,
+  });
+  if (autoApproveError) {
+    console.error("approve_tenant_on_registration failed for new tenant", tenantId, autoApproveError);
   }
 
-  const { error: checkoutRefError } = await service
-    .from("subscriptions")
-    .update({ provider: provider.name, provider_ref: checkout.providerRef })
-    .eq("tenant_id", tenantId);
-  if (checkoutRefError) return { ok: false, error: "unknown" };
-
-  return { ok: true, redirectUrl: checkout.checkoutUrl };
+  return { ok: true, redirectUrl: `http://${ROOT_DOMAIN}/kayit/tamamlandi` };
 }

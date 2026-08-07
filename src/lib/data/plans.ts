@@ -8,6 +8,13 @@ export type Plan = {
   key: string;
   name: string;
   priceMinor: number;
+  /**
+   * D96 vitrin bayrağı. Liste FİLTRELENMEZ (aşağıdaki nota bakın) ama
+   * çağıranın "hangisi varsayılan seçili gelmeli" sorusunu cevaplayabilmesi
+   * için taşınır — kayıt formu buna bakıp Demo gibi iç planları varsayılan
+   * yapmaz (D101).
+   */
+  isPublic: boolean;
 };
 
 // plans herkese açık okunur (marketing fiyatlandırma tablosu, Adım 6) —
@@ -22,10 +29,16 @@ export async function getPlans(): Promise<Plan[]> {
   const supabase = await createClient();
   const { data } = await supabase
     .from("plans")
-    .select("id, key, name, price_minor")
+    .select("id, key, name, price_minor, is_public")
     .order("table_limit", { ascending: true, nullsFirst: false });
 
-  return (data ?? []).map((p) => ({ id: p.id, key: p.key, name: p.name, priceMinor: p.price_minor }));
+  return (data ?? []).map((p) => ({
+    id: p.id,
+    key: p.key,
+    name: p.name,
+    priceMinor: p.price_minor,
+    isPublic: p.is_public,
+  }));
 }
 
 export type MarketingPlan = Plan & {
@@ -81,6 +94,11 @@ export async function getMarketingPlans(): Promise<MarketingPlan[]> {
     key: p.key,
     name: p.name,
     priceMinor: p.price_minor,
+    // Sabit `true`: bu fonksiyonun dönüşü VİTRİNİN KENDİSİ, yani buradaki her
+    // satır tanımı gereği vitrinde. `is_public` bilerek SELECT'e eklenmedi —
+    // eklenseydi yukarıdaki D99 geri düşüşü de aynı eksik kolona takılır ve
+    // ana sayfanın fiyat tablosunu boşaltan hata geri gelirdi.
+    isPublic: true,
     tableLimit: p.table_limit,
     includedBranchCount: p.included_branch_count,
     extraBranchPriceMinor: p.extra_branch_price_minor,
