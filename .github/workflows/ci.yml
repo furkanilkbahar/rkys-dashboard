@@ -36,6 +36,16 @@ jobs:
           version: latest
       - run: supabase start
       - run: cp .env.ci .env.local
+      # QR (D86) ve personel PIN (D102) "Göster" ozellikleri sifreli-kopya
+      # deseniyle calisiyor; anahtar yoksa sifreleme SESSIZCE atlaniyor ve
+      # ilgili testler "yenileyin" ekraniyla kirmiziya donuyor. Anahtarlar
+      # repo'ya COMMIT'LENMEZ, her kosumda uretilir: repo public ve
+      # commit'lenmis bir anahtarin yanlislikla uretime kopyalanmasi tam olarak
+      # lisans anahtarinda yasanan hataydi (D103).
+      - name: Generate ephemeral encryption keys
+        run: |
+          echo "QR_TOKEN_ENCRYPTION_KEY=$(openssl rand -base64 32)" >> .env.local
+          echo "STAFF_PIN_ENCRYPTION_KEY=$(openssl rand -base64 32)" >> .env.local
       - run: pnpm run test:integration
 
   e2e:
@@ -54,6 +64,16 @@ jobs:
           version: latest
       - run: supabase start
       - run: cp .env.ci .env.local
+      # QR (D86) ve personel PIN (D102) "Göster" ozellikleri sifreli-kopya
+      # deseniyle calisiyor; anahtar yoksa sifreleme SESSIZCE atlaniyor ve
+      # ilgili testler "yenileyin" ekraniyla kirmiziya donuyor. Anahtarlar
+      # repo'ya COMMIT'LENMEZ, her kosumda uretilir: repo public ve
+      # commit'lenmis bir anahtarin yanlislikla uretime kopyalanmasi tam olarak
+      # lisans anahtarinda yasanan hataydi (D103).
+      - name: Generate ephemeral encryption keys
+        run: |
+          echo "QR_TOKEN_ENCRYPTION_KEY=$(openssl rand -base64 32)" >> .env.local
+          echo "STAFF_PIN_ENCRYPTION_KEY=$(openssl rand -base64 32)" >> .env.local
       - run: pnpm exec playwright install --with-deps chromium webkit
       - run: pnpm exec playwright test
       - uses: actions/upload-artifact@v4
