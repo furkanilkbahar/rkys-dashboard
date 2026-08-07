@@ -14,6 +14,12 @@ async function loginToOnboarding(page: import("@playwright/test").Page, baseURL:
   await page.getByLabel("Şifre").fill("password123");
   await page.getByRole("button", { name: "Giriş yap" }).click();
   await expect(page).toHaveURL(/\/admin\/onboarding$/);
+  // Hidrasyon yarışı (register.spec.ts / faq-and-contact.spec.ts'deki
+  // beklemenin aynısı): giriş ekranındaki iki düğme de saf client-side
+  // (`setScreen`/`router.push`), yani hidrasyon bitmeden yapılan tıklama
+  // sessizce yutuluyor ve sayfa giriş ekranında kalıyor. URL'in
+  // /admin/onboarding olması JS'in bağlandığını GÖSTERMEZ.
+  await page.waitForLoadState("networkidle");
 }
 
 test("S8: Sıfırdan kur — sihirbazın tüm adımları tamamlanınca dashboard açılır, guard bir daha sihirbaza yönlendirmez", async ({
