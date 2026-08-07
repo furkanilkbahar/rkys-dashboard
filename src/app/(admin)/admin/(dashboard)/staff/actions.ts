@@ -3,8 +3,9 @@
 import { revalidatePath } from "next/cache";
 
 import { assertCan, PERMISSION_KEYS, type PermissionKey } from "@/lib/auth/can";
-import { getCurrentActor } from "@/lib/auth/session";
+import { getCurrentActor, type CurrentActor } from "@/lib/auth/session";
 import { STAFF_MANAGEABLE_ROLES, type StaffRole } from "@/lib/data/adminStaff";
+import { decryptPin, encryptPin, generatePinCandidate } from "@/lib/staff/pin";
 import {
   createStaffMemberFormSchema,
   deviceFormSchema,
@@ -12,6 +13,7 @@ import {
   staffUpdateFormSchema,
   type DeviceActionResult,
   type StaffActionResult,
+  type StaffPinRevealResult,
 } from "@/lib/staff/schemas";
 import { createClient, createServiceRoleClient } from "@/lib/supabase/server";
 
@@ -25,6 +27,48 @@ function mapRpcError(message: string | undefined): Extract<StaffActionResult, { 
   // değiştirerek çözebilir — "tekrar deneyin" demek yerine bunu söylüyoruz.
   if (message.includes("PIN_ALREADY_IN_USE")) return "pin_in_use";
   return "unknown";
+}
+
+/**
+ * D102: PIN başarıyla atandıktan SONRA ham PIN'in şifreli kopyasını saklar
+ * (staff_pin_secrets, 0094) — böylece "PIN Göster" fiziksel bir sıfırlama
+ * gerektirmez. Hata FIRLATMAZ: şifreleme bir ek özellik, PIN'in kendisi
+ * zaten atanmış durumda; anahtar yoksa/yazma başarısızsa akış "gösterilemez
+ * ama çalışır" hâline düşer (QR'daki d15a26d dersi).
+ */
+async function storePinSecret(profileId: string, tenantId: string, rawPin: string): Promise<void> {
+  const encrypted = encryptPin(rawPin);
+  if (!encrypted) return;
+
+  const service = createServiceRoleClient();
+  const { error } = await service
+    .from("staff_pin_secrets")
+    .upsert(
+      { profile_id: profileId, tenant_id: tenantId, pin_encrypted: encrypted, updated_at: new Date().toISOString() },
+      { onConflict: "profile_id" },
+    );
+  if (error) console.error("storePinSecret failed", error);
+}
+
+/**
+ * PIN'i actor'ın KENDİ oturumuyla atar (reset_staff_pin RPC'si tenant/izin
+ * kontrolünü orada yapar) ve başarılıysa şifreli kopyayı yazar. Personel
+ * oluşturma, PIN sıfırlama ve PIN üretme akışlarının ortak adımı.
+ */
+async function assignPin(
+  actor: CurrentActor,
+  profileId: string,
+  rawPin: string,
+): Promise<Extract<StaffActionResult, { ok: false }>["error"] | null> {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("reset_staff_pin", { p_profile_id: profileId, p_new_pin: rawPin });
+  if (error) {
+    console.error("assignPin: reset_staff_pin failed", error);
+    return mapRpcError(error.message);
+  }
+
+  await storePinSecret(profileId, actor.tenantId, rawPin);
+  return null;
 }
 
 /**
@@ -80,18 +124,13 @@ export async function createStaffMember(input: unknown): Promise<StaffActionResu
     return { ok: false, error: "unknown" };
   }
 
-  const supabase = await createClient();
-  const { error: pinError } = await supabase.rpc("reset_staff_pin", {
-    p_profile_id: authUser.user.id,
-    p_new_pin: parsed.data.pin,
-  });
+  const pinError = await assignPin(actor, authUser.user.id, parsed.data.pin);
   if (pinError) {
-    console.error("createStaffMember: reset_staff_pin failed", pinError);
     // auth.users + profiles satırı geri alınır (PIN'siz personel giriş
     // yapamaz, yarım kayıt bırakmıyoruz); hata KODU korunur — PIN çakışması
     // "bilgileri kontrol edin" değil, "bu PIN kullanımda" demeli.
     await service.auth.admin.deleteUser(authUser.user.id);
-    return { ok: false, error: mapRpcError(pinError.message) };
+    return { ok: false, error: pinError };
   }
 
   revalidatePath("/admin/staff");
@@ -126,12 +165,79 @@ export async function resetStaffPin(profileId: string, input: unknown): Promise<
   const parsed = pinResetFormSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "invalid_input" };
 
-  const supabase = await createClient();
-  const { error } = await supabase.rpc("reset_staff_pin", { p_profile_id: profileId, p_new_pin: parsed.data.pin });
-  if (error) return { ok: false, error: mapRpcError(error.message) };
+  const error = await assignPin(actor, profileId, parsed.data.pin);
+  if (error) return { ok: false, error };
 
   revalidatePath("/admin/staff");
   return { ok: true };
+}
+
+/**
+ * D102: çakışmayan rastgele bir PIN atar ve ham hâlini bir kez döner
+ * (QR'daki "Yenile" karşılığı). Çakışma kararı RPC'nin kendisinde
+ * (PIN_ALREADY_IN_USE, 0071) — burada yalnızca aday üretilip yeniden
+ * deneniyor. Tenant'ta 10.000 PIN'in tamamı dolu olmadıkça birkaç denemede
+ * biter; dolmuşsa pin_in_use dönüp kullanıcıya söylemek, sonsuz denemekten
+ * iyidir.
+ */
+export async function regenerateStaffPin(profileId: string): Promise<StaffPinRevealResult> {
+  const actor = await getCurrentActor();
+  if (!actor) return { ok: false, error: "forbidden" };
+  try {
+    await assertCan(actor, "staff.manage");
+  } catch {
+    return { ok: false, error: "forbidden" };
+  }
+
+  for (let attempt = 0; attempt < 10; attempt += 1) {
+    const candidate = generatePinCandidate();
+    const error = await assignPin(actor, profileId, candidate);
+    if (!error) {
+      revalidatePath("/admin/staff");
+      return { ok: true, pin: candidate };
+    }
+    if (error !== "pin_in_use") {
+      return { ok: false, error: error === "forbidden" || error === "not_found" ? error : "unknown" };
+    }
+  }
+
+  return { ok: false, error: "pin_in_use" };
+}
+
+/**
+ * D102: PIN'i sıfırlamadan gösterir. Şifreli kopya yoksa (anahtar
+ * ayarlanmadan önce atanmış PIN) not_found döner — arayüz PIN uydurmaz.
+ * Okuma service-role ile yapılır: staff_pin_secrets'ın authenticated için
+ * hiç policy'si yok (0094), ciphertext sunucudan çıkmaz.
+ */
+export async function revealStaffPin(profileId: string): Promise<StaffPinRevealResult> {
+  const actor = await getCurrentActor();
+  if (!actor) return { ok: false, error: "forbidden" };
+  try {
+    await assertCan(actor, "staff.manage");
+  } catch {
+    return { ok: false, error: "forbidden" };
+  }
+
+  const service = createServiceRoleClient();
+  const { data, error } = await service
+    .from("staff_pin_secrets")
+    .select("pin_encrypted")
+    .eq("profile_id", profileId)
+    // Tenant filtresi service-role'de RLS olmadığı için ELLE uygulanır —
+    // aksi halde bir tenant'ın owner'ı başka tenant'ın PIN'ini isteyebilirdi.
+    .eq("tenant_id", actor.tenantId)
+    .maybeSingle();
+  if (error) {
+    console.error("revealStaffPin: lookup failed", error);
+    return { ok: false, error: "unknown" };
+  }
+  if (!data) return { ok: false, error: "not_found" };
+
+  const pin = decryptPin(data.pin_encrypted);
+  if (!pin) return { ok: false, error: "not_found" };
+
+  return { ok: true, pin };
 }
 
 export async function createStaffDevice(branchId: string, input: unknown): Promise<DeviceActionResult> {

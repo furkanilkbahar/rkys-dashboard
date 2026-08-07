@@ -31,6 +31,7 @@ import {
   staffUpdateFormSchema,
   type DeviceActionResult,
   type StaffActionResult,
+  type StaffPinRevealResult,
 } from "@/lib/staff/schemas";
 
 const PERMISSION_MATRIX_ROLES: StaffRole[] = ["manager", "waiter", "kitchen", "courier"];
@@ -39,18 +40,53 @@ function StaffRow({
   member,
   updateStaffMember,
   resetStaffPin,
+  revealStaffPin,
+  regenerateStaffPin,
 }: {
   member: AdminStaffMember;
   updateStaffMember: (profileId: string, input: unknown) => Promise<StaffActionResult>;
   resetStaffPin: (profileId: string, input: unknown) => Promise<StaffActionResult>;
+  revealStaffPin: (profileId: string) => Promise<StaffPinRevealResult>;
+  regenerateStaffPin: (profileId: string) => Promise<StaffPinRevealResult>;
 }) {
   const t = useTranslations("admin.staff");
   const tRole = useTranslations("admin.staff.role");
   const tErrors = useTranslations("admin.staff.errors");
+  const tCommon = useTranslations("admin.common");
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [showPinForm, setShowPinForm] = useState(false);
   const [pinError, setPinError] = useState<string | null>(null);
+  // D102: gösterilen PIN ekranda kalıcı DEĞİL — kullanıcı "Onayla"ya basana
+  // kadar duruyor, sonra siliniyor (cihaz şifresindeki desenin aynısı).
+  const [revealedPin, setRevealedPin] = useState<string | null>(null);
+  const [pinBusy, setPinBusy] = useState(false);
+  // PIN üretmek sunucudaki durumu değiştirir ama router.refresh() BURADA
+  // çağrılamaz: yenileme satırı yeniden çizip PIN kutusunu kapatıyordu, yani
+  // kullanıcı yeni PIN'i göremeden kaybediyordu (E2E ile yakalandı). Rozet
+  // yerelde güncellenir, tablo ise kutu kapatılırken tazelenir.
+  const [hasPin, setHasPin] = useState(member.hasPin);
+
+  async function runPinAction(action: () => Promise<StaffPinRevealResult>) {
+    setPinError(null);
+    setRevealedPin(null);
+    setPinBusy(true);
+    const result = await action();
+    setPinBusy(false);
+    if (!result.ok) {
+      setPinError(tErrors(result.error === "not_found" ? "pin_not_revealable" : result.error));
+      return;
+    }
+    setRevealedPin(result.pin);
+    setHasPin(true);
+  }
+
+  function closeRevealedPin() {
+    setRevealedPin(null);
+    // Tablodaki "PIN tanımlı/yok" kolonu ancak sunucudan gelir; kutu
+    // kapanırken tazelemek, PIN'i ekrandan düşürmeden onu da güncel tutar.
+    router.refresh();
+  }
 
   const { register, control, handleSubmit } = useForm({
     resolver: standardSchemaResolver(staffUpdateFormSchema),
@@ -126,12 +162,32 @@ function StaffRow({
           />
           <Label>{t("member.active")}</Label>
         </div>
-        <Badge variant="secondary">{member.hasPin ? t("member.pinSet") : t("member.pinNotSet")}</Badge>
+        <Badge variant="secondary">{hasPin ? t("member.pinSet") : t("member.pinNotSet")}</Badge>
         <Button type="submit" size="sm">
           {t("member.save")}
         </Button>
         <Button type="button" size="sm" variant="outline" onClick={() => setShowPinForm((v) => !v)}>
           {t("member.resetPin")}
+        </Button>
+        {/* D102: PIN'i sıfırlamadan gösterir — şifreli kopyası yoksa (anahtar
+            ayarlanmadan önce atanmış PIN) uydurmaz, "yenileyin" der. */}
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          disabled={!hasPin || pinBusy}
+          onClick={() => runPinAction(() => revealStaffPin(member.id))}
+        >
+          {t("member.showPin")}
+        </Button>
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          disabled={pinBusy}
+          onClick={() => runPinAction(() => regenerateStaffPin(member.id))}
+        >
+          {t("member.generatePin")}
         </Button>
         {error && <p className="text-xs text-destructive">{error}</p>}
       </form>
@@ -145,8 +201,20 @@ function StaffRow({
           <Button type="submit" size="sm" variant="outline">
             {t("member.resetPin")}
           </Button>
-          {pinError && <p className="text-xs text-destructive">{pinError}</p>}
         </form>
+      )}
+
+      {pinError && <p className="text-xs text-destructive">{pinError}</p>}
+
+      {revealedPin && (
+        <div className="rounded-md border border-border p-3" data-testid={`revealed-pin-${member.id}`}>
+          <p className="text-sm font-semibold">{t("member.pinRevealTitle")}</p>
+          <p className="font-mono text-lg tracking-widest">{revealedPin}</p>
+          <p className="text-xs text-destructive">{t("member.pinRevealWarning")}</p>
+          <Button type="button" size="sm" className="mt-2" onClick={closeRevealedPin}>
+            {tCommon("confirm")}
+          </Button>
+        </div>
       )}
     </div>
   );
@@ -169,6 +237,8 @@ function StaffTable({
   actions: {
     updateStaffMember: (profileId: string, input: unknown) => Promise<StaffActionResult>;
     resetStaffPin: (profileId: string, input: unknown) => Promise<StaffActionResult>;
+    revealStaffPin: (profileId: string) => Promise<StaffPinRevealResult>;
+    regenerateStaffPin: (profileId: string) => Promise<StaffPinRevealResult>;
   };
 }) {
   const t = useTranslations("admin.staff");
@@ -189,6 +259,8 @@ function StaffTable({
             member={member}
             updateStaffMember={actions.updateStaffMember}
             resetStaffPin={actions.resetStaffPin}
+            revealStaffPin={actions.revealStaffPin}
+            regenerateStaffPin={actions.regenerateStaffPin}
           />
         )
       }
@@ -531,6 +603,8 @@ export function StaffManager({
     createStaffMember: (input: unknown) => Promise<StaffActionResult>;
     updateStaffMember: (profileId: string, input: unknown) => Promise<StaffActionResult>;
     resetStaffPin: (profileId: string, input: unknown) => Promise<StaffActionResult>;
+    revealStaffPin: (profileId: string) => Promise<StaffPinRevealResult>;
+    regenerateStaffPin: (profileId: string) => Promise<StaffPinRevealResult>;
     createStaffDevice: (branchId: string, input: unknown) => Promise<DeviceActionResult>;
     revokeStaffDevice: (deviceId: string) => Promise<StaffActionResult>;
     updateRolePermission: (role: StaffRole, permissionKey: PermissionKey, allowed: boolean) => Promise<StaffActionResult>;

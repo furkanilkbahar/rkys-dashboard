@@ -41,7 +41,7 @@
 ## 🆕 v2.0 Ek Kurallar
 27. Masa taşıma (session move) işlemi müşteri arayüzünde hiçbir koşulda sunulmaz — yalnızca personel RPC'si.
 28. Plan masa limiti yalnızca UI'da değil DB düzeyinde de (trigger/RPC) uygulanır.
-29. Vardiya PIN'leri düz metin saklanmaz (hash); yetkisiz cihazda PIN girişi çalışmaz.
+29. Vardiya PIN'leri düz metin saklanmaz: **doğrulama** her zaman bcrypt hash üzerinden yapılır (`profiles.pin_hash`). "PIN Göster" için ayrıca AES-256-GCM ile **şifreli** bir kopya tutulur (`staff_pin_secrets`, D102) — bu tabloyu hiçbir personel okuyamaz (policy yok, grant yalnız service_role), anahtar yalnızca `STAFF_PIN_ENCRYPTION_KEY`'de yaşar ve yoksa özellik kapanır, akış kırılmaz. Yetkisiz cihazda PIN girişi çalışmaz.
 30. Düşük müşteri puanları (≤3★) hiçbir akışta Google'a yönlendirilmez.
 31. Sipariş gönderimi idempotency_key olmadan kabul edilmez (çift sipariş yasak).
 32. Genel QR akışında masa seçimi yapılmadan sipariş/çağrı oluşturulamaz.

@@ -41,3 +41,12 @@ export type StaffActionResult =
 export type DeviceActionResult =
   | { ok: true; rawSecret: string }
   | { ok: false; error: "invalid_input" | "forbidden" | "unknown" };
+
+/**
+ * D102: "PIN Göster" / "Yeni PIN Üret". not_found = personelin şifreli
+ * kopyası yok (anahtar ayarlanmadan önce atanmış eski bir PIN) — bu durumda
+ * arayüz PIN uydurmaz, "yenileyin" der.
+ */
+export type StaffPinRevealResult =
+  | { ok: true; pin: string }
+  | { ok: false; error: "forbidden" | "not_found" | "pin_in_use" | "unknown" };

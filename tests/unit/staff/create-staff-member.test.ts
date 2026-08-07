@@ -12,7 +12,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const deleteUser = vi.fn(async () => ({ data: null, error: null }));
 const createUser = vi.fn(async () => ({ data: { user: { id: "new-staff-id" } }, error: null }));
 const insert = vi.fn(async () => ({ error: null }));
-const upsert = vi.fn(async () => ({ error: null }));
+const upsert = vi.fn(async (row?: { profile_id: string; pin_encrypted: string }) => ({ row, error: null }));
 const maybeSingle = vi.fn(async () => ({ data: null as { pin_encrypted: string } | null, error: null }));
 const rpc = vi.fn(async () => ({ error: null as { message: string } | null }));
 
@@ -89,9 +89,9 @@ describe("createStaffMember()", () => {
     await createStaffMember(INPUT);
 
     expect(upsert).toHaveBeenCalledTimes(1);
-    const row = upsert.mock.calls[0][0] as unknown as { profile_id: string; pin_encrypted: string };
-    expect(row.profile_id).toBe("new-staff-id");
-    expect(row.pin_encrypted).not.toContain("1234");
+    const row = upsert.mock.calls[0][0];
+    expect(row?.profile_id).toBe("new-staff-id");
+    expect(row?.pin_encrypted).not.toContain("1234");
   });
 
   it("anahtar yoksa şifreli kopya hiç yazılmaz ama personel yine oluşur", async () => {
@@ -99,6 +99,16 @@ describe("createStaffMember()", () => {
 
     expect(result).toEqual({ ok: true });
     expect(upsert).not.toHaveBeenCalled();
+  });
+
+  it("staff_pin_secrets yazılamazsa (migration henüz gitmemişse) personel yine oluşur", async () => {
+    // D99'un tersi durum: uygulama kodu şemadan ÖNCE canlıya çıkarsa özellik
+    // kapanmalı, akış kırılmamalı. Prod'da 0094 uygulanana kadar tam olarak
+    // bu hâl yaşanır.
+    process.env.STAFF_PIN_ENCRYPTION_KEY = KEY;
+    upsert.mockResolvedValueOnce({ row: undefined, error: { message: "relation does not exist" } as never });
+
+    expect(await createStaffMember(INPUT)).toEqual({ ok: true });
   });
 });
 

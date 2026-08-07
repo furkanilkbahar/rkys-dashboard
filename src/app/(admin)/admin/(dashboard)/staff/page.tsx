@@ -7,7 +7,9 @@ import { getDefaultBranchId } from "@/lib/data/branch";
 import {
   createStaffDevice,
   createStaffMember,
+  regenerateStaffPin,
   resetStaffPin,
+  revealStaffPin,
   revokeStaffDevice,
   updateRolePermission,
   updateStaffMember,
@@ -38,6 +40,8 @@ export default async function AdminStaffPage() {
         createStaffMember,
         updateStaffMember,
         resetStaffPin,
+        revealStaffPin,
+        regenerateStaffPin,
         createStaffDevice,
         revokeStaffDevice,
         updateRolePermission,
