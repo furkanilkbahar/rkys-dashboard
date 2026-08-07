@@ -20,8 +20,27 @@ Next.js dev server (`pnpm dev`, Turbopack) + Docker'da lokal Supabase (`supabase
 > (`_templates/`) yukler. Calistirilmazsa menu fotografsiz acilir (kirilmaz)
 > ve "Demo veriyle kesfet" yolu kirik gorsellerle gelir.
 
-## GitHub + CI (aktif)
-`.github/workflows/ci.yml`: `lint-typecheck-unit` -> `integration-and-rls` (lokal Supabase CLI) + `e2e` (Playwright, chromium+mobile-safari). Kirmizi testle merge yok.
+## GitHub + CI (TANIMLI AMA KOSMUYOR)
+`.github/workflows/ci.yml`: `lint-typecheck-unit` -> `integration-and-rls` (lokal Supabase CLI) + `e2e` (Playwright, chromium+mobile-safari).
+
+> **CI FIILEN CALISMIYOR (2026-08-08'de tespit edildi).** Son 60 kosumun
+> 60'i da job HIC BASLAMADAN dustu (`steps=0`). GitHub'in check-run
+> annotation'indaki birebir mesaj: *"The job was not started because recent
+> account payments have failed or your spending limit needs to be increased.
+> Please check the 'Billing & plans' section in your settings"*. Repo PRIVATE
+> oldugu icin Actions dakikalari faturaya tabi; odeme/limit duzelene kadar
+> **hicbir job kosmuyor**.
+>
+> **Sonucu:** `tsc`/lint/unit/integration/E2E hicbir seyi KAPIDA TUTMUYOR —
+> bu projede "yesil" denen her sey yalnizca LOKAL kosumdan geliyor. D99
+> (2026-08-06) ve D101 (2026-08-07) uretim olaylarinin ikisinin de
+> arkasindaki asil bosluk bu: korumasi beklenen otomatik kapi zaten yoktu.
+> Asagidaki `migrate-production` job'u da faturalandirma duzelene kadar
+> ATIL — dogru yazilmis durumda ama kosmuyor.
+>
+> **Yapilmasi gereken (yalniz hesap sahibi yapabilir):** GitHub Settings ->
+> Billing & plans -> odeme yontemi/spending limit duzeltilir. Alternatifler:
+> repo'yu public yapmak (Actions ucretsiz) ya da self-hosted runner.
 
 **`migrate-production` job'u (2026-08-08, D99/D101 sonrasi):** `main`'e push'ta,
 uc test job'u da yesilse `supabase db push --linked --yes` ile uretim semasini
