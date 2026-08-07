@@ -1,7 +1,7 @@
 ---
 tags: [runbook, test, e2e, yasayan-liste]
 ozet: "Kritik E2E senaryolarinin tam listesi (S1-S55+) — her faz kapanisinda buraya eklenir."
-guncelleme: 2026-08-01
+guncelleme: 2026-08-07
 ---
 
 # Kritik E2E Senaryolari
@@ -59,6 +59,7 @@ guncelleme: 2026-08-01
 | S47 | Vardiya+puantaj: cihaz secret + PIN in/out; yanlis PIN/iptal cihaz reddedilir; CSV export | 11 |
 | S48 | Garson — masa tasima: `session.move` izinli tasir, audit kaydi; izinsizde bolum hic gorunmez | genel |
 | S49-S55 | Faz 4 revizyonu (plan_modules RLS, plan yonetimi, onay kuyrugu, kapali kapi kayit, elle modul, dusurme incelemesi, Talep Et) | Faz 4 rev. |
+| S56 | Abonelik kapisi (D101): trial dolan tenant'ta panel + QR menu kapanir, giris ve `/admin/billing` acik kalir; super admin "Odemesi alindi" ile aninda geri acar | 24 |
 
 ## Baglantili notlar
 [[test-stratejisi]] · [[faz-kapanis-ve-onay-akisi]]
