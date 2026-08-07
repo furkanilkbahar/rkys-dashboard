@@ -1,7 +1,7 @@
 ---
 tags: [runbook, ortam, deploy, ci]
 ozet: "Lokal-oncelikli akis: Lokal -> GitHub CI -> Staging -> Production; production'a erken cikis yasak."
-guncelleme: 2026-08-04
+guncelleme: 2026-08-08
 ---
 
 # Ortamlar & Deploy
@@ -21,7 +21,25 @@ Next.js dev server (`pnpm dev`, Turbopack) + Docker'da lokal Supabase (`supabase
 > ve "Demo veriyle kesfet" yolu kirik gorsellerle gelir.
 
 ## GitHub + CI (aktif)
-`.github/workflows/ci.yml`: 3 sirali job — `lint-typecheck-unit` -> `integration-and-rls` (lokal Supabase CLI) -> `e2e` (Playwright, chromium+mobile-safari). Kirmizi testle merge yok.
+`.github/workflows/ci.yml`: `lint-typecheck-unit` -> `integration-and-rls` (lokal Supabase CLI) + `e2e` (Playwright, chromium+mobile-safari). Kirmizi testle merge yok.
+
+**`migrate-production` job'u (2026-08-08, D99/D101 sonrasi):** `main`'e push'ta,
+uc test job'u da yesilse `supabase db push --linked --yes` ile uretim semasini
+hizalar. PR'larda ASLA kosmaz (fork PR'i uretim semasina yazamamali).
+`environment: production` — GitHub'da bu ortama "required reviewer" eklenirse
+migration'lar elle onaya baglanir, job degismeden. `concurrency` grubu
+`cancel-in-progress: false` ile: yarida kesilen migration semayi belirsiz
+birakir.
+
+**Gereken GitHub secret'lari:** `SUPABASE_ACCESS_TOKEN` (supabase.com/dashboard
+/account/tokens), `SUPABASE_PROJECT_REF` (`ifwzdjiwvpkbzeofaxyj`),
+`SUPABASE_DB_PASSWORD`. Ucu de yoksa job kirmizi olur, uretim etkilenmez.
+
+**KALAN ACIK:** Vercel `main`'e push'ta kendi deploy'unu BAGIMSIZ baslatiyor,
+yani migration ile deploy arasinda sira garantisi yok — yalnizca pencere
+daraliyor. Sirayi garantiye almak icin Vercel'in git otomatik deploy'u
+kapatilip deploy da bu workflow'dan, `migrate-production`'dan SONRA
+tetiklenmeli (VERCEL_TOKEN gerekir). Ayri is, kullanici karari.
 
 ## Staging (TANIM — henuz kurulmadi)
 Ayri Supabase Cloud projesi + Vercel preview/staging. Migration'lar once staging'e, sonra CI onayli pipeline ile prod'a. Test tenant'lari burada yasar. **Acilisi kullanici onayina tabidir** (RULES #45).
@@ -29,10 +47,14 @@ Ayri Supabase Cloud projesi + Vercel preview/staging. Migration'lar once staging
 ## Production (KURULU — D83, 2026-07-28)
 Vercel projesi `rkys` (`rkys.vercel.app`), GitHub `main`'e otomatik deploy + PR preview. Supabase Cloud projesi `rkys` (ref `ifwzdjiwvpkbzeofaxyj`, region ap-southeast-2).
 
-**Migration durumu (2026-08-04):** 0001-0090 uygulandi. 0090 (tema katalogu v2,
-D88) bu tarihte `supabase db push --linked` ile itildi; oncesinde prod'da yeni
-tema KODU vardi ama tema VERISI yoktu — kirilma olmadi cunku emekli tema
-CSS'leri strangler kurali (RULES #22) geregi silinmemisti.
+**Migration durumu (2026-08-08):** 0001-0095'in tamami uygulandi
+(`supabase migration list --linked` ile dogrulandi). Bu tarihten itibaren
+migration'lari CI'daki `migrate-production` job'u itiyor, elle push gerekmiyor.
+
+Onceki kayit (2026-08-04): 0090 (tema katalogu v2, D88) elle `supabase db push
+--linked` ile itilmisti; oncesinde prod'da yeni tema KODU vardi ama tema
+VERISI yoktu — kirilma olmadi cunku emekli tema CSS'leri strangler kurali
+(RULES #22) geregi silinmemisti.
 
 **Deploy durumu nasil dogrulanir:** `vercel ls` (deploy listesi + durum).
 `vercel ls --prod` KULLANMA — o komut alias listesi donduruyor ve "son deploy

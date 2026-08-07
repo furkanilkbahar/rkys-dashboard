@@ -62,3 +62,64 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 7
+
+  # Üretim şemasını migration'larla hizalar.
+  #
+  # NEDEN VAR (D99, 2026-08-06 ve D101, 2026-08-07): bu repo'da migration'lar
+  # elle uygulanıyordu, uygulama kodu ise `main`'e push'lanır push'lanmaz D83
+  # gereği otomatik production'a çıkıyor. İki kez aynı şey oldu — şemaya
+  # bağımlı kod şemadan önce yayına girdi: birincisinde ana sayfanın fiyat
+  # tablosu tamamen boşaldı, ikincisinde abonelik kapısı ~37 dakika boyunca
+  # HER tenant'ı kapattı. "Önce migration'ı uygula" kuralı yazılıydı;
+  # uygulanması insana bağlı kaldığı için iki kez atlandı.
+  #
+  # KALAN AÇIK (bilerek, ayrı iş): Vercel `main`'e push'ta kendi deploy'unu
+  # bağımsız başlatıyor, yani bu job ile deploy arasında sıra garantisi YOK —
+  # yalnızca pencere daralıyor (migration push'u tipik olarak Next.js
+  # build'inden hızlı biter). Sırayı gerçekten garantiye almak için Vercel'in
+  # git otomatik deploy'u kapatılıp deploy da bu workflow'dan, bu job'dan
+  # SONRA tetiklenmeli (VERCEL_TOKEN gerekir).
+  migrate-production:
+    # PR'larda ASLA koşmaz: bir fork PR'ının üretim şemasına yazabilmesi
+    # başlı başına bir güvenlik açığı olurdu.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # Tam paket yeşil değilse üretim şemasına dokunulmaz.
+    needs: [lint-typecheck-unit, integration-and-rls, e2e]
+    runs-on: ubuntu-latest
+    # GitHub'da bu ortama "required reviewer" eklenirse migration'lar elle
+    # onaya bağlanabilir — job'u değiştirmeye gerek kalmadan.
+    environment: production
+    # Arka arkaya iki push'un migration'ı aynı anda uygulamasını engeller;
+    # cancel-in-progress KAPALI, çünkü yarıda kesilen bir migration koşumu
+    # şemayı belirsiz durumda bırakır.
+    concurrency:
+      group: migrate-production
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Link production project
+        run: supabase link --project-ref "$SUPABASE_PROJECT_REF"
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      # Önce ne uygulanacağını log'a yazar (uygulanmamış migration listesi),
+      # sonra uygular. Bir olay sonrası "o deploy'da şema ne oldu" sorusunun
+      # cevabı koşum log'unda kalsın diye.
+      - name: List pending migrations
+        run: supabase migration list --linked
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      # --yes: CLI "bu migration'ları uygulayayım mı?" diye soruyor, TTY
+      # olmayan bir runner'da bu istem koşumu asar.
+      # --linked: hedef, bir üstteki adımda link'lenen üretim projesi; hangi
+      # veritabanına yazıldığı komutun kendisinden okunabilsin diye açık.
+      - name: Apply migrations
+        run: supabase db push --linked --yes
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
