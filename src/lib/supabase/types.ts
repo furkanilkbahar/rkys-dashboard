@@ -5223,6 +5223,10 @@ export type Database = {
       }
       approve_order: { Args: { p_order_id: string }; Returns: undefined }
       approve_tenant: { Args: { p_tenant_id: string }; Returns: undefined }
+      approve_tenant_on_registration: {
+        Args: { p_tenant_id: string }
+        Returns: boolean
+      }
       assign_courier: {
         Args: { p_courier_id: string; p_order_id: string }
         Returns: string
@@ -5531,6 +5535,10 @@ export type Database = {
           table_id: string
         }[]
       }
+      mark_subscription_paid: {
+        Args: { p_period_days?: number; p_tenant_id: string }
+        Returns: undefined
+      }
       move_table_session: {
         Args: {
           p_reason?: string
@@ -5686,6 +5694,7 @@ export type Database = {
       resolve_tenant_by_domain: {
         Args: { p_domain: string }
         Returns: {
+          subscription_active: boolean
           tenant_currency: string
           tenant_id: string
           tenant_name: string
