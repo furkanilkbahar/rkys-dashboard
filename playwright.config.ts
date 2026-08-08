@@ -25,11 +25,23 @@ export default defineConfig({
     baseURL: "http://localhost:3000",
     trace: "on-first-retry",
   },
+  // CI'da PRODUCTION build test edilir, dev sunucusu değil. Gerekçe (2026-08-08,
+  // koşum 31227522233): dev sunucusuna karşı koşulduğunda paket boyunca
+  // `ChunkLoadError: Failed to load chunk .../[turbopack]/browser/dev/hmr-client`
+  // yağıyordu ve alakasız spec'ler (menu-crud, theme-switch, kiosk, api-keys...)
+  // topluca düşüyordu. Ortak sebep testler değil, HMR istemcisinin chunk'larıydı
+  // — yani hiç sevk edilmeyecek bir artefakt test ediliyordu.
+  //
+  // `reuseExistingServer` CI'da kapalı: PLAN.md Faz 24 madde 4'teki "uzun
+  // koşumda paket kendini bozuyor" davranışının kaynağı buydu — Playwright
+  // saatlerdir ayakta olan bayat bir dev sunucusunu devralıyordu. Lokalde
+  // açık kalıyor, çünkü orada yeniden başlatma maliyeti gereksiz.
   webServer: {
-    command: "pnpm dev",
+    command: process.env.CI ? "pnpm start" : "pnpm dev",
     url: "http://localhost:3000",
-    reuseExistingServer: true,
-    timeout: 60_000,
+    reuseExistingServer: !process.env.CI,
+    // Production sunucusu hızlı açılır; build ayrı bir CI adımı.
+    timeout: 120_000,
   },
   projects: [
     {
