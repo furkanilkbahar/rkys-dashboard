@@ -296,10 +296,45 @@ Kullanıcı talebi (2026-08-06): entegrasyon şeridi düzensiz ve çok yukarıda
       1. ~~Migration 0092 üretim Supabase'ine uygulanmadı.~~ **Kapandı (2026-08-08):** `supabase migration list` ile doğrulandı — 0001–0095'in tamamı remote'ta uygulanmış durumda (0092, 0093, 0094, 0095 dahil). Üretimde Demo planı vitrinden çekilmiş, `mark_subscription_paid` mevcut, resolver 0095 ile 0085 şemasına dönmüş.
       2. ~~Kayıt formunda plan sırası `table_limit` artan — "Demo" varsayılan açılıyor.~~ **Adım 5'te kapatıldı (D101):** varsayılan artık ilk `is_public` plan; Demo listede kalıyor.
       3. ~~CI migration push etmiyor.~~ **Job eklendi (2026-08-08):** `migrate-production`, `main`'e push'ta ve üç test job'u da yeşilse `supabase db push --linked --yes` çalıştırır; PR'larda asla koşmaz. **AMA ATIL** — bkz. madde 5.
-      5. **AÇIK, EN KRİTİĞİ — GitHub Actions faturalandırma yüzünden hiç çalışmıyor.** 2026-08-08'de tespit edildi: son 60 koşumun 60'ı da job hiç başlamadan düştü (`steps=0`). GitHub'ın kendi mesajı: *"The job was not started because recent account payments have failed or your spending limit needs to be increased."* Repo private olduğu için Actions dakikaları faturaya tabi. **Sonucu: `tsc`/lint/unit/integration/E2E hiçbir şeyi kapıda tutmuyor — bu projede "yeşil" denen her şey yalnızca lokal koşumdan geliyor.** D99 ve D101 üretim olaylarının ikisinin de arkasındaki asıl boşluk bu; korumasi beklenen otomatik kapı zaten yoktu. Madde 3'teki yeni job da faturalandırma düzelene kadar koşmaz. **Yalnız hesap sahibi çözebilir:** GitHub Settings → Billing & plans → ödeme yöntemi / spending limit. Alternatif: repo'yu public yapmak ya da self-hosted runner.
-      4. **AÇIK — E2E paketi uzun koşumda kendi kendini bozuyor.** Dev sunucusu ~2 saat ayakta kalıp ağır yük gördükten sonra testler kod değişmeden kırmızıya dönüyor: aynı S13, sunucu yeniden başlatılınca hiçbir değişiklik olmadan geçti. İlk tam koşumda mobile-safari'de görülen 60 hata bu yüzden geçersiz sayıldı. **mobile-safari temiz ortamda hiç koşulmadı** — kapatılmamış boşluk. Playwright `webServer.reuseExistingServer` yüzünden bayat sunucuyu devralıyor; koşum öncesi sunucuyu yenilemek (ya da CI'da her zaman taze başlatmak) gerekiyor.
+      5. ~~**AÇIK, EN KRİTİĞİ — GitHub Actions faturalandırma yüzünden hiç çalışmıyor.**~~ **KAPANDI (2026-08-08).** Repo public yapıldı (D103 turunda) ve Actions canlandı: koşumlar artık `steps=0` ile düşmüyor, 36-40 dakika gerçekten çalışıyor. `lint-typecheck-unit` ve `integration-and-rls` yeşil. Kalan kırmızılık e2e'ydi ve sebebi faturalandırma değil, madde 4'teki asıl kök sebepti. Aşağıdaki eski metin tarihsel kayıt olarak duruyor:
+      **GitHub Actions faturalandırma yüzünden hiç çalışmıyor (eski durum).** 2026-08-08'de tespit edildi: son 60 koşumun 60'ı da job hiç başlamadan düştü (`steps=0`). GitHub'ın kendi mesajı: *"The job was not started because recent account payments have failed or your spending limit needs to be increased."* Repo private olduğu için Actions dakikaları faturaya tabi. **Sonucu: `tsc`/lint/unit/integration/E2E hiçbir şeyi kapıda tutmuyor — bu projede "yeşil" denen her şey yalnızca lokal koşumdan geliyor.** D99 ve D101 üretim olaylarının ikisinin de arkasındaki asıl boşluk bu; korumasi beklenen otomatik kapı zaten yoktu. Madde 3'teki yeni job da faturalandırma düzelene kadar koşmaz. **Yalnız hesap sahibi çözebilir:** GitHub Settings → Billing & plans → ödeme yöntemi / spending limit. Alternatif: repo'yu public yapmak ya da self-hosted runner.
+      4. ~~**AÇIK — E2E paketi uzun koşumda kendi kendini bozuyor.**~~ **KÖK SEBEP BULUNDU VE DÜZELTİLDİ (2026-08-08, `be6a282`).** Teşhis "bayat sunucu" değil, **yanlış artefakt** çıktı: Playwright `pnpm dev` ayağa kaldırıyordu, yani hiç sevk edilmeyecek olan HMR'li geliştirme sunucusu test ediliyordu. CI koşumu 31227522233'ün log'unda ortak sebep açıkça görünüyor — alakasız spec'lerin (menu-crud, module-gating, theme-switch, online-payment, trial-subscription, kiosk, api-keys, ingredients) arasına serpiştirilmiş `ChunkLoadError: Failed to load chunk .../[turbopack]/browser/dev/hmr-client/hmr-client.ts`. Düzeltme: `playwright.config.ts` CI'da `pnpm start` (production build) kullanır, `reuseExistingServer` CI'da kapalı; workflow'a `pnpm build` adımı eklendi. Lokal doğrulama (production build'e karşı, chromium): theme-switch ✘13.1s→✓2.0s, module-gating ✘24.2s→✓3.5s, online-payment ✓, trial-subscription ✓. Testler yalnızca geçmiyor, **6-7 kat da hızlı** — CI süresi de kısalmalı. Kalan tek kırılganlık `menu-crud` (retry'da geçiyor, seed verisine bağlı, HMR ile ilgisi yok). **mobile-safari hâlâ temiz ortamda tam koşulmadı** — bu kısım açık kalıyor.
 
 ---
+
+## Faz 25 — Subdomain'siz Tenant Çözümleme
+
+Kullanıcı talebi (2026-08-07): alan adı henüz alınmadı (D71) ve Vercel'in `*.vercel.app` joker sertifikası tek etiket kapsadığı için `rukancafe.rkys.vercel.app` TLS handshake'te düşüyor (`dig` çözüyor, `curl` `SSL_ERROR_SYSCALL` veriyor). Sonuç: garson PIN girişi ve cihaz eşleme production'da kullanılamıyor. **Kullanıcı kararı: subdomain bağımlılığı komple kaldırılsın** (D25 fiilen iptal).
+
+Kilit bulgu: tenant kimliği zaten JWT claim'inde (`custom_access_token_hook`, 0006) ve QR token'ı global çözülüyor (`masa/t/[rawToken]/route.ts:22-27`, tenant filtresi bile yok). Subdomain yalnızca 4 cold-start noktasında taşıyıcı. RLS `auth.jwt() ->> 'tenant_id'` ile çalışıyor (`0001:11`), yani host'a sıfır bağımlılık — bu değişiklik izolasyonu yapısal olarak zayıflatamaz.
+
+Tasarım + iki inceleme: `~/.gstack/projects/RestoranKafeYonetimSistemi/furkanilkbahar-main-design-20260807-160252.md` (office-hours → plan-eng-review 8 bulgu → plan-design-review 6 bulgu, hepsi karara bağlandı).
+
+**Kabul kriterleri:** `rkys.vercel.app/waiter/login` subdomain'siz PIN pad gösterir · QR akışı bozulmaz · `grep -rn "x-rkys-tenant" src` boş döner · RLS izolasyon testi + regresyon testi yeşil · tam paket yeşil.
+
+**D99 SIRALAMA KURALI (bağlayıcı):** şemaya bağımlı kod, migration üretime uygulanmadan push edilmez. `main`'e push D83 gereği otomatik production'a çıkar; `migrate-production` job'ı `needs: [...e2e]` ile korunur. Bu kural PLAN.md'de iki kez ihlal edildi (D99, D101), ikincisi 37 dakika kesinti yaptı.
+
+- [x] **Adım 0 — CI kapısı açıldı (`be6a282`).** Faz 24 madde 4'ün kök sebebi bulundu ve düzeltildi; `migrate-production` job'ı e2e'ye bağlı olduğu için migration boru hattı kapalıydı. Detay: Faz 24 madde 4.
+- [ ] **Adım 1 — Production'ı aç (test churn: sıfır, host zincirde kalır).**
+  - [ ] T1 `resolveTenantId()` zinciri: **JWT → cihaz → host → null**. Sıra kritik (eng D3): host önce olsaydı mevcut gösterim/veri uyuşmazlığı yeni mimariye taşınırdı.
+  - [ ] T2 `requireTenant()` sarmalayıcısı — yol önekine göre yönlendirir; 18 çağrı yeri kendi redirect'ini yazmaz (DRY, eng D6).
+  - [ ] T3 **migration 0096** `resolve_tenant_by_device(p_device_id, p_secret)` + anahtar formatı `<deviceId>.<secret>`. **Ayrı commit.** Filtresiz bcrypt taraması 100 tenant'ta ~30sn sürerdi (eng D9); `deviceId` zaten `rkys_device_id` cookie'sinde.
+  - [ ] T5 B5 güvenlik kuralı RULES.md'ye + 5 yazma yolu + `no_tenant_context` hata kodu (`vardiya/actions.ts:9-10` bugün doğru anahtara "geçersiz anahtar" diyor).
+  - [ ] T6 **REGRESYON testi** — tenant A oturumu + tenant B subdomain'i → A gösterilmeli (IRON RULE, T1 davranışı değiştiriyor).
+  - [ ] T7 RLS testi — tenant A'nın cihaz anahtarı tenant B'yi çözemez.
+  - [ ] T8 `getAdminTenantName()` sil (eng D7 — varlık gerekçesi ortadan kalkıyor, DRY).
+  - [ ] T9 5 bayat yorumu güncelle (`tenant.ts:16`, `bootstrap.ts:99`, `paket/baslat:8`, `kiosk/baslat:8`, `surface.ts:35`).
+  - [ ] T15 Cihaz satırına "Anahtarı yenile" eylemi (tasarım D6 — anahtar kaybı bugün kurtarılamıyor).
+  - [ ] T17 Anahtar dizesi 16px mono, gruplanmış, kopyala düğmeli (tasarım D9 — `text-sm` DESIGN.md 16px kuralını çiğniyor).
+- [ ] **Adım 2 — Subdomain'i kaldır.**
+  - [ ] T11 + T13 **tek commit** (tasarım D5, eng D5): proxy host çözümlemesi kalkar, `resolveSurface` tek parametre, `data-theme` kök layout'tan (yalnız guest yüzeyinde — `/masa` zaten `getCurrentTenant()` çağırdığı için React `cache()` ile net ek sorgu sıfır), paket/teslimat giriş token'ı `/admin/tables`'ta `qr-reveal-card.tsx` ile.
+  - [ ] T14 Cihaz anahtarı QR olarak gösterilir, `/vardiya/kurulum?k=` ile **otomatik eşlenir** (tasarım D7 + D10). **Kabul edilen risk:** onay adımı yok, geçerli bir eşleme QR'ı cihazı sessizce başka tenant'a bağlayabilir — kullanıcı kararı.
+  - [ ] T16 `/vardiya` + `/vardiya/kurulum` `.ops-surface` alır, DESIGN.md:96 listesi güncellenir.
+  - [ ] T10 3 `betaUrl` spec'i iki-context desenine (`waiter-call-realtime.spec.ts:30-39` deseni; diğer 55 spec değişmez çünkü helper imzası korunuyor).
+  - [ ] T12 DECISIONS.md D25 kaydı + RULES.md.
+  - [ ] T18 (opsiyonel, P3) `/vardiya` üstünde bağlı işletme adı — D10 riskini görünür kılar.
+
+**`/isletme-sec` İPTAL (tasarım D3).** İlk tasarım QR'sız misafir için bir işletme seçme sayfası öngörüyordu. `DESIGN.md:154` "restoran keşfi"ni pazar yeri deseni olarak açıkça yasaklıyor ve ürün zaten token'la giriyor (`generic_qr_codes` + `masa/g/[rawToken]`). Sayfa yerine tenant başına giriş token'ı verilir. Bu kararla yeni sayfa, `is_publicly_listed` kolonu, güvenilmez cookie girdisi ve müşteri listesini yayınlama sorunu birlikte ortadan kalktı.
 
 ## Çalışma Prensipleri
 1. Faz başında plan sun → onay → uygula; faz sonunda migration+seed güncel, akış elle test edilmiş.
