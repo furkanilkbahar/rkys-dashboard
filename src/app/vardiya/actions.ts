@@ -12,11 +12,22 @@ export async function setupDevice(input: unknown): Promise<DeviceSetupResult> {
   const parsed = deviceSetupSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "invalid_input" };
 
+  // Anahtar "<deviceId>.<secret>" biçiminde gösteriliyor (0096). Önek YALNIZCA
+  // eşleme anının taşıma biçimi: cihaz id'sini kurulum tarafına ulaştırıp
+  // aramayı O(1) yapıyor. Cookie'ye ve sonraki RPC'lere ÇIPLAK secret gider —
+  // verify_staff_pin_identity hash'i çıplak secret'tan hesaplıyor, önekli dize
+  // oraya sızarsa PIN girişi sessizce başarısız olur.
+  const rawKey = parsed.data.deviceSecret.trim();
+  const dotAt = rawKey.indexOf(".");
+  const bareSecret = dotAt > 0 ? rawKey.slice(dotAt + 1) : rawKey;
+
   const service = createServiceRoleClient();
-  const { data: deviceId } = await service.rpc("verify_staff_device", { p_tenant_id: tenant.id, p_secret: parsed.data.deviceSecret });
+  // Önekli dize verilir: 0097 sonrası verify_staff_device iki biçimi de kabul
+  // eder ve önekliyi O(1) yoluna sokar.
+  const { data: deviceId } = await service.rpc("verify_staff_device", { p_tenant_id: tenant.id, p_secret: rawKey });
   if (!deviceId) return { ok: false, error: "invalid_secret" };
 
-  await setDeviceCredentials({ deviceId, deviceSecret: parsed.data.deviceSecret });
+  await setDeviceCredentials({ deviceId, deviceSecret: bareSecret });
   return { ok: true };
 }
 
