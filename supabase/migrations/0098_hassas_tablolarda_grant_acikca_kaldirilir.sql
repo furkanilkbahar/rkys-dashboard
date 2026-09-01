@@ -1,0 +1,32 @@
+-- Politikasız RLS tablolarında yetki kaldırma ARTIK AÇIKÇA yazılır.
+--
+-- BULGU (2026-09-01, CI koşumu 33563275915): platform-admin entegrasyon
+-- testinin "hiç kimse platform_admins tablosunu doğrudan okuyamaz" beklentisi
+-- CI'da düştü — `owner.from("platform_admins").select()` 42501 yerine hatasız
+-- boş liste döndürdü. Lokalde aynı test geçiyordu.
+--
+-- KÖK SEBEP ORTAM SÜRÜKLENMESİ, KOD DEĞİL: lokal yığın postgres 17.6.1.147,
+-- CI ise `supabase/setup-cli@v1` + `version: latest` üzerinden 17.6.1.165
+-- çekiyor. İki imaj `public` şemasının VARSAYILAN yetkilerinde ayrışıyor:
+-- lokalde `anon`/`authenticated` yalnızca Dxtm (TRUNCATE/REFERENCES/TRIGGER/
+-- MAINTAIN) alıyor, CI imajında SELECT de geliyor. Yani testin doğruladığı
+-- güvenlik özelliği repo'nun beyan ettiği bir şeye değil, upstream imajın
+-- varsayılanına yaslanıyormuş — imaj değişince sessizce kayboldu.
+--
+-- VERİ SIZINTISI OLMADI: üç tablonun da RLS'i açık ve HİÇ policy'si yok, bu
+-- yüzden authenticated'in SELECT hakkı olsa bile sorgu sıfır satır döner.
+-- Kaybolan katman kuşak-ve-askı olanıydı (0036'nın yorumu bunu bir garanti
+-- gibi anlatıyor: "authenticated hiçbir zaman bu tabloyu doğrudan
+-- sorgulayamaz"). Bu migration o cümleyi imajdan bağımsız olarak DOĞRU yapar.
+--
+-- KAPSAM: politikasız RLS tabloları — hepsi hassas.
+--   • platform_admins    (0036) — platform yöneticisi kimlikleri
+--   • otp_codes          — tek kullanımlık kodlar
+--   • staff_pin_secrets  (D102) — personel PIN'lerinin şifreli kopyası
+-- Üçüne de uygulama YALNIZCA service_role ile veya security-definer
+-- fonksiyon üzerinden erişiyor (staff/actions.ts:43,222
+-- createServiceRoleClient), dolayısıyla bu revoke hiçbir çalışan yolu kesmez.
+-- service_role ve postgres'in yetkileri KASITLI olarak korunuyor.
+revoke all on public.platform_admins from anon, authenticated;
+revoke all on public.otp_codes from anon, authenticated;
+revoke all on public.staff_pin_secrets from anon, authenticated;
