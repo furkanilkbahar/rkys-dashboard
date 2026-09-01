@@ -24,36 +24,64 @@ async function setupTenant(prefix: string, schedulingEnabled = true) {
 // üretimini yapan mevcut RPC'lerdir — testte ham secret/PIN'i taklit etmek
 // yerine bunlar kullanılır (admin UI'ının kendisi de bunları çağırıyor).
 async function registerDeviceAndPin(owner: Awaited<ReturnType<typeof signInAsSeededOwner>>, branchId: string, pin: string) {
-  const { data: rawSecret } = await owner.rpc("create_staff_device", { p_branch_id: branchId, p_label: "Test Device" });
+  const { data: pairingKey } = await owner.rpc("create_staff_device", { p_branch_id: branchId, p_label: "Test Device" });
   const { data: profile } = await owner.from("profiles").select("id").eq("role", "owner").single();
   await owner.rpc("reset_staff_pin", { p_profile_id: profile!.id, p_new_pin: pin });
-  return { rawSecret: rawSecret as string, profileId: profile!.id as string };
+  // 0096 sonrası anahtar "<deviceId>.<secret>" biçiminde dönüyor. Önek YALNIZCA
+  // eşleme anının taşıma biçimi: verify_staff_device'a önekli dize gider ve
+  // arama O(1) olur. Çalışma zamanı RPC'leri (clock_in_or_out,
+  // verify_staff_pin_identity) hash'i ÇIPLAK secret'tan hesaplar — cookie'ye de
+  // çıplak hali yazılıyor (vardiya/actions.ts:20-30). Test bu ayrımı taklit eder.
+  const key = pairingKey as string;
+  const dotAt = key.indexOf(".");
+  return {
+    pairingKey: key,
+    bareSecret: dotAt > 0 ? key.slice(dotAt + 1) : key,
+    profileId: profile!.id as string,
+  };
 }
 
 describe("verify_staff_device / clock_in_or_out (Faz 11 Adım 2, S47)", () => {
   it("geçerli secret ile device_id döner, yanlış secret null döner", async () => {
     const { tenantId, branchId, owner } = await setupTenant("timeclock-verify");
-    const { rawSecret } = await registerDeviceAndPin(owner, branchId, "1234");
+    const { pairingKey } = await registerDeviceAndPin(owner, branchId, "1234");
     const service = serviceRoleClient();
 
-    const { data: deviceId } = await service.rpc("verify_staff_device", { p_tenant_id: tenantId, p_secret: rawSecret });
+    const { data: deviceId } = await service.rpc("verify_staff_device", { p_tenant_id: tenantId, p_secret: pairingKey });
     expect(deviceId).not.toBeNull();
 
     const { data: wrongDeviceId } = await service.rpc("verify_staff_device", { p_tenant_id: tenantId, p_secret: "wrong-secret" });
     expect(wrongDeviceId).toBeNull();
   });
 
+  // 0096 anahtar biçimini değiştirdiğinde onu tutan hiçbir test yoktu; cihaz
+  // kurulumu sessizce kırıldı ve 0097 ile düzeltildi. Bu test iki kontratı da
+  // sabitler: önek cihazın KENDİ id'si olmak zorunda (0096) ve çıplak biçim
+  // hâlâ kabul edilmeli (0097 strangler-fig — geçişte eski anahtarlar kırılmaz).
+  it("create_staff_device anahtarı '<deviceId>.<secret>' biçiminde döner (0096/0097 kontratı)", async () => {
+    const { tenantId, branchId, owner } = await setupTenant("timeclock-key-shape");
+    const { pairingKey, bareSecret } = await registerDeviceAndPin(owner, branchId, "6666");
+    const service = serviceRoleClient();
+
+    const { data: deviceId } = await service.rpc("verify_staff_device", { p_tenant_id: tenantId, p_secret: pairingKey });
+    expect(deviceId).not.toBeNull();
+    expect(pairingKey).toBe(`${deviceId}.${bareSecret}`);
+
+    const { data: bareDeviceId } = await service.rpc("verify_staff_device", { p_tenant_id: tenantId, p_secret: bareSecret });
+    expect(bareDeviceId).toBe(deviceId);
+  });
+
   it("ilk çağrı 'in', ikinci çağrı 'out' döner (giriş-çıkış geçişi)", async () => {
     const { tenantId, branchId, owner } = await setupTenant("timeclock-toggle");
-    const { rawSecret } = await registerDeviceAndPin(owner, branchId, "4321");
+    const { pairingKey, bareSecret } = await registerDeviceAndPin(owner, branchId, "4321");
     const service = serviceRoleClient();
-    const { data: deviceId } = await service.rpc("verify_staff_device", { p_tenant_id: tenantId, p_secret: rawSecret });
+    const { data: deviceId } = await service.rpc("verify_staff_device", { p_tenant_id: tenantId, p_secret: pairingKey });
 
-    const first = await service.rpc("clock_in_or_out", { p_tenant_id: tenantId, p_device_id: deviceId!, p_device_secret: rawSecret, p_pin: "4321" });
+    const first = await service.rpc("clock_in_or_out", { p_tenant_id: tenantId, p_device_id: deviceId!, p_device_secret: bareSecret, p_pin: "4321" });
     expect(first.error).toBeNull();
     expect(first.data![0].action).toBe("in");
 
-    const second = await service.rpc("clock_in_or_out", { p_tenant_id: tenantId, p_device_id: deviceId!, p_device_secret: rawSecret, p_pin: "4321" });
+    const second = await service.rpc("clock_in_or_out", { p_tenant_id: tenantId, p_device_id: deviceId!, p_device_secret: bareSecret, p_pin: "4321" });
     expect(second.data![0].action).toBe("out");
 
     const { data: entries } = await service.from("timeclock_entries").select("clock_in_at, clock_out_at").eq("tenant_id", tenantId);
@@ -63,19 +91,19 @@ describe("verify_staff_device / clock_in_or_out (Faz 11 Adım 2, S47)", () => {
 
   it("yanlış PIN reddedilir", async () => {
     const { tenantId, branchId, owner } = await setupTenant("timeclock-wrong-pin");
-    const { rawSecret } = await registerDeviceAndPin(owner, branchId, "1111");
+    const { pairingKey, bareSecret } = await registerDeviceAndPin(owner, branchId, "1111");
     const service = serviceRoleClient();
-    const { data: deviceId } = await service.rpc("verify_staff_device", { p_tenant_id: tenantId, p_secret: rawSecret });
+    const { data: deviceId } = await service.rpc("verify_staff_device", { p_tenant_id: tenantId, p_secret: pairingKey });
 
-    const { error } = await service.rpc("clock_in_or_out", { p_tenant_id: tenantId, p_device_id: deviceId!, p_device_secret: rawSecret, p_pin: "9999" });
+    const { error } = await service.rpc("clock_in_or_out", { p_tenant_id: tenantId, p_device_id: deviceId!, p_device_secret: bareSecret, p_pin: "9999" });
     expect(error?.message).toContain("invalid pin");
   });
 
   it("geçersiz cihaz secret'ı reddedilir", async () => {
     const { tenantId, branchId, owner } = await setupTenant("timeclock-wrong-device");
-    const { rawSecret } = await registerDeviceAndPin(owner, branchId, "2222");
+    const { pairingKey } = await registerDeviceAndPin(owner, branchId, "2222");
     const service = serviceRoleClient();
-    const { data: deviceId } = await service.rpc("verify_staff_device", { p_tenant_id: tenantId, p_secret: rawSecret });
+    const { data: deviceId } = await service.rpc("verify_staff_device", { p_tenant_id: tenantId, p_secret: pairingKey });
 
     const { error } = await service.rpc("clock_in_or_out", { p_tenant_id: tenantId, p_device_id: deviceId!, p_device_secret: "wrong", p_pin: "2222" });
     expect(error?.message).toContain("invalid device");
@@ -83,22 +111,22 @@ describe("verify_staff_device / clock_in_or_out (Faz 11 Adım 2, S47)", () => {
 
   it("revoke edilmiş (is_active=false) cihaz artık kabul edilmez", async () => {
     const { tenantId, branchId, owner } = await setupTenant("timeclock-revoked");
-    const { rawSecret } = await registerDeviceAndPin(owner, branchId, "3333");
+    const { pairingKey, bareSecret } = await registerDeviceAndPin(owner, branchId, "3333");
     const service = serviceRoleClient();
-    const { data: deviceId } = await service.rpc("verify_staff_device", { p_tenant_id: tenantId, p_secret: rawSecret });
+    const { data: deviceId } = await service.rpc("verify_staff_device", { p_tenant_id: tenantId, p_secret: pairingKey });
     await owner.rpc("revoke_staff_device", { p_device_id: deviceId! });
 
-    const { error } = await service.rpc("clock_in_or_out", { p_tenant_id: tenantId, p_device_id: deviceId!, p_device_secret: rawSecret, p_pin: "3333" });
+    const { error } = await service.rpc("clock_in_or_out", { p_tenant_id: tenantId, p_device_id: deviceId!, p_device_secret: bareSecret, p_pin: "3333" });
     expect(error?.message).toContain("invalid device");
   });
 
   it("staff_scheduling modülü kapalıyken reddedilir", async () => {
     const { tenantId, branchId, owner } = await setupTenant("timeclock-disabled", false);
-    const { rawSecret } = await registerDeviceAndPin(owner, branchId, "5555");
+    const { pairingKey, bareSecret } = await registerDeviceAndPin(owner, branchId, "5555");
     const service = serviceRoleClient();
-    const { data: deviceId } = await service.rpc("verify_staff_device", { p_tenant_id: tenantId, p_secret: rawSecret });
+    const { data: deviceId } = await service.rpc("verify_staff_device", { p_tenant_id: tenantId, p_secret: pairingKey });
 
-    const { error } = await service.rpc("clock_in_or_out", { p_tenant_id: tenantId, p_device_id: deviceId!, p_device_secret: rawSecret, p_pin: "5555" });
+    const { error } = await service.rpc("clock_in_or_out", { p_tenant_id: tenantId, p_device_id: deviceId!, p_device_secret: bareSecret, p_pin: "5555" });
     expect(error?.message).toContain("staff_scheduling module not enabled");
   });
 });
