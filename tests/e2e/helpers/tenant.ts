@@ -1,4 +1,4 @@
-import type { Page } from "@playwright/test";
+import { expect, type Page } from "@playwright/test";
 
 export function tenantUrl(baseURL: string, subdomain: string, path: string): string {
   const url = new URL(baseURL);
@@ -61,4 +61,24 @@ export async function loginAsPlatformAdmin(page: Page, baseURL: string) {
   await page.getByLabel("Şifre").fill("password123");
   await page.getByRole("button", { name: "Giriş yap" }).click();
   await page.waitForURL(/\/platform$/);
+}
+
+/**
+ * `router.refresh()` yarışına dayanıklı gezinme.
+ *
+ * Server action'ları takip eden `router.refresh()` çağrıları, aksiyon
+ * çözüldükten SONRA bir RSC navigasyonu başlatıyor. Test tam o sırada başka
+ * bir sayfaya geçmeye çalışırsa Playwright "interrupted by another navigation"
+ * ile düşer — mobile-safari'de tekrarlanabilir şekilde görüldü
+ * (ingredients-recipe S34 ve waiter-pin-login D87).
+ *
+ * `networkidle` beklemesi bunu KAPATMAZ: yenileme, ağ boşaldıktan sonra
+ * başlayabiliyor. Kesilme geçici bir durumdur ve `goto` yan etkisizdir, bu
+ * yüzden doğru araç yeniden denemektir. Hedef sayfaya varılamazsa test yine
+ * düşer — iddia zayıflamıyor.
+ */
+export async function gotoSettled(page: Page, url: string): Promise<void> {
+  await expect(async () => {
+    await page.goto(url);
+  }).toPass({ timeout: 20_000 });
 }

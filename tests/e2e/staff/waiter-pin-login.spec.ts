@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { expect, test } from "@playwright/test";
 
-import { tenantUrl } from "../helpers/tenant";
+import { gotoSettled, tenantUrl } from "../helpers/tenant";
 
 function serviceClient() {
   return createClient(
@@ -47,6 +47,20 @@ test("bug-hunt 2026-08-01 (D87): garson kendi PIN'iyle bağımsız giriş yapar,
     await page.waitForURL(/\/admin$/);
 
     await page.goto(tenantUrl(baseURL!, subdomain, "/admin/staff"));
+    // WebKit HİDRASYON KAPISI. İki ayrı belirtiyi de bu kapatıyor:
+    //   1) beklemesiz ilk `fill` hidrasyondan önce gidiyor ve react-hook-form
+    //      alanı devralınca boşaltıyor (snapshot'ta "Ad Soyad" boş, diğerleri
+    //      dolu görünüyordu — Ad Soyad 0091/D94 ile zorunlu, kayıt oluşmuyor),
+    //   2) beklemesiz tıklama sessizce yutuluyor: formun native submit'i yok,
+    //      `handleSubmit` yalnızca React tarafında bağlanıyor.
+    //
+    // `networkidle` BU İŞE YETMEZ — ağın boşaldığını söyler, React'in olay
+    // dinleyicilerini bağladığını değil (eklendiğinde 1 düzeldi, 2 kaldı).
+    // Rol seçicisi saf client bileşeni: AÇILIYORSA hidrasyon bitmiştir. Kapı
+    // aynı zamanda rolü açıkça seçiyor, yani ek bir yan etkisi yok.
+    const createCard = page.locator('[data-slot="card"]').filter({ hasText: "Personel Ekle" });
+    await createCard.getByRole("combobox", { name: "Rol" }).click();
+    await page.getByRole("option", { name: "Garson" }).click();
     // Ad Soyad 0091/D94 ile ZORUNLU alan oldu: adsız açılan personel listede
     // yalnızca rozetle ayırt edilebiliyordu, rozet de opsiyonel — aynı açığı
     // tekrar üretmemek için ad girişte isteniyor.
@@ -74,7 +88,9 @@ test("bug-hunt 2026-08-01 (D87): garson kendi PIN'iyle bağımsız giriş yapar,
 
     // 2) AYNI taraycıda (owner hâlâ admin oturumunda) cihaz kurulumu yapılır
     // — device cookie'leri Supabase Auth oturumundan tamamen bağımsızdır.
-    await page.goto(tenantUrl(baseURL!, subdomain, "/vardiya/kurulum"));
+    // `gotoSettled`: cihaz ekleme server action'ının `router.refresh()`'i bu
+    // gezinmeyi kesebiliyor (bkz. helpers/tenant.ts).
+    await gotoSettled(page, tenantUrl(baseURL!, subdomain, "/vardiya/kurulum"));
     await page.getByLabel("Cihaz Anahtarı").fill(deviceSecret!.trim());
     await page.getByRole("button", { name: "Kaydet" }).click();
     await page.waitForURL(/\/vardiya$/);

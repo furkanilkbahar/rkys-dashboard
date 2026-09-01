@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { expect, test, type Page } from "@playwright/test";
 
-import { tenantUrl } from "../helpers/tenant";
+import { gotoSettled, tenantUrl } from "../helpers/tenant";
 
 function serviceClient() {
   return createClient(
@@ -96,8 +96,12 @@ test("S34: admin malzeme+reçete tanımlar, siparişte reçeteden stok otomatik 
     await page.getByPlaceholder("Miktar").fill("200");
     await page.getByRole("button", { name: "Reçeteyi Kaydet" }).click();
     await expect(page.getByText("Kaydedildi.")).toBeVisible();
-
-    await page.goto(tenantUrl(baseURL!, subdomain, "/cashier/order"));
+    // recipe-editor.tsx:71 kaydetmenin ardından `router.refresh()` çağırıyor ve
+    // "Kaydedildi." o yenileme BİTMEDEN görünüyor; aşağıdaki gezinme yarı yolda
+    // kesiliyordu ("interrupted by another navigation to
+    // /admin/ingredients/recipes/<id>"). PLAN.md Faz 19'un son açık maddesinin
+    // kök sebebi buydu — `networkidle` beklemesi yetmedi, bkz. gotoSettled.
+    await gotoSettled(page, tenantUrl(baseURL!, subdomain, "/cashier/order"));
     await page.getByLabel("Masa Seç").click();
     await page.getByRole("option", { name: /Tezgâh/ }).click();
     const row = page.getByText("Latte", { exact: true }).locator("../..");
