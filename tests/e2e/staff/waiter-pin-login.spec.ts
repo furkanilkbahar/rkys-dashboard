@@ -119,8 +119,19 @@ test("bug-hunt 2026-08-01 (D87): garson kendi PIN'iyle bağımsız giriş yapar,
     await expect(page.getByRole("heading", { name: "Garson Paneli" })).toBeVisible();
 
     // 7) Garson kendi "Çıkış" butonuyla yalnızca KENDİ oturumunu kapatır.
-    await page.getByRole("button", { name: "Çıkış" }).click();
-    await page.waitForURL(/\/waiter\/login$/);
+    //
+    // Tıklama TEKRARLANIR, çünkü garson paneli sürekli yeniden render oluyor:
+    // realtime aboneliği + D30 5 saniyelik polling. mousedown ile mouseup
+    // arasına denk gelen bir render tıklamayı yutuyor ve WebKit'te bu
+    // tekrarlanabilir şekilde oluyordu — hata anındaki page snapshot'ta buton
+    // `[active]` (odaklanmış, yani tıklama BUTONA ulaşmış), durum "Bağlı"
+    // (hidrasyon tamam) ama sayfa hâlâ /waiter idi: işleyici hiç çalışmamıştı.
+    // Çıkış idempotent olduğu için tekrar denemek güvenli; hedef URL'e
+    // varılamazsa test yine düşer.
+    await expect(async () => {
+      await page.getByRole("button", { name: "Çıkış" }).click();
+      await page.waitForURL(/\/waiter\/login$/, { timeout: 5_000 });
+    }).toPass({ timeout: 30_000 });
   } finally {
     await deleteTenant(tenantId);
   }
