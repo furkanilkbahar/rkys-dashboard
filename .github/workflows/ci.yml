@@ -80,7 +80,31 @@ jobs:
       # chunk'lari koşum ortasinda kayboluyor ve alakasiz spec'ler topluca
       # dusuyordu — hic sevk edilmeyecek bir artefakt test ediliyordu.
       - run: pnpm build
-      - run: pnpm exec playwright test
+      # E2E projeleri SIRAYLA kosar (2026-09-02).
+      #
+      # NEDEN: iki proje (chromium-desktop, mobile-safari) ayni spec'leri ayni
+      # anda, PAYLASILAN acme tenant'ina karsi kosuyordu. Tenant seviyesinde
+      # durum degistiren her spec boylece kendi ikiziyle yarisiyor. Lokalde
+      # birebir uretildi: theme-switch tek basina iki projede kosturuldugunda
+      # chromium'un `finally` blogu temayi "kagit"a geri alirken mobile-safari
+      # "kor" bekliyor ve dusuyor. 2026-08-08 kosumundaki 18 hatanin sinifi bu
+      # (izole kosuldugunda ayni spec'ler geciyor).
+      #
+      # Projeleri ayirmak bu yaris sinifini tamamen kaldirir; hicbir spec
+      # degismez ve kapsam kaybi olmaz. Bedeli duvar saati suresi.
+      #
+      # IKISI DE KOSAR, karar sonda verilir: ilki dustugunde ikincisini hic
+      # kosmamak her turda tek bir tarayicinin hatalarini gosterir ve duzeltme
+      # turlarini gereksiz yere uzatir.
+      - name: E2E (projeler sirayla)
+        run: |
+          set +e
+          pnpm exec playwright test --project=chromium-desktop
+          chromium=$?
+          pnpm exec playwright test --project=mobile-safari
+          safari=$?
+          echo "::notice::chromium-desktop exit=$chromium, mobile-safari exit=$safari"
+          [ $chromium -eq 0 ] && [ $safari -eq 0 ]
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
