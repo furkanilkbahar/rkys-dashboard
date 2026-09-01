@@ -31,9 +31,17 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      # SURUM SABIT (2026-09-02). `version: latest` CI'i upstream'e baglıyordu:
+      # postgres imaji 17.6.1.147 -> 17.6.1.165 degisince `public` semasinin
+      # VARSAYILAN yetkileri degisti, `authenticated` rolu SELECT kazandi ve
+      # "platform_admins'i kimse okuyamaz" guvenlik testi bizim hicbir
+      # degisikligimiz olmadan kirmiziya dondu (lokal ayni testte yesildi).
+      # Kok sorun 0098 ile kapatildi (grant artik acikca revoke ediliyor), ama
+      # ayni sinif tekrar etmesin diye surum burada sabitlenir; yukseltme
+      # bilincli bir commit olur ve kirarsa sebep tek bir degisiklikte gorunur.
       - uses: supabase/setup-cli@v1
         with:
-          version: latest
+          version: 2.116.0
       - run: supabase start
       - run: cp .env.ci .env.local
       # QR (D86) ve personel PIN (D102) "Göster" ozellikleri sifreli-kopya
@@ -61,7 +69,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - uses: supabase/setup-cli@v1
         with:
-          version: latest
+          version: 2.116.0
       - run: supabase start
       - run: cp .env.ci .env.local
       # QR (D86) ve personel PIN (D102) "Göster" ozellikleri sifreli-kopya
@@ -148,7 +156,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: supabase/setup-cli@v1
         with:
-          version: latest
+          version: 2.116.0
       - name: Link production project
         run: supabase link --project-ref "$SUPABASE_PROJECT_REF"
         env:
