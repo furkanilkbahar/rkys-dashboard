@@ -1,6 +1,6 @@
 import "server-only";
 
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 
 // Vardiya cihazı kimliği Supabase Auth oturumu DEĞİLDİR (RULES #29 gereği
 // "yetkili cihaz" personelin kendi kimliğinden bağımsız, cihaza özgü bir
@@ -23,11 +23,35 @@ export async function getDeviceCredentials(): Promise<DeviceCredentials | null> 
   return { deviceId, deviceSecret };
 }
 
+/**
+ * Cookie'nin `Secure` niteliği isteğin GERÇEK protokolünden türetilir.
+ *
+ * Eski kural `NODE_ENV === "production"` idi; bu bir VEKİL: "üretim ortamı
+ * https'tir" varsayımı. Vercel'de doğru ama tek doğru değil — E2E paketi
+ * production build'ini (`pnpm start`, yani NODE_ENV=production) DÜZ HTTP
+ * üzerinde koşturuyor. Orada cookie `Secure` işaretleniyordu ve WebKit onu
+ * saklamayı reddediyordu (Chromium localhost'a ayrıcalık tanır, WebKit
+ * tanımaz). Sonuç: cihaz eşleme mobile-safari'de hiç doğrulanamıyordu — S47
+ * 45 saniye boyunca "Bu cihaz yetkili değil." ekranında kalıyordu.
+ *
+ * HEADER YOKSA `Secure` VERİLMEZ, çünkü Next.js TLS'i hiçbir zaman kendisi
+ * sonlandırmaz: `x-forwarded-proto` yokluğu, önünde TLS sonlandıran bir vekil
+ * olmadığı ve bağlantının düz http olduğu anlamına gelir. Vercel bu header'ı
+ * her istekte gönderir, dolayısıyla üretim davranışı birebir korunur.
+ */
+async function isSecureConnection(): Promise<boolean> {
+  const headerStore = await headers();
+  // Zincirlenmiş vekillerde değer virgülle ayrılmış olabilir; İSTEMCİYE en
+  // yakın olan ilk parçadır.
+  const proto = headerStore.get("x-forwarded-proto")?.split(",")[0]?.trim();
+  return proto === "https";
+}
+
 export async function setDeviceCredentials(credentials: DeviceCredentials): Promise<void> {
   const cookieStore = await cookies();
   const options = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: await isSecureConnection(),
     sameSite: "lax" as const,
     path: "/",
     maxAge: COOKIE_MAX_AGE_SECONDS,
