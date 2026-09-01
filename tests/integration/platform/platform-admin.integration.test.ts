@@ -65,10 +65,19 @@ describe("custom_access_token_hook: platform_admin dalı (Adım 0)", () => {
     expect(ownTenants![0].slug).toBe("acme");
   });
 
-  it("hiç kimse platform_admins tablosunu doğrudan okuyamaz — yalnızca service_role'a grant var, authenticated'e hiç yok", async () => {
-    const owner = await signInAsSeededOwner(SEED.acme.ownerEmail);
-    const { error } = await owner.from("platform_admins").select("id");
-    expect(error).not.toBeNull();
-    expect(error?.code).toBe("42501");
-  });
+  // Bu garanti 0098'e kadar hiçbir yerde YAZILI DEĞİLDİ: `public` şemasının
+  // varsayılan yetkilerinde authenticated'e SELECT verilmemesine güveniliyordu.
+  // CI'nın postgres imajı 17.6.1.147 → 17.6.1.165 değişince varsayılan da
+  // değişti ve garanti sessizce kayboldu (test 2026-09-01'de CI'da düştü,
+  // lokalde geçmeye devam etti). 0098 revoke'u açıkça yazıyor; test de artık
+  // aynı deseni paylaşan ÜÇ politikasız RLS tablosunun hepsini kapsıyor.
+  it.each(["platform_admins", "otp_codes", "staff_pin_secrets"] as const)(
+    "politikasız RLS tablosu %s authenticated tarafından doğrudan okunamaz — yalnızca service_role",
+    async (table) => {
+      const owner = await signInAsSeededOwner(SEED.acme.ownerEmail);
+      const { error } = await owner.from(table).select("*");
+      expect(error).not.toBeNull();
+      expect(error?.code).toBe("42501");
+    },
+  );
 });
