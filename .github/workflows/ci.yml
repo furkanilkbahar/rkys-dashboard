@@ -104,12 +104,26 @@ jobs:
       # IKISI DE KOSAR, karar sonda verilir: ilki dustugunde ikincisini hic
       # kosmamak her turda tek bir tarayicinin hatalarini gosterir ve duzeltme
       # turlarini gereksiz yere uzatir.
+      #
+      # mobile-safari TEK WORKER ile kosar (2026-09-02, TESHIS AMACLI).
+      # Projeler ayrildiktan sonra geriye kalan hatalar bir "bug" gibi
+      # davranmiyor: lokalde ve CI'da DUSEN SPEC'LER FARKLI (CI'da
+      # multi-language-currency + waiter-call-realtime, lokalde day-closure +
+      # gift-cards; ayni kod, ayni komut). Kalan mekanizma bir proje ICINDE
+      # paralel kosan worker'larin PAYLASILAN acme/beta seed tenant'ini ayni
+      # anda mutasyona ugratmasi. Tek worker bu cakismayi tamamen kaldirir;
+      # hipotez doğruysa kalan hatalar kaybolur. chromium zaten exit=0
+      # oldugu icin orada degisiklige gerek yok.
+      #
+      # Bu ADIM GECICI olabilir: dogrulanirsa ya kalici kabul edilir ya da
+      # mutasyon yapan ~10 spec tek kullanimlik tenant'a tasinir (CI suresi
+      # artmadan ayni sonucu verir; bkz. D106'da elenen ikinci secenek).
       - name: E2E (projeler sirayla)
         run: |
           set +e
           pnpm exec playwright test --project=chromium-desktop
           chromium=$?
-          pnpm exec playwright test --project=mobile-safari
+          pnpm exec playwright test --project=mobile-safari --workers=1
           safari=$?
           echo "::notice::chromium-desktop exit=$chromium, mobile-safari exit=$safari"
           [ $chromium -eq 0 ] && [ $safari -eq 0 ]
